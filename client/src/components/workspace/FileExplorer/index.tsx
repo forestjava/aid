@@ -28,7 +28,7 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
   const queryClient = useQueryClient()
 
   // Загрузка корневой директории
-  const { data: rootData, isLoading, error } = useQuery({
+  const { data: rootData, isLoading } = useQuery({
     queryKey: ['readdir', ''],
     queryFn: () => filesystemApi.readdir(''),
   })
@@ -38,7 +38,6 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
     mutationFn: ({ path, content }: { path: string; content: string }) =>
       filesystemApi.writeFile(path, content),
     onSuccess: () => {
-      // Инвалидируем весь кэш дерева файлов
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
     },
   })
@@ -47,7 +46,6 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
   const createFolderMutation = useMutation({
     mutationFn: (path: string) => filesystemApi.mkdir(path),
     onSuccess: () => {
-      // Инвалидируем весь кэш дерева файлов
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
     },
   })
@@ -57,7 +55,6 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
     mutationFn: ({ oldPath, newPath }: { oldPath: string; newPath: string }) =>
       filesystemApi.rename(oldPath, newPath),
     onSuccess: (_, variables) => {
-      // Инвалидируем весь кэш дерева файлов
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
       // Если переименовали выбранный элемент, обновляем выбранный путь
       if (selectedPath === variables.oldPath) {
@@ -70,7 +67,6 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
   const deleteMutation = useMutation({
     mutationFn: (path: string) => filesystemApi.rm(path),
     onSuccess: (_, path) => {
-      // Инвалидируем весь кэш дерева файлов
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
       // Если удалили выбранный элемент, сбрасываем выбор
       if (selectedPath === path) {
@@ -170,10 +166,6 @@ export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
       <div className="flex-1 overflow-auto py-2">
         {isLoading ? (
           <div className="px-3 py-2 text-sm text-muted-foreground">Загрузка...</div>
-        ) : error ? (
-          <div className="px-3 py-2 text-sm text-destructive">
-            Ошибка загрузки: {error instanceof Error ? error.message : 'Unknown error'}
-          </div>
         ) : rootData?.items && rootData.items.length > 0 ? (
           sortFileSystemItems(rootData.items).map((item) => (
             <FileTreeItem

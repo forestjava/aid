@@ -15,7 +15,7 @@ export const Editor = ({ currentFile }: EditorProps) => {
   const queryClient = useQueryClient()
 
   // Загрузка содержимого файла
-  const { data: fileData, isLoading, error } = useQuery({
+  const { data: fileData, isLoading } = useQuery({
     queryKey: ['readFile', currentFile],
     queryFn: () => filesystemApi.readFile(currentFile!),
     enabled: !!currentFile,
@@ -27,7 +27,6 @@ export const Editor = ({ currentFile }: EditorProps) => {
       filesystemApi.writeFile(currentFile!, content),
     onSuccess: () => {
       setHasChanges(false)
-      // Инвалидируем кэш файла
       queryClient.invalidateQueries({ queryKey: ['readFile', currentFile] })
     },
   })
@@ -109,12 +108,6 @@ export const Editor = ({ currentFile }: EditorProps) => {
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-muted-foreground">Загрузка файла...</p>
         </div>
-      ) : error ? (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-sm text-destructive">
-            Ошибка загрузки файла: {error instanceof Error ? error.message : 'Неизвестная ошибка'}
-          </p>
-        </div>
       ) : (
         <Textarea
           value={content}
@@ -123,15 +116,6 @@ export const Editor = ({ currentFile }: EditorProps) => {
           className="flex-1 w-full resize-none font-mono text-sm rounded-none border-0 focus-visible:ring-0 shadow-none"
           spellCheck={false}
         />
-      )}
-
-      {/* Статус-бар с информацией о сохранении */}
-      {saveMutation.isError && (
-        <div className="h-8 border-t px-3 flex items-center bg-destructive/10">
-          <span className="text-xs text-destructive">
-            Ошибка сохранения: {saveMutation.error instanceof Error ? saveMutation.error.message : 'Неизвестная ошибка'}
-          </span>
-        </div>
       )}
     </div>
   )
