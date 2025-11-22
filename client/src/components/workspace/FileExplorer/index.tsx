@@ -9,7 +9,11 @@ import { RenameDialog } from './RenameDialog'
 import { DeleteDialog } from './DeleteDialog'
 import { Button } from '@/components/ui/button'
 
-export const FileExplorer = () => {
+interface FileExplorerProps {
+  onFileSelect?: (path: string) => void
+}
+
+export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
   const [selectedIsDirectory, setSelectedIsDirectory] = useState(false)
 
@@ -81,6 +85,10 @@ export const FileExplorer = () => {
   const handleSelect = (path: string, isDirectory: boolean) => {
     setSelectedPath(path)
     setSelectedIsDirectory(isDirectory)
+    // Если выбран файл (не каталог), уведомляем родительский компонент
+    if (!isDirectory && onFileSelect) {
+      onFileSelect(path)
+    }
   }
 
   const handleCreateFile = () => {

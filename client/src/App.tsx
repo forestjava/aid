@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Layout } from '@/components/layout/Layout'
 import { Header } from '@/components/layout/Header'
 import { Main } from '@/components/layout/Main'
@@ -6,18 +7,22 @@ import { FileExplorer } from '@/components/workspace/FileExplorer'
 import { Editor } from '@/components/workspace/Editor'
 import { Preview } from '@/components/workspace/Preview'
 
-const App = () => {
+export const App = () => {
+  const [currentFile, setCurrentFile] = useState<string | null>(null)
+
+  const handleFileSelect = (path: string) => {
+    setCurrentFile(path)
+  }
+
   return (
     <Layout>
       <Header>Система управления документацией</Header>
       <Main>
-        <FileExplorer />
-        <Editor />
+        <FileExplorer onFileSelect={handleFileSelect} />
+        <Editor currentFile={currentFile} />
         <Preview />
       </Main>
       <Footer>© 2025 ОЭЗ Алабуга</Footer>
     </Layout>
   )
 }
-
-export default App

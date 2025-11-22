@@ -1,14 +1,138 @@
-export const Editor = () => {
+import { useState, useEffect } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Save } from 'lucide-react'
+import { filesystemApi } from '@/api/filesystem'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+
+interface EditorProps {
+  currentFile: string | null
+}
+
+export const Editor = ({ currentFile }: EditorProps) => {
+  const [content, setContent] = useState('')
+  const [hasChanges, setHasChanges] = useState(false)
+  const queryClient = useQueryClient()
+
+  // Загрузка содержимого файла
+  const { data: fileData, isLoading, error } = useQuery({
+    queryKey: ['readFile', currentFile],
+    queryFn: () => filesystemApi.readFile(currentFile!),
+    enabled: !!currentFile,
+  })
+
+  // Мутация для сохранения файла
+  const saveMutation = useMutation({
+    mutationFn: (content: string) =>
+      filesystemApi.writeFile(currentFile!, content),
+    onSuccess: () => {
+      setHasChanges(false)
+      // Инвалидируем кэш файла
+      queryClient.invalidateQueries({ queryKey: ['readFile', currentFile] })
+    },
+  })
+
+  // Обновляем локальное содержимое при загрузке нового файла
+  useEffect(() => {
+    if (fileData?.content !== undefined) {
+      setContent(fileData.content)
+      setHasChanges(false)
+    }
+
+  }, [fileData?.content])
+
+  // Сброс состояния при смене файла
+  useEffect(() => {
+    if (!currentFile) {
+      setContent('')
+      setHasChanges(false)
+    }
+  }, [currentFile])
+
+  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value)
+    setHasChanges(true)
+  }
+
+  const handleSave = () => {
+    if (currentFile && hasChanges) {
+      saveMutation.mutate(content)
+    }
+  }
+
   return (
     <div className="h-full w-full bg-background flex flex-col">
-      <div className="h-10 border-b px-3 flex items-center gap-2 shrink-0">
-        <span className="text-sm font-medium">Editor</span>
-        <span className="text-xs text-muted-foreground">• No file selected</span>
+      {/* Заголовок */}
+      <div className="h-10 border-b px-3 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm font-medium">Редактор</span>
+          {currentFile ? (
+            <>
+              <span className="text-xs text-muted-foreground">•</span>
+              <span className="text-xs text-muted-foreground truncate">
+                {currentFile}
+              </span>
+              {hasChanges && (
+                <>
+                  <span className="text-xs text-muted-foreground">•</span>
+                  <span className="text-xs text-orange-500">Изменён</span>
+                </>
+              )}
+            </>
+          ) : (
+            <span className="text-xs text-muted-foreground">• Файл не выбран</span>
+          )}
+        </div>
+
+        {currentFile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSave}
+            disabled={!hasChanges || saveMutation.isPending}
+            title={saveMutation.isPending ? 'Сохранение...' : 'Сохранить файл'}
+            className="h-7 w-7 p-0"
+          >
+            <Save className="h-4 w-4" />
+          </Button>
+        )}
       </div>
-      <div className="flex-1 overflow-auto p-4">
-        {/* Здесь будет редактор кода */}
-        <p className="text-sm text-muted-foreground">Code editor will be here...</p>
-      </div>
+
+      {/* Область редактирования */}
+      {!currentFile ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">
+            Выберите файл в файловом менеджере для редактирования
+          </p>
+        </div>
+      ) : isLoading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">Загрузка файла...</p>
+        </div>
+      ) : error ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-destructive">
+            Ошибка загрузки файла: {error instanceof Error ? error.message : 'Неизвестная ошибка'}
+          </p>
+        </div>
+      ) : (
+        <Textarea
+          value={content}
+          onChange={handleContentChange}
+          placeholder="Начните вводить текст..."
+          className="flex-1 w-full resize-none font-mono text-sm rounded-none border-0 focus-visible:ring-0 shadow-none"
+          spellCheck={false}
+        />
+      )}
+
+      {/* Статус-бар с информацией о сохранении */}
+      {saveMutation.isError && (
+        <div className="h-8 border-t px-3 flex items-center bg-destructive/10">
+          <span className="text-xs text-destructive">
+            Ошибка сохранения: {saveMutation.error instanceof Error ? saveMutation.error.message : 'Неизвестная ошибка'}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
