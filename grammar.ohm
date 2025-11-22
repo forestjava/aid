@@ -14,7 +14,8 @@ DSL {
     
   // Ключевые слова
   keyword = // Английские ключевые слова
-            "entity"
+          "service"
+          | "entity"
           | "type"
           | "attribute"
           | "import"
