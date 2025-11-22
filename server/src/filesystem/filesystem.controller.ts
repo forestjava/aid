@@ -6,6 +6,8 @@ import {
   Delete,
   Query,
   Body,
+  ParseBoolPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { FileSystemService } from './filesystem.service';
 
@@ -47,7 +49,10 @@ export class FileSystemController {
   }
 
   @Delete('rm')
-  async rm(@Query('path') path: string, @Query('recursive') recursive = true) {
+  async rm(
+    @Query('path') path: string,
+    @Query('recursive', new DefaultValuePipe(true), ParseBoolPipe) recursive: boolean,
+  ) {
     return await this.fileSystemService.rm(path, recursive);
   }
 }
