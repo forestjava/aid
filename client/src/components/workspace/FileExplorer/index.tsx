@@ -13,7 +13,7 @@ interface FileExplorerProps {
   onFileSelect?: (path: string) => void
 }
 
-export const FileExplorer = ({ onFileSelect }: FileExplorerProps) => {
+export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
   const [selectedIsDirectory, setSelectedIsDirectory] = useState(false)
 

@@ -20,7 +20,7 @@ export const App = () => {
       <Main>
         <FileExplorer onFileSelect={handleFileSelect} />
         <Editor currentFile={currentFile} />
-        <Preview />
+        <Preview currentFile={currentFile} />
       </Main>
       <Footer>© 2025 ОЭЗ Алабуга</Footer>
     </Layout>
