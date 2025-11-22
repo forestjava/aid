@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
 interface EditorProps {
-  currentFile: string | null
+  currentFile: string | null  // файл, который нужно открыть (приходит извне)
 }
 
-export const Editor = ({ currentFile }: EditorProps) => {
+export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
+  const [currentFile, setCurrentFile] = useState<string | null>(null)
   const [content, setContent] = useState('')
   const [hasChanges, setHasChanges] = useState(false)
   const queryClient = useQueryClient()
@@ -31,13 +32,27 @@ export const Editor = ({ currentFile }: EditorProps) => {
     },
   })
 
+  // переключение текущего файла с автосохранением
+  useEffect(() => {
+    // Если пришёл новый файл извне и он отличается от текущего
+    if (setFile !== currentFile) {
+      // Если есть несохранённые изменения в текущем файле
+      if (hasChanges && currentFile) {
+        // Автоматически сохраняем текущий файл, затем переключаемся на новый файл
+        saveMutation.mutate(content, { onSuccess: () => setCurrentFile(setFile) });
+      } else {
+        // Если изменений нет, просто переключаемся на новый файл
+        setCurrentFile(setFile)
+      }
+    }
+  }, [setFile])
+
   // Обновляем локальное содержимое при загрузке нового файла
   useEffect(() => {
     if (fileData?.content !== undefined) {
       setContent(fileData.content)
       setHasChanges(false)
     }
-
   }, [fileData?.content])
 
   // Сброс состояния при смене файла
@@ -120,4 +135,3 @@ export const Editor = ({ currentFile }: EditorProps) => {
     </div>
   )
 }
-
