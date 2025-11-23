@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Save } from 'lucide-react'
 import { filesystemApi } from '@/api/filesystem'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import { CodeEditor } from './CodeEditor'
 
 interface EditorProps {
   currentFile: string | null  // файл, который нужно открыть (приходит извне)
@@ -63,8 +63,8 @@ export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
     }
   }, [currentFile])
 
-  const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value)
+  const handleContentChange = (newValue: string) => {
+    setContent(newValue)
     setHasChanges(true)
   }
 
@@ -124,12 +124,10 @@ export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
           <p className="text-sm text-muted-foreground">Загрузка файла...</p>
         </div>
       ) : (
-        <Textarea
+        // <Textarea /> from @/components/ui/textarea        
+        <CodeEditor
           value={content}
           onChange={handleContentChange}
-          placeholder="Начните вводить текст..."
-          className="flex-1 w-full resize-none font-mono text-sm rounded-none border-0 focus-visible:ring-0 shadow-none"
-          spellCheck={false}
         />
       )}
     </div>

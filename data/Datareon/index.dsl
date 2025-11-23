@@ -5,7 +5,7 @@ entity Route {
   attribute id {
     type UUID;
 
-  };
+  }
 
   attribute name {
     type String;
