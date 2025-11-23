@@ -1,6 +1,12 @@
-import { StreamLanguage } from '@codemirror/language';
-import { dslStreamParser } from './dsl-parser';
+import type { Extension } from '@codemirror/state';
+import { dslSyntaxHighlight } from './dsl-syntax-highlight';
 
-// Создаём языковую поддержку
-export const dslLanguage = StreamLanguage.define(dslStreamParser);
+/**
+ * Языковая поддержка для DSL
+ * Использует Ohm грамматику для парсинга и подсветки синтаксиса
+ * через ViewPlugin с decorations
+ */
+export const dslLanguage: Extension = [
+  dslSyntaxHighlight
+];
 

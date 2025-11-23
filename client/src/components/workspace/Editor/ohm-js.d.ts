@@ -11,16 +11,35 @@ declare module 'ohm-js' {
     getExpectedText(): string;
   }
 
+  export interface Node {
+    source: Interval;
+    sourceString: string;
+    children: Node[];
+    ctorName: string;
+    isTerminal(): boolean;
+    isNonterminal(): boolean;
+  }
+
+  export interface Interval {
+    startIdx: number;
+    endIdx: number;
+    contents: string;
+  }
+
   export interface Semantics {
-    addOperation<T = any>(name: string, operations: ActionDict): SemanticOperation<T>;
+    addOperation<T = any>(name: string, operations: ActionDict<T>): Semantics;
+    (match: MatchResult): SemanticAdapter;
   }
 
-  export interface SemanticOperation<T = any> {
-    (match: MatchResult): T;
+  export interface SemanticAdapter {
+    [key: string]: any;
   }
 
-  export interface ActionDict {
-    [key: string]: (...args: any[]) => any;
+  export interface ActionDict<T = any> {
+    [key: string]: (...args: Node[]) => T;
+    _terminal?: (this: Node) => T;
+    _iter?: (...children: Node[]) => T;
+    _nonterminal?: (...children: Node[]) => T;
   }
 
   export function grammar(source: string): Grammar;
