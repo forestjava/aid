@@ -36,7 +36,8 @@ DSL {
   identifier = letter (letter | digit)*
   
   // Строковый литерал в двойных кавычках
-  stringLiteral = "\"" (~"\"" any)* "\""
+  stringLiteral = "\"" stringChar* "\""
+  stringChar = ~("\"" | "\n" | "\r") any
 
   // Переопределяем правило space для поддержки комментариев
   space += comment
