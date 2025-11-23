@@ -54,6 +54,52 @@ semantics.addOperation<Token[]>('getTokens', {
     return entities.getTokens();
   },
 
+  Entity_type(typeKeyword: any, typeRef: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем typeKeyword (терминальный узел)
+    tokens.push({
+      from: typeKeyword.source.startIdx,
+      to: typeKeyword.source.endIdx,
+      type: 'keyword'
+    });
+
+    // Добавляем typeRef (identifier с опциональными скобками)
+    tokens.push(...typeRef.getTokens());
+
+    // Добавляем пунктуацию (терминальный узел)
+    tokens.push({
+      from: _semicolon.source.startIdx,
+      to: _semicolon.source.endIdx,
+      type: 'punctuation'
+    });
+
+    return tokens;
+  },
+
+  Entity_import(importKeyword: any, importRef: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем importKeyword (терминальный узел)
+    tokens.push({
+      from: importKeyword.source.startIdx,
+      to: importKeyword.source.endIdx,
+      type: 'keyword'
+    });
+
+    // Добавляем importRef (stringLiteral)
+    tokens.push(...importRef.getTokens());
+
+    // Добавляем пунктуацию (терминальный узел)
+    tokens.push({
+      from: _semicolon.source.startIdx,
+      to: _semicolon.source.endIdx,
+      type: 'punctuation'
+    });
+
+    return tokens;
+  },
+
   Entity_simple(keyword: any, name: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
@@ -137,8 +183,45 @@ semantics.addOperation<Token[]>('getTokens', {
     return [];
   },
 
+  typeKeyword(_typeKeyword: any): Token[] {
+    // Ключевое слово типа обрабатывается в Entity_type
+    return [];
+  },
+
+  importKeyword(_importKeyword: any): Token[] {
+    // Ключевое слово импорта обрабатывается в Entity_import
+    return [];
+  },
+
   name(nameNode: any): Token[] {
     return nameNode.getTokens();
+  },
+
+  // typeRef = identifier "[]"?
+  // Арность: 2 (identifier + опциональные скобки)
+  typeRef(identifier: any, brackets: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем идентификатор
+    tokens.push(...identifier.getTokens());
+
+    // Добавляем скобки [] если они есть (опциональный терминальный узел)
+    if (brackets && brackets.source) {
+      tokens.push({
+        from: brackets.source.startIdx,
+        to: brackets.source.endIdx,
+        type: 'punctuation'
+      });
+    }
+
+    return tokens;
+  },
+
+  // importRef = stringLiteral
+  // Арность: 1 (только stringLiteral)
+  importRef(stringLiteral: any): Token[] {
+    // Делегируем обработку stringLiteral
+    return stringLiteral.getTokens();
   },
 
   // identifier = simpleIdentifier ("." simpleIdentifier)*

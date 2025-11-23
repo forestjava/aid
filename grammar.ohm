@@ -5,8 +5,14 @@ DSL {
   
   // Сущность - это ключевое слово + наименование и + опционально блок содержимого
   // Используем case names для разделения веток с разной арностью
-  Entity = keyword name ";"         --simple
-         | keyword name Block ";"?  --options
+  //Entity = keyword name ";"         --simple
+  //       | keyword name Block ";"?  --options
+
+  Entity = typeKeyword typeRef ";"       --type
+         | importKeyword importRef ";"   --import
+         | keyword name ";"              --simple
+         | keyword name Block ";"?       --options
+
 
   // Блок содержит набор элементов в фигурных скобках
   Block = "{" Item* "}"
@@ -15,23 +21,29 @@ DSL {
   Item = Entity
     
   // Ключевые слова
+  typeKeyword = "type" | "тип"
+  importKeyword = "import" | "из"
   keyword = 
     // Английские ключевые слова
       "service"
       | "entity"
-      | "type"
       | "attribute"
-      | "import"
+      | "sync"
     // Русские ключевые слова
       | "сервис"
       | "сущность"
-      | "тип"
       | "реквизит"
-      | "из"
+      | "обмен"
   
-  // Имя может быть идентификатором или строкой в кавычках
-  name = identifier | stringLiteral
-  
+  // Имя в общем случае может быть только идентификатором
+  name = identifier
+
+  // Имя типа может быть только идентификатором, и плюс может содержать признак [] collection 
+  typeRef = identifier "[]"?
+
+  // Имя импорта может быть только строковым литералом 
+  importRef = stringLiteral
+
   // Идентификатор может быть составным через точку (неограниченная вложенность)
   identifier = simpleIdentifier ("." simpleIdentifier)*
 
