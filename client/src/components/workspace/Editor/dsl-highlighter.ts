@@ -141,14 +141,22 @@ semantics.addOperation<Token[]>('getTokens', {
     return nameNode.getTokens();
   },
 
-  // identifier = letter (letter | digit)*
-  // Арность: 2 (первая буква + итератор остальных)
-  identifier(this: Node, _firstLetter: any, _rest: any): Token[] {
+  // identifier = simpleIdentifier ("." simpleIdentifier)*
+  // Арность: 3 (первый simpleIdentifier + итератор точек + итератор simpleIdentifier'ов)
+  identifier(this: Node, _firstIdentifier: any, _dots: any, _restIdentifiers: any): Token[] {
     return [{
       from: this.source.startIdx,
       to: this.source.endIdx,
       type: 'identifier'
     }];
+  },
+
+  // simpleIdentifier = letter (letter | digit)*
+  // Арность: 2 (первая буква + итератор остальных)
+  simpleIdentifier(this: Node, _firstLetter: any, _rest: any): Token[] {
+    // Простой идентификатор не обрабатываем отдельно,
+    // он является частью составного identifier
+    return [];
   },
 
   // stringLiteral = "\"" (~"\"" any)* "\""

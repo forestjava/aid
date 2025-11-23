@@ -32,9 +32,12 @@ DSL {
   // Имя может быть идентификатором или строкой в кавычках
   name = identifier | stringLiteral
   
-  // Идентификатор начинается с буквы и содержит буквы/цифры
-  identifier = letter (letter | digit)*
-  
+  // Идентификатор может быть составным через точку (неограниченная вложенность)
+  identifier = simpleIdentifier ("." simpleIdentifier)*
+
+  // Простой идентификатор начинается с буквы и содержит буквы/цифры
+  simpleIdentifier = letter (letter | digit)*
+
   // Строковый литерал в двойных кавычках
   stringLiteral = "\"" stringChar* "\""
   stringChar = ~("\"" | "\n" | "\r") any

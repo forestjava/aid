@@ -32,11 +32,6 @@ export const dslLinter = linter(view => {
       message: `Синтаксическая ошибка. Ожидается: ${expected}`
     });
   }
-  // Можно добавить семантические проверки позже
-  // else {
-  //   const semanticDiagnostics = performSemanticChecks(match);
-  //   diagnostics.push(...semanticDiagnostics);
-  // }
 
   return diagnostics;
 });
