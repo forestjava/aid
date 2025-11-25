@@ -1,22 +1,20 @@
 import { useEffect, useRef } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
-import { EditorState, Compartment } from '@codemirror/state';
+import { EditorState } from '@codemirror/state';
 import { dslSupport } from './dsl-support';
 
 interface CodeEditorProps {
   value: string;
   onChange: (value: string) => void;
-  readOnly?: boolean;
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
-  readOnly = false
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
-  const readOnlyCompartment = useRef(new Compartment());
+  const isLoading = useRef(false);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -27,14 +25,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       extensions: [
         basicSetup,
         ...dslSupport,
-        EditorView.lineWrapping, // Перенос строк
         EditorView.updateListener.of((update) => {
-          if (update.docChanged && !readOnly) {
+          if (update.docChanged && !isLoading.current) {
             const newValue = update.state.doc.toString();
             onChange(newValue);
           }
         }),
-        readOnlyCompartment.current.of(EditorState.readOnly.of(readOnly)),
         // Стилизация редактора
         EditorView.theme({
           '&': {
@@ -120,26 +116,22 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
 
     const currentValue = viewRef.current.state.doc.toString();
     if (currentValue !== value) {
-      viewRef.current.dispatch({
-        changes: {
-          from: 0,
-          to: currentValue.length,
-          insert: value,
-        },
-      });
+      // Блокируем вызов onChange во время программного обновления
+      isLoading.current = true;
+      try {
+        viewRef.current.dispatch({
+          changes: {
+            from: 0,
+            to: currentValue.length,
+            insert: value,
+          },
+        });
+      } finally {
+        // Сбрасываем флаг после завершения обновления
+        isLoading.current = false;
+      }
     }
   }, [value]);
-
-  // Обновляем режим readOnly
-  useEffect(() => {
-    if (!viewRef.current) return;
-
-    viewRef.current.dispatch({
-      effects: readOnlyCompartment.current.reconfigure(
-        EditorState.readOnly.of(readOnly)
-      ),
-    });
-  }, [readOnly]);
 
   return (
     <div

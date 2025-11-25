@@ -27,13 +27,17 @@ DSL {
     // Английские ключевые слова
       "service"
       | "entity"
+      | "class"
+      | "method"
       | "attribute"
       | "sync"
+      | "value"
     // Русские ключевые слова
       | "сервис"
       | "сущность"
       | "реквизит"
       | "обмен"
+      | "значение"
   
   // Имя в общем случае может быть только идентификатором
   name = identifier
@@ -48,7 +52,7 @@ DSL {
   identifier = simpleIdentifier ("." simpleIdentifier)*
 
   // Простой идентификатор начинается с буквы и содержит буквы/цифры
-  simpleIdentifier = letter (letter | digit)*
+  simpleIdentifier = letter (letter | digit | "_")*
 
   // Строковый литерал в двойных кавычках
   stringLiteral = "\"" stringChar* "\""
