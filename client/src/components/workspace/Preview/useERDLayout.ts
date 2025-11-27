@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { type Node, type Edge, MarkerType } from 'reactflow'
+import { type Node, type Edge } from 'reactflow'
 import dagre from 'dagre'
-import { type DatabaseSchema, type Entity, type EntityRelation } from './types'
+import { type DatabaseSchema, type Entity } from './types'
 import { type EntityNodeData } from './EntityNode'
 import { getEdgeColor } from './colors'
 
@@ -14,25 +14,6 @@ const calculateNodeHeight = (entity: Entity): number => {
   const attributeHeight = 28
   const totalHeight = headerHeight + entity.attributes.length * attributeHeight
   return Math.max(totalHeight, NODE_HEIGHT)
-}
-
-// Функция для преобразования типа связи в стиль линии
-const getEdgeStyle = (relationType: EntityRelation['type'], color: string) => {
-  const baseStyle = {
-    strokeWidth: 2,
-    stroke: color,
-  }
-
-  switch (relationType) {
-    case 'one-to-one':
-      return baseStyle
-    case 'one-to-many':
-      return baseStyle
-    case 'many-to-many':
-      return { ...baseStyle, strokeDasharray: '5,5' }
-    default:
-      return baseStyle
-  }
 }
 
 export const useERDLayout = (schema: DatabaseSchema | null) => {
@@ -69,26 +50,21 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
 
     // Создаем ребра для связей
     const edges: Edge[] = schema.relations.map((relation, index) => {
-      // Добавляем ребро в граф dagre
-      dagreGraph.setEdge(relation.from, relation.to)
+      // Добавляем ребро в граф dagre для расчета layout
+      dagreGraph.setEdge(relation.source, relation.target)
 
-      // Получаем цвет для связи по индексу
       const edgeColor = getEdgeColor(index)
 
       return {
-        id: `e${index}-${relation.from}-${relation.to}`,
-        source: relation.to, // Связь идет от таблицы с FK
-        target: relation.from, // к таблице с PK
-        sourceHandle: `${relation.to}-${relation.toField}`, // FK атрибут
-        targetHandle: `${relation.from}-${relation.fromField}`, // PK атрибут
+        id: `e${index}-${relation.source}-${relation.target}`,
+        source: relation.source,
+        target: relation.target,
+        sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
+        targetHandle: `${relation.target}-${relation.targetNavigation}`,
         type: 'smoothstep',
-        animated: relation.type === 'many-to-many',
-        style: getEdgeStyle(relation.type, edgeColor),
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-          color: edgeColor,
+        style: {
+          strokeWidth: 2,
+          stroke: edgeColor,
         },
       }
     })

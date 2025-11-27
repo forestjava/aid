@@ -19,26 +19,25 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
             key={idx}
             className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
           >
-            {/* Handle слева для входящих связей (target - для PK) */}
-            {attr.isPrimaryKey && (
-              <Handle
-                type="target"
-                position={Position.Left}
-                id={`${data.id}-${attr.name}`}
-                className="w-2 h-2 !-left-1"
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              />
-            )}
-
-            {/* Handle справа для исходящих связей (source - для FK) */}
-            {attr.isForeignKey && (
-              <Handle
-                type="source"
-                position={Position.Right}
-                id={`${data.id}-${attr.name}`}
-                className="w-2 h-2 !-right-1"
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              />
+            {/* Handle для навигационных свойств */}
+            {attr.isNavigation && (
+              <>
+                {/* Все навигационные свойства имеют handles с обеих сторон для bidirectional связей */}
+                <Handle
+                  type="target"
+                  position={Position.Left}
+                  id={`${data.id}-${attr.name}`}
+                  className="w-2 h-2 !-left-1"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                />
+                <Handle
+                  type="source"
+                  position={Position.Right}
+                  id={`${data.id}-${attr.name}`}
+                  className="w-2 h-2 !-right-1"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                />
+              </>
             )}
 
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
@@ -52,7 +51,17 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
                   🔗
                 </span>
               )}
-              <span className={`font-mono truncate ${attr.isPrimaryKey ? 'font-semibold' : ''}`}>
+              {attr.isNavigation && !attr.isCollection && (
+                <span className="text-purple-500" title="Navigation Property">
+                  →
+                </span>
+              )}
+              {attr.isNavigation && attr.isCollection && (
+                <span className="text-purple-500" title="Navigation Collection">
+                  ⇉
+                </span>
+              )}
+              <span className={`font-mono truncate ${attr.isPrimaryKey ? 'font-semibold' : ''} ${attr.isNavigation ? 'italic' : ''}`}>
                 {attr.name}
               </span>
             </div>

@@ -2,18 +2,19 @@
 
 export interface EntityAttribute {
   name: string
-  type: string
+  type: string // Для скалярных типов: 'INTEGER', 'VARCHAR', etc. Для навигационных: 'EntityName' или 'EntityName[]'
   isPrimaryKey?: boolean
   isForeignKey?: boolean
   isNullable?: boolean
+  isNavigation?: boolean // Навигационное свойство (ссылка на другую сущность)
+  isCollection?: boolean // Коллекция (массив) сущностей
 }
 
 export interface EntityRelation {
-  from: string // ID сущности источника
-  to: string // ID сущности назначения
-  type: 'one-to-one' | 'one-to-many' | 'many-to-many'
-  fromField: string
-  toField: string
+  source: string // ID сущности-источника связи (слева)
+  sourceNavigation: string // Имя навигационного свойства источника
+  target: string // ID сущности-цели связи (справа)
+  targetNavigation: string // Имя навигационного свойства цели
 }
 
 export interface Entity {
@@ -31,90 +32,87 @@ export interface DatabaseSchema {
 export const testSchema: DatabaseSchema = {
   entities: [
     {
-      id: 'users',
-      name: 'Users',
+      id: 'user',
+      name: 'User',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
         { name: 'email', type: 'VARCHAR(255)' },
         { name: 'username', type: 'VARCHAR(100)' },
         { name: 'created_at', type: 'TIMESTAMP' },
+        // Навигационные свойства
+        { name: 'posts', type: 'Post[]', isNavigation: true, isCollection: true },
+        { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },
       ],
     },
     {
-      id: 'posts',
-      name: 'Posts',
+      id: 'post',
+      name: 'Post',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
         { name: 'user_id', type: 'INTEGER', isForeignKey: true },
         { name: 'title', type: 'VARCHAR(200)' },
         { name: 'content', type: 'TEXT' },
         { name: 'created_at', type: 'TIMESTAMP' },
+        // Навигационные свойства
+        { name: 'author', type: 'User', isNavigation: true },
+        { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },
+        { name: 'categories', type: 'Category[]', isNavigation: true, isCollection: true },
       ],
     },
     {
-      id: 'comments',
-      name: 'Comments',
+      id: 'comment',
+      name: 'Comment',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
         { name: 'post_id', type: 'INTEGER', isForeignKey: true },
         { name: 'user_id', type: 'INTEGER', isForeignKey: true },
         { name: 'content', type: 'TEXT' },
         { name: 'created_at', type: 'TIMESTAMP' },
+        // Навигационные свойства
+        { name: 'post', type: 'Post', isNavigation: true },
+        { name: 'author', type: 'User', isNavigation: true },
       ],
     },
     {
-      id: 'categories',
-      name: 'Categories',
+      id: 'category',
+      name: 'Category',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
         { name: 'name', type: 'VARCHAR(100)' },
         { name: 'description', type: 'TEXT', isNullable: true },
-      ],
-    },
-    {
-      id: 'post_categories',
-      name: 'PostCategories',
-      attributes: [
-        { name: 'post_id', type: 'INTEGER', isPrimaryKey: true, isForeignKey: true },
-        { name: 'category_id', type: 'INTEGER', isPrimaryKey: true, isForeignKey: true },
+        // Навигационные свойства
+        { name: 'posts', type: 'Post[]', isNavigation: true, isCollection: true },
       ],
     },
   ],
   relations: [
     {
-      from: 'users',
-      to: 'posts',
-      type: 'one-to-many',
-      fromField: 'id',
-      toField: 'user_id',
+      // User -> Post (User.posts -> Post.author)
+      source: 'user',
+      sourceNavigation: 'posts',
+      target: 'post',
+      targetNavigation: 'author',
     },
     {
-      from: 'users',
-      to: 'comments',
-      type: 'one-to-many',
-      fromField: 'id',
-      toField: 'user_id',
+      // User -> Comment (User.comments -> Comment.author)
+      source: 'user',
+      sourceNavigation: 'comments',
+      target: 'comment',
+      targetNavigation: 'author',
     },
     {
-      from: 'posts',
-      to: 'comments',
-      type: 'one-to-many',
-      fromField: 'id',
-      toField: 'post_id',
+      // Post -> Comment (Post.comments -> Comment.post)
+      source: 'post',
+      sourceNavigation: 'comments',
+      target: 'comment',
+      targetNavigation: 'post',
     },
     {
-      from: 'posts',
-      to: 'post_categories',
-      type: 'one-to-many',
-      fromField: 'id',
-      toField: 'post_id',
-    },
-    {
-      from: 'categories',
-      to: 'post_categories',
-      type: 'one-to-many',
-      fromField: 'id',
-      toField: 'category_id',
+      // Post -> Category (Post.categories -> Category.posts)
+      source: 'post',
+      sourceNavigation: 'categories',
+      target: 'category',
+      targetNavigation: 'posts',
     },
   ],
 }
