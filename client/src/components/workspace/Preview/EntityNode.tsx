@@ -6,7 +6,7 @@ export type EntityNodeData = Entity
 
 const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
   return (
-    <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px]">
+    <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
       <div className="bg-primary text-primary-foreground px-3 py-2 rounded-t-md font-semibold text-sm">
         {data.name}
