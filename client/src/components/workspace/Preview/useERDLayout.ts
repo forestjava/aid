@@ -26,11 +26,11 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
     const dagreGraph = new dagre.graphlib.Graph()
     dagreGraph.setDefaultEdgeLabel(() => ({}))
     dagreGraph.setGraph({
-      rankdir: 'TB', // Top to Bottom
-      nodesep: 100,
-      ranksep: 150,
-      marginx: 50,
-      marginy: 50,
+      rankdir: 'LR', // Top to Bottom
+      nodesep: 200,
+      ranksep: 20,
+      marginx: 10,
+      marginy: 10,
     })
 
     // Создаем узлы для каждой сущности
@@ -40,10 +40,31 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
       // Добавляем узел в граф dagre
       dagreGraph.setNode(entity.id, { width: NODE_WIDTH, height })
 
+      // Копируем entity и проставляем hasConnection для навигационных свойств
+      const entityWithConnections: Entity = {
+        ...entity,
+        attributes: entity.attributes.map((attr) => {
+          // Проверяем, есть ли связь для этого навигационного свойства
+          const sourceRelation = schema.relations.find(
+            (rel) => rel.source === entity.id && rel.sourceNavigation === attr.name
+          )
+          const targetRelation = schema.relations.find(
+            (rel) => rel.target === entity.id && rel.targetNavigation === attr.name
+          )
+
+          if (sourceRelation) {
+            return { ...attr, hasConnection: 'source' as const }
+          } else if (targetRelation) {
+            return { ...attr, hasConnection: 'target' as const }
+          }
+          return attr
+        }),
+      }
+
       return {
         id: entity.id,
         type: 'entity',
-        data: entity,
+        data: entityWithConnections,
         position: { x: 0, y: 0 }, // Будет обновлено после расчета layout
       }
     })
@@ -61,7 +82,7 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
         target: relation.target,
         sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
         targetHandle: `${relation.target}-${relation.targetNavigation}`,
-        type: 'smoothstep',
+        type: 'bezier',
         style: {
           strokeWidth: 2,
           stroke: edgeColor,

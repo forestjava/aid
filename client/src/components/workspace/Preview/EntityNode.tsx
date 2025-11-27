@@ -20,26 +20,24 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
             className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
           >
             {/* Handle для навигационных свойств */}
-            {attr.isNavigation && (
-              <>
-                {/* Все навигационные свойства имеют handles с обеих сторон для bidirectional связей */}
-                <Handle
-                  type="target"
-                  position={Position.Left}
-                  id={`${data.id}-${attr.name}`}
-                  className="w-2 h-2 !-left-1"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
-                />
-                <Handle
-                  type="source"
-                  position={Position.Right}
-                  id={`${data.id}-${attr.name}`}
-                  className="w-2 h-2 !-right-1"
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
-                />
-              </>
+            {attr.hasConnection === 'target' && (
+              <Handle
+                type="target"
+                position={Position.Left}
+                id={`${data.id}-${attr.name}`}
+                className="w-2 h-2 !-left-1"
+                style={{ top: '50%', transform: 'translateY(-50%)' }}
+              />
             )}
-
+            {attr.hasConnection === 'source' && (
+              <Handle
+                type="source"
+                position={Position.Right}
+                id={`${data.id}-${attr.name}`}
+                className="w-2 h-2 !-right-1"
+                style={{ top: '50%', transform: 'translateY(-50%)' }}
+              />
+            )}
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
               {attr.isPrimaryKey && (
                 <span className="text-yellow-500" title="Primary Key">

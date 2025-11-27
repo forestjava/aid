@@ -8,6 +8,7 @@ export interface EntityAttribute {
   isNullable?: boolean
   isNavigation?: boolean // Навигационное свойство (ссылка на другую сущность)
   isCollection?: boolean // Коллекция (массив) сущностей
+  hasConnection?: 'source' | 'target' // Роль навигационного свойства в связи
 }
 
 export interface EntityRelation {
@@ -32,19 +33,6 @@ export interface DatabaseSchema {
 export const testSchema: DatabaseSchema = {
   entities: [
     {
-      id: 'user',
-      name: 'User',
-      attributes: [
-        { name: 'id', type: 'INTEGER', isPrimaryKey: true },
-        { name: 'email', type: 'VARCHAR(255)' },
-        { name: 'username', type: 'VARCHAR(100)' },
-        { name: 'created_at', type: 'TIMESTAMP' },
-        // Навигационные свойства
-        { name: 'posts', type: 'Post[]', isNavigation: true, isCollection: true },
-        { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },
-      ],
-    },
-    {
       id: 'post',
       name: 'Post',
       attributes: [
@@ -57,6 +45,19 @@ export const testSchema: DatabaseSchema = {
         { name: 'author', type: 'User', isNavigation: true },
         { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },
         { name: 'categories', type: 'Category[]', isNavigation: true, isCollection: true },
+      ],
+    },
+    {
+      id: 'user',
+      name: 'User',
+      attributes: [
+        { name: 'id', type: 'INTEGER', isPrimaryKey: true },
+        { name: 'email', type: 'VARCHAR(255)' },
+        { name: 'username', type: 'VARCHAR(100)' },
+        { name: 'created_at', type: 'TIMESTAMP' },
+        // Навигационные свойства
+        { name: 'posts', type: 'Post[]', isNavigation: true, isCollection: true },
+        { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },
       ],
     },
     {
@@ -87,20 +88,6 @@ export const testSchema: DatabaseSchema = {
   ],
   relations: [
     {
-      // User -> Post (User.posts -> Post.author)
-      source: 'user',
-      sourceNavigation: 'posts',
-      target: 'post',
-      targetNavigation: 'author',
-    },
-    {
-      // User -> Comment (User.comments -> Comment.author)
-      source: 'user',
-      sourceNavigation: 'comments',
-      target: 'comment',
-      targetNavigation: 'author',
-    },
-    {
       // Post -> Comment (Post.comments -> Comment.post)
       source: 'post',
       sourceNavigation: 'comments',
@@ -113,6 +100,20 @@ export const testSchema: DatabaseSchema = {
       sourceNavigation: 'categories',
       target: 'category',
       targetNavigation: 'posts',
+    },
+    {
+      // User -> Post (User.posts -> Post.author)
+      source: 'user',
+      sourceNavigation: 'posts',
+      target: 'post',
+      targetNavigation: 'author',
+    },
+    {
+      // User -> Comment (User.comments -> Comment.author)
+      source: 'user',
+      sourceNavigation: 'comments',
+      target: 'comment',
+      targetNavigation: 'author',
     },
   ],
 }
