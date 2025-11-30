@@ -38,28 +38,18 @@ export const useProcessSchema = (
     // Асинхронная обработка DSL
     const processContent = async () => {
       try {
-        console.log('=== Starting DSL processing ===');
-        console.log('File path:', currentFilePath || '(root)');
-        console.log('Content length:', content.length);
 
         // Шаг 1: Резолвинг импортов
-        console.log('Step 1: Resolving imports...');
         const resolvedResult = await resolveImports(content, currentFilePath);
 
         if (resolvedResult.error) {
           console.error('Import resolution error:', resolvedResult.error);
         }
 
-        console.log('Resolved content length:', resolvedResult.content.length);
-
         // Шаг 2: Парсинг схемы
-        console.log('Step 2: Parsing schema...');
         const parsedSchema = await parseSchema(resolvedResult.content);
 
         if (parsedSchema) {
-          console.log('Schema parsed successfully');
-          console.log('Entities:', parsedSchema.entities.length);
-          console.log('Relations:', parsedSchema.relations.length);
           setSchema(parsedSchema);
         } else {
           console.log('Schema parsing failed or empty result');

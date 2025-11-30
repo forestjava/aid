@@ -18,7 +18,7 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
     dagreGraph.setDefaultEdgeLabel(() => ({}))
     dagreGraph.setGraph({
       rankdir: 'LR',
-      nodesep: NODE_HEIGHT,
+      nodesep: 1,
       ranksep: NODE_WIDTH,
     })
 

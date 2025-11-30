@@ -51,13 +51,6 @@ semantics.addOperation<ImportInfo[]>('findImports', {
       },
     };
 
-    console.log('Import found:', {
-      keyword,
-      path,
-      position: importInfo.position,
-      fullText: this.sourceString,
-    });
-
     return [importInfo];
   },
 
@@ -174,8 +167,6 @@ export async function resolveImports(
     return { content };
   }
 
-  console.log(`Resolving ${imports.length} import(s) in ${currentPath || 'root'}`);
-
   // Обрабатываем импорты в обратном порядке (от конца к началу),
   // чтобы позиции не сбивались при замене
   const sortedImports = [...imports].sort((a, b) => b.position.start - a.position.start);
@@ -199,7 +190,6 @@ export async function resolveImports(
 
     try {
       // Загружаем файл через filesystem API
-      console.log(`Loading file: ${resolvedPath}`);
       const fileResponse = await filesystemApi.readFile(resolvedPath);
       const fileContent = fileResponse.content;
 
@@ -225,7 +215,6 @@ export async function resolveImports(
         replacement +
         resultContent.substring(imp.position.end);
 
-      console.log(`Successfully resolved import: ${imp.path}`);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.error(`Failed to load file ${resolvedPath}:`, errorMsg);
