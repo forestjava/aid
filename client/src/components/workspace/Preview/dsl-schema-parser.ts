@@ -151,10 +151,9 @@ semantics.addOperation<Partial<AttributeBuilder>>('extractAttributeProps', {
     const typeStr = typeRef.sourceString;
     // Проверяем, является ли тип коллекцией (заканчивается на [])
     const isCollection = typeStr.endsWith('[]');
-    const cleanType = isCollection ? typeStr.slice(0, -2) : typeStr;
 
     return {
-      type: cleanType,
+      type: typeStr,
       isCollection,
     };
   },

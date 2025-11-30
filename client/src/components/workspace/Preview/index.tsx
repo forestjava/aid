@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
   Controls,
   type NodeTypes,
+  useNodesState,
+  useEdgesState,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 
@@ -28,6 +31,19 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
 
   // Асинхронная обработка содержимого файла в схему и layout
   const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content, currentFile || '')
+
+  // Локальное состояние для возможности перемещения узлов
+  const [previewNodes, setNodes, onNodesChange] = useNodesState([])
+  const [previewEdges, setEdges, onEdgesChange] = useEdgesState([])
+
+  // Синхронизируем с данными из useProcessSchema
+  useEffect(() => {
+    setNodes(nodes)
+  }, [nodes, setNodes])
+
+  useEffect(() => {
+    setEdges(edges)
+  }, [edges, setEdges])
 
   return (
     <div className="h-full w-full bg-background border-l flex flex-col">
@@ -72,8 +88,10 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
       ) : (
         <div className="flex-1 relative">
           <ReactFlow
-            nodes={nodes}
-            edges={edges}
+            nodes={previewNodes}
+            edges={previewEdges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
             fitView
           >
