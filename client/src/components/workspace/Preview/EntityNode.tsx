@@ -24,7 +24,7 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
               <Handle
                 type="target"
                 position={Position.Left}
-                id={`${data.id}-${attr.name}`}
+                id={`${data.name}-${attr.name}`}
                 className="w-2 h-2 !-left-1"
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
               />
@@ -33,7 +33,7 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
               <Handle
                 type="source"
                 position={Position.Right}
-                id={`${data.id}-${attr.name}`}
+                id={`${data.name}-${attr.name}`}
                 className="w-2 h-2 !-right-1"
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
               />

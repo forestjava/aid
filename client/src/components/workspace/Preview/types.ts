@@ -12,14 +12,13 @@ export interface EntityAttribute {
 }
 
 export interface EntityRelation {
-  source: string // ID сущности-источника связи (слева)
+  source: string // Имя сущности-источника связи (слева)
   sourceNavigation: string // Имя навигационного свойства источника
-  target: string // ID сущности-цели связи (справа)
+  target: string // Имя сущности-цели связи (справа)
   targetNavigation: string // Имя навигационного свойства цели
 }
 
 export interface Entity {
-  id: string
   name: string
   attributes: EntityAttribute[]
 }
@@ -33,7 +32,6 @@ export interface DatabaseSchema {
 export const testSchema: DatabaseSchema = {
   entities: [
     {
-      id: 'post',
       name: 'Post',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
@@ -48,7 +46,6 @@ export const testSchema: DatabaseSchema = {
       ],
     },
     {
-      id: 'user',
       name: 'User',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
@@ -60,7 +57,6 @@ export const testSchema: DatabaseSchema = {
       ],
     },
     {
-      id: 'comment',
       name: 'Comment',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
@@ -74,7 +70,6 @@ export const testSchema: DatabaseSchema = {
       ],
     },
     {
-      id: 'category',
       name: 'Category',
       attributes: [
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
@@ -88,30 +83,30 @@ export const testSchema: DatabaseSchema = {
   relations: [
     {
       // Post -> Comment (Post.comments -> Comment.post)
-      source: 'post',
+      source: 'Post',
       sourceNavigation: 'comments',
-      target: 'comment',
+      target: 'Comment',
       targetNavigation: 'post',
     },
     {
       // Post -> Category (Post.categories -> Category.posts)
-      source: 'post',
+      source: 'Post',
       sourceNavigation: 'categories',
-      target: 'category',
+      target: 'Category',
       targetNavigation: 'posts',
     },
     {
       // User -> Post (User.posts -> Post.author)
-      source: 'user',
+      source: 'User',
       sourceNavigation: 'posts',
-      target: 'post',
+      target: 'Post',
       targetNavigation: 'author',
     },
     {
       // User -> Comment (User.comments -> Comment.author)
-      source: 'user',
+      source: 'User',
       sourceNavigation: 'comments',
-      target: 'comment',
+      target: 'Comment',
       targetNavigation: 'author',
     },
   ],

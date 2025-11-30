@@ -207,39 +207,41 @@ semantics.addOperation<Partial<AttributeBuilder>>('extractAttributeProps', {
  * Создает relations между сущностями на основе навигационных свойств
  */
 function buildRelations(entities: Entity[]): EntityRelation[] {
-  const relations: EntityRelation[] = [];
-  const entityMap = new Map(entities.map(e => [e.name.toLowerCase(), e]));
+  const entityMap = new Map(entities.map(e => [e.name, e]));
+  const relationsMap = new Map<string, EntityRelation>();
 
   for (const entity of entities) {
     for (const attr of entity.attributes) {
       // Пропускаем не-навигационные атрибуты
       if (!attr.isNavigation) continue;
 
-      // Находим целевую сущность по типу атрибута
+      // Выделяем тип (имя целевой сущности)
       const targetEntityName = attr.type.replace('[]', '');
-      const targetEntity = entityMap.get(targetEntityName.toLowerCase());
+      const targetEntity = entityMap.get(targetEntityName);
 
       if (!targetEntity) continue;
 
-      // Ищем обратное навигационное свойство в целевой сущности
-      const reverseAttr = targetEntity.attributes.find(a =>
-        a.isNavigation && a.type.replace('[]', '').toLowerCase() === entity.name.toLowerCase()
-      );
+      // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
+      const canonicalKey = [entity.name, targetEntity.name].sort().join('::');
 
-      // Добавляем relation только для одной стороны связи (чтобы не дублировать)
-      // Условие: добавляем, если это коллекция, или если обратного свойства нет
-      if (attr.isCollection || !reverseAttr) {
-        relations.push({
-          source: entity.id,
+      // Сохраняем связь в Map по ключу (первая встреченная)
+      if (!relationsMap.has(canonicalKey)) {
+        // Ищем обратный навигационный атрибут (используем первый подходящий)
+        const reverseAttr = targetEntity.attributes.find(a =>
+          a.isNavigation && a.type.replace('[]', '') === entity.name
+        );
+
+        relationsMap.set(canonicalKey, {
+          source: entity.name,
           sourceNavigation: attr.name,
-          target: targetEntity.id,
+          target: targetEntity.name,
           targetNavigation: reverseAttr?.name || '',
         });
       }
     }
   }
 
-  return relations;
+  return Array.from(relationsMap.values());
 }
 
 /**
@@ -269,7 +271,6 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
 
     // Преобразуем в финальную структуру
     const entities: Entity[] = entityBuilders.map(builder => ({
-      id: builder.name.toLowerCase(),
       name: builder.name,
       attributes: builder.attributes.map(attr => ({
         name: attr.name,
@@ -284,9 +285,6 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
 
     // Строим relations
     const relations = buildRelations(entities);
-
-    console.log(`Built ${relations.length} relations`);
-    console.log('Entities:', entities.map(e => e.name).join(', '));
 
     return { entities, relations };
   } catch (error) {

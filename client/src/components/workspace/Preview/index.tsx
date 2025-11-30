@@ -3,9 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
   Controls,
+  type Node,
   type NodeTypes,
   useNodesState,
   useEdgesState,
+  useReactFlow,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 
@@ -21,22 +23,40 @@ const nodeTypes: NodeTypes = {
   entity: EntityNode,
 }
 
+// Внутренний компонент для автоматического fitView
+const AutoFitView: React.FC<{ nodes: Node[] }> = ({ nodes }) => {
+  const reactFlowInstance = useReactFlow()
+
+  useEffect(() => {
+    if (nodes.length > 0) {
+      // Небольшая задержка для завершения рендера
+      setTimeout(() => {
+        reactFlowInstance.fitView({
+          duration: 200, // анимация 200ms
+        })
+      }, 200)
+    }
+  }, [nodes, reactFlowInstance])
+
+  return null
+}
+
 export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
-  // Загрузка содержимого файла
+  // Шаг 1: Получение контента текущего файла
   const { data: fileData, isLoading } = useQuery({
     queryKey: ['readFile', currentFile],
     queryFn: () => filesystemApi.readFile(currentFile!),
     enabled: !!currentFile,
   })
 
-  // Асинхронная обработка содержимого файла в схему и layout
+  // Шаги 2-5: Асинхронная обработка содержимого файла (резолвинг, парсинг, размеры, layout)
   const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content, currentFile || '')
 
   // Локальное состояние для возможности перемещения узлов
   const [previewNodes, setNodes, onNodesChange] = useNodesState([])
   const [previewEdges, setEdges, onEdgesChange] = useEdgesState([])
 
-  // Синхронизируем с данными из useProcessSchema
+  // Синхронизируем с данными из useProcessSchema для рендера (Шаг 6)
   useEffect(() => {
     setNodes(nodes)
   }, [nodes, setNodes])
@@ -87,16 +107,17 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
         </div>
       ) : (
         <div className="flex-1 relative">
+          {/* Шаг 6: Рендер компонента ReactFlow с узлами и связями */}
           <ReactFlow
             nodes={previewNodes}
             edges={previewEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
-            fitView
           >
             <Background />
             <Controls />
+            <AutoFitView nodes={previewNodes} />
           </ReactFlow>
         </div>
       )}
