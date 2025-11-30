@@ -1,19 +1,18 @@
 import { useCallback } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
   Controls,
-  useNodesState,
-  useEdgesState,
   type NodeTypes,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 
+import { filesystemApi } from '@/api/filesystem'
 import EntityNode from './EntityNode'
-import { useERDLayout } from './useERDLayout'
-import { testSchema } from './types'
+import { useProcessSchema } from './useProcessSchema'
 
 interface PreviewProps {
-  currentFile: string | null
+  currentFile: string | null // файл, который нужно открыть (приходит извне)
 }
 
 const nodeTypes: NodeTypes = {
@@ -21,40 +20,69 @@ const nodeTypes: NodeTypes = {
 }
 
 export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
-  // Пока используем тестовые данные
-  const { nodes: layoutNodes, edges: layoutEdges } = useERDLayout(testSchema)
+  // Загрузка содержимого файла
+  const { data: fileData, isLoading } = useQuery({
+    queryKey: ['readFile', currentFile],
+    queryFn: () => filesystemApi.readFile(currentFile!),
+    enabled: !!currentFile,
+  })
 
-  const [nodes, , onNodesChange] = useNodesState(layoutNodes)
-  const [edges, , onEdgesChange] = useEdgesState(layoutEdges)
-
-  const onInit = useCallback(() => {
-    console.log('ReactFlow initialized')
-  }, [])
+  // Асинхронная обработка содержимого файла в схему и layout
+  const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content)
 
   return (
     <div className="h-full w-full bg-background border-l flex flex-col">
-      <div className="h-10 border-b px-3 flex items-center text-sm font-medium shrink-0">
-        Схема {currentFile && `- ${currentFile}`}
+      {/* Заголовок */}
+      <div className="h-10 border-b px-3 flex items-center gap-2 min-w-0 shrink-0">
+        <span className="text-sm font-medium">Схема</span>
+        {currentFile ? (
+          <>
+            <span className="text-xs text-muted-foreground">•</span>
+            <span className="text-xs text-muted-foreground truncate" title={currentFile}>
+              {currentFile}
+            </span>
+            {(isLoading || isProcessing) && (
+              <>
+                <span className="text-xs text-muted-foreground">•</span>
+                <span className="text-xs text-blue-500">
+                  {isLoading ? 'Загрузка...' : 'Обработка...'}
+                </span>
+              </>
+            )}
+          </>
+        ) : (
+          <span className="text-xs text-muted-foreground">• Файл не выбран</span>
+        )}
       </div>
-      <div className="flex-1 relative">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onInit={onInit}
-          nodeTypes={nodeTypes}
-          fitView
-          minZoom={0.1}
-          maxZoom={2}
-          defaultEdgeOptions={{
-            style: { strokeWidth: 2 },
-          }}
-        >
-          <Background />
-          <Controls />
-        </ReactFlow>
-      </div>
+
+      {/* Область схемы */}
+      {!currentFile ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">
+            Выберите файл в файловом менеджере для просмотра схемы
+          </p>
+        </div>
+      ) : isLoading ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">Загрузка файла...</p>
+        </div>
+      ) : isProcessing ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-muted-foreground">Обработка схемы...</p>
+        </div>
+      ) : (
+        <div className="flex-1 relative">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            fitView
+          >
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </div>
+      )}
     </div>
   )
 }
