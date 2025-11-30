@@ -1,0 +1,58 @@
+/*
+Cхема данных Шины обмена Datareon
+*/
+
+// Рейсы
+entity Message.ROUTE { 
+  type JSON;
+
+  attribute sync_id {
+    type UUID;
+    sync ALIS.Routes.id;
+  }
+  attribute route_number {
+    type String;
+    sync ALIS.Routes.number;
+    sync WMS.Справочник.Рейс.Номер;
+  }
+  attribute route_orders {
+    type Message.ORDER[]; // пакеты данных, описывающие заявки целиком
+    sync ALIS.Route.orders;
+    sync WMS.Справочник.Рейс.Заявки;
+  }
+}
+
+// Заявки
+entity Message.ORDER { 
+  type JSON;
+
+  attribute sync_id {
+    type UUID;
+    sync ALIS.Order.id;
+  }
+  attribute order_number {
+    type String;
+    sync ALIS.Order.number;
+  }
+  attribute route {
+    type Message.ROUTE; // пакет данных, описывающий рейс
+    sync ALIS.Order.route;
+  }
+  attribute order_goods {
+    type Datareon.Packet.GOOD[]; // пакеты данных, описывающие номенклатуру целиком
+    sync ALIS.Order.order_goods;
+  }  
+}
+
+entity Datareon.Packet.GOOD {
+  type JSON;
+
+  attribute orders {
+    type Message.ORDER[];
+  }
+  
+  attribute parent {
+    
+  }
+}
+

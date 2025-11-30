@@ -1,0 +1,6 @@
+service ALIS {
+
+  import "ALIS/orders";
+  import "ALIS/remains";
+  
+}

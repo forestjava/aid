@@ -1,0 +1,37 @@
+// Пример определения коллекций через [] в типе
+
+entity Author {
+  attribute id;
+  attribute name;
+  
+  // Коллекция книг - определяется через Book[]
+  attribute books {
+    type Book[];
+  }
+  
+  // Коллекция статей - также через []
+  attribute articles {
+    type Article[];
+  }
+}
+
+entity Book {
+  attribute id;
+  attribute title;
+  
+  // Одиночная ссылка - без []
+  attribute author {
+    type Author;
+  }
+}
+
+entity Article {
+  attribute id;
+  attribute title;
+  
+  // Одиночная ссылка
+  attribute author {
+    type Author;
+  }
+}
+

@@ -1,0 +1,19 @@
+/*
+ERD
+Entity Relation Diagram
+Базы данных блога (сервис Blog)
+
+В целях демонстрации системы управления документацией AID
+*/
+
+// Объявляется именованный сервис  
+service Blog {
+
+  // состоящий из взаимосвязанных сущностей
+  // каждая из которых может быть описана в отдельной файле
+  import "Demo/posts";
+  import "Demo/categories";
+  import "Demo/comments";
+  import "Demo/users";
+  
+}

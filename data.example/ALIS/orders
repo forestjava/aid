@@ -1,0 +1,55 @@
+/*
+ALIS Заявки и Рейсы
+Описание структуры данных, связей и обмена с другими системами
+*/
+
+// Рейсы
+entity Route { 
+  type Table;
+
+  sync Datareon.Message.ROUTES;
+
+  attribute id {
+    type UUID;
+    sync Datareon.Message.ROUTES {
+      attribute sync_id;
+    }    
+  }
+  attribute number {
+    type String;
+    sync Datareon.Message.ROUTES {
+      attribute route_number;
+    }        
+  }
+  attribute orders {
+    type Order[]; // 1-ко-многим Заявки
+    sync Datareon.Message.ROUTES {
+      attribute orders;
+    }    
+  };
+  
+}
+
+// Заявки
+entity Order { 
+  type Table;
+
+  sync Datareon.Message.ORDERS;
+
+  attribute id {
+    type UUID;
+    sync Datareon.Message.ORDERS.sync_id;
+  }
+  attribute number {
+    type String;
+    sync order_number;
+  }
+  attribute route {
+    type Route; // Рейсы 1-ко-многим
+    sync route;
+  }
+  attribute goods {
+    type ALIS.ClientGood[];
+    sync order_goods;
+  }
+}

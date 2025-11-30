@@ -1,0 +1,35 @@
+/*
+ERD
+Entity Relation Diagram
+Базы данных блога (сущность Users)
+
+В целях демонстрации системы управления документацией AID
+*/
+
+// Объявляется именованная сущность  
+entity User {
+  
+  // Атрибуты c примитивным скалярным значением
+  attribute email {
+    type VARCHAR(255);
+  }
+  attribute username {
+    type VARCHAR(100);
+    is required;
+  }
+
+  // Навигационные свойства
+  attribute posts {
+    type Post[];
+  }
+  attribute comments {
+    type Comment[];
+  }
+
+  // Технические атрибуты, например, ключ
+  attribute id {
+    type INTEGER; 
+    key primary; 
+  }
+  
+}

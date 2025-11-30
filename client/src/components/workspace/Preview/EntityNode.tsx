@@ -2,9 +2,7 @@ import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
 import { type Entity } from './types'
 
-export type EntityNodeData = Entity
-
-const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
+const EntityNode = ({ data }: NodeProps<Entity>) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
@@ -44,7 +42,7 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
                   🔑
                 </span>
               )}
-              {attr.isForeignKey && !attr.isPrimaryKey && (
+              {attr.isForeignKey && (
                 <span className="text-blue-500" title="Foreign Key">
                   🔗
                 </span>
@@ -61,6 +59,11 @@ const EntityNode = ({ data }: NodeProps<EntityNodeData>) => {
               )}
               <span className={`font-mono truncate ${attr.isPrimaryKey ? 'font-semibold' : ''} ${attr.isNavigation ? 'italic' : ''}`}>
                 {attr.name}
+                {attr.isRequired && (
+                  <span className="text-red-500 ml-0.5" title="Required">
+                    *
+                  </span>
+                )}
               </span>
             </div>
             <span className="text-muted-foreground text-[10px] whitespace-nowrap">

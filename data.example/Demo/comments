@@ -1,0 +1,52 @@
+/*
+ERD
+Entity Relation Diagram
+Базы данных блога (сущность Comments)
+
+В целях демонстрации системы управления документацией AID
+*/
+
+// Объявляется именованная сущность  
+entity Comment {
+  
+  // Атрибуты c примитивным скалярным значением
+  attribute content {
+    type TEXT;
+  }
+  attribute created_at {
+    type TIMESTAMP;
+  }
+
+  // Навигационные свойства
+  attribute post {
+    type Post;
+  }
+  attribute author {
+    type User;
+  }
+
+  // Технические атрибуты, напрмер, ключ
+  attribute id {
+    type INTEGER; 
+    key primary; 
+  }
+  
+  // или внешние ключи
+  attribute post_id {
+    type INTEGER; 
+    is required;
+    key foreign {
+      attribute Post.id;
+    }
+  }
+  
+  attribute user_id {
+    type INTEGER; 
+    is required;
+    key foreign {
+      attribute User.id;
+    }
+  }
+  
+}
+

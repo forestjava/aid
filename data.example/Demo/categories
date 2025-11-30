@@ -1,0 +1,32 @@
+/*
+ERD
+Entity Relation Diagram
+Базы данных блога (сущность Categories)
+
+В целях демонстрации системы управления документацией AID
+*/
+
+// Объявляется именованная сущность  
+entity Category {
+
+  // Атрибуты c примитивным скалярным значением
+  attribute name {
+    type VARCHAR(100);
+  }
+  attribute description {
+    type TEXT;
+    is nullable;
+  }
+
+  // Навигационные свойства
+  attribute posts {
+    type Post[];
+  }
+
+  // Технические атрибуты, например, ключ
+  attribute id {
+    type INTEGER; 
+    key primary; 
+  }
+
+}

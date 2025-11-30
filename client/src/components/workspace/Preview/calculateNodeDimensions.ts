@@ -1,4 +1,4 @@
-import type { Entity } from './types'
+import type { Entity, EntityAttribute } from './types'
 
 /**
  * Константы для расчета размеров узлов
@@ -31,14 +31,7 @@ const estimateTextWidth = (text: string, isMonospace: boolean = false): number =
 /**
  * Вычисляет ширину строки атрибута
  */
-const calculateAttributeRowWidth = (attr: {
-  name: string
-  type: string
-  isPrimaryKey?: boolean
-  isForeignKey?: boolean
-  isNavigation?: boolean
-  isCollection?: boolean
-}): number => {
+const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
   let width = METRICS.PADDING_HORIZONTAL
 
   // Добавляем ширину иконки, если есть
@@ -54,7 +47,7 @@ const calculateAttributeRowWidth = (attr: {
   width += METRICS.GAP_WIDTH * 2
 
   // Ширина типа (text-[10px])
-  width += attr.type.length * METRICS.TYPE_CHAR_WIDTH
+  width += (attr.type || 'unknown').length * METRICS.TYPE_CHAR_WIDTH
 
   return width
 }

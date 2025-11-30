@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import type { Node, Edge } from 'reactflow'
 import dagre from 'dagre'
 import type { DatabaseSchema, Entity } from './types'
-import type { EntityNodeData } from './EntityNode'
 import { resolveImports } from '@/components/workspace/Preview/dsl-import-resolver'
 import { parseSchema } from '@/components/workspace/Preview/dsl-schema-parser'
 import { calculateAllNodeDimensions } from './calculateNodeDimensions'
@@ -14,8 +13,8 @@ interface ProcessSchemaResult {
   isProcessing: boolean
 }
 
-const DEFAULT_NODE_WIDTH = 200
-const DEFAULT_NODE_HEIGHT = 400
+const DEFAULT_NODE_WIDTH = 100
+const DEFAULT_NODE_HEIGHT = 100
 
 /**
  * Хук для асинхронной обработки содержимого DSL-файла
@@ -101,7 +100,7 @@ export const useProcessSchema = (
 function layoutGraph(
   schema: DatabaseSchema,
   nodeDimensions: Map<string, { width: number; height: number }>
-): { nodes: Node<EntityNodeData>[]; edges: Edge[] } {
+): { nodes: Node<Entity>[]; edges: Edge[] } {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
   dagreGraph.setGraph({
@@ -113,7 +112,7 @@ function layoutGraph(
   })
 
   // Создаем узлы с рассчитанными размерами
-  const nodes: Node<EntityNodeData>[] = schema.entities.map((entity) => {
+  const nodes: Node<Entity>[] = schema.entities.map((entity) => {
     const dimensions = nodeDimensions.get(entity.name) || {
       width: DEFAULT_NODE_WIDTH,
       height: DEFAULT_NODE_HEIGHT,
@@ -124,30 +123,10 @@ function layoutGraph(
       height: dimensions.height,
     })
 
-    // Добавляем информацию о связях к атрибутам
-    const entityWithConnections: Entity = {
-      ...entity,
-      attributes: entity.attributes.map((attr) => {
-        const sourceRelation = schema.relations.find(
-          (rel) => rel.source === entity.name && rel.sourceNavigation === attr.name
-        )
-        const targetRelation = schema.relations.find(
-          (rel) => rel.target === entity.name && rel.targetNavigation === attr.name
-        )
-
-        if (sourceRelation) {
-          return { ...attr, hasConnection: 'source' as const }
-        } else if (targetRelation) {
-          return { ...attr, hasConnection: 'target' as const }
-        }
-        return attr
-      }),
-    }
-
     return {
       id: entity.name,
       type: 'entity',
-      data: entityWithConnections,
+      data: entity,
       position: { x: 0, y: 0 },
     }
   })

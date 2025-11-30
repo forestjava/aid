@@ -1,0 +1,111 @@
+/*
+ALIS Остатки
+Описание структуры данных, связей и обмена с другими системами
+*/
+
+// Остатки
+entity ALIS.Remains { 
+  type View;
+
+  attribute key {
+    type UUID;
+  };
+  attribute positions {
+    type ALIS.RemainsPosition[];
+  };  
+}
+
+// Позиция остатков
+entity ALIS.RemainsPosition { 
+  type View.Row;
+
+  attribute client {
+    type ALIS.Client;
+  };
+  attribute good {
+    type ALIS.ClientGood;
+  };
+  attribute status {
+    type ALIS.GoodStatus;
+  };
+  attribute quantity {
+    type Number;
+  };
+  attribute remains {
+    type ALIS.Remains;
+  }
+}
+
+// Клиенты
+entity ALIS.Client { 
+  type Table;
+
+  attribute id {
+    type UUID;
+  };
+  attribute name {
+    type String;
+  };
+  attribute remains{
+    type ALIS.RemainsPosition[];
+  }
+}
+
+// Номенклатура клиентов
+entity ALIS.ClientGood { 
+  type Table;
+
+  attribute id {
+    type UUID;
+  };
+  attribute name {
+    type String;
+  };
+  attribute unit {
+    type ALIS.Unit;
+  }
+  attribute remains{
+    type ALIS.RemainsPosition[];
+  } 
+  attribute orders{
+    type Order[];
+  } 
+
+  attribute parent {
+    type ALIS.ClientGood;
+    sync Datareon.Packet.GOOD.parent;
+  }
+  attribute children {
+    type ALIS.ClientGood[];
+  }
+}
+
+// Единица измерения
+entity ALIS.Unit { 
+  type Table;
+
+  attribute id {
+    type UUID;
+  };
+  attribute name {
+    type String;
+  };
+  attribute goods {
+    type ALIS.ClientGood[];
+  }
+  
+}
+
+// Статус
+entity ALIS.GoodStatus { 
+  type Enum;
+
+  value Размещено;
+  value Принято;
+  value Брак;
+
+  attribute remains{
+    type ALIS.RemainsPosition[];
+  }  
+}
+

@@ -1,27 +1,6 @@
 import type { Node } from 'ohm-js';
 import { dslGrammar } from '@/lib/grammar';
-import type { DatabaseSchema, Entity, EntityRelation } from './types';
-
-/**
- * Временная структура для атрибута во время парсинга
- */
-interface AttributeBuilder {
-  name: string;
-  type?: string;
-  isPrimaryKey?: boolean;
-  isForeignKey?: boolean;
-  isNullable?: boolean;
-  isNavigation?: boolean;
-  isCollection?: boolean;
-}
-
-/**
- * Временная структура для сущности во время парсинга
- */
-interface EntityBuilder {
-  name: string;
-  attributes: AttributeBuilder[];
-}
+import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './types';
 
 /**
  * Семантика для парсинга DSL в схему БД
@@ -29,32 +8,32 @@ interface EntityBuilder {
 const semantics = dslGrammar.createSemantics();
 
 // Операция для извлечения сущностей
-semantics.addOperation<EntityBuilder[]>('extractEntities', {
-  _terminal(): EntityBuilder[] {
+semantics.addOperation<Entity[]>('extractEntities', {
+  _terminal(): Entity[] {
     return [];
   },
 
-  _iter(...children: any[]): EntityBuilder[] {
+  _iter(...children: any[]): Entity[] {
     return children.flatMap(child => child.extractEntities());
   },
 
-  Program(entities: any): EntityBuilder[] {
+  Program(entities: any): Entity[] {
     return entities.extractEntities();
   },
 
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): EntityBuilder[] {
+  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Entity[] {
     return [];
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): EntityBuilder[] {
+  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Entity[] {
     return [];
   },
 
-  Entity_simple(_keyword: any, _name: any, _semicolon: any): EntityBuilder[] {
+  Entity_simple(_keyword: any, _name: any, _semicolon: any): Entity[] {
     return [];
   },
 
-  Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): EntityBuilder[] {
+  Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): Entity[] {
     const keywordStr = keyword.sourceString;
     const nameStr = name.sourceString;
 
@@ -71,34 +50,34 @@ semantics.addOperation<EntityBuilder[]>('extractEntities', {
     return block.extractEntities();
   },
 
-  Block(_open: any, items: any, _close: any): EntityBuilder[] {
+  Block(_open: any, items: any, _close: any): Entity[] {
     return items.extractEntities();
   },
 
-  Item(entity: any): EntityBuilder[] {
+  Item(entity: any): Entity[] {
     return entity.extractEntities();
   },
 });
 
 // Операция для извлечения атрибутов внутри entity
-semantics.addOperation<AttributeBuilder[]>('extractAttributes', {
-  _terminal(): AttributeBuilder[] {
+semantics.addOperation<EntityAttribute[]>('extractAttributes', {
+  _terminal(): EntityAttribute[] {
     return [];
   },
 
-  _iter(...children: any[]): AttributeBuilder[] {
+  _iter(...children: any[]): EntityAttribute[] {
     return children.flatMap(child => child.extractAttributes());
   },
 
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): AttributeBuilder[] {
+  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): EntityAttribute[] {
     return [];
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): AttributeBuilder[] {
+  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): EntityAttribute[] {
     return [];
   },
 
-  Entity_simple(keyword: any, name: any, _semicolon: any): AttributeBuilder[] {
+  Entity_simple(keyword: any, name: any, _semicolon: any): EntityAttribute[] {
     const keywordStr = keyword.sourceString;
     const nameStr = name.sourceString;
 
@@ -112,7 +91,7 @@ semantics.addOperation<AttributeBuilder[]>('extractAttributes', {
     return [];
   },
 
-  Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): AttributeBuilder[] {
+  Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): EntityAttribute[] {
     const keywordStr = keyword.sourceString;
     const nameStr = name.sourceString;
 
@@ -128,26 +107,26 @@ semantics.addOperation<AttributeBuilder[]>('extractAttributes', {
     return [];
   },
 
-  Block(_open: any, items: any, _close: any): AttributeBuilder[] {
+  Block(_open: any, items: any, _close: any): EntityAttribute[] {
     return items.extractAttributes();
   },
 
-  Item(entity: any): AttributeBuilder[] {
+  Item(entity: any): EntityAttribute[] {
     return entity.extractAttributes();
   },
 });
 
 // Операция для извлечения свойств атрибута (type, is navigation, key primary, etc.)
-semantics.addOperation<Partial<AttributeBuilder>>('extractAttributeProps', {
-  _terminal(): Partial<AttributeBuilder> {
+semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
+  _terminal(): Partial<EntityAttribute> {
     return {};
   },
 
-  _iter(...children: any[]): Partial<AttributeBuilder> {
+  _iter(...children: any[]): Partial<EntityAttribute> {
     return children.reduce((acc, child) => ({ ...acc, ...child.extractAttributeProps() }), {});
   },
 
-  Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<AttributeBuilder> {
+  Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<EntityAttribute> {
     const typeStr = typeRef.sourceString;
     // Проверяем, является ли тип коллекцией (заканчивается на [])
     const isCollection = typeStr.endsWith('[]');
@@ -158,21 +137,24 @@ semantics.addOperation<Partial<AttributeBuilder>>('extractAttributeProps', {
     };
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<AttributeBuilder> {
+  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<EntityAttribute> {
     return {};
   },
 
-  Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<AttributeBuilder> {
+  Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<EntityAttribute> {
     const keywordStr = _keyword.sourceString;
     const nameStr = name.sourceString;
 
-    // Обрабатываем "is navigation", "is nullable"
+    // Обрабатываем "is navigation", "is nullable", "is required"
     if (keywordStr === 'is') {
       if (nameStr === 'navigation') {
         return { isNavigation: true };
       }
       if (nameStr === 'nullable') {
         return { isNullable: true };
+      }
+      if (nameStr === 'required') {
+        return { isRequired: true };
       }
     }
 
@@ -189,16 +171,29 @@ semantics.addOperation<Partial<AttributeBuilder>>('extractAttributeProps', {
     return {};
   },
 
-  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<AttributeBuilder> {
+  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<EntityAttribute> {
+    const keywordStr = _keyword.sourceString;
+    const nameStr = _name.sourceString;
+
+    // Обрабатываем "key primary" и "key foreign" с блоком опций
+    if (keywordStr === 'key') {
+      if (nameStr === 'primary') {
+        return { isPrimaryKey: true, ...block.extractAttributeProps() };
+      }
+      if (nameStr === 'foreign') {
+        return { isForeignKey: true, ...block.extractAttributeProps() };
+      }
+    }
+
     // Рекурсивно собираем свойства из вложенных блоков
     return block.extractAttributeProps();
   },
 
-  Block(_open: any, items: any, _close: any): Partial<AttributeBuilder> {
+  Block(_open: any, items: any, _close: any): Partial<EntityAttribute> {
     return items.extractAttributeProps();
   },
 
-  Item(entity: any): Partial<AttributeBuilder> {
+  Item(entity: any): Partial<EntityAttribute> {
     return entity.extractAttributeProps();
   },
 });
@@ -212,14 +207,21 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
 
   for (const entity of entities) {
     for (const attr of entity.attributes) {
-      // Пропускаем не-навигационные атрибуты
-      if (!attr.isNavigation) continue;
+      // Пропускаем атрибуты без типа
+      if (!attr.type) continue;
 
       // Выделяем тип (имя целевой сущности)
-      const targetEntityName = attr.type.replace('[]', '');
+      let type = attr.type;
+      if (type.endsWith('[]')) {
+        attr.isCollection = true;
+        type = type.replace('[]', '');
+      };
+      const targetEntityName = type;
       const targetEntity = entityMap.get(targetEntityName);
-
-      if (!targetEntity) continue;
+      if (!targetEntity) {
+        attr.isNavigation = false;
+        continue;
+      }
 
       // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
       const canonicalKey = [entity.name, targetEntity.name].sort().join('::');
@@ -228,14 +230,20 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
       if (!relationsMap.has(canonicalKey)) {
         // Ищем обратный навигационный атрибут (используем первый подходящий)
         const reverseAttr = targetEntity.attributes.find(a =>
-          a.isNavigation && a.type.replace('[]', '') === entity.name
+          a.type && (a.type.replace('[]', '') === entity.name) && a.name !== attr.name
         );
+        if (!reverseAttr) {
+          continue;
+        }
+
+        attr.hasConnection = 'source';
+        reverseAttr.hasConnection = 'target';
 
         relationsMap.set(canonicalKey, {
           source: entity.name,
           sourceNavigation: attr.name,
           target: targetEntity.name,
-          targetNavigation: reverseAttr?.name || '',
+          targetNavigation: reverseAttr.name,
         });
       }
     }
@@ -267,21 +275,16 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
 
     // Извлекаем сущности
     const adapter = semantics(match);
-    const entityBuilders: EntityBuilder[] = adapter.extractEntities();
+    const entities: Entity[] = adapter.extractEntities();
 
-    // Преобразуем в финальную структуру
-    const entities: Entity[] = entityBuilders.map(builder => ({
-      name: builder.name,
-      attributes: builder.attributes.map(attr => ({
-        name: attr.name,
-        type: attr.type || 'Unknown',
-        isPrimaryKey: attr.isPrimaryKey,
-        isForeignKey: attr.isForeignKey,
-        isNullable: attr.isNullable,
-        isNavigation: attr.isNavigation,
-        isCollection: attr.isCollection,
-      })),
-    }));
+    // Устанавливаем значение по умолчанию для атрибутов без типа
+    entities.forEach(entity => {
+      entity.attributes.forEach(attr => {
+        if (!attr.type) {
+          attr.type = 'unknown';
+        }
+      });
+    });
 
     // Строим relations
     const relations = buildRelations(entities);
