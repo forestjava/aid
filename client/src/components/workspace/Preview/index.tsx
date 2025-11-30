@@ -24,19 +24,33 @@ const nodeTypes: NodeTypes = {
 }
 
 // Внутренний компонент для автоматического fitView
-const AutoFitView: React.FC<{ nodes: Node[] }> = ({ nodes }) => {
+const AutoFitView: React.FC<{ currentFile: string | null, nodes: Node[] }> = ({ currentFile, nodes }) => {
   const reactFlowInstance = useReactFlow()
 
+  // fitView при изменении currentFile
   useEffect(() => {
     if (nodes.length > 0) {
       // Небольшая задержка для завершения рендера
       setTimeout(() => {
-        reactFlowInstance.fitView({
-          duration: 200, // анимация 200ms
-        })
+        reactFlowInstance.fitView({ duration: 200 })
       }, 200)
     }
-  }, [nodes, reactFlowInstance])
+  }, [currentFile, nodes.length, reactFlowInstance])
+
+  // fitView при изменении размера контейнера (например, при ресайзе панели)
+  useEffect(() => {
+    const container = document.querySelector('.react-flow')
+    if (!container) return
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (nodes.length > 0) {
+        reactFlowInstance.fitView({ duration: 200 })
+      }
+    })
+
+    resizeObserver.observe(container)
+    return () => resizeObserver.disconnect()
+  }, [nodes.length, reactFlowInstance])
 
   return null
 }
@@ -117,7 +131,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
           >
             <Background />
             <Controls />
-            <AutoFitView nodes={previewNodes} />
+            <AutoFitView currentFile={currentFile} nodes={previewNodes} />
           </ReactFlow>
         </div>
       )}
