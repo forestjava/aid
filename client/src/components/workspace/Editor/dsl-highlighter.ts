@@ -178,21 +178,36 @@ semantics.addOperation<Token[]>('getTokens', {
     return entity.getTokens();
   },
 
-  // typeRef = identifier "[]"?
-  // Арность: 2 (identifier + опциональные скобки)
-  typeRef(identifier: any, brackets: any): Token[] {
+  // typeRef = identifier ("(" digit+ ("," digit+)* ")")? "[]"?
+  // Арность: 7 (identifier + размерность + квадратные скобки)
+  typeRef(identifier: any, openParen: any, firstDigits: any, commas: any, additionalDigits: any, closeParen: any, brackets: any): Token[] {
     const tokens: Token[] = [];
 
     // Добавляем идентификатор
     tokens.push(...identifier.getTokens());
 
-    // Добавляем скобки [] если они есть (опциональный терминальный узел)
-    if (brackets && brackets.source) {
-      tokens.push({
-        from: brackets.source.startIdx,
-        to: brackets.source.endIdx,
-        type: 'punctuation'
-      });
+    // Все остальное обрабатываем пока как пунктуацию
+    const all_the_rest = [openParen, firstDigits, commas, additionalDigits, closeParen, brackets];
+
+    for (const node of all_the_rest) {
+      if (node && node.source) {
+        tokens.push({
+          from: node.source.startIdx,
+          to: node.source.endIdx,
+          type: 'punctuation'
+        });
+      } else if (node && node.children) {
+        // Если это итератор, обрабатываем его дочерние узлы
+        for (const child of node.children) {
+          if (child && child.source) {
+            tokens.push({
+              from: child.source.startIdx,
+              to: child.source.endIdx,
+              type: 'punctuation'
+            });
+          }
+        }
+      }
     }
 
     return tokens;
