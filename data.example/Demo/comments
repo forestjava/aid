@@ -25,7 +25,7 @@ entity Comment {
     type User;
   }
 
-  // Технические атрибуты, напрмер, ключ
+  // Технические атрибуты, например, ключ
   attribute id {
     type INTEGER; 
     key primary; 

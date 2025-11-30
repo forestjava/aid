@@ -1,4 +1,5 @@
 import "ALIS/index";
+import "ALIS/Excel/index";
 import "WMS/index";
 import "TOS/index";
 
