@@ -54,7 +54,6 @@ export const testSchema: DatabaseSchema = {
         { name: 'id', type: 'INTEGER', isPrimaryKey: true },
         { name: 'email', type: 'VARCHAR(255)' },
         { name: 'username', type: 'VARCHAR(100)' },
-        { name: 'created_at', type: 'TIMESTAMP' },
         // Навигационные свойства
         { name: 'posts', type: 'Post[]', isNavigation: true, isCollection: true },
         { name: 'comments', type: 'Comment[]', isNavigation: true, isCollection: true },

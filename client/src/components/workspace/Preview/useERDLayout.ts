@@ -61,7 +61,7 @@ export const useERDLayout = (schema: DatabaseSchema | null) => {
         target: relation.target,
         sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
         targetHandle: `${relation.target}-${relation.targetNavigation}`,
-        type: 'bezier',
+        //type: 'bezier',
         style: {
           strokeWidth: 2,
           stroke: getEdgeColor(index),

@@ -178,25 +178,6 @@ semantics.addOperation<Token[]>('getTokens', {
     return entity.getTokens();
   },
 
-  keyword(_keyword: any): Token[] {
-    // Ключевое слово обрабатывается в Entity
-    return [];
-  },
-
-  typeKeyword(_typeKeyword: any): Token[] {
-    // Ключевое слово типа обрабатывается в Entity_type
-    return [];
-  },
-
-  importKeyword(_importKeyword: any): Token[] {
-    // Ключевое слово импорта обрабатывается в Entity_import
-    return [];
-  },
-
-  name(nameNode: any): Token[] {
-    return nameNode.getTokens();
-  },
-
   // typeRef = identifier "[]"?
   // Арность: 2 (identifier + опциональные скобки)
   typeRef(identifier: any, brackets: any): Token[] {
