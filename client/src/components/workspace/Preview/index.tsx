@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
@@ -28,7 +27,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
   })
 
   // Асинхронная обработка содержимого файла в схему и layout
-  const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content)
+  const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content, currentFile || '')
 
   return (
     <div className="h-full w-full bg-background border-l flex flex-col">

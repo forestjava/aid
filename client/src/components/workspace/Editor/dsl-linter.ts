@@ -1,6 +1,6 @@
 import { linter } from '@codemirror/lint';
 import type { Diagnostic } from '@codemirror/lint';
-import { dslGrammar } from './dsl-grammar';
+import { dslGrammar } from '@/lib/grammar';
 
 // Функция линтинга на основе Ohm
 export const dslLinter = linter(view => {

@@ -1,5 +1,5 @@
 import type { Text } from '@codemirror/state';
-import { dslGrammar } from './dsl-grammar';
+import { dslGrammar } from '@/lib/grammar';
 import type { Node } from 'ohm-js';
 
 /**
