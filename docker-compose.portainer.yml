@@ -6,8 +6,10 @@ services:
       context: ./server
       dockerfile: Dockerfile
     container_name: aid-backend
+    volumes:
+      - /data/aid:/data
     environment:
-      - FS_ROOT_PATH=/data/aid
+      - FS_ROOT_PATH=/data
     networks:
       - proxy
     restart: unless-stopped
