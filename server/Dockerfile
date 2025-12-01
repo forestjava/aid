@@ -17,9 +17,6 @@ RUN npm run build
 # Expose port
 EXPOSE 3000
 
-# non-root user
-USER 1013
-
 # Start the application
 CMD ["npm", "run", "start:prod"]
 
