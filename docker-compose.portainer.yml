@@ -7,9 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: aid-backend
     environment:
-      - FS_ROOT_PATH=/data
-    volumes:
-      - /data/aid:/data
+      - FS_ROOT_PATH=/data/aid
     networks:
       - proxy
     restart: unless-stopped
