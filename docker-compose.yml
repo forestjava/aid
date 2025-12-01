@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: aid-backend
+    environment:
+      - FS_ROOT_PATH=/data
+    volumes:
+      - ./data:/data
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: aid-frontend
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:latest
+    container_name: aid-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - proxy
+    restart: unless-stopped
+
+networks:
+  proxy:
+    driver: bridge
+
