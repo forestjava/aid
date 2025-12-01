@@ -9,7 +9,7 @@ services:
     environment:
       - FS_ROOT_PATH=/data
     volumes:
-      - ./data:/data
+      - /data/aid:/data
     networks:
       - proxy
     restart: unless-stopped
