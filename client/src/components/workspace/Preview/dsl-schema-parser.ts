@@ -3,6 +3,14 @@ import { dslGrammar } from '@/lib/grammar';
 import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './types';
 
 /**
+ * Константы для ключевых слов DSL
+ */
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность']);
+const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
+const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
+const KEY_MODIFIERS = new Set(['primary', 'foreign']);
+
+/**
  * Семантика для парсинга DSL в схему БД
  */
 const semantics = dslGrammar.createSemantics();
@@ -38,7 +46,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
     const nameStr = name.sourceString;
 
     // Обрабатываем только entity
-    if (keywordStr === 'entity' || keywordStr === 'сущность') {
+    if (ENTITY_KEYWORDS.has(keywordStr)) {
       const attributes = block.extractAttributes();
       return [{
         name: nameStr,
@@ -82,7 +90,7 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     const nameStr = name.sourceString;
 
     // Обрабатываем только attribute без блока опций
-    if (keywordStr === 'attribute' || keywordStr === 'реквизит') {
+    if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       return [{
         name: nameStr,
       }];
@@ -96,7 +104,7 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     const nameStr = name.sourceString;
 
     // Обрабатываем только attribute с блоком опций
-    if (keywordStr === 'attribute' || keywordStr === 'реквизит') {
+    if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       const props = block.extractAttributeProps();
       return [{
         name: nameStr,
@@ -146,7 +154,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     const nameStr = name.sourceString;
 
     // Обрабатываем "is navigation", "is nullable", "is required"
-    if (keywordStr === 'is') {
+    if (keywordStr === 'is' && IS_MODIFIERS.has(nameStr)) {
       if (nameStr === 'navigation') {
         return { isNavigation: true };
       }
@@ -159,7 +167,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     }
 
     // Обрабатываем "key primary", "key foreign"
-    if (keywordStr === 'key') {
+    if (keywordStr === 'key' && KEY_MODIFIERS.has(nameStr)) {
       if (nameStr === 'primary') {
         return { isPrimaryKey: true };
       }
@@ -176,7 +184,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     const nameStr = _name.sourceString;
 
     // Обрабатываем "key primary" и "key foreign" с блоком опций
-    if (keywordStr === 'key') {
+    if (keywordStr === 'key' && KEY_MODIFIERS.has(nameStr)) {
       if (nameStr === 'primary') {
         return { isPrimaryKey: true, ...block.extractAttributeProps() };
       }
