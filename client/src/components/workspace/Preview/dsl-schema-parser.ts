@@ -5,7 +5,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
@@ -227,7 +227,6 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
       const targetEntityName = type;
       const targetEntity = entityMap.get(targetEntityName);
       if (!targetEntity) {
-        attr.isNavigation = false;
         continue;
       }
 
@@ -245,7 +244,10 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
         }
 
         attr.hasConnection = 'source';
+        attr.isNavigation = true;
+          
         reverseAttr.hasConnection = 'target';
+        reverseAttr.isNavigation = true;
 
         relationsMap.set(canonicalKey, {
           source: entity.name,

@@ -98,7 +98,19 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   }
 
   const handleConfirmCreate = (name: string) => {
-    const basePath = selectedIsDirectory ? selectedPath || '' : ''
+    let basePath = ''
+    
+    if (selectedPath) {
+      if (selectedIsDirectory) {
+        // Если выбрана папка, используем её путь
+        basePath = selectedPath
+      } else {
+        // Если выбран файл, используем путь к родительской папке
+        const pathParts = selectedPath.split('/')
+        basePath = pathParts.slice(0, -1).join('/')
+      }
+    }
+    
     const fullPath = basePath ? `${basePath}/${name}` : name
 
     if (createType === 'file') {
@@ -133,7 +145,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   }
 
   // Определяем текущий путь для диалога создания
-  const currentPath = selectedIsDirectory ? selectedPath || '' : ''
+  const currentPath = selectedPath 
+    ? (selectedIsDirectory ? selectedPath : selectedPath.split('/').slice(0, -1).join('/'))
+    : ''
 
   return (
     <div className="h-full w-full bg-background border-r flex flex-col">
