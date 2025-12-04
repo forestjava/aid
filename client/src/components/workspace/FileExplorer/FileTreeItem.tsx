@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, ChevronDown, File, Folder, MoreVertical } from 'lucide-react'
 import { filesystemApi } from '@/api/filesystem'
@@ -33,9 +33,20 @@ export function FileTreeItem({
   onRename,
   onDelete,
 }: FileTreeItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
   const fullPath = path ? `${path}/${item.name}` : item.name
   const isSelected = selectedPath === fullPath
+  
+  // Проверяем, является ли эта папка родительской для selectedPath
+  const isParentOfSelected = selectedPath?.startsWith(`${fullPath}/`) ?? false
+  
+  const [isExpanded, setIsExpanded] = useState(isParentOfSelected)
+
+  // Автоматически разворачиваем папку, если она содержит выбранный путь
+  useEffect(() => {
+    if (item.isDirectory && isParentOfSelected && !isExpanded) {
+      setIsExpanded(true)
+    }
+  }, [isParentOfSelected, isExpanded, item.isDirectory])
 
   // Загружаем содержимое папки только когда она раскрыта
   const { data, isLoading } = useQuery({
