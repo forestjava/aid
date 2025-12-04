@@ -19,9 +19,10 @@ export const App = () => {
   // location.pathname будет "/" → selectedPath = null
   // location.pathname будет "/Demo/users" → selectedPath = "Demo/users"
   // location.pathname будет "/Demo" → selectedPath = "Demo"
+  // Явно декодируем путь для поддержки кириллицы и спецсимволов
   const selectedPath = location.pathname === '/' 
     ? null 
-    : location.pathname.slice(1) // убираем первый слеш
+    : decodeURIComponent(location.pathname.slice(1))
 
   // Состояние для текущего файла (только файл, не папка)
   const [currentFile, setCurrentFile] = useState<string | null>(null)

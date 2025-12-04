@@ -36,17 +36,20 @@ export function FileTreeItem({
   const fullPath = path ? `${path}/${item.name}` : item.name
   const isSelected = selectedPath === fullPath
   
-  // Проверяем, является ли эта папка родительской для selectedPath
+  // Проверяем, нужно ли разворачивать папку:
+  // 1. Если это родительская папка для selectedPath
+  // 2. Если это сама выбранная папка (isDirectory)
   const isParentOfSelected = selectedPath?.startsWith(`${fullPath}/`) ?? false
+  const shouldAutoExpand = isParentOfSelected || (isSelected && item.isDirectory)
   
-  const [isExpanded, setIsExpanded] = useState(isParentOfSelected)
+  const [isExpanded, setIsExpanded] = useState(shouldAutoExpand)
 
-  // Автоматически разворачиваем папку, если она содержит выбранный путь
+  // Автоматически разворачиваем папку при изменении selectedPath
   useEffect(() => {
-    if (item.isDirectory && isParentOfSelected && !isExpanded) {
+    if (item.isDirectory && shouldAutoExpand && !isExpanded) {
       setIsExpanded(true)
     }
-  }, [isParentOfSelected, isExpanded, item.isDirectory])
+  }, [shouldAutoExpand, isExpanded, item.isDirectory])
 
   // Загружаем содержимое папки только когда она раскрыта
   const { data, isLoading } = useQuery({
