@@ -1,4 +1,4 @@
-import type { ReadDirResponse, ReadFileResponse } from '@/types/filesystem'
+import type { ReadDirResponse, ReadFileResponse, ExistsResponse } from '@/types/filesystem'
 
 const API_BASE = '/api/fs'
 
@@ -86,6 +86,15 @@ export const filesystemApi = {
     })
     if (!response.ok) {
       throw new Error(`Failed to delete: ${response.statusText}`)
+    }
+    return response.json()
+  },
+
+  // Проверить существование файла/папки
+  async exists(path: string): Promise<ExistsResponse> {
+    const response = await fetch(`${API_BASE}/exists?path=${encodeURIComponent(path)}`)
+    if (!response.ok) {
+      throw new Error(`Failed to check existence: ${response.statusText}`)
     }
     return response.json()
   },

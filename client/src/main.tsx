@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 import { QueryClient, QueryClientProvider, QueryCache, MutationCache } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { toast } from 'sonner'
@@ -33,12 +34,22 @@ const queryClient = new QueryClient({
   },
 })
 
+// Создаём роутер с catch-all маршрутом
+const router = createBrowserRouter([
+  {
+    path: '*', // Ловит все пути: /, /Demo, /Demo/users, /ALIS/orders и т.д.
+    element: (
+      <QueryClientProvider client={queryClient}>
+        <App />
+        <Toaster position="top-right" />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    ),
+  },
+])
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <App />
-      <Toaster position="top-right" />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <RouterProvider router={router} />
   </StrictMode>,
 )

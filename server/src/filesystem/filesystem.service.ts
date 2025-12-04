@@ -77,5 +77,17 @@ export class FileSystemService {
     await fs.rm(fullPath, { recursive, force: true });
     return { path: relativePath };
   }
+
+  async exists(relativePath: string) {
+    const fullPath = this.resolvePath(relativePath);
+    return fs.stat(fullPath)
+      .then((stats) => ({
+        exists: true,
+        isDirectory: stats.isDirectory(),
+      }))
+      .catch(() => ({
+        exists: false,
+      }));
+  }
 }
 

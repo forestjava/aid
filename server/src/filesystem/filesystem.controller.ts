@@ -55,5 +55,11 @@ export class FileSystemController {
   ) {
     return await this.fileSystemService.rm(path, recursive);
   }
+
+  @Get('exists')
+  async exists(@Query('path') path: string) {
+    const result = await this.fileSystemService.exists(path);
+    return { path, ...result };
+  }
 }
 

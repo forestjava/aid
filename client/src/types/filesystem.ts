@@ -22,3 +22,9 @@ export interface ReadFileResponse {
   content: string
 }
 
+export interface ExistsResponse {
+  path: string
+  exists: boolean
+  isDirectory?: boolean // присутствует только если exists: true
+}
+

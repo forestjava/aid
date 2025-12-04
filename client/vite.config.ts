@@ -16,8 +16,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        //target: 'http://localhost:3000',        
-        target: 'https:/aid.sandbox.lkds.alabuga.ru/api',
+        target: 'http://localhost:3000',        
+        //target: 'https:/aid.sandbox.lkds.alabuga.ru/api',
         secure: false,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),

@@ -10,12 +10,17 @@ import { DeleteDialog } from './DeleteDialog'
 import { Button } from '@/components/ui/button'
 
 interface FileExplorerProps {
-  onFileSelect?: (path: string) => void
+  onSelect?: (path: string, isDirectory: boolean) => void
+  selectedPath: string | null // Полностью управляемый компонент
+  selectedIsDirectory: boolean // Полностью управляемый компонент
 }
 
-export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
-  const [selectedPath, setSelectedPath] = useState<string | null>(null)
-  const [selectedIsDirectory, setSelectedIsDirectory] = useState(false)
+export const FileExplorer: React.FC<FileExplorerProps> = ({ 
+  onSelect, 
+  selectedPath, 
+  selectedIsDirectory 
+}) => {
+  // Компонент теперь полностью управляемый, состояния приходят извне
 
   // Диалоги
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -56,9 +61,9 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
       filesystemApi.rename(oldPath, newPath),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
-      // Если переименовали выбранный элемент, обновляем выбранный путь
-      if (selectedPath === variables.oldPath) {
-        setSelectedPath(variables.newPath)
+      // Если переименовали выбранный элемент, уведомляем родителя
+      if (selectedPath === variables.oldPath && onSelect) {
+        onSelect(variables.newPath, selectedIsDirectory)
       }
     },
   })
@@ -66,24 +71,21 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   // Мутация для удаления
   const deleteMutation = useMutation({
     mutationFn: (path: string) => filesystemApi.rm(path),
-    onSuccess: (_, path) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
-      // Если удалили выбранный элемент, сбрасываем выбор
-      if (selectedPath === path) {
-        setSelectedPath(null)
-        setSelectedIsDirectory(false)
-      }
+      // Если удалили выбранный элемент, родитель должен обработать это
+      // через обновление URL (например, navigate('/'))
+      // Пока ничего не делаем, родитель сам решит
     },
   })
 
   // Обработчики
 
   const handleSelect = (path: string, isDirectory: boolean) => {
-    setSelectedPath(path)
-    setSelectedIsDirectory(isDirectory)
-    // Если выбран файл (не каталог), уведомляем родительский компонент
-    if (!isDirectory && onFileSelect) {
-      onFileSelect(path)
+    // Просто уведомляем родительский компонент
+    // Родитель обновит URL, который вернётся обратно через пропы
+    if (onSelect) {
+      onSelect(path, isDirectory)
     }
   }
 
@@ -145,7 +147,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
   }
 
   // Определяем текущий путь для диалога создания
-  const currentPath = selectedPath 
+  const dialogBasePath = selectedPath 
     ? (selectedIsDirectory ? selectedPath : selectedPath.split('/').slice(0, -1).join('/'))
     : ''
 
@@ -205,7 +207,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ onFileSelect }) => {
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
         type={createType}
-        currentPath={currentPath}
+        currentPath={dialogBasePath}
         onConfirm={handleConfirmCreate}
       />
 
