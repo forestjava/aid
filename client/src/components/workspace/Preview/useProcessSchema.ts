@@ -20,7 +20,7 @@ const GRAPH_RANKDIR = 'LR'
 const GRAPH_NODESEP = 40
 const GRAPH_MARGINX = 60
 const GRAPH_MARGINY = 40
-const RELATIONS_PER_RANKSEP_UNIT = 6 // Количество связей на одну единицу ranksep
+const RELATIONS_PER_RANKSEP_UNIT = 5 // Количество связей на одну единицу ranksep
 
 /**
  * Хук для асинхронной обработки содержимого DSL-файла

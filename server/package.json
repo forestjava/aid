@@ -1,6 +1,6 @@
 {
-  "name": "doc-backend",
-  "version": "0.0.1",
+  "name": "aid-backend",
+  "version": "1.0.0",
   "description": "",
   "author": "Nikita Biziaev",
   "scripts": {

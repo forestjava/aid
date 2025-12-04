@@ -1,6 +1,6 @@
 {
-  "name": "doc-frontend",
-  "version": "0.0.1",
+  "name": "aid-frontend",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
