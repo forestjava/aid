@@ -128,6 +128,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
+            minZoom={0.01} 
           >
             <Background />
             <Controls />

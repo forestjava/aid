@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
 import { type Entity } from './types'
+import { getEdgeColor } from './colors'
 
 const EntityNode = ({ data }: NodeProps<Entity>) => {
   return (
@@ -16,6 +17,11 @@ const EntityNode = ({ data }: NodeProps<Entity>) => {
           <div
             key={idx}
             className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
+            style={
+              attr.paletteIndex !== undefined
+                ? { color: getEdgeColor(attr.paletteIndex) }
+                : undefined
+            }
           >
             {/* Handle для навигационных свойств */}
             {attr.hasConnection === 'target' && (

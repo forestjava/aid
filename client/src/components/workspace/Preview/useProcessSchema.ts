@@ -13,8 +13,14 @@ interface ProcessSchemaResult {
   isProcessing: boolean
 }
 
+// Константы для настройки dagre-графа
 const DEFAULT_NODE_WIDTH = 100
 const DEFAULT_NODE_HEIGHT = 100
+const GRAPH_RANKDIR = 'LR'
+const GRAPH_NODESEP = 40
+const GRAPH_MARGINX = 60
+const GRAPH_MARGINY = 40
+const RELATIONS_PER_RANKSEP_UNIT = 6 // Количество связей на одну единицу ranksep
 
 /**
  * Хук для асинхронной обработки содержимого DSL-файла
@@ -103,12 +109,18 @@ function layoutGraph(
 ): { nodes: Node<Entity>[]; edges: Edge[] } {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
+  
+  // Динамический расчет ranksep в зависимости от количества связей
+  // На каждые RELATIONS_PER_RANKSEP_UNIT связей - одна ширина узла
+  const relationsCount = schema.relations.length
+  const ranksep = Math.max(1, Math.ceil(relationsCount / RELATIONS_PER_RANKSEP_UNIT)) * DEFAULT_NODE_WIDTH
+  
   dagreGraph.setGraph({
-    rankdir: 'LR',
-    nodesep: 40,
-    ranksep: DEFAULT_NODE_WIDTH,
-    marginx: 60,
-    marginy: 40,
+    rankdir: GRAPH_RANKDIR,
+    nodesep: GRAPH_NODESEP,
+    ranksep,
+    marginx: GRAPH_MARGINX,
+    marginy: GRAPH_MARGINY,
   })
 
   // Создаем узлы с рассчитанными размерами
@@ -143,7 +155,7 @@ function layoutGraph(
       targetHandle: `${relation.target}-${relation.targetNavigation}`,
       style: {
         strokeWidth: 2,
-        stroke: getEdgeColor(index),
+        stroke: getEdgeColor(relation.paletteIndex),
       },
     }
   })

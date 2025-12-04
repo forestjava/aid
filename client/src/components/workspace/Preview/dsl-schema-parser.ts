@@ -243,17 +243,23 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
           continue;
         }
 
+        // Текущий размер Map = индекс новой связи
+        const paletteIndex = relationsMap.size;
+
         attr.hasConnection = 'source';
         attr.isNavigation = true;
+        attr.paletteIndex = paletteIndex;
           
         reverseAttr.hasConnection = 'target';
         reverseAttr.isNavigation = true;
+        reverseAttr.paletteIndex = paletteIndex;
 
         relationsMap.set(canonicalKey, {
           source: entity.name,
           sourceNavigation: attr.name,
           target: targetEntity.name,
           targetNavigation: reverseAttr.name,
+          paletteIndex,
         });
       }
     }

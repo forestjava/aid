@@ -11,6 +11,7 @@ export interface EntityAttribute {
   isNavigation?: boolean // Навигационное свойство (ссылка на другую сущность)
   isCollection?: boolean // Коллекция (массив) сущностей
   hasConnection?: 'source' | 'target' // Роль навигационного свойства в связи
+  paletteIndex?: number // Индекс в палитре цветов для связи
 }
 
 export interface EntityRelation {
@@ -18,6 +19,7 @@ export interface EntityRelation {
   sourceNavigation: string // Имя навигационного свойства источника
   target: string // Имя сущности-цели связи (справа)
   targetNavigation: string // Имя навигационного свойства цели
+  paletteIndex: number // Индекс в палитре цветов
 }
 
 export interface Entity {
