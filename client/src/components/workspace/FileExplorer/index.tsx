@@ -76,11 +76,19 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   // Мутация для удаления
   const deleteMutation = useMutation({
     mutationFn: (path: string) => filesystemApi.rm(path),
-    onSuccess: () => {
+    onSuccess: (_, deletedPath) => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
-      // Если удалили выбранный элемент, родитель должен обработать это
-      // через обновление URL (например, navigate('/'))
-      // Пока ничего не делаем, родитель сам решит
+
+      // Если удалили выбранный элемент, редиректим на родительскую папку
+      if (selectedPath === deletedPath && onSelect) {
+        // Извлекаем родительский путь
+        const pathParts = deletedPath.split('/')
+        const parentPath = pathParts.length > 1
+          ? pathParts.slice(0, -1).join('/')  // "Demo/users" -> "Demo"
+          : ''                                 // "example" -> "" (корень)
+
+        onSelect(parentPath, true)
+      }
     },
   });
 
