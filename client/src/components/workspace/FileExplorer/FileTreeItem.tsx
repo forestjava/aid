@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, ChevronDown, File, Folder, MoreVertical } from 'lucide-react'
 import { filesystemApi } from '@/api/filesystem'
@@ -22,6 +22,16 @@ interface FileTreeItemProps {
   onSelect: (path: string, isDirectory: boolean) => void
   onRename: (path: string, name: string) => void
   onDelete: (path: string) => void
+  // Drag and Drop props
+  dragOverPath?: string | null
+  onDragStart?: (e: React.DragEvent, path: string, name: string, isDirectory: boolean) => void
+  onDragEnd?: (e: React.DragEvent) => void
+  onDragOver?: (e: React.DragEvent, path: string, isDirectory: boolean) => void
+  onDragLeave?: (e: React.DragEvent, path: string) => void
+  onDrop?: (e: React.DragEvent, path: string, isDirectory: boolean) => void
+  onMouseDown?: (path: string, name: string, isDirectory: boolean, element: HTMLElement) => void
+  onMouseUp?: (element: HTMLElement) => void
+  onMouseMove?: (element: HTMLElement) => void
 }
 
 export function FileTreeItem({
@@ -32,16 +42,27 @@ export function FileTreeItem({
   onSelect,
   onRename,
   onDelete,
+  dragOverPath,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onMouseDown,
+  onMouseUp,
+  onMouseMove,
 }: FileTreeItemProps) {
   const fullPath = path ? `${path}/${item.name}` : item.name
   const isSelected = selectedPath === fullPath
-  
+  const isDraggedOver = dragOverPath === fullPath
+  const itemRef = useRef<HTMLDivElement>(null)
+
   // Проверяем, нужно ли разворачивать папку:
   // Автоматически разворачиваем только родительские папки
   // Сам выбранный каталог управляется вручную через handleClick
   const isParentOfSelected = selectedPath?.startsWith(`${fullPath}/`) ?? false
   const shouldAutoExpand = isParentOfSelected
-  
+
   const [isExpanded, setIsExpanded] = useState(shouldAutoExpand)
 
   // Автоматически разворачиваем папку при изменении selectedPath
@@ -69,7 +90,7 @@ export function FileTreeItem({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    
+
     if (item.isDirectory) {
       if (isSelected) {
         // Если каталог уже выбран, только toggle без навигации
@@ -97,12 +118,35 @@ export function FileTreeItem({
   return (
     <div>
       <div
+        ref={itemRef}
         className={cn(
-          'group flex items-center gap-1 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer text-sm',
-          isSelected && 'bg-accent'
+          'group flex items-center gap-1 py-1 px-2 hover:bg-accent rounded-sm cursor-pointer text-sm transition-colors',
+          isSelected && 'bg-accent',
+          isDraggedOver && item.isDirectory && 'bg-blue-100 dark:bg-blue-900/30'
         )}
         style={{ paddingLeft: `${level * 12 + 8}px` }}
         onClick={handleClick}
+        draggable={false}
+        onMouseDown={(e) => {
+          if (e.button === 0 && itemRef.current && onMouseDown) {
+            onMouseDown(fullPath, item.name, item.isDirectory, itemRef.current)
+          }
+        }}
+        onMouseUp={() => {
+          if (itemRef.current && onMouseUp) {
+            onMouseUp(itemRef.current)
+          }
+        }}
+        onMouseMove={() => {
+          if (itemRef.current && onMouseMove) {
+            onMouseMove(itemRef.current)
+          }
+        }}
+        onDragStart={(e) => onDragStart?.(e, fullPath, item.name, item.isDirectory)}
+        onDragEnd={(e) => onDragEnd?.(e)}
+        onDragOver={(e) => onDragOver?.(e, fullPath, item.isDirectory)}
+        onDragLeave={(e) => onDragLeave?.(e, fullPath)}
+        onDrop={(e) => onDrop?.(e, fullPath, item.isDirectory)}
       >
         {/* Кнопка разворачивания для папок */}
         {item.isDirectory ? (
@@ -181,12 +225,29 @@ export function FileTreeItem({
                 onSelect={onSelect}
                 onRename={onRename}
                 onDelete={onDelete}
+                dragOverPath={dragOverPath}
+                onDragStart={onDragStart}
+                onDragEnd={onDragEnd}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+                onMouseDown={onMouseDown}
+                onMouseUp={onMouseUp}
+                onMouseMove={onMouseMove}
               />
             ))
           ) : (
             <div
-              className="py-1 px-2 text-xs text-muted-foreground"
-              style={{ paddingLeft: `${(level + 1) * 12 + 8}px` }}
+              className={cn(
+                "py-2 px-2 mx-2 text-xs text-muted-foreground cursor-pointer rounded border-2 border-dashed transition-colors min-h-[40px]",
+                dragOverPath === fullPath
+                  ? "border-blue-500 bg-blue-100 dark:bg-blue-900/30"
+                  : "border-transparent"
+              )}
+              style={{ marginLeft: `${(level + 1) * 12 + 8}px` }}
+              onDragOver={(e) => onDragOver?.(e, fullPath, true)}
+              onDragLeave={(e) => onDragLeave?.(e, fullPath)}
+              onDrop={(e) => onDrop?.(e, fullPath, true)}
             >
               Пусто
             </div>

@@ -8,6 +8,8 @@ import { CreateDialog } from './CreateDialog'
 import { RenameDialog } from './RenameDialog'
 import { DeleteDialog } from './DeleteDialog'
 import { Button } from '@/components/ui/button'
+import { useDragAndDrop } from './useDragAndDrop'
+import { cn } from '@/lib/utils'
 
 interface FileExplorerProps {
   onSelect?: (path: string, isDirectory: boolean) => void
@@ -15,10 +17,10 @@ interface FileExplorerProps {
   selectedIsDirectory: boolean // Полностью управляемый компонент
 }
 
-export const FileExplorer: React.FC<FileExplorerProps> = ({ 
-  onSelect, 
-  selectedPath, 
-  selectedIsDirectory 
+export const FileExplorer: React.FC<FileExplorerProps> = ({
+  onSelect,
+  selectedPath,
+  selectedIsDirectory
 }) => {
   // Компонент теперь полностью управляемый, состояния приходят извне
 
@@ -30,13 +32,16 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+
+  // Drag and Drop
+  const dragAndDrop = useDragAndDrop();
 
   // Загрузка корневой директории
   const { data: rootData, isLoading } = useQuery({
     queryKey: ['readdir', ''],
     queryFn: () => filesystemApi.readdir(''),
-  })
+  });
 
   // Мутация для создания файла
   const createFileMutation = useMutation({
@@ -45,7 +50,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
     },
-  })
+  });
 
   // Мутация для создания папки
   const createFolderMutation = useMutation({
@@ -53,7 +58,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
     },
-  })
+  });
 
   // Мутация для переименования
   const renameMutation = useMutation({
@@ -66,7 +71,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
         onSelect(variables.newPath, selectedIsDirectory)
       }
     },
-  })
+  });
 
   // Мутация для удаления
   const deleteMutation = useMutation({
@@ -77,7 +82,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
       // через обновление URL (например, navigate('/'))
       // Пока ничего не делаем, родитель сам решит
     },
-  })
+  });
 
   // Обработчики
 
@@ -101,7 +106,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
 
   const handleConfirmCreate = (name: string) => {
     let basePath = ''
-    
+
     if (selectedPath) {
       if (selectedIsDirectory) {
         // Если выбрана папка, используем её путь
@@ -112,7 +117,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
         basePath = pathParts.slice(0, -1).join('/')
       }
     }
-    
+
     const fullPath = basePath ? `${basePath}/${name}` : name
 
     if (createType === 'file') {
@@ -147,12 +152,12 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   }
 
   // Определяем текущий путь для диалога создания
-  const dialogBasePath = selectedPath 
+  const dialogBasePath = selectedPath
     ? (selectedIsDirectory ? selectedPath : selectedPath.split('/').slice(0, -1).join('/'))
     : ''
 
   return (
-    <div className="h-full w-full bg-background border-r flex flex-col">
+    <div className="h-full w-full bg-background border-r flex flex-col select-none">
       {/* Заголовок с кнопками создания */}
       <div className="h-10 border-b px-2 flex items-center justify-between shrink-0">
         <span className="text-sm font-medium">Файлы описания</span>
@@ -179,26 +184,56 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
       </div>
 
       {/* Дерево файлов */}
-      <div className="flex-1 overflow-auto py-2">
-        {isLoading ? (
-          <div className="px-3 py-2 text-sm text-muted-foreground">Загрузка...</div>
-        ) : rootData?.items && rootData.items.length > 0 ? (
-          sortFileSystemItems(rootData.items).map((item) => (
-            <FileTreeItem
-              key={item.name}
-              item={item}
-              path=""
-              level={0}
-              selectedPath={selectedPath}
-              onSelect={handleSelect}
-              onRename={handleRename}
-              onDelete={handleDelete}
-            />
-          ))
-        ) : (
-          <div className="px-3 py-2 text-sm text-muted-foreground">
-            Нет файлов. Создайте новый файл или папку.
-          </div>
+      <div className="flex-1 overflow-auto py-2 flex flex-col">
+        <div className="flex-shrink-0">
+          {isLoading ? (
+            <div className="px-3 py-2 text-sm text-muted-foreground">Загрузка...</div>
+          ) : rootData?.items && rootData.items.length > 0 ? (
+            sortFileSystemItems(rootData.items).map((item) => (
+              <FileTreeItem
+                key={item.name}
+                item={item}
+                path=""
+                level={0}
+                selectedPath={selectedPath}
+                onSelect={handleSelect}
+                onRename={handleRename}
+                onDelete={handleDelete}
+                dragOverPath={dragAndDrop.dragOverPath}
+                onDragStart={(e, path, name, isDirectory) =>
+                  dragAndDrop.handleDragStart(e, { path, name, isDirectory })
+                }
+                onDragEnd={dragAndDrop.handleDragEnd}
+                onDragOver={dragAndDrop.handleDragOver}
+                onDragLeave={dragAndDrop.handleDragLeave}
+                onDrop={dragAndDrop.handleDrop}
+                onMouseDown={(path, name, isDirectory, element) =>
+                  dragAndDrop.handleMouseDown({ path, name, isDirectory }, element)
+                }
+                onMouseUp={dragAndDrop.handleMouseUp}
+                onMouseMove={dragAndDrop.handleMouseMove}
+              />
+            ))
+          ) : (
+            <div className="px-3 py-2 text-sm text-muted-foreground">
+              Нет файлов. Создайте новый файл или папку.
+            </div>
+          )}
+        </div>
+
+        {/* Drop-зона для перемещения в корневой каталог */}
+        {dragAndDrop.isDragging && (
+          <div
+            className={cn(
+              "flex-1 min-h-[60px] mx-2 mt-2 rounded border-2 border-dashed transition-colors",
+              dragAndDrop.dragOverPath === ''
+                ? "border-blue-500 bg-blue-100 dark:bg-blue-900/30"
+                : "border-muted-foreground/20"
+            )}
+            onDragOver={(e) => dragAndDrop.handleDragOver(e, '', true)}
+            onDragLeave={(e) => dragAndDrop.handleDragLeave(e, '')}
+            onDrop={(e) => dragAndDrop.handleDrop(e, '', true)}
+          />
         )}
       </div>
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -74,6 +74,15 @@ export class FileSystemService {
   async rename(oldPath: string, newPath: string) {
     const fullOldPath = this.resolvePath(oldPath);
     const fullNewPath = this.resolvePath(newPath);
+
+    // Проверка существования файла/папки в месте назначения
+    const destExists = await this.exists(newPath);
+    if (destExists.exists) {
+      throw new ConflictException(
+        `Destination path already exists: ${newPath}`
+      );
+    }
+
     await fs.rename(fullOldPath, fullNewPath);
     return { oldPath, newPath };
   }
