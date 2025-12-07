@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { filesystemApi } from '@/api/filesystem'
 
@@ -56,28 +56,20 @@ export function useDragAndDrop() {
   )
 
   // Обработчик mouseup - ЕДИНСТВЕННОЕ место отмены таймера
-  const handleMouseUp = useCallback(
-    (element: HTMLElement) => {
-      clearDragTimer()
-      element.setAttribute('draggable', 'false')
+  const handleMouseUp = useCallback(() => {
+    clearDragTimer()
 
-      // Убираем визуальное выделение
-      element.classList.remove('drag-ready')
-      element.style.outline = ''
-      element.style.outlineOffset = ''
-      element.style.backgroundColor = ''
-    },
-    [clearDragTimer]
-  )
-
-  // Обработчик mousemove - не отменяет таймер, разрешаем движение мыши
-  const handleMouseMove = useCallback(
-    (_element: HTMLElement) => {
-      // Ничего не делаем, разрешаем пользователю двигать мышь
-      // Таймер отменяется только в handleMouseUp
-    },
-    []
-  )
+    // Очищаем визуальное выделение со всех элементов с классом 'drag-ready'
+    document.querySelectorAll('.drag-ready').forEach((element) => {
+      if (element instanceof HTMLElement) {
+        element.setAttribute('draggable', 'false')
+        element.classList.remove('drag-ready')
+        element.style.outline = ''
+        element.style.outlineOffset = ''
+        element.style.backgroundColor = ''
+      }
+    })
+  }, [clearDragTimer])
 
   // Обработчик dragstart - начало перетаскивания
   const handleDragStart = useCallback((e: React.DragEvent, item: DragItem) => {
@@ -191,12 +183,17 @@ export function useDragAndDrop() {
     [moveMutation]
   )
 
+  useEffect(() => {
+    document.addEventListener('mouseup', handleMouseUp)
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [handleMouseUp])
+
   return {
     isDragging,
     dragOverPath,
     handleMouseDown,
-    handleMouseUp,
-    handleMouseMove,
     handleDragStart,
     handleDragEnd,
     handleDragOver,

@@ -30,8 +30,6 @@ interface FileTreeItemProps {
   onDragLeave?: (e: React.DragEvent, path: string) => void
   onDrop?: (e: React.DragEvent, path: string, isDirectory: boolean) => void
   onMouseDown?: (path: string, name: string, isDirectory: boolean, element: HTMLElement) => void
-  onMouseUp?: (element: HTMLElement) => void
-  onMouseMove?: (element: HTMLElement) => void
 }
 
 export function FileTreeItem({
@@ -49,8 +47,6 @@ export function FileTreeItem({
   onDragLeave,
   onDrop,
   onMouseDown,
-  onMouseUp,
-  onMouseMove,
 }: FileTreeItemProps) {
   const fullPath = path ? `${path}/${item.name}` : item.name
   const isSelected = selectedPath === fullPath
@@ -130,16 +126,6 @@ export function FileTreeItem({
         onMouseDown={(e) => {
           if (e.button === 0 && itemRef.current && onMouseDown) {
             onMouseDown(fullPath, item.name, item.isDirectory, itemRef.current)
-          }
-        }}
-        onMouseUp={() => {
-          if (itemRef.current && onMouseUp) {
-            onMouseUp(itemRef.current)
-          }
-        }}
-        onMouseMove={() => {
-          if (itemRef.current && onMouseMove) {
-            onMouseMove(itemRef.current)
           }
         }}
         onDragStart={(e) => onDragStart?.(e, fullPath, item.name, item.isDirectory)}
@@ -232,8 +218,6 @@ export function FileTreeItem({
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
                 onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-                onMouseMove={onMouseMove}
               />
             ))
           ) : (

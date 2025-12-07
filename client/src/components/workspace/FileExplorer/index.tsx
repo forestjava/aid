@@ -210,8 +210,6 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                 onMouseDown={(path, name, isDirectory, element) =>
                   dragAndDrop.handleMouseDown({ path, name, isDirectory }, element)
                 }
-                onMouseUp={dragAndDrop.handleMouseUp}
-                onMouseMove={dragAndDrop.handleMouseMove}
               />
             ))
           ) : (
