@@ -90,6 +90,21 @@ export const filesystemApi = {
     return response.json()
   },
 
+  // Переместить файл/папку
+  async move(sourcePath: string, destinationPath: string): Promise<void> {
+    const response = await fetch(`${API_BASE}/move`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sourcePath, destinationPath }),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to move: ${response.statusText}`)
+    }
+    return response.json()
+  },
+
   // Удалить файл/папку
   async rm(path: string, recursive: boolean = true): Promise<void> {
     const url = new URL(`${API_BASE}/rm`, window.location.origin)

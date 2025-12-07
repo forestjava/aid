@@ -53,6 +53,11 @@ export class FileSystemController {
     return await this.fileSystemService.rename(body.oldPath, body.newPath);
   }
 
+  @Put('move')
+  async move(@Body() body: { sourcePath: string; destinationPath: string }) {
+    return await this.fileSystemService.move(body.sourcePath, body.destinationPath);
+  }
+
   @Delete('rm')
   async rm(
     @Query('path') path: string,

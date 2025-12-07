@@ -78,6 +78,10 @@ export class FileSystemService {
     return { oldPath, newPath };
   }
 
+  async move(sourcePath: string, destinationPath: string) {
+    return this.rename(sourcePath, destinationPath);
+  }
+
   async rm(relativePath: string, recursive = true) {
     const fullPath = this.resolvePath(relativePath);
     await fs.rm(fullPath, { recursive, force: true });
