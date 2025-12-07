@@ -37,10 +37,10 @@ export function FileTreeItem({
   const isSelected = selectedPath === fullPath
   
   // Проверяем, нужно ли разворачивать папку:
-  // 1. Если это родительская папка для selectedPath
-  // 2. Если это сама выбранная папка (isDirectory)
+  // Автоматически разворачиваем только родительские папки
+  // Сам выбранный каталог управляется вручную через handleClick
   const isParentOfSelected = selectedPath?.startsWith(`${fullPath}/`) ?? false
-  const shouldAutoExpand = isParentOfSelected || (isSelected && item.isDirectory)
+  const shouldAutoExpand = isParentOfSelected
   
   const [isExpanded, setIsExpanded] = useState(shouldAutoExpand)
 
@@ -69,9 +69,19 @@ export function FileTreeItem({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onSelect(fullPath, item.isDirectory)
+    
     if (item.isDirectory) {
-      setIsExpanded(!isExpanded)
+      if (isSelected) {
+        // Если каталог уже выбран, только toggle без навигации
+        setIsExpanded(!isExpanded)
+      } else {
+        // Если каталог не выбран, навигация + раскрытие
+        onSelect(fullPath, true)
+        setIsExpanded(true)
+      }
+    } else {
+      // Для файлов всегда навигация
+      onSelect(fullPath, false)
     }
   }
 
