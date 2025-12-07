@@ -41,7 +41,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   // Мутация для создания файла
   const createFileMutation = useMutation({
     mutationFn: ({ path, content }: { path: string; content: string }) =>
-      filesystemApi.writeFile(path, content),
+      filesystemApi.createFile(path, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['readdir'] })
     },

@@ -30,9 +30,9 @@ export const filesystemApi = {
     return response.json()
   },
 
-  // Создать/записать файл
-  async writeFile(path: string, content: string): Promise<void> {
-    const response = await fetch(`${API_BASE}/writeFile`, {
+  // Создать новый файл
+  async createFile(path: string, content: string): Promise<void> {
+    const response = await fetch(`${API_BASE}/createFile`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,7 +40,22 @@ export const filesystemApi = {
       body: JSON.stringify({ path, content }),
     })
     if (!response.ok) {
-      throw new Error(`Failed to write file: ${response.statusText}`)
+      throw new Error(`Failed to create file: ${response.statusText}`)
+    }
+    return response.json()
+  },
+
+  // Обновить существующий файл
+  async updateFile(path: string, content: string): Promise<void> {
+    const response = await fetch(`${API_BASE}/updateFile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ path, content }),
+    })
+    if (!response.ok) {
+      throw new Error(`Failed to update file: ${response.statusText}`)
     }
     return response.json()
   },

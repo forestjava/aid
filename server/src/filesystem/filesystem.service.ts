@@ -53,7 +53,13 @@ export class FileSystemService {
     };
   }
 
-  async writeFile(relativePath: string, content: string) {
+  async createFile(relativePath: string, content: string) {
+    const fullPath = this.resolvePath(relativePath);
+    await fs.writeFile(fullPath, content, { encoding: 'utf-8', flag: 'wx' });
+    return { path: relativePath };
+  }
+
+  async updateFile(relativePath: string, content: string) {
     const fullPath = this.resolvePath(relativePath);
     await fs.writeFile(fullPath, content, 'utf-8');
     return { path: relativePath };

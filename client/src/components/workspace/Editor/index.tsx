@@ -25,7 +25,7 @@ export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
   // Мутация для сохранения файла
   const saveMutation = useMutation({
     mutationFn: (content: string) =>
-      filesystemApi.writeFile(currentFile!, content),
+      filesystemApi.updateFile(currentFile!, content),
     onSuccess: () => {
       setHasChanges(false)
       queryClient.invalidateQueries({ queryKey: ['readFile', currentFile] })

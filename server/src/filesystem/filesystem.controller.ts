@@ -33,9 +33,14 @@ export class FileSystemController {
     return { path, ...stats };
   }
 
-  @Post('writeFile')
-  async writeFile(@Body() body: { path: string; content: string }) {
-    return await this.fileSystemService.writeFile(body.path, body.content);
+  @Post('createFile')
+  async createFile(@Body() body: { path: string; content: string }) {
+    return await this.fileSystemService.createFile(body.path, body.content);
+  }
+
+  @Put('updateFile')
+  async updateFile(@Body() body: { path: string; content: string }) {
+    return await this.fileSystemService.updateFile(body.path, body.content);
   }
 
   @Post('mkdir')
