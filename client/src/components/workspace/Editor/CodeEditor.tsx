@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
+import { highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view';
 import { dslSupport } from './dsl-support';
 
 interface CodeEditorProps {
@@ -25,6 +26,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       extensions: [
         basicSetup,
         ...dslSupport,
+        highlightActiveLine(),
+        highlightActiveLineGutter(),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && !isLoading.current) {
             const newValue = update.state.doc.toString();
@@ -43,7 +46,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           },
           '.cm-content': {
             padding: '8px 0',
-            caretColor: 'hsl(var(--foreground))',
+            caretColor: 'var(--foreground)',
           },
           '.cm-line': {
             padding: '0 8px',
@@ -52,21 +55,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             outline: 'none',
           },
           '.cm-gutters': {
-            backgroundColor: 'hsl(var(--muted))',
-            color: 'hsl(var(--muted-foreground))',
+            backgroundColor: 'var(--muted)',
+            color: 'var(--muted-foreground)',
             border: 'none',
           },
           '.cm-activeLineGutter': {
-            backgroundColor: 'hsl(var(--accent))',
+            backgroundColor: 'color-mix(in oklab, var(--primary) 20%, var(--muted))',
           },
           '.cm-activeLine': {
-            backgroundColor: 'hsl(var(--accent) / 0.1)',
+            backgroundColor: 'color-mix(in oklab, var(--primary) 8%, transparent)',
           },
           '.cm-selectionMatch': {
-            backgroundColor: 'hsl(var(--accent) / 0.3)',
+            backgroundColor: 'color-mix(in oklab, var(--accent) 30%, transparent)',
           },
           '.cm-cursor': {
-            borderLeftColor: 'hsl(var(--foreground))',
+            borderLeftColor: 'var(--foreground)',
           },
         }),
         // Синтаксическая подсветка
