@@ -75,15 +75,6 @@ export function FileTreeItem({
     enabled: item.isDirectory && isExpanded,
   })
 
-  const handleToggle = () => {
-    if (item.isDirectory) {
-      setIsExpanded(!isExpanded)
-      if (!isExpanded) {
-        onSelect(fullPath, true)
-      }
-    }
-  }
-
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
 
@@ -134,21 +125,15 @@ export function FileTreeItem({
         onDragLeave={(e) => onDragLeave?.(e, fullPath)}
         onDrop={(e) => onDrop?.(e, fullPath, item.isDirectory)}
       >
-        {/* Кнопка разворачивания для папок */}
+        {/* Иконка разворачивания для папок */}
         {item.isDirectory ? (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              handleToggle()
-            }}
-            className="shrink-0 p-0.5 hover:bg-accent-foreground/10 rounded"
-          >
+          <div className="shrink-0 w-5 flex items-center justify-center">
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
             ) : (
               <ChevronRight className="h-4 w-4" />
             )}
-          </button>
+          </div>
         ) : (
           <div className="w-5 shrink-0" />
         )}

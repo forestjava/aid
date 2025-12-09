@@ -12,6 +12,7 @@ DSL {
   // Описываем особенности для ключевых слов type и import
   Entity = typeKeyword typeRef ";"       --type
          | importKeyword importRef ";"   --import
+         | labelKeyword labelRef ";"     --label
          | keyword name ";"              --simple
          | keyword name Block ";"?       --options
 
@@ -25,6 +26,7 @@ DSL {
   // Ключевые слова
   typeKeyword = "type" | "тип"
   importKeyword = "import" | "из"
+  labelKeyword = "label" | "заголовок"
   keyword = 
     // Английские ключевые слова
       "service"
@@ -59,6 +61,9 @@ DSL {
 
   // Имя импорта при этом может быть только строковым литералом 
   importRef = stringLiteral
+
+  // Заголовок может быть только строковым литералом 
+  labelRef = stringLiteral
 
   // Идентификатор может быть составным через точку (неограниченная вложенность)
   identifier = simpleIdentifier ("." simpleIdentifier)*

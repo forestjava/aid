@@ -100,6 +100,29 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_label(labelKeyword: any, labelRef: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем labelKeyword (терминальный узел)
+    tokens.push({
+      from: labelKeyword.source.startIdx,
+      to: labelKeyword.source.endIdx,
+      type: 'keyword'
+    });
+
+    // Добавляем labelRef (stringLiteral)
+    tokens.push(...labelRef.getTokens());
+
+    // Добавляем пунктуацию (терминальный узел)
+    tokens.push({
+      from: _semicolon.source.startIdx,
+      to: _semicolon.source.endIdx,
+      type: 'punctuation'
+    });
+
+    return tokens;
+  },
+
   Entity_simple(keyword: any, name: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
@@ -216,6 +239,13 @@ semantics.addOperation<Token[]>('getTokens', {
   // importRef = stringLiteral
   // Арность: 1 (только stringLiteral)
   importRef(stringLiteral: any): Token[] {
+    // Делегируем обработку stringLiteral
+    return stringLiteral.getTokens();
+  },
+
+  // labelRef = stringLiteral
+  // Арность: 1 (только stringLiteral)
+  labelRef(stringLiteral: any): Token[] {
     // Делегируем обработку stringLiteral
     return stringLiteral.getTokens();
   },

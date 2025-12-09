@@ -37,6 +37,10 @@ semantics.addOperation<Entity[]>('extractEntities', {
     return [];
   },
 
+  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): Entity[] {
+    return [];
+  },
+
   Entity_simple(_keyword: any, _name: any, _semicolon: any): Entity[] {
     return [];
   },
@@ -48,8 +52,10 @@ semantics.addOperation<Entity[]>('extractEntities', {
     // Обрабатываем только entity
     if (ENTITY_KEYWORDS.has(keywordStr)) {
       const attributes = block.extractAttributes();
+      const entityProps = block.extractEntityProps();
       return [{
         name: nameStr,
+        label: entityProps.label || '',
         attributes,
       }];
     }
@@ -85,6 +91,10 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     return [];
   },
 
+  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): EntityAttribute[] {
+    return [];
+  },
+
   Entity_simple(keyword: any, name: any, _semicolon: any): EntityAttribute[] {
     const keywordStr = keyword.sourceString;
     const nameStr = name.sourceString;
@@ -93,6 +103,7 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       return [{
         name: nameStr,
+        label: '',
       }];
     }
 
@@ -108,6 +119,7 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
       const props = block.extractAttributeProps();
       return [{
         name: nameStr,
+        label: props.label || '',
         ...props,
       }];
     }
@@ -147,6 +159,13 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
   Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<EntityAttribute> {
     return {};
+  },
+
+  Entity_label(_labelKeyword: any, labelRef: any, _semicolon: any): Partial<EntityAttribute> {
+    const labelStr = labelRef.sourceString;
+    // Убираем кавычки из строкового литерала
+    const label = labelStr.slice(1, -1);
+    return { label };
   },
 
   Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<EntityAttribute> {
@@ -203,6 +222,48 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
   Item(entity: any): Partial<EntityAttribute> {
     return entity.extractAttributeProps();
+  },
+});
+
+// Операция для извлечения свойств самой entity (label, и т.д.)
+semantics.addOperation<Partial<Pick<Entity, 'label'>>>('extractEntityProps', {
+  _terminal(): Partial<Pick<Entity, 'label'>> {
+    return {};
+  },
+
+  _iter(...children: any[]): Partial<Pick<Entity, 'label'>> {
+    return children.reduce((acc, child) => ({ ...acc, ...child.extractEntityProps() }), {});
+  },
+
+  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    return {};
+  },
+
+  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    return {};
+  },
+
+  Entity_label(_labelKeyword: any, labelRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    const labelStr = labelRef.sourceString;
+    // Убираем кавычки из строкового литерала
+    const label = labelStr.slice(1, -1);
+    return { label };
+  },
+
+  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    return {};
+  },
+
+  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    return block.extractEntityProps();
+  },
+
+  Block(_open: any, items: any, _close: any): Partial<Pick<Entity, 'label'>> {
+    return items.extractEntityProps();
+  },
+
+  Item(entity: any): Partial<Pick<Entity, 'label'>> {
+    return entity.extractEntityProps();
   },
 });
 

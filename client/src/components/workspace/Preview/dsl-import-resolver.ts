@@ -54,6 +54,10 @@ semantics.addOperation<ImportInfo[]>('findImports', {
     return [importInfo];
   },
 
+  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): ImportInfo[] {
+    return [];
+  },
+
   Entity_simple(_keyword: any, _name: any, _semicolon: any): ImportInfo[] {
     return [];
   },

@@ -6,7 +6,8 @@ import type { Entity, EntityAttribute } from './types'
 const METRICS = {
   // Высота
   HEADER_HEIGHT: 40, // высота заголовка с padding
-  ATTRIBUTE_ROW_HEIGHT: 28, // высота строки атрибута
+  HEADER_LABEL_HEIGHT: 18, // дополнительная высота для label (text-xs + mt-0.5)
+  ATTRIBUTE_ROW_HEIGHT: 30, // высота строки атрибута
   BORDER_WIDTH: 4, // border-2 = 2px с каждой стороны
 
   // Ширина
@@ -56,16 +57,19 @@ const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
  * Вычисляет размеры одного узла (entity)
  */
 export const calculateNodeDimensions = (entity: Entity): { width: number; height: number } => {
-  // Высота = заголовок + (количество атрибутов * высота строки) + границы
+  // Высота = заголовок + (label если есть) + (количество атрибутов * высота строки) + границы
   const height =
     METRICS.HEADER_HEIGHT +
+    (entity.label ? METRICS.HEADER_LABEL_HEIGHT : 0) +
     (entity.attributes.length * METRICS.ATTRIBUTE_ROW_HEIGHT) +
     METRICS.BORDER_WIDTH
 
   // Ширина = максимальная ширина среди:
-  // 1. Ширина заголовка (имя entity)
+  // 1. Ширина заголовка (имя entity и label, если есть)
   // 2. Ширина самой длинной строки атрибута
-  const headerWidth = estimateTextWidth(entity.name, false) + METRICS.PADDING_HORIZONTAL
+  const nameWidth = estimateTextWidth(entity.name, false)
+  const labelWidth = entity.label ? estimateTextWidth(entity.label, false) : 0
+  const headerWidth = Math.max(nameWidth, labelWidth) + METRICS.PADDING_HORIZONTAL
 
   const maxAttributeWidth = entity.attributes.reduce((max, attr) => {
     const attrWidth = calculateAttributeRowWidth(attr)

@@ -7,8 +7,11 @@ const EntityNode = ({ data }: NodeProps<Entity>) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
-      <div className="bg-primary text-primary-foreground px-3 py-2 rounded-t-md font-semibold text-sm">
-        {data.name}
+      <div className="bg-primary text-primary-foreground px-3 py-2 rounded-t-md">
+        <div className="font-semibold text-sm">{data.name}</div>
+        {data.label && (
+          <div className="text-xs opacity-75 mt-0.5">{data.label}</div>
+        )}
       </div>
 
       {/* Атрибуты */}

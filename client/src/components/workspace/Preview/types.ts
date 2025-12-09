@@ -2,6 +2,7 @@
 
 export interface EntityAttribute {
   name: string
+  label: string
   type?: string // Для скалярных типов: 'INTEGER', 'VARCHAR', etc. Для навигационных: 'EntityName' или 'EntityName[]'
   isPrimaryKey?: boolean
   isForeignKey?: boolean
@@ -24,6 +25,7 @@ export interface EntityRelation {
 
 export interface Entity {
   name: string
+  label: string
   attributes: EntityAttribute[]
 }
 
