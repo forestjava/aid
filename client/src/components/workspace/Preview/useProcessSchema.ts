@@ -147,15 +147,19 @@ function layoutGraph(
   const edges: Edge[] = schema.relations.map((relation, index) => {
     dagreGraph.setEdge(relation.source, relation.target)
 
+    const isExternal = relation.type === 'external'
+
     return {
       id: `e${index}-${relation.source}-${relation.target}`,
       source: relation.source,
       target: relation.target,
       sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
       targetHandle: `${relation.target}-${relation.targetNavigation}`,
+      animated: isExternal,
       style: {
-        strokeWidth: 2,
+        strokeWidth: isExternal ? 1 : 2,
         stroke: getEdgeColor(relation.paletteIndex),
+        strokeDasharray: isExternal ? '5,5' : undefined,
       },
     }
   })

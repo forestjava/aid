@@ -13,6 +13,7 @@ export interface EntityAttribute {
   isCollection?: boolean // Коллекция (массив) сущностей
   hasConnection?: 'source' | 'target' // Роль навигационного свойства в связи
   paletteIndex?: number // Индекс в палитре цветов для связи
+  syncTarget?: string // Цель синхронизации для external связей: "EntityName.attributeName"
 }
 
 export interface EntityRelation {
@@ -21,6 +22,7 @@ export interface EntityRelation {
   target: string // Имя сущности-цели связи (справа)
   targetNavigation: string // Имя навигационного свойства цели
   paletteIndex: number // Индекс в палитре цветов
+  type: 'internal' | 'external' // Тип связи
 }
 
 export interface Entity {

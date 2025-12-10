@@ -7,6 +7,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
+const SYNC_KEYWORDS = new Set(['sync', 'обмен']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
 
@@ -195,6 +196,11 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
       }
     }
 
+    // Обрабатываем "sync ExternalEntity.externalAttr"
+    if (SYNC_KEYWORDS.has(keywordStr)) {
+      return { syncTarget: nameStr };
+    }
+
     return {};
   },
 
@@ -268,9 +274,9 @@ semantics.addOperation<Partial<Pick<Entity, 'label'>>>('extractEntityProps', {
 });
 
 /**
- * Создает relations между сущностями на основе навигационных свойств
+ * Создает internal relations между сущностями на основе навигационных свойств
  */
-function buildRelations(entities: Entity[]): EntityRelation[] {
+function buildInternalRelations(entities: Entity[]): EntityRelation[] {
   const entityMap = new Map(entities.map(e => [e.name, e]));
   const relationsMap = new Map<string, EntityRelation>();
 
@@ -321,6 +327,67 @@ function buildRelations(entities: Entity[]): EntityRelation[] {
           target: targetEntity.name,
           targetNavigation: reverseAttr.name,
           paletteIndex,
+          type: 'internal',
+        });
+      }
+    }
+  }
+
+  return Array.from(relationsMap.values());
+}
+
+/**
+ * Создает external relations между сущностями на основе sync-атрибутов
+ */
+function buildExternalRelations(entities: Entity[], startPaletteIndex: number): EntityRelation[] {
+  // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
+  const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
+  
+  for (const entity of entities) {
+    for (const attr of entity.attributes) {
+      const fullPath = `${entity.name}.${attr.name}`;
+      attributesMap.set(fullPath, { entity, attr });
+    }
+  }
+
+  const relationsMap = new Map<string, EntityRelation>();
+
+  // Перебираем все атрибуты и ищем sync
+  for (const entity of entities) {
+    for (const attr of entity.attributes) {
+      if (!attr.syncTarget) continue;
+
+      // Ищем целевой атрибут по полному пути в Map
+      const target = attributesMap.get(attr.syncTarget);
+      
+      if (!target) {
+        console.warn(`Sync target not found: ${attr.syncTarget}`);
+        continue;
+      }
+
+      // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
+      const canonicalKey = [entity.name, target.entity.name].sort().join('::');
+
+      // Сохраняем связь в Map по ключу (первая встреченная)
+      if (!relationsMap.has(canonicalKey)) {
+        // Текущий размер relationsMap как paletteIndex новой связи
+        const paletteIndex = relationsMap.size + startPaletteIndex;
+
+        // Помечаем атрибуты
+        attr.hasConnection = 'source';
+        attr.paletteIndex = paletteIndex;
+        
+        target.attr.hasConnection = 'target';
+        target.attr.paletteIndex = paletteIndex;
+
+        // Создаем external связь
+        relationsMap.set(canonicalKey, {
+          source: entity.name,
+          sourceNavigation: attr.name,
+          target: target.entity.name,
+          targetNavigation: target.attr.name,
+          paletteIndex,
+          type: 'external',
         });
       }
     }
@@ -363,8 +430,14 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
       });
     });
 
-    // Строим relations
-    const relations = buildRelations(entities);
+    // Строим internal relations
+    const internalRelations = buildInternalRelations(entities);
+
+    // Строим external relations (начиная с индекса после internal)
+    const externalRelations = buildExternalRelations(entities, internalRelations.length);
+
+    // Объединяем все связи
+    const relations = [...internalRelations, ...externalRelations];
 
     return { entities, relations };
   } catch (error) {
