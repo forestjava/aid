@@ -35,3 +35,10 @@ export interface DatabaseSchema {
   entities: Entity[]
   relations: EntityRelation[]
 }
+
+/**
+ * Контекст схемы - общие параметры для стилизации
+ */
+export interface SchemeContext {
+  hasExternalRelations: boolean // Есть ли в схеме external связи
+}

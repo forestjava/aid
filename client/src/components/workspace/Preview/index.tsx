@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
@@ -17,10 +17,6 @@ import { useProcessSchema } from './useProcessSchema'
 
 interface PreviewProps {
   currentFile: string | null // файл, который нужно открыть (приходит извне)
-}
-
-const nodeTypes: NodeTypes = {
-  entity: EntityNode,
 }
 
 // Внутренний компонент для автоматического fitView
@@ -64,7 +60,12 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
   })
 
   // Шаги 2-5: Асинхронная обработка содержимого файла (резолвинг, парсинг, размеры, layout)
-  const { nodes, edges, isProcessing } = useProcessSchema(fileData?.content, currentFile || '')
+  const { nodes, edges, isProcessing, schemeContext } = useProcessSchema(fileData?.content, currentFile || '')
+
+  // Создаем nodeTypes с замыканием на schemeContext
+  const nodeTypes: NodeTypes = useMemo(() => ({
+    entity: (props) => <EntityNode {...props} schemeContext={schemeContext} />,
+  }), [schemeContext])
 
   // Локальное состояние для возможности перемещения узлов
   const [previewNodes, setNodes, onNodesChange] = useNodesState([])

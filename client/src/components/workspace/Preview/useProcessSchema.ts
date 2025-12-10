@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react'
 import type { Node, Edge } from 'reactflow'
 import dagre from 'dagre'
-import type { DatabaseSchema, Entity } from './types'
+import type { DatabaseSchema, Entity, SchemeContext } from './types'
 import { resolveImports } from '@/components/workspace/Preview/dsl-import-resolver'
 import { parseSchema } from '@/components/workspace/Preview/dsl-schema-parser'
 import { calculateAllNodeDimensions } from './calculateNodeDimensions'
-import { getEdgeColor } from './colors'
+import { getEdgeStyle } from './styles'
 
 interface ProcessSchemaResult {
   nodes: Node[]
   edges: Edge[]
   isProcessing: boolean
+  schemeContext: SchemeContext
 }
 
 // Константы для настройки dagre-графа
@@ -40,11 +41,13 @@ export const useProcessSchema = (
   const [nodes, setNodes] = useState<Node[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
+  const [schemeContext, setSchemeContext] = useState<SchemeContext>({ hasExternalRelations: false })
 
   useEffect(() => {
     if (!content) {
       setNodes([])
       setEdges([])
+      setSchemeContext({ hasExternalRelations: false })
       setIsProcessing(false)
       return
     }
@@ -79,15 +82,23 @@ export const useProcessSchema = (
 
         // Шаг 5: Размещение узлов и связей на схеме
         console.log('Шаг 5: Размещение узлов и связей (dagre.layout)...')
-        const { nodes: layoutNodes, edges: layoutEdges } = layoutGraph(schema, nodeDimensions)
+        const hasExternalRelations = schema.relations.some(r => r.type === 'external')
+        const context: SchemeContext = { hasExternalRelations }
+        const { nodes: layoutNodes, edges: layoutEdges } = layoutGraph(
+          schema,
+          nodeDimensions,
+          context
+        )
 
         setNodes(layoutNodes)
         setEdges(layoutEdges)
+        setSchemeContext(context)
         console.log('Обработка завершена. Готово к рендеру (Шаг 6)')
       } catch (error) {
         console.error('DSL processing error:', error)
         setNodes([])
         setEdges([])
+        setSchemeContext({ hasExternalRelations: false })
       } finally {
         setIsProcessing(false)
       }
@@ -96,7 +107,7 @@ export const useProcessSchema = (
     processContent()
   }, [content, currentFilePath])
 
-  return { nodes, edges, isProcessing }
+  return { nodes, edges, isProcessing, schemeContext }
 }
 
 /**
@@ -105,7 +116,8 @@ export const useProcessSchema = (
  */
 function layoutGraph(
   schema: DatabaseSchema,
-  nodeDimensions: Map<string, { width: number; height: number }>
+  nodeDimensions: Map<string, { width: number; height: number }>,
+  schemeContext: SchemeContext
 ): { nodes: Node<Entity>[]; edges: Edge[] } {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
@@ -124,7 +136,7 @@ function layoutGraph(
   })
 
   // Создаем узлы с рассчитанными размерами
-  const nodes: Node<Entity>[] = schema.entities.map((entity) => {
+  const nodes: Node[] = schema.entities.map((entity) => {
     const dimensions = nodeDimensions.get(entity.name) || {
       width: DEFAULT_NODE_WIDTH,
       height: DEFAULT_NODE_HEIGHT,
@@ -147,20 +159,13 @@ function layoutGraph(
   const edges: Edge[] = schema.relations.map((relation, index) => {
     dagreGraph.setEdge(relation.source, relation.target)
 
-    const isExternal = relation.type === 'external'
-
     return {
       id: `e${index}-${relation.source}-${relation.target}`,
       source: relation.source,
       target: relation.target,
       sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
       targetHandle: `${relation.target}-${relation.targetNavigation}`,
-      animated: isExternal,
-      style: {
-        strokeWidth: isExternal ? 1 : 2,
-        stroke: getEdgeColor(relation.paletteIndex),
-        strokeDasharray: isExternal ? '5,5' : undefined,
-      },
+      ...getEdgeStyle(relation, schemeContext),
     }
   })
 

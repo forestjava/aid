@@ -1,9 +1,13 @@
 import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
-import { type Entity } from './types'
-import { getEdgeColor } from './colors'
+import { type Entity, type SchemeContext } from './types'
+import { getAttributeStyle } from './styles'
 
-const EntityNode = ({ data }: NodeProps<Entity>) => {
+interface EntityNodeProps extends NodeProps<Entity> {
+  schemeContext: SchemeContext
+}
+
+const EntityNode: React.FC<EntityNodeProps> = ({ data, schemeContext }) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
@@ -16,16 +20,14 @@ const EntityNode = ({ data }: NodeProps<Entity>) => {
 
       {/* Атрибуты */}
       <div className="divide-y divide-border">
-        {data.attributes.map((attr, idx) => (
-          <div
-            key={idx}
-            className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
-            style={
-              attr.paletteIndex !== undefined
-                ? { color: getEdgeColor(attr.paletteIndex) }
-                : undefined
-            }
-          >
+        {data.attributes.map((attr, idx) => {
+          const style = getAttributeStyle(attr, schemeContext)
+          return (
+            <div
+              key={idx}
+              className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
+              style={style}
+            >
             {/* Handle для навигационных свойств */}
             {attr.hasConnection === 'target' && (
               <Handle
@@ -79,7 +81,7 @@ const EntityNode = ({ data }: NodeProps<Entity>) => {
               {attr.type}
             </span>
           </div>
-        ))}
+        )})}
       </div>
     </div>
   )
