@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ReactFlow, {
   Background,
@@ -10,17 +10,26 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { filesystemApi } from '@/api/filesystem'
 import EntityNode from './EntityNode'
 import { useProcessSchema } from './useProcessSchema'
+import { Button } from '@/components/ui/button'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 interface PreviewProps {
   currentFile: string | null // файл, который нужно открыть (приходит извне)
 }
 
-// Внутренний компонент для автоматического fitView
-const AutoFitView: React.FC<{ currentFile: string | null, nodes: Node[] }> = ({ currentFile, nodes }) => {
+// Внутренний компонент для автоматического fitView и центрирования на выбранном узле
+const AutoFitView: React.FC<{
+  currentFile: string | null
+  nodes: Node[]
+  selectedNodeId: string
+}> = ({ currentFile, nodes, selectedNodeId }) => {
   const reactFlowInstance = useReactFlow()
 
   // fitView при изменении currentFile
@@ -48,10 +57,28 @@ const AutoFitView: React.FC<{ currentFile: string | null, nodes: Node[] }> = ({ 
     return () => resizeObserver.disconnect()
   }, [nodes.length, reactFlowInstance])
 
+  // Центрирование на выбранном узле
+  useEffect(() => {
+    if (selectedNodeId && nodes.length > 0) {
+      const selectedNode = nodes.find(node => node.id === selectedNodeId)
+      if (selectedNode) {
+        reactFlowInstance.fitView({
+          nodes: [selectedNode],
+          duration: 300,
+          padding: 0.5,
+        })
+      }
+    }
+  }, [selectedNodeId, nodes, reactFlowInstance])
+
   return null
 }
 
 export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
+  // Состояние для combobox выбора узлов
+  const [open, setOpen] = useState(false)
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('')
+
   // Шаг 1: Получение контента текущего файла
   const { data: fileData, isLoading } = useQuery({
     queryKey: ['readFile', currentFile],
@@ -70,6 +97,14 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
   // Локальное состояние для возможности перемещения узлов
   const [previewNodes, setNodes, onNodesChange] = useNodesState([])
   const [previewEdges, setEdges, onEdgesChange] = useEdgesState([])
+
+  // Список имен узлов для combobox
+  const nodeNames = useMemo(() => {
+    return previewNodes.map(node => ({
+      value: node.id,
+      label: node.data.name || node.id,
+    }))
+  }, [previewNodes])
 
   // Синхронизируем с данными из useProcessSchema для рендера (Шаг 6)
   useEffect(() => {
@@ -103,6 +138,56 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
         ) : (
           <span className="text-xs text-muted-foreground">• Файл не выбран</span>
         )}
+
+        {/* Combobox для выбора узлов - в правой части заголовка */}
+        {nodeNames.length > 0 && (
+          <div className="ml-auto">
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="h-7 w-[180px] justify-between text-xs"
+                >
+                  {selectedNodeId
+                    ? nodeNames.find((node) => node.value === selectedNodeId)?.label
+                    : "Выбрать узел..."}
+                  <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[180px] p-0">
+                <Command>
+                  <CommandInput placeholder="Поиск узла..." className="h-8 text-xs" />
+                  <CommandList>
+                    <CommandEmpty>Узел не найден.</CommandEmpty>
+                    <CommandGroup>
+                      {nodeNames.map((node) => (
+                        <CommandItem
+                          key={node.value}
+                          value={node.value}
+                          onSelect={(currentValue) => {
+                            setSelectedNodeId(currentValue === selectedNodeId ? '' : currentValue)
+                            setOpen(false)
+                          }}
+                          className="text-xs"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-3 w-3",
+                              selectedNodeId === node.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {node.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
       </div>
 
       {/* Область схемы */}
@@ -129,11 +214,11 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
-            minZoom={0.01} 
+            minZoom={0.01}
           >
             <Background />
             <Controls />
-            <AutoFitView currentFile={currentFile} nodes={previewNodes} />
+            <AutoFitView currentFile={currentFile} nodes={previewNodes} selectedNodeId={selectedNodeId} />
           </ReactFlow>
         </div>
       )}
