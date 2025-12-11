@@ -53,20 +53,11 @@ export function FileTreeItem({
   const isDraggedOver = dragOverPath === fullPath
   const itemRef = useRef<HTMLDivElement>(null)
 
-  // Проверяем, нужно ли разворачивать папку:
-  // Автоматически разворачиваем только родительские папки
-  // Сам выбранный каталог управляется вручную через handleClick
-  const isParentOfSelected = selectedPath?.startsWith(`${fullPath}/`) ?? false
-  const shouldAutoExpand = isParentOfSelected
-
-  const [isExpanded, setIsExpanded] = useState(shouldAutoExpand)
-
-  // Автоматически разворачиваем папку при изменении selectedPath
+  const [isExpanded, setIsExpanded] = useState(false);
+  
   useEffect(() => {
-    if (item.isDirectory && shouldAutoExpand && !isExpanded) {
-      setIsExpanded(true)
-    }
-  }, [shouldAutoExpand, isExpanded, item.isDirectory])
+    if (isSelected && item.isDirectory) setIsExpanded(!isExpanded);
+  }, [item, isSelected])
 
   // Загружаем содержимое папки только когда она раскрыта
   const { data, isLoading } = useQuery({
@@ -77,20 +68,8 @@ export function FileTreeItem({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-
-    if (item.isDirectory) {
-      if (isSelected) {
-        // Если каталог уже выбран, только toggle без навигации
-        setIsExpanded(!isExpanded)
-      } else {
-        // Если каталог не выбран, навигация + раскрытие
-        onSelect(fullPath, true)
-        setIsExpanded(true)
-      }
-    } else {
-      // Для файлов всегда навигация
-      onSelect(fullPath, false)
-    }
+    if (isSelected && item.isDirectory) setIsExpanded(!isExpanded);
+    else onSelect(fullPath, item.isDirectory);
   }
 
   const handleMenuAction = (e: React.MouseEvent, action: 'rename' | 'delete') => {
