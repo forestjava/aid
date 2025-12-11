@@ -10,6 +10,7 @@ const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', '
 const SYNC_KEYWORDS = new Set(['sync', 'обмен']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
+const LABEL_MODIFIERS = new Set(['label', 'заголовок']);
 
 /**
  * Семантика для парсинга DSL в схему БД
@@ -34,11 +35,11 @@ semantics.addOperation<Entity[]>('extractEntities', {
     return [];
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Entity[] {
+  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): Entity[] {
     return [];
   },
 
-  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): Entity[] {
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Entity[] {
     return [];
   },
 
@@ -88,11 +89,11 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     return [];
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): EntityAttribute[] {
+  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): EntityAttribute[] {
     return [];
   },
 
-  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): EntityAttribute[] {
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): EntityAttribute[] {
     return [];
   },
 
@@ -158,15 +159,23 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     };
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<EntityAttribute> {
+  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<EntityAttribute> {
+    const keywordStr = stringKeyword.sourceString;
+    
+    // Обрабатываем label - извлекаем значение
+    if (LABEL_MODIFIERS.has(keywordStr)) {
+      const valueStr = stringValue.sourceString;
+      // Убираем кавычки из строкового литерала
+      const label = valueStr.slice(1, -1);
+      return { label };
+    }
+    
+    // Для других строковых модификаторов (import и т.д.)
     return {};
   },
 
-  Entity_label(_labelKeyword: any, labelRef: any, _semicolon: any): Partial<EntityAttribute> {
-    const labelStr = labelRef.sourceString;
-    // Убираем кавычки из строкового литерала
-    const label = labelStr.slice(1, -1);
-    return { label };
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<EntityAttribute> {
+    return {};
   },
 
   Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<EntityAttribute> {
@@ -245,15 +254,23 @@ semantics.addOperation<Partial<Pick<Entity, 'label'>>>('extractEntityProps', {
     return {};
   },
 
-  Entity_import(_importKeyword: any, _importRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    const keywordStr = stringKeyword.sourceString;
+    
+    // Обрабатываем label - извлекаем значение
+    if (LABEL_MODIFIERS.has(keywordStr)) {
+      const valueStr = stringValue.sourceString;
+      // Убираем кавычки из строкового литерала
+      const label = valueStr.slice(1, -1);
+      return { label };
+    }
+    
+    // Для других строковых модификаторов (import и т.д.)
     return {};
   },
 
-  Entity_label(_labelKeyword: any, labelRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
-    const labelStr = labelRef.sourceString;
-    // Убираем кавычки из строкового литерала
-    const label = labelStr.slice(1, -1);
-    return { label };
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+    return {};
   },
 
   Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {

@@ -16,6 +16,11 @@ interface ImportInfo {
 }
 
 /**
+ * Константы для ключевых слов DSL
+ */
+const IMPORT_MODIFIERS = new Set(['import', 'из']);
+
+/**
  * Семантика для извлечения импортов
  */
 const semantics = dslGrammar.createSemantics();
@@ -37,24 +42,31 @@ semantics.addOperation<ImportInfo[]>('findImports', {
     return [];
   },
 
-  Entity_import(this: Node, importKeyword: any, importRef: any, _semicolon: any): ImportInfo[] {
-    const keyword = importKeyword.sourceString;
-    const path = importRef.sourceString.slice(1, -1); // Убираем кавычки
+  Entity_string(this: Node, stringKeyword: any, stringValue: any, _semicolon: any): ImportInfo[] {
+    const keywordStr = stringKeyword.sourceString;
+    
+    // Обрабатываем import - извлекаем информацию об импорте
+    if (IMPORT_MODIFIERS.has(keywordStr)) {
+      const path = stringValue.sourceString.slice(1, -1); // Убираем кавычки
 
-    const importInfo: ImportInfo = {
-      keyword,
-      path,
-      fullText: this.sourceString,
-      position: {
-        start: this.source.startIdx,
-        end: this.source.endIdx,
-      },
-    };
+      const importInfo: ImportInfo = {
+        keyword: keywordStr,
+        path,
+        fullText: this.sourceString,
+        position: {
+          start: this.source.startIdx,
+          end: this.source.endIdx,
+        },
+      };
 
-    return [importInfo];
+      return [importInfo];
+    }
+    
+    // Для других строковых модификаторов (label и т.д.)
+    return [];
   },
 
-  Entity_label(_labelKeyword: any, _labelRef: any, _semicolon: any): ImportInfo[] {
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): ImportInfo[] {
     return [];
   },
 

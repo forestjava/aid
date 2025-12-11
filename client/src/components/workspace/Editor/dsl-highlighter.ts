@@ -77,18 +77,18 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  Entity_import(importKeyword: any, importRef: any, _semicolon: any): Token[] {
+  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
-    // Добавляем importKeyword (терминальный узел)
+    // Добавляем stringKeyword (терминальный узел)
     tokens.push({
-      from: importKeyword.source.startIdx,
-      to: importKeyword.source.endIdx,
+      from: stringKeyword.source.startIdx,
+      to: stringKeyword.source.endIdx,
       type: 'keyword'
     });
 
-    // Добавляем importRef (stringLiteral)
-    tokens.push(...importRef.getTokens());
+    // Добавляем stringValue (stringLiteral)
+    tokens.push(...stringValue.getTokens());
 
     // Добавляем пунктуацию (терминальный узел)
     tokens.push({
@@ -100,18 +100,22 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  Entity_label(labelKeyword: any, labelRef: any, _semicolon: any): Token[] {
+  Entity_number(this: Node, numberKeyword: any, numberValue: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
-    // Добавляем labelKeyword (терминальный узел)
+    // Добавляем numberKeyword (терминальный узел)
     tokens.push({
-      from: labelKeyword.source.startIdx,
-      to: labelKeyword.source.endIdx,
+      from: numberKeyword.source.startIdx,
+      to: numberKeyword.source.endIdx,
       type: 'keyword'
     });
 
-    // Добавляем labelRef (stringLiteral)
-    tokens.push(...labelRef.getTokens());
+    // Добавляем numberValue (число - терминальный узел)
+    tokens.push({
+      from: numberValue.source.startIdx,
+      to: numberValue.source.endIdx,
+      type: 'number'
+    });
 
     // Добавляем пунктуацию (терминальный узел)
     tokens.push({
@@ -236,18 +240,21 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  // importRef = stringLiteral
+  // stringValue = stringLiteral
   // Арность: 1 (только stringLiteral)
-  importRef(stringLiteral: any): Token[] {
+  stringValue(stringLiteral: any): Token[] {
     // Делегируем обработку stringLiteral
     return stringLiteral.getTokens();
   },
 
-  // labelRef = stringLiteral
-  // Арность: 1 (только stringLiteral)
-  labelRef(stringLiteral: any): Token[] {
-    // Делегируем обработку stringLiteral
-    return stringLiteral.getTokens();
+  // numberValue = digit+ ("." digit+)?
+  // Арность: 3 (целая часть + опциональная точка + опциональная дробная часть)
+  numberValue(this: Node, _integerPart: any, _dot: any, _fractionalPart: any): Token[] {
+    return [{
+      from: this.source.startIdx,
+      to: this.source.endIdx,
+      type: 'number'
+    }];
   },
 
   // identifier = simpleIdentifier ("." simpleIdentifier)*

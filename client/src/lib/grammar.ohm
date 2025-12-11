@@ -9,10 +9,10 @@ DSL {
   //Entity = keyword name ";"         --simple
   //       | keyword name Block ";"?  --options
 
-  // Описываем особенности для ключевых слов type и import
+  // Описываем особенности для ключевых слов type, строковых и числовых значений
   Entity = typeKeyword typeRef ";"       --type
-         | importKeyword importRef ";"   --import
-         | labelKeyword labelRef ";"     --label
+         | stringKeyword stringValue ";" --string
+         | numberKeyword numberValue ";" --number
          | keyword name ";"              --simple
          | keyword name Block ";"?       --options
 
@@ -25,8 +25,8 @@ DSL {
     
   // Ключевые слова
   typeKeyword = "type" | "тип"
-  importKeyword = "import" | "из"
-  labelKeyword = "label" | "заголовок"
+  stringKeyword = "import" | "из" | "label" | "заголовок"
+  numberKeyword = "width" | "ширина" | "height" | "высота"
   keyword = 
     // Английские ключевые слова
       "service"
@@ -59,11 +59,11 @@ DSL {
   // Имя типа при этом может содержать размерность (200) или (10,2) и/или признак [] collection 
   typeRef = identifier ("(" digit+ ("," digit+)* ")")? "[]"?
 
-  // Имя импорта при этом может быть только строковым литералом 
-  importRef = stringLiteral
+  // Строковое значение - это строковый литерал
+  stringValue = stringLiteral
 
-  // Заголовок может быть только строковым литералом 
-  labelRef = stringLiteral
+  // Числовое значение - это целое или дробное число
+  numberValue = digit+ ("." digit+)?
 
   // Идентификатор может быть составным через точку (неограниченная вложенность)
   identifier = simpleIdentifier ("." simpleIdentifier)*
