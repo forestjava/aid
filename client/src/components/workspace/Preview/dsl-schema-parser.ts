@@ -456,7 +456,11 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     // Объединяем все связи
     const relations = [...internalRelations, ...externalRelations];
 
-    return { entities, relations };
+    return {
+      entities,
+      relations,
+      hasExternalRelations: externalRelations.length > 0,
+    };
   } catch (error) {
     console.error('Schema parsing error:', error);
     return null;

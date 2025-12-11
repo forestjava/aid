@@ -3,18 +3,18 @@
  * Содержит всю логику определения цветов и стилей для связей и атрибутов
  */
 
-import type { EntityRelation, EntityAttribute, SchemeContext } from './types'
+import type { EntityRelation, EntityAttribute, DatabaseSchema } from './types'
 import { getEdgeColor as getColorFromPalette } from './colors'
 
 /**
  * Получить стиль для связи (edge)
  * @param relation - связь
- * @param schemeContext - контекст схемы (общие параметры)
+ * @param schema - схема БД (включая информацию о наличии external связей)
  * @returns объект стиля для ReactFlow Edge (включая цвет)
  */
-export function getEdgeStyle(relation: EntityRelation, schemeContext: SchemeContext) {
+export function getEdgeStyle(relation: EntityRelation, schema: DatabaseSchema) {
   const isExternal = relation.type === 'external'
-  const { hasExternalRelations } = schemeContext
+  const { hasExternalRelations } = schema
   
   // Если есть external связи, раскрашиваем только их, иначе раскрашиваем все
   const shouldColor = hasExternalRelations ? isExternal : true
@@ -33,12 +33,12 @@ export function getEdgeStyle(relation: EntityRelation, schemeContext: SchemeCont
 /**
  * Получить стиль для атрибута
  * @param attribute - атрибут
- * @param schemeContext - контекст схемы (общие параметры)
+ * @param schema - схема БД (включая информацию о наличии external связей)
  * @returns объект стиля для атрибута (включая цвет) или undefined
  */
 export function getAttributeStyle(
   attribute: EntityAttribute,
-  schemeContext: SchemeContext
+  schema: DatabaseSchema
 ): { color: string } | undefined {
   // Если атрибут не имеет связи, не раскрашиваем
   if (attribute.paletteIndex === undefined) {
@@ -46,7 +46,7 @@ export function getAttributeStyle(
   }
 
   const isExternalAttribute = attribute.syncTarget !== undefined
-  const { hasExternalRelations } = schemeContext
+  const { hasExternalRelations } = schema
   
   // Если есть external связи в схеме, раскрашиваем только атрибуты external связей
   if (hasExternalRelations) {

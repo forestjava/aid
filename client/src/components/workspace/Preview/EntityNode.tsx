@@ -1,13 +1,13 @@
 import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
-import { type Entity, type SchemeContext } from './types'
+import { type Entity, type DatabaseSchema } from './types'
 import { getAttributeStyle } from './styles'
 
 interface EntityNodeProps extends NodeProps<Entity> {
-  schemeContext: SchemeContext
+  schema: DatabaseSchema
 }
 
-const EntityNode: React.FC<EntityNodeProps> = ({ data, schemeContext }) => {
+const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
@@ -21,7 +21,7 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schemeContext }) => {
       {/* Атрибуты */}
       <div className="divide-y divide-border">
         {data.attributes.map((attr, idx) => {
-          const style = getAttributeStyle(attr, schemeContext)
+          const style = getAttributeStyle(attr, schema)
           return (
             <div
               key={idx}

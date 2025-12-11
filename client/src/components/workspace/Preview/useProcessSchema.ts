@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { Node, Edge } from 'reactflow'
 import dagre from 'dagre'
-import type { DatabaseSchema, Entity, SchemeContext } from './types'
+import type { DatabaseSchema, Entity } from './types'
 import { resolveImports } from '@/components/workspace/Preview/dsl-import-resolver'
 import { parseSchema } from '@/components/workspace/Preview/dsl-schema-parser'
 import { calculateAllNodeDimensions } from './calculateNodeDimensions'
@@ -11,7 +11,7 @@ interface ProcessSchemaResult {
   nodes: Node[]
   edges: Edge[]
   isProcessing: boolean
-  schemeContext: SchemeContext
+  schema: DatabaseSchema | null
 }
 
 // Константы для настройки dagre-графа
@@ -41,13 +41,13 @@ export const useProcessSchema = (
   const [nodes, setNodes] = useState<Node[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
-  const [schemeContext, setSchemeContext] = useState<SchemeContext>({ hasExternalRelations: false })
+  const [schema, setSchema] = useState<DatabaseSchema | null>(null)
 
   useEffect(() => {
     if (!content) {
       setNodes([])
       setEdges([])
-      setSchemeContext({ hasExternalRelations: false })
+      setSchema(null)
       setIsProcessing(false)
       return
     }
@@ -73,6 +73,7 @@ export const useProcessSchema = (
           console.log('Schema parsing failed or empty result')
           setNodes([])
           setEdges([])
+          setSchema(null)
           return
         }
 
@@ -82,23 +83,20 @@ export const useProcessSchema = (
 
         // Шаг 5: Размещение узлов и связей на схеме
         console.log('Шаг 5: Размещение узлов и связей (dagre.layout)...')
-        const hasExternalRelations = schema.relations.some(r => r.type === 'external')
-        const context: SchemeContext = { hasExternalRelations }
         const { nodes: layoutNodes, edges: layoutEdges } = layoutGraph(
           schema,
-          nodeDimensions,
-          context
+          nodeDimensions
         )
 
         setNodes(layoutNodes)
         setEdges(layoutEdges)
-        setSchemeContext(context)
+        setSchema(schema)
         console.log('Обработка завершена. Готово к рендеру (Шаг 6)')
       } catch (error) {
         console.error('DSL processing error:', error)
         setNodes([])
         setEdges([])
-        setSchemeContext({ hasExternalRelations: false })
+        setSchema(null)
       } finally {
         setIsProcessing(false)
       }
@@ -107,7 +105,7 @@ export const useProcessSchema = (
     processContent()
   }, [content, currentFilePath])
 
-  return { nodes, edges, isProcessing, schemeContext }
+  return { nodes, edges, isProcessing, schema }
 }
 
 /**
@@ -116,8 +114,7 @@ export const useProcessSchema = (
  */
 function layoutGraph(
   schema: DatabaseSchema,
-  nodeDimensions: Map<string, { width: number; height: number }>,
-  schemeContext: SchemeContext
+  nodeDimensions: Map<string, { width: number; height: number }>
 ): { nodes: Node<Entity>[]; edges: Edge[] } {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
@@ -165,7 +162,7 @@ function layoutGraph(
       target: relation.target,
       sourceHandle: `${relation.source}-${relation.sourceNavigation}`,
       targetHandle: `${relation.target}-${relation.targetNavigation}`,
-      ...getEdgeStyle(relation, schemeContext),
+      ...getEdgeStyle(relation, schema),
     }
   })
 

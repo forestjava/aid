@@ -87,12 +87,12 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
   })
 
   // Шаги 2-5: Асинхронная обработка содержимого файла (резолвинг, парсинг, размеры, layout)
-  const { nodes, edges, isProcessing, schemeContext } = useProcessSchema(fileData?.content, currentFile || '')
+  const { nodes, edges, isProcessing, schema } = useProcessSchema(fileData?.content, currentFile || '')
 
-  // Создаем nodeTypes с замыканием на schemeContext
+  // Создаем nodeTypes с замыканием на schema
   const nodeTypes: NodeTypes = useMemo(() => ({
-    entity: (props) => <EntityNode {...props} schemeContext={schemeContext} />,
-  }), [schemeContext])
+    entity: (props) => schema && <EntityNode {...props} schema={schema} />,
+  }), [schema])
 
   // Локальное состояние для возможности перемещения узлов
   const [previewNodes, setNodes, onNodesChange] = useNodesState([])
