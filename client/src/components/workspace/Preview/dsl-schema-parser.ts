@@ -11,6 +11,7 @@ const SYNC_KEYWORDS = new Set(['sync', 'обмен']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
 const LABEL_MODIFIERS = new Set(['label', 'заголовок']);
+const SEPARATE_MODIFIERS = new Set(['separate', 'промежуток']);
 
 /**
  * Семантика для парсинга DSL в схему БД
@@ -241,20 +242,20 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 });
 
 // Операция для извлечения свойств самой entity (label, и т.д.)
-semantics.addOperation<Partial<Pick<Entity, 'label'>>>('extractEntityProps', {
-  _terminal(): Partial<Pick<Entity, 'label'>> {
+semantics.addOperation<Partial<Entity>>('extractEntityProps', {
+  _terminal(): Partial<Entity> {
     return {};
   },
 
-  _iter(...children: any[]): Partial<Pick<Entity, 'label'>> {
+  _iter(...children: any[]): Partial<Entity> {
     return children.reduce((acc, child) => ({ ...acc, ...child.extractEntityProps() }), {});
   },
 
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<Entity> {
     return {};
   },
 
-  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Entity> {
     const keywordStr = stringKeyword.sourceString;
     
     // Обрабатываем label - извлекаем значение
@@ -269,24 +270,76 @@ semantics.addOperation<Partial<Pick<Entity, 'label'>>>('extractEntityProps', {
     return {};
   },
 
-  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<Entity> {
     return {};
   },
 
-  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<Entity> {
     return {};
   },
 
-  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<Pick<Entity, 'label'>> {
+  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<Entity> {
     return block.extractEntityProps();
   },
 
-  Block(_open: any, items: any, _close: any): Partial<Pick<Entity, 'label'>> {
+  Block(_open: any, items: any, _close: any): Partial<Entity> {
     return items.extractEntityProps();
   },
 
-  Item(entity: any): Partial<Pick<Entity, 'label'>> {
+  Item(entity: any): Partial<Entity> {
     return entity.extractEntityProps();
+  },
+});
+
+// Операция для извлечения свойств схемы (separate и т.д.)
+semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
+  _terminal(): Partial<DatabaseSchema> {
+    return {};
+  },
+
+  _iter(...children: any[]): Partial<DatabaseSchema> {
+    return children.reduce((acc, child) => ({ ...acc, ...child.extractSchemaProps() }), {});
+  },
+
+  Program(entities: any): Partial<DatabaseSchema> {
+    return entities.extractSchemaProps();
+  },
+
+  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<DatabaseSchema> {
+    return {};
+  },
+
+  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): Partial<DatabaseSchema> {
+    return {};
+  },
+
+  Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<DatabaseSchema> {
+    const keywordStr = numberKeyword.sourceString;
+    const valueStr = numberValue.sourceString;
+    
+    // Обрабатываем separate - извлекаем числовое значение
+    if (SEPARATE_MODIFIERS.has(keywordStr)) {
+      const separate = parseFloat(valueStr);
+      return { separate };
+    }
+    
+    return {};
+  },
+
+  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<DatabaseSchema> {
+    return {};
+  },
+
+  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<DatabaseSchema> {
+    return block.extractSchemaProps();
+  },
+
+  Block(_open: any, items: any, _close: any): Partial<DatabaseSchema> {
+    return items.extractSchemaProps();
+  },
+
+  Item(entity: any): Partial<DatabaseSchema> {
+    return entity.extractSchemaProps();
   },
 });
 
@@ -356,7 +409,7 @@ function buildInternalRelations(entities: Entity[]): EntityRelation[] {
 /**
  * Создает external relations между сущностями на основе sync-атрибутов
  */
-function buildExternalRelations(entities: Entity[], startPaletteIndex: number): EntityRelation[] {
+function buildExternalRelations(entities: Entity[]): EntityRelation[] {
   // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
   const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
   
@@ -387,8 +440,8 @@ function buildExternalRelations(entities: Entity[], startPaletteIndex: number): 
 
       // Сохраняем связь в Map по ключу (первая встреченная)
       if (!relationsMap.has(canonicalKey)) {
-        // Текущий размер relationsMap как paletteIndex новой связи
-        const paletteIndex = relationsMap.size + startPaletteIndex;
+        // Текущий размер Map = индекс новой внешней связи
+        const paletteIndex = relationsMap.size;
 
         // Помечаем атрибуты
         attr.hasConnection = 'source';
@@ -438,6 +491,9 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     const adapter = semantics(match);
     const entities: Entity[] = adapter.extractEntities();
 
+    // Извлекаем свойства схемы (напр., separate)
+    const schemaProps = adapter.extractSchemaProps();
+
     // Устанавливаем значение по умолчанию для атрибутов без типа
     entities.forEach(entity => {
       entity.attributes.forEach(attr => {
@@ -450,8 +506,8 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     // Строим internal relations
     const internalRelations = buildInternalRelations(entities);
 
-    // Строим external relations (начиная с индекса после internal)
-    const externalRelations = buildExternalRelations(entities, internalRelations.length);
+    // Строим external relations
+    const externalRelations = buildExternalRelations(entities);
 
     // Объединяем все связи
     const relations = [...internalRelations, ...externalRelations];
@@ -460,6 +516,7 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
       entities,
       relations,
       hasExternalRelations: externalRelations.length > 0,
+      separate: schemaProps.separate,
     };
   } catch (error) {
     console.error('Schema parsing error:', error);

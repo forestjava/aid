@@ -35,4 +35,5 @@ export interface DatabaseSchema {
   entities: Entity[]
   relations: EntityRelation[]
   hasExternalRelations: boolean // Есть ли в схеме external связи
+  separate?: number
 }

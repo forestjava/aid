@@ -15,13 +15,13 @@ interface ProcessSchemaResult {
 }
 
 // Константы для настройки dagre-графа
-const DEFAULT_NODE_WIDTH = 100
-const DEFAULT_NODE_HEIGHT = 100
+const DEFAULT_NODE_WIDTH = 200
+const DEFAULT_NODE_HEIGHT = 200
 const GRAPH_RANKDIR = 'LR'
 const GRAPH_NODESEP = 40
 const GRAPH_MARGINX = 60
 const GRAPH_MARGINY = 40
-const RELATIONS_PER_RANKSEP_UNIT = 10 // Количество связей на одну единицу ranksep
+//const RELATIONS_PER_RANKSEP_UNIT = 10 // Количество связей на одну единицу ranksep
 
 /**
  * Хук для асинхронной обработки содержимого DSL-файла
@@ -119,10 +119,8 @@ function layoutGraph(
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
   
-  // Динамический расчет ranksep в зависимости от количества связей
-  // На каждые RELATIONS_PER_RANKSEP_UNIT связей - одна ширина узла
-  const relationsCount = schema.relations.length
-  const ranksep = Math.max(1, Math.ceil(relationsCount / RELATIONS_PER_RANKSEP_UNIT)) * DEFAULT_NODE_WIDTH
+  // Используем значение separate из схемы, если указано
+  const ranksep = schema.separate || DEFAULT_NODE_WIDTH;
   
   dagreGraph.setGraph({
     rankdir: GRAPH_RANKDIR,
