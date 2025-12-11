@@ -37,7 +37,7 @@ const AutoFitView: React.FC<{
     if (nodes.length > 0) {
       // Небольшая задержка для завершения рендера
       setTimeout(() => {
-        reactFlowInstance.fitView({ duration: 200 })
+        reactFlowInstance.fitView({ duration: 800 })
       }, 200)
     }
   }, [currentFile, nodes.length, reactFlowInstance])
@@ -49,7 +49,7 @@ const AutoFitView: React.FC<{
 
     const resizeObserver = new ResizeObserver(() => {
       if (nodes.length > 0) {
-        reactFlowInstance.fitView({ duration: 200 })
+        reactFlowInstance.fitView({ duration: 400 })
       }
     })
 
@@ -64,7 +64,7 @@ const AutoFitView: React.FC<{
       if (selectedNode) {
         reactFlowInstance.fitView({
           nodes: [selectedNode],
-          duration: 300,
+          duration: 800,
           padding: 0.5,
         })
       }
@@ -148,15 +148,17 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
                   variant="outline"
                   role="combobox"
                   aria-expanded={open}
-                  className="h-7 w-[180px] justify-between text-xs"
+                  className="h-7 min-w-[180px] max-w-[400px] justify-between text-xs"
                 >
-                  {selectedNodeId
-                    ? nodeNames.find((node) => node.value === selectedNodeId)?.label
-                    : "Выбрать узел..."}
+                  <span className="truncate">
+                    {selectedNodeId
+                      ? nodeNames.find((node) => node.value === selectedNodeId)?.label
+                      : "Выбрать узел..."}
+                  </span>
                   <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[180px] p-0">
+              <PopoverContent className="min-w-[180px] max-w-[400px] p-0">
                 <Command>
                   <CommandInput placeholder="Поиск узла..." className="h-8 text-xs" />
                   <CommandList>
@@ -171,14 +173,15 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
                             setOpen(false)
                           }}
                           className="text-xs"
+                          title={node.label}
                         >
                           <Check
                             className={cn(
-                              "mr-2 h-3 w-3",
+                              "mr-2 h-3 w-3 shrink-0",
                               selectedNodeId === node.value ? "opacity-100" : "opacity-0"
                             )}
                           />
-                          {node.label}
+                          <span className="truncate">{node.label}</span>
                         </CommandItem>
                       ))}
                     </CommandGroup>
