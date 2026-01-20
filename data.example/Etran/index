@@ -1,0 +1,15 @@
+/*
+ЭТРАН - Интеграция с системой электронных перевозочных документов ОАО "РЖД"
+Описание структуры данных накладных и связанных сущностей
+*/
+
+set Etran {
+  label "ЭТРАН";
+  
+  import "./Waybill";
+  import "./WaybillRailwayCarriage";
+  import "./WaybillContainer";
+  import "./WaybillProduct";
+  import "./WaybillSpecialMark";
+  import "./WaybillTariffMark";
+}

@@ -1,0 +1,58 @@
+/*
+Контейнер накладной (wagon_container / waybill_container)
+Связь накладной с контейнерами
+*/
+
+class WaybillContainer {
+  label "Контейнер накладной";
+
+  // Идентификатор записи
+  attribute id {
+    type uuid;
+    key primary;
+  }
+
+  // Номер отправки/подачи в заявке
+  attribute requestNumber {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_container.request_number;
+  }
+
+  // Собственник контейнера
+  attribute owner {
+    type varchar(255);
+    is nullable;
+    sync Etran.waybill_container.owner;
+  }
+
+  // Провозная плата
+  attribute carriageFee {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_container.carriage_fee;
+  }
+
+  // ЗПУ (запорно-пломбировочное устройство)
+  attribute zpu {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_container.zpu;
+  }
+
+  /*===============================================
+
+            НАВИГАЦИОННЫЕ АТРИБУТЫ И МЕТОДЫ
+  
+  ===============================================*/
+
+  // Ссылка на накладную
+  attribute waybill {
+    type Waybill;
+  }
+
+  // Ссылка на контейнер (справочник)
+  attribute container {
+    type Container;
+  }
+}

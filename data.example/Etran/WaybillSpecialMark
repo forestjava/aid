@@ -1,0 +1,39 @@
+/*
+Специальная отметка накладной (waybill_special_marks)
+Специальные отметки в накладной
+*/
+
+class WaybillSpecialMark {
+  label "Специальная отметка накладной";
+
+  // Идентификатор записи
+  attribute id {
+    type uuid;
+    key primary;
+  }
+
+  // Отметка
+  attribute mark {
+    type varchar(500);
+    is nullable;
+    sync Etran.waybill_special_marks.mark;
+  }
+
+  // Информация
+  attribute info {
+    type varchar(1000);
+    is nullable;
+    sync Etran.waybill_special_marks.info;
+  }
+
+  /*===============================================
+
+            НАВИГАЦИОННЫЕ АТРИБУТЫ И МЕТОДЫ
+  
+  ===============================================*/
+
+  // Ссылка на накладную
+  attribute waybill {
+    type Waybill;
+  }
+}

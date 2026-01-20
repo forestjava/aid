@@ -1,0 +1,170 @@
+/*
+Груз накладной (waybill_product)
+Информация о грузах в накладной
+*/
+
+class WaybillProduct {
+  label "Груз накладной";
+
+  // Идентификатор записи
+  attribute id {
+    type uuid;
+    key primary;
+  }
+
+  // Груз по ГНГ (код)
+  attribute gngCode {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.gng_code;
+  }
+
+  // Точное наименование груза
+  attribute cargoFullName {
+    type varchar(500);
+    is nullable;
+    sync Etran.waybill_product.cargo_full_name;
+  }
+
+  // Дополнительная информация
+  attribute additional {
+    type varchar(1000);
+    is nullable;
+    sync Etran.waybill_product.additional;
+  }
+
+  // Вид упаковки
+  attribute packagingType {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_product.packaging_type;
+  }
+
+  // Объем
+  attribute volume {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.volume;
+  }
+
+  // Масса
+  attribute weight {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.weight;
+  }
+
+  // Масса погруженного груза
+  attribute weightLoaded {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.weight_loaded;
+  }
+
+  // Масса места нетто
+  attribute weightNet {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.weight_net;
+  }
+
+  // Масса места брутто
+  attribute weightGross {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.weight_gross;
+  }
+
+  // Максимальная длина груза
+  attribute length {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.length;
+  }
+
+  // Максимальная ширина груза
+  attribute width {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.width;
+  }
+
+  // Максимальная высота груза
+  attribute height {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.height;
+  }
+
+  // Знаки и марки грузоотправителя
+  attribute marksStampsShipper {
+    type varchar(500);
+    is nullable;
+    sync Etran.waybill_product.marks_stamps_shipper;
+  }
+
+  // Признак опасности
+  attribute signDanger {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_product.sign_danger;
+  }
+
+  // Количество пакетов
+  attribute packagesCount {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.packages_count;
+  }
+
+  // Количество мест
+  attribute placesCount {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.places_count;
+  }
+
+  // Признак аварийного груза
+  attribute isDangerous {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.is_dangerous;
+  }
+
+  // Номер аварийной карты
+  attribute emergencyCardNumber {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_product.emergency_card_number;
+  }
+
+  // Номер декларации на товар
+  attribute customsDeclarationNumber {
+    type varchar(100);
+    is nullable;
+    sync Etran.waybill_product.customs_declaration_number;
+  }
+
+  // Номер позиции груза в декларации
+  attribute customsDeclarationProductNumber {
+    type varchar(50);
+    is nullable;
+    sync Etran.waybill_product.customs_declaration_product_number;
+  }
+
+  /*===============================================
+
+            НАВИГАЦИОННЫЕ АТРИБУТЫ И МЕТОДЫ
+  
+  ===============================================*/
+
+  // Ссылка на накладную
+  attribute waybill {
+    type Waybill;
+  }
+
+  // Ссылка на код ЕТСНГ (справочник)
+  attribute etsngCode {
+    type EtsngCode;
+  }
+}
