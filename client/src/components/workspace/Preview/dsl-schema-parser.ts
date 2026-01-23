@@ -12,6 +12,7 @@ const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
 const LABEL_MODIFIERS = new Set(['label', 'заголовок']);
 const SEPARATE_MODIFIERS = new Set(['separate', 'промежуток']);
+const RANK_MODIFIERS = new Set(['rank', 'позиция']);
 
 /**
  * Семантика для парсинга DSL в схему БД
@@ -60,6 +61,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
         name: nameStr,
         label: entityProps.label || '',
         attributes,
+        rank: entityProps.rank, // Опциональный rank для layout
       }];
     }
 
@@ -208,7 +210,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
     // Обрабатываем "sync ExternalEntity.externalAttr"
     if (SYNC_KEYWORDS.has(keywordStr)) {
-      return { syncTarget: nameStr };
+      return { sync: nameStr };
     }
 
     return {};
@@ -270,7 +272,16 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     return {};
   },
 
-  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<Entity> {
+  Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<Entity> {
+    const keywordStr = numberKeyword.sourceString;
+    const valueStr = numberValue.sourceString;
+    
+    // Обрабатываем rank - извлекаем числовое значение
+    if (RANK_MODIFIERS.has(keywordStr)) {
+      const rank = parseInt(valueStr, 10);
+      return { rank };
+    }
+    
     return {};
   },
 
@@ -407,6 +418,19 @@ function buildInternalRelations(entities: Entity[]): EntityRelation[] {
 }
 
 /**
+ * Объединяет роли связи для атрибута (для external связей атрибут может быть и source, и target)
+ */
+function mergeConnectionRole(
+  current: 'source' | 'target' | 'both' | undefined,
+  newRole: 'source' | 'target'
+): 'source' | 'target' | 'both' {
+  if (!current) return newRole;
+  if (current === 'both') return 'both';
+  if (current === newRole) return current;
+  return 'both'; // current и newRole разные → 'both'
+}
+
+/**
  * Создает external relations между сущностями на основе sync-атрибутов
  */
 function buildExternalRelations(entities: Entity[]): EntityRelation[] {
@@ -425,37 +449,54 @@ function buildExternalRelations(entities: Entity[]): EntityRelation[] {
   // Перебираем все атрибуты и ищем sync
   for (const entity of entities) {
     for (const attr of entity.attributes) {
-      if (!attr.syncTarget) continue;
+      if (!attr.sync) continue;
 
       // Ищем целевой атрибут по полному пути в Map
-      const target = attributesMap.get(attr.syncTarget);
+      const target = attributesMap.get(attr.sync);
       
       if (!target) {
-        console.warn(`Sync target not found: ${attr.syncTarget}`);
+        console.warn(`Sync target not found: ${attr.sync}`);
         continue;
       }
 
-      // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
-      const canonicalKey = [entity.name, target.entity.name].sort().join('::');
+      // Создаём канонический ключ связи (включаем атрибуты для поддержки нескольких связей между сущностями)
+      const canonicalKey = [
+        `${entity.name}.${attr.name}`,
+        `${target.entity.name}.${target.attr.name}`
+      ].sort().join('::');
 
       // Сохраняем связь в Map по ключу (первая встреченная)
       if (!relationsMap.has(canonicalKey)) {
-        // Текущий размер Map = индекс новой внешней связи
-        const paletteIndex = relationsMap.size;
-
-        // Помечаем атрибуты
-        attr.hasConnection = 'source';
-        attr.paletteIndex = paletteIndex;
+        // Определяем направление связи на основе rank сущностей
+        // source должен иметь меньший или равный rank, чтобы связь шла слева направо
+        const sourceRank = entity.rank ?? 0;
+        const targetRank = target.entity.rank ?? 0;
         
-        target.attr.hasConnection = 'target';
-        target.attr.paletteIndex = paletteIndex;
+        const isForward = sourceRank <= targetRank;
+        
+        // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
+        const [sourceEntity, sourceAttr, targetEntity, targetAttr] = isForward
+          ? [entity, attr, target.entity, target.attr]
+          : [target.entity, target.attr, entity, attr];
+
+        // Определяем paletteIndex: используем существующий у атрибутов или генерируем новый
+        const paletteIndex = sourceAttr.paletteIndex ?? targetAttr.paletteIndex ?? relationsMap.size;
+
+        // Помечаем атрибуты (учитываем, что атрибут может участвовать в нескольких связях)
+        sourceAttr.hasConnection = mergeConnectionRole(sourceAttr.hasConnection, 'source');
+        sourceAttr.paletteIndex = paletteIndex;
+        sourceAttr.sync = `${targetEntity.name}.${targetAttr.name}`;
+
+        targetAttr.hasConnection = mergeConnectionRole(targetAttr.hasConnection, 'target');
+        targetAttr.paletteIndex = paletteIndex;
+        targetAttr.sync = `${sourceEntity.name}.${sourceAttr.name}`;
 
         // Создаем external связь
         relationsMap.set(canonicalKey, {
-          source: entity.name,
-          sourceNavigation: attr.name,
-          target: target.entity.name,
-          targetNavigation: target.attr.name,
+          source: sourceEntity.name,
+          sourceNavigation: sourceAttr.name,
+          target: targetEntity.name,
+          targetNavigation: targetAttr.name,
           paletteIndex,
           type: 'external',
         });

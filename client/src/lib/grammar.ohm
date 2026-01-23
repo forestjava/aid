@@ -26,7 +26,7 @@ DSL {
   // Ключевые слова
   typeKeyword = "type" | "тип"
   stringKeyword = "import" | "из" | "label" | "заголовок"
-  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток"
+  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   keyword = 
     // Английские ключевые слова
       "service"
@@ -41,7 +41,7 @@ DSL {
       | "sync"
       | "value"
       | "is"
-      | "key"
+      | "key"      
     // Русские ключевые слова
       | "сервис"
       | "набор"
@@ -51,7 +51,7 @@ DSL {
       | "реквизит"
       | "метод"
       | "обмен"
-      | "значение"
+      | "значение"      
   
   // Имя в общем случае может быть только идентификатором
   name = identifier

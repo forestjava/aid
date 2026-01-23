@@ -11,9 +11,9 @@ export interface EntityAttribute {
   // свойства, определяемые по значению type
   isNavigation?: boolean // Навигационное свойство (ссылка на другую сущность)
   isCollection?: boolean // Коллекция (массив) сущностей
-  hasConnection?: 'source' | 'target' // Роль навигационного свойства в связи
+  hasConnection?: 'source' | 'target' | 'both' // Роль в связи: source (справа), target (слева), both (для external связей)
   paletteIndex?: number // Индекс в палитре цветов для связи
-  syncTarget?: string // Цель синхронизации для external связей: "EntityName.attributeName"
+  sync?: string // Цель синхронизации для external связей: "EntityName.attributeName"
 }
 
 export interface EntityRelation {
@@ -28,6 +28,8 @@ export interface EntityRelation {
 export interface Entity {
   name: string
   label: string
+  rank?: number // Позиция в layout для dagre (опционально, указывается явно в DSL)
+
   attributes: EntityAttribute[]
 }
 

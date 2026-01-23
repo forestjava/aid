@@ -28,8 +28,8 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
               className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
               style={style}
             >
-            {/* Handle для навигационных свойств */}
-            {attr.hasConnection === 'target' && (
+            {/* Handle для связей: target (слева), source (справа), both (оба) */}
+            {(attr.hasConnection === 'target' || attr.hasConnection === 'both') && (
               <Handle
                 type="target"
                 position={Position.Left}
@@ -38,7 +38,7 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
               />
             )}
-            {attr.hasConnection === 'source' && (
+            {(attr.hasConnection === 'source' || attr.hasConnection === 'both') && (
               <Handle
                 type="source"
                 position={Position.Right}
