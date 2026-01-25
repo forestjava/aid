@@ -38,4 +38,5 @@ export interface DatabaseSchema {
   relations: EntityRelation[]
   hasExternalRelations: boolean // Есть ли в схеме external связи
   separate?: number
+  annotation?: string // Текст аннотации схемы
 }

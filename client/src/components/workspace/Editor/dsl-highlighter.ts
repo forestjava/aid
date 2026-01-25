@@ -54,6 +54,40 @@ semantics.addOperation<Token[]>('getTokens', {
     return entities.getTokens();
   },
 
+  Entity_annotation(this: Node, keyword: any, name: any, block: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем keyword (терминальный узел)
+    tokens.push({
+      from: keyword.source.startIdx,
+      to: keyword.source.endIdx,
+      type: 'keyword'
+    });
+
+    // Добавляем name (если есть - опциональный)
+    if (name && name.source && name.source.endIdx > name.source.startIdx) {
+      tokens.push(...name.getTokens());
+    }
+
+    // Добавляем токены из блока (как комментарий - содержимое аннотации)
+    tokens.push({
+      from: block.source.startIdx + 1,
+      to: block.source.endIdx - 1,
+      type: 'comment'
+    });
+
+    // Добавляем пунктуацию (если есть - опциональный терминальный узел)
+    if (_semicolon && _semicolon.source && _semicolon.source.endIdx > _semicolon.source.startIdx) {
+      tokens.push({
+        from: _semicolon.source.startIdx,
+        to: _semicolon.source.endIdx,
+        type: 'punctuation'
+      });
+    }
+
+    return tokens;
+  },
+
   Entity_type(typeKeyword: any, typeRef: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 

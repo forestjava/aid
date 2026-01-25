@@ -33,6 +33,10 @@ semantics.addOperation<Entity[]>('extractEntities', {
     return entities.extractEntities();
   },
 
+  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Entity[] {
+    return [];
+  },
+
   Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Entity[] {
     return [];
   },
@@ -86,6 +90,10 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
 
   _iter(...children: any[]): EntityAttribute[] {
     return children.flatMap(child => child.extractAttributes());
+  },
+
+  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): EntityAttribute[] {
+    return [];
   },
 
   Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): EntityAttribute[] {
@@ -151,6 +159,10 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     return children.reduce((acc, child) => ({ ...acc, ...child.extractAttributeProps() }), {});
   },
 
+  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<EntityAttribute> {
+    return {};
+  },
+
   Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<EntityAttribute> {
     const typeStr = typeRef.sourceString;
     // Проверяем, является ли тип коллекцией (заканчивается на [])
@@ -164,7 +176,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<EntityAttribute> {
     const keywordStr = stringKeyword.sourceString;
-    
+
     // Обрабатываем label - извлекаем значение
     if (LABEL_MODIFIERS.has(keywordStr)) {
       const valueStr = stringValue.sourceString;
@@ -172,7 +184,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
       const label = valueStr.slice(1, -1);
       return { label };
     }
-    
+
     // Для других строковых модификаторов (import и т.д.)
     return {};
   },
@@ -253,13 +265,17 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     return children.reduce((acc, child) => ({ ...acc, ...child.extractEntityProps() }), {});
   },
 
+  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<Entity> {
+    return {};
+  },
+
   Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<Entity> {
     return {};
   },
 
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Entity> {
     const keywordStr = stringKeyword.sourceString;
-    
+
     // Обрабатываем label - извлекаем значение
     if (LABEL_MODIFIERS.has(keywordStr)) {
       const valueStr = stringValue.sourceString;
@@ -267,7 +283,7 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
       const label = valueStr.slice(1, -1);
       return { label };
     }
-    
+
     // Для других строковых модификаторов (import и т.д.)
     return {};
   },
@@ -275,13 +291,13 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<Entity> {
     const keywordStr = numberKeyword.sourceString;
     const valueStr = numberValue.sourceString;
-    
+
     // Обрабатываем rank - извлекаем числовое значение
     if (RANK_MODIFIERS.has(keywordStr)) {
       const rank = parseInt(valueStr, 10);
       return { rank };
     }
-    
+
     return {};
   },
 
@@ -316,6 +332,14 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
     return entities.extractSchemaProps();
   },
 
+  Entity_annotation(_keyword: any, _name: any, block: any, _semicolon: any): Partial<DatabaseSchema> {
+    // Извлекаем содержимое блока (без фигурных скобок)
+    const blockContent = block.sourceString;
+    // Убираем { и } и переводы строк в начале/конце
+    const annotation = blockContent.slice(1, -1).replace(/^[\r\n]+|[\r\n]+$/g, '');
+    return { annotation };
+  },
+
   Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<DatabaseSchema> {
     return {};
   },
@@ -327,13 +351,13 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<DatabaseSchema> {
     const keywordStr = numberKeyword.sourceString;
     const valueStr = numberValue.sourceString;
-    
+
     // Обрабатываем separate - извлекаем числовое значение
     if (SEPARATE_MODIFIERS.has(keywordStr)) {
       const separate = parseFloat(valueStr);
       return { separate };
     }
-    
+
     return {};
   },
 
@@ -397,7 +421,7 @@ function buildInternalRelations(entities: Entity[]): EntityRelation[] {
         attr.hasConnection = 'source';
         attr.isNavigation = true;
         attr.paletteIndex = paletteIndex;
-          
+
         reverseAttr.hasConnection = 'target';
         reverseAttr.isNavigation = true;
         reverseAttr.paletteIndex = paletteIndex;
@@ -436,7 +460,7 @@ function mergeConnectionRole(
 function buildExternalRelations(entities: Entity[]): EntityRelation[] {
   // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
   const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
-  
+
   for (const entity of entities) {
     for (const attr of entity.attributes) {
       const fullPath = `${entity.name}.${attr.name}`;
@@ -453,7 +477,7 @@ function buildExternalRelations(entities: Entity[]): EntityRelation[] {
 
       // Ищем целевой атрибут по полному пути в Map
       const target = attributesMap.get(attr.sync);
-      
+
       if (!target) {
         console.warn(`Sync target not found: ${attr.sync}`);
         continue;
@@ -471,9 +495,9 @@ function buildExternalRelations(entities: Entity[]): EntityRelation[] {
         // source должен иметь меньший или равный rank, чтобы связь шла слева направо
         const sourceRank = entity.rank ?? 0;
         const targetRank = target.entity.rank ?? 0;
-        
+
         const isForward = sourceRank <= targetRank;
-        
+
         // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
         const [sourceEntity, sourceAttr, targetEntity, targetAttr] = isForward
           ? [entity, attr, target.entity, target.attr]
@@ -558,6 +582,7 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
       relations,
       hasExternalRelations: externalRelations.length > 0,
       separate: schemaProps.separate,
+      annotation: schemaProps.annotation,
     };
   } catch (error) {
     console.error('Schema parsing error:', error);

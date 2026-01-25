@@ -38,6 +38,10 @@ semantics.addOperation<ImportInfo[]>('findImports', {
     return entities.findImports();
   },
 
+  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): ImportInfo[] {
+    return [];
+  },
+
   Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): ImportInfo[] {
     return [];
   },

@@ -66,6 +66,10 @@ export class DslParser {
         return entities.findImports();
       },
 
+      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): ImportInfo[] {
+        return [];
+      },
+
       Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): ImportInfo[] {
         return [];
       },
@@ -134,6 +138,10 @@ export class DslParser {
         return entities.extractEntities();
       },
 
+      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): ParsedEntities {
+        return {};
+      },
+
       Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): ParsedEntities {
         return {};
       },
@@ -181,6 +189,10 @@ export class DslParser {
 
       _iter(...children: any[]): Record<string, string> {
         return children.reduce((acc, child) => ({ ...acc, ...child.extractAttributes() }), {});
+      },
+
+      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Record<string, string> {
+        return {};
       },
 
       Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Record<string, string> {
@@ -240,6 +252,10 @@ export class DslParser {
           const type = child.extractType();
           if (type) return type;
         }
+        return null;
+      },
+
+      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): string | null {
         return null;
       },
 

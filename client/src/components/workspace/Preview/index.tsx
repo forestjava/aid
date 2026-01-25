@@ -222,6 +222,13 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
             <Background />
             <Controls />
             <AutoFitView currentFile={currentFile} nodes={previewNodes} selectedNodeId={selectedNodeId} />
+
+            {/* Плашка аннотации - absolute positioned в левом верхнем углу */}
+            {schema?.annotation && (
+              <div className="absolute top-2 left-2 z-10 max-w-sm p-3 pr-5 bg-background/90 backdrop-blur-sm border rounded-lg shadow-sm text-xs text-muted-foreground whitespace-pre-wrap">
+                {schema.annotation}
+              </div>
+            )}
           </ReactFlow>
         </div>
       )}

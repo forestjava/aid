@@ -10,11 +10,12 @@ DSL {
   //       | keyword name Block ";"?  --options
 
   // Описываем особенности для ключевых слов type, строковых и числовых значений
-  Entity = typeKeyword typeRef ";"       --type
-         | stringKeyword stringValue ";" --string
-         | numberKeyword numberValue ";" --number
-         | keyword name ";"              --simple
-         | keyword name Block ";"?       --options
+  Entity = annotationKeyword name? AnnotationBlock ";"?  --annotation
+         | typeKeyword typeRef ";"                       --type
+         | stringKeyword stringValue ";"                 --string
+         | numberKeyword numberValue ";"                 --number
+         | keyword name ";"                              --simple
+         | keyword name Block ";"?                       --options
 
 
   // Блок содержит набор элементов в фигурных скобках
@@ -22,8 +23,15 @@ DSL {
   
   // Элемент может быть другой сущностью
   Item = Entity
+
+  // Блок аннотации содержит произвольный текст между { и }
+  AnnotationBlock = "{" annotationContent "}"
+  
+  // Содержимое - любые символы кроме закрывающей фигурной скобки
+  annotationContent = (~"}" any)*
     
   // Ключевые слова
+  annotationKeyword = "annotation" | "аннотация"
   typeKeyword = "type" | "тип"
   stringKeyword = "import" | "из" | "label" | "заголовок" | "description" | "описание"
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
