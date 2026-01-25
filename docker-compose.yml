@@ -1,8 +1,9 @@
+
 services:
   backend:
     build:
-      context: ./server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: server/Dockerfile
     container_name: aid-backend
     environment:
       - FS_ROOT_PATH=/data
@@ -14,8 +15,8 @@ services:
 
   frontend:
     build:
-      context: ./client
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: client/Dockerfile
     container_name: aid-frontend
     networks:
       - proxy
@@ -38,4 +39,3 @@ services:
 networks:
   proxy:
     driver: bridge
-

@@ -30,12 +30,12 @@
     /* shadcn/ui */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": [
-    "src"
+    "src",
+    "../shared"
   ]
 }

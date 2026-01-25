@@ -25,7 +25,7 @@ DSL {
     
   // Ключевые слова
   typeKeyword = "type" | "тип"
-  stringKeyword = "import" | "из" | "label" | "заголовок"
+  stringKeyword = "import" | "из" | "label" | "заголовок" | "description" | "описание"
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   keyword = 
     // Английские ключевые слова
