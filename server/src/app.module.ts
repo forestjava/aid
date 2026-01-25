@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FileSystemModule } from './filesystem/filesystem.module';
+import { ParseModule } from './parse/parse.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { FileSystemModule } from './filesystem/filesystem.module';
       envFilePath: '.env',
     }),
     FileSystemModule,
+    ParseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
