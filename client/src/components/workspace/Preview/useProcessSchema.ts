@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import type { Node, Edge } from 'reactflow'
 import ELK from 'elkjs/lib/elk.bundled.js'
 import type { DatabaseSchema, Entity } from './types'
-import { resolveImports } from '@/components/workspace/Preview/dsl-import-resolver'
 import { parseSchema } from '@/components/workspace/Preview/dsl-schema-parser'
 import { calculateAllNodeDimensions } from './calculateNodeDimensions'
 import { getEdgeStyle } from './styles'
@@ -27,16 +26,14 @@ const elk = new ELK()
  * Хук для асинхронной обработки содержимого DSL-файла
  * 
  * Процесс обработки:
- * Шаг 1. Получение контента текущего файла (происходит в компоненте через react-query)
- * Шаг 2. Резолвинг импортов, получение зависимостей, сбор кумулятивного текста
- * Шаг 3. Парсинг кумулятивного текста в объект схемы { entities, relations }
- * Шаг 4. Оценка размеров всех узлов на основе их содержимого
- * Шаг 5. Размещение узлов и связей на схеме ELK.layout
- * Шаг 6. Рендер компонента <ReactFlow /> (происходит в компоненте)
+ * Шаг 1. Получение контента текущего файла с разрешёнными импортами (происходит в компоненте через react-query)
+ * Шаг 2. Парсинг текста в объект схемы { entities, relations }
+ * Шаг 3. Оценка размеров всех узлов на основе их содержимого
+ * Шаг 4. Размещение узлов и связей на схеме ELK.layout
+ * Шаг 5. Рендер компонента <ReactFlow /> (происходит в компоненте)
  */
 export const useProcessSchema = (
-  content: string | undefined,
-  currentFilePath: string = ''
+  content: string | undefined
 ): ProcessSchemaResult => {
   const [nodes, setNodes] = useState<Node[]>([])
   const [edges, setEdges] = useState<Edge[]>([])
@@ -57,17 +54,9 @@ export const useProcessSchema = (
     // Асинхронная обработка DSL
     const processContent = async () => {
       try {
-        // Шаг 2: Резолвинг импортов, получение зависимостей, сбор кумулятивного текста
-        console.log('Шаг 2: Резолвинг импортов...')
-        const resolvedResult = await resolveImports(content, currentFilePath)
-
-        if (resolvedResult.error) {
-          console.error('Import resolution error:', resolvedResult.error)
-        }
-
-        // Шаг 3: Парсинг кумулятивного текста в объект схемы
-        console.log('Шаг 3: Парсинг схемы...')
-        const schema = await parseSchema(resolvedResult.content)
+        // Шаг 2: Парсинг текста в объект схемы
+        console.log('Шаг 2: Парсинг схемы...')
+        const schema = await parseSchema(content)
 
         if (!schema) {
           console.log('Schema parsing failed or empty result')
@@ -77,12 +66,12 @@ export const useProcessSchema = (
           return
         }
 
-        // Шаг 4: Оценка размеров всех узлов на основе их содержимого
-        console.log('Шаг 4: Оценка размеров узлов...')
+        // Шаг 3: Оценка размеров всех узлов на основе их содержимого
+        console.log('Шаг 3: Оценка размеров узлов...')
         const nodeDimensions = calculateAllNodeDimensions(schema.entities)
 
-        // Шаг 5: Размещение узлов и связей на схеме
-        console.log('Шаг 5: Размещение узлов и связей (ELK.layout)...')
+        // Шаг 4: Размещение узлов и связей на схеме
+        console.log('Шаг 4: Размещение узлов и связей (ELK.layout)...')
         const { nodes: layoutNodes, edges: layoutEdges } = await layoutGraph(
           schema,
           nodeDimensions
@@ -91,7 +80,7 @@ export const useProcessSchema = (
         setNodes(layoutNodes)
         setEdges(layoutEdges)
         setSchema(schema)
-        console.log('Обработка завершена. Готово к рендеру (Шаг 6)')
+        console.log('Обработка завершена. Готово к рендеру (Шаг 5)')
       } catch (error) {
         console.error('DSL processing error:', error)
         setNodes([])
@@ -103,14 +92,14 @@ export const useProcessSchema = (
     }
 
     processContent()
-  }, [content, currentFilePath])
+  }, [content])
 
   return { nodes, edges, isProcessing, schema }
 }
 
 /**
  * Выполняет размещение узлов и связей на схеме с использованием ELK
- * (Шаг 5 обработки)
+ * (Шаг 4 обработки)
  */
 async function layoutGraph(
   schema: DatabaseSchema,

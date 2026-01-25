@@ -12,7 +12,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import { Check, ChevronsUpDown } from 'lucide-react'
 
-import { filesystemApi } from '@/api/filesystem'
+import { parseApi } from '@/api/filesystem'
 import EntityNode from './EntityNode'
 import { useProcessSchema } from './useProcessSchema'
 import { Button } from '@/components/ui/button'
@@ -79,15 +79,15 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
   const [open, setOpen] = useState(false)
   const [selectedNodeId, setSelectedNodeId] = useState<string>('')
 
-  // Шаг 1: Получение контента текущего файла
+  // Шаг 1: Получение контента текущего файла (с разрешёнными импортами)
   const { data: fileData, isLoading } = useQuery({
-    queryKey: ['readFile', currentFile],
-    queryFn: () => filesystemApi.readFile(currentFile!),
+    queryKey: ['parseText', currentFile],
+    queryFn: () => parseApi.parseText(currentFile!),
     enabled: !!currentFile,
   })
 
-  // Шаги 2-5: Асинхронная обработка содержимого файла (резолвинг, парсинг, размеры, layout)
-  const { nodes, edges, isProcessing, schema } = useProcessSchema(fileData?.content, currentFile || '')
+  // Шаги 2-5: Асинхронная обработка содержимого файла (парсинг, размеры, layout)
+  const { nodes, edges, isProcessing, schema } = useProcessSchema(fileData?.content)
 
   // Создаем nodeTypes с замыканием на schema
   const nodeTypes: NodeTypes = useMemo(() => ({

@@ -130,3 +130,17 @@ export const filesystemApi = {
   },
 }
 
+// API для парсинга DSL файлов
+const PARSE_API_BASE = '/api/parse'
+
+export const parseApi = {
+  // Получить содержимое файла с разрешёнными импортами
+  async parseText(path: string): Promise<{ path: string; content: string }> {
+    const response = await fetch(`${PARSE_API_BASE}/text?path=${encodeURIComponent(path)}`)
+    if (!response.ok) {
+      throw new Error(`Failed to parse file: ${response.statusText}`)
+    }
+    return response.json()
+  },
+}
+
