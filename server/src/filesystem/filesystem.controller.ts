@@ -13,7 +13,7 @@ import { FileSystemService } from './filesystem.service';
 
 @Controller('fs')
 export class FileSystemController {
-  constructor(private readonly fileSystemService: FileSystemService) {}
+  constructor(private readonly fileSystemService: FileSystemService) { }
 
   @Get('readdir')
   async readdir(@Query('path') path: string = '') {
@@ -41,6 +41,11 @@ export class FileSystemController {
   @Put('updateFile')
   async updateFile(@Body() body: { path: string; content: string }) {
     return await this.fileSystemService.updateFile(body.path, body.content);
+  }
+
+  @Put('writeFile')
+  async writeFile(@Body() body: { path: string; content: string }) {
+    return await this.fileSystemService.writeFile(body.path, body.content);
   }
 
   @Post('mkdir')

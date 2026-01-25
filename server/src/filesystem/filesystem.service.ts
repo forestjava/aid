@@ -65,6 +65,10 @@ export class FileSystemService {
     return { path: relativePath };
   }
 
+  async writeFile(relativePath: string, content: string) {
+    return this.updateFile(relativePath, content);
+  }
+
   async mkdir(relativePath: string, recursive = true) {
     const fullPath = this.resolvePath(relativePath);
     await fs.mkdir(fullPath, { recursive });
