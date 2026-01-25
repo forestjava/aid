@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router'
+import { useNavigate, useLocation, useSearchParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Layout } from '@/components/layout/Layout'
 import { Header } from '@/components/layout/Header'
 import { Main } from '@/components/layout/Main'
 import { Footer } from '@/components/layout/Footer'
+import { Only } from '@/components/layout/Only'
 import { FileExplorer } from '@/components/workspace/FileExplorer'
 import { Editor } from '@/components/workspace/Editor'
 import { Preview } from '@/components/workspace/Preview'
@@ -14,14 +15,16 @@ import { filesystemApi } from '@/api/filesystem'
 export const App = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const onlyPreview = searchParams.get('only') === 'preview'
 
   // Извлекаем путь из URL
   // location.pathname будет "/" → selectedPath = null
   // location.pathname будет "/Demo/users" → selectedPath = "Demo/users"
   // location.pathname будет "/Demo" → selectedPath = "Demo"
   // Явно декодируем путь для поддержки кириллицы и спецсимволов
-  const selectedPath = location.pathname === '/' 
-    ? null 
+  const selectedPath = location.pathname === '/'
+    ? null
     : decodeURIComponent(location.pathname.slice(1))
 
   // Состояние для текущего файла (только файл, не папка)
@@ -34,7 +37,7 @@ export const App = () => {
     queryKey: ['validatePath', selectedPath],
     queryFn: async () => {
       if (!selectedPath) return { exists: true, isDirectory: false }
-      
+
       // Используем обновленный API exists, который возвращает isDirectory
       const existsResult = await filesystemApi.exists(selectedPath)
       if (!existsResult.exists) {
@@ -42,9 +45,9 @@ export const App = () => {
       }
 
       // isDirectory уже есть в ответе exists
-      return { 
-        exists: true, 
-        isDirectory: existsResult.isDirectory ?? false 
+      return {
+        exists: true,
+        isDirectory: existsResult.isDirectory ?? false
       }
     },
     enabled: !!selectedPath,
@@ -94,24 +97,15 @@ export const App = () => {
 
   // Показываем loader пока проверяем валидацию
   if (selectedPath && !validationChecked) {
+    return "Загрузка..."
+  }
+
+  // Preview-only режим: отображаем только Preview на всю страницу
+  if (onlyPreview) {
     return (
-      <Layout>
-        <Header>Система управления документацией</Header>
-        <Main>
-          <FileExplorer 
-            onSelect={handleSelect} 
-            selectedPath={selectedPath}
-            selectedIsDirectory={selectedIsDirectory}
-          />
-          <div className="flex items-center justify-center w-full h-full">
-            <p className="text-sm text-muted-foreground">Загрузка...</p>
-          </div>
-          <div className="flex items-center justify-center w-full h-full">
-            <p className="text-sm text-muted-foreground">Загрузка...</p>
-          </div>
-        </Main>
-        <Footer>© 2025 ОЭЗ Алабуга</Footer>
-      </Layout>
+      <Only>
+        <Preview currentFile={currentFile} />
+      </Only>
     )
   }
 
@@ -119,7 +113,7 @@ export const App = () => {
     <Layout>
       <Header>Система управления документацией</Header>
       <Main>
-        <FileExplorer 
+        <FileExplorer
           onSelect={handleSelect}
           selectedPath={selectedPath}
           selectedIsDirectory={selectedIsDirectory}
