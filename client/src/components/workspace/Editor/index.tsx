@@ -29,6 +29,7 @@ export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
     onSuccess: () => {
       setHasChanges(false)
       queryClient.invalidateQueries({ queryKey: ['readFile', currentFile] })
+      queryClient.invalidateQueries({ queryKey: ['parseText', currentFile] })
     },
   })
 
