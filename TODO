@@ -16,6 +16,8 @@
 [x] вынести grammar и ohm.grammar из client на общий уровень (server + client) — Dockerfile, сборка dev и prod
 [] переделать data: описание БД отдельно, описание моделей отдельно, модели используют БД (как sync внутри system)
 [] сделать общий префикс /api переделать соотв.сборку и деплой
+[] AID CODEGEN
+[] AID VALIDATOR
 
 ## Для Михеева
 [x] ручка readFile с resolved imports — возвращать текст со включёнными импортами
