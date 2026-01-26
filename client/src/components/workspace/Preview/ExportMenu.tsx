@@ -70,7 +70,7 @@ export const ExportMenu: React.FC<ExportMenuProps> = ({ schema }) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="h-7 text-xs gap-1.5"
+          className="h-7 text-xs gap-1.5 cursor-pointer"
           disabled={!schema}
         >
           <Download className="h-3.5 w-3.5" />
