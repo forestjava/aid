@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { DatabaseSchema } from '@/components/workspace/Preview/types'
+import { exportToPng, exportToSvg } from './export-image'
 
 /**
  * Тип элемента меню экспорта
@@ -57,12 +58,12 @@ export const exportMenuConfig: ExportMenuItem[] = [
       {
         id: 'png',
         label: 'PNG',
-        action: notImplemented('PNG'),
+        action: () => exportToPng(),
       },
       {
         id: 'svg',
         label: 'SVG',
-        action: notImplemented('SVG'),
+        action: () => exportToSvg(),
       },
     ],
   },
