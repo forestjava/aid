@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
-import { highlightActiveLine, highlightActiveLineGutter } from '@codemirror/view';
+import { highlightActiveLine, highlightActiveLineGutter, keymap } from '@codemirror/view';
+import { indentWithTab, toggleComment } from '@codemirror/commands';
 import { dslSupport } from './dsl-support';
 
 interface CodeEditorProps {
@@ -25,6 +26,10 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
       doc: value,
       extensions: [
         basicSetup,
+        keymap.of([
+          { key: 'Mod-/', run: toggleComment },
+          indentWithTab,
+        ]),
         ...dslSupport,
         highlightActiveLine(),
         highlightActiveLineGutter(),

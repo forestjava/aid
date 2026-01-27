@@ -15,6 +15,7 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { parseApi } from '@/api/filesystem'
 import EntityNode from './EntityNode'
 import { useProcessSchema } from './useProcessSchema'
+import { ExportMenu } from './ExportMenu'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -139,9 +140,9 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
           <span className="text-xs text-muted-foreground">• Файл не выбран</span>
         )}
 
-        {/* Combobox для выбора узлов - в правой части заголовка */}
+        {/* Combobox для выбора узлов и меню экспорта - в правой части заголовка */}
         {nodeNames.length > 0 && (
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -189,6 +190,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
                 </Command>
               </PopoverContent>
             </Popover>
+            <ExportMenu schema={schema} />
           </div>
         )}
       </div>
