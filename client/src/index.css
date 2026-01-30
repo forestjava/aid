@@ -118,3 +118,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Яркий цвет описания в toast-ошибках */
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: var(--destructive);
+}

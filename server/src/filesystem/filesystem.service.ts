@@ -1,7 +1,11 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+// Регулярное выражение для валидного идентификатора:
+// начинается с буквы (латиница или кириллица), далее буквы, цифры или _
+const VALID_IDENTIFIER_REGEX = /^[a-zA-Zа-яА-ЯёЁ_][a-zA-Zа-яА-ЯёЁ0-9_]*$/;
 
 @Injectable()
 export class FileSystemService {
@@ -13,6 +17,29 @@ export class FileSystemService {
       throw new Error('FS_ROOT_PATH environment variable is required');
     }
     this.rootPath = path.resolve(process.cwd(), configPath);
+  }
+
+  /**
+   * Проверяет, является ли имя валидным идентификатором DSL.
+   * Имя должно начинаться с буквы и содержать только буквы, цифры и _.
+   */
+  private validateIdentifierName(name: string, context: string): void {
+    if (!name) {
+      throw new BadRequestException(`${context}: имя не может быть пустым`);
+    }
+    if (!VALID_IDENTIFIER_REGEX.test(name)) {
+      throw new BadRequestException(
+        `${context}: "${name}" не является валидным идентификатором. ` +
+        `Имя должно начинаться с буквы и содержать только буквы, цифры и символ подчёркивания.`
+      );
+    }
+  }
+
+  /**
+   * Извлекает имя файла или каталога из пути
+   */
+  private getBaseName(relativePath: string): string {
+    return path.basename(relativePath);
   }
 
   private resolvePath(relativePath: string): string {
@@ -54,6 +81,9 @@ export class FileSystemService {
   }
 
   async createFile(relativePath: string, content: string) {
+    const fileName = this.getBaseName(relativePath);
+    this.validateIdentifierName(fileName, 'Создание файла');
+    
     const fullPath = this.resolvePath(relativePath);
     await fs.writeFile(fullPath, content, { encoding: 'utf-8', flag: 'wx' });
     return { path: relativePath };
@@ -70,12 +100,18 @@ export class FileSystemService {
   }
 
   async mkdir(relativePath: string, recursive = true) {
+    const dirName = this.getBaseName(relativePath);
+    this.validateIdentifierName(dirName, 'Создание каталога');
+    
     const fullPath = this.resolvePath(relativePath);
     await fs.mkdir(fullPath, { recursive });
     return { path: relativePath };
   }
 
   async rename(oldPath: string, newPath: string) {
+    const newName = this.getBaseName(newPath);
+    this.validateIdentifierName(newName, 'Переименование');
+    
     const fullOldPath = this.resolvePath(oldPath);
     const fullNewPath = this.resolvePath(newPath);
 

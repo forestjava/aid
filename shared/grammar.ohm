@@ -64,8 +64,20 @@ DSL {
   // Имя в общем случае может быть только идентификатором
   name = identifier
 
-  // Имя типа при этом может содержать размерность (200) или (10,2) и/или признак [] collection 
-  typeRef = identifier ("(" digit+ ("," digit+)* ")")? "[]"?
+  // Имя типа может быть относительным путём или обычным идентификатором
+  // Примеры: string, MyEntity.Field, ./local/MyType, ../shared/Dotted.Folder/Type, Demo/Post
+  // Также может содержать размерность (200) или (10,2) и/или признак [] collection 
+  typeRef = typeIdentifier ("(" digit+ ("," digit+)* ")")? "[]"?
+
+  // Идентификатор типа: путь с префиксом ./ или ../, либо путь без префикса
+  typeIdentifier = relativePrefix pathBody   -- relativePath
+                 | pathBody                   -- path
+
+  // Префикс относительного пути: / root, ./ или один или несколько ../
+  relativePrefix = "/" | "./" | ("../")+
+
+  // Тело пути: идентификаторы, разделённые /
+  pathBody = identifier ("/" identifier)*
 
   // Строковое значение - это строковый литерал
   stringValue = stringLiteral

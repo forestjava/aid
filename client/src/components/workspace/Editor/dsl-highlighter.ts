@@ -239,13 +239,13 @@ semantics.addOperation<Token[]>('getTokens', {
     return entity.getTokens();
   },
 
-  // typeRef = identifier ("(" digit+ ("," digit+)* ")")? "[]"?
-  // Арность: 7 (identifier + размерность + квадратные скобки)
-  typeRef(identifier: any, openParen: any, firstDigits: any, commas: any, additionalDigits: any, closeParen: any, brackets: any): Token[] {
+  // typeRef = typeIdentifier ("(" digit+ ("," digit+)* ")")? "[]"?
+  // Арность: 7 (typeIdentifier + размерность + квадратные скобки)
+  typeRef(typeIdentifier: any, openParen: any, firstDigits: any, commas: any, additionalDigits: any, closeParen: any, brackets: any): Token[] {
     const tokens: Token[] = [];
 
-    // Добавляем идентификатор
-    tokens.push(...identifier.getTokens());
+    // Добавляем идентификатор типа (может быть путём или обычным идентификатором)
+    tokens.push(...typeIdentifier.getTokens());
 
     // Все остальное обрабатываем пока как пунктуацию
     const all_the_rest = [openParen, firstDigits, commas, additionalDigits, closeParen, brackets];
@@ -268,6 +268,61 @@ semantics.addOperation<Token[]>('getTokens', {
             });
           }
         }
+      }
+    }
+
+    return tokens;
+  },
+
+  // typeIdentifier = relativePrefix pathBody -- relativePath | pathBody -- path
+  // Для пути с префиксом ./  или ../
+  typeIdentifier_relativePath(this: Node, relativePrefix: any, pathBody: any): Token[] {
+    const tokens: Token[] = [];
+    tokens.push(...relativePrefix.getTokens());
+    tokens.push(...pathBody.getTokens());
+    return tokens;
+  },
+
+  // Для пути без префикса (включая простые идентификаторы типа string)
+  typeIdentifier_path(pathBody: any): Token[] {
+    return pathBody.getTokens();
+  },
+
+  // relativePrefix = "./" | ("../")+
+  // Подсвечиваем как пунктуацию (путевые символы)
+  relativePrefix(this: Node, _content: any): Token[] {
+    return [{
+      from: this.source.startIdx,
+      to: this.source.endIdx,
+      type: 'punctuation'
+    }];
+  },
+
+  // pathBody = identifier ("/" identifier)*
+  // Арность: 3 (первый идентификатор + итератор слэшей + итератор остальных идентификаторов)
+  pathBody(firstIdentifier: any, slashes: any, restIdentifiers: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Первый идентификатор
+    tokens.push(...firstIdentifier.getTokens());
+
+    // Слэши как пунктуация
+    if (slashes && slashes.children) {
+      for (const slash of slashes.children) {
+        if (slash && slash.source) {
+          tokens.push({
+            from: slash.source.startIdx,
+            to: slash.source.endIdx,
+            type: 'punctuation'
+          });
+        }
+      }
+    }
+
+    // Остальные идентификаторы
+    if (restIdentifiers && restIdentifiers.children) {
+      for (const identifier of restIdentifiers.children) {
+        tokens.push(...identifier.getTokens());
       }
     }
 
