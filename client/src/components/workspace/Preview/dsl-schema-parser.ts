@@ -7,7 +7,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
-const SYNC_KEYWORDS = new Set(['sync', 'обмен']);
+const SYNC_KEYWORDS = new Set(['sync', 'обмен', 'map', 'relates', 'связь', 'относится']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);
 const LABEL_MODIFIERS = new Set(['label', 'заголовок']);
