@@ -5,9 +5,16 @@ import {
   Decoration,
   type DecorationSet,
 } from '@codemirror/view';
-import { StateField, StateEffect, RangeSetBuilder } from '@codemirror/state';
+import { StateField, StateEffect, RangeSetBuilder, Facet } from '@codemirror/state';
 import { getHighlightTokens, type Token } from './dsl-highlighter';
 import { navigateToRef } from '@/lib/navigation';
+
+/**
+ * Facet для хранения имени текущего файла
+ */
+export const sourceFacet = Facet.define<string, string>({
+  combine: values => values[0] ?? ''
+});
 
 /**
  * StateEffect для установки hover-позиции ref
@@ -161,12 +168,13 @@ const clickToNavigatePlugin = ViewPlugin.fromClass(
         if (refToken) {
           // Получаем текст ссылки
           const refText = view.state.doc.sliceString(refToken.from, refToken.to);
+          // Получаем имя текущего файла из Facet
+          const source = view.state.facet(sourceFacet);
 
           // Выполняем навигацию
           const handled = navigateToRef({
             ref: refText,
-            from: refToken.from,
-            to: refToken.to,
+            source,
           });
 
           if (handled) {

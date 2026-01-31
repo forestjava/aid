@@ -129,6 +129,7 @@ export const Editor: React.FC<EditorProps> = ({ currentFile: setFile }) => {
         <CodeEditor
           value={content}
           onChange={handleContentChange}
+          currentFile={currentFile!}
         />
       )}
     </div>

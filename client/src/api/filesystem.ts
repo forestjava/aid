@@ -115,9 +115,27 @@ export const filesystemApi = {
 // API для парсинга DSL файлов
 const PARSE_API_BASE = '/api/parse'
 
+/**
+ * Результат навигации по ref-ссылке
+ */
+export interface NavigateResponse {
+  path: string | null
+  position?: { line: number; column: number }
+  error?: string
+}
+
 export const parseApi = {
   async parseText(path: string): Promise<{ path: string; content: string }> {
     const response = await fetch(`${PARSE_API_BASE}/text?path=${encodeURIComponent(path)}`)
+    await validate(response)
+    return response.json()
+  },
+
+  async navigate(ref: string, source: string): Promise<NavigateResponse> {
+    const url = new URL(`${PARSE_API_BASE}/navigate`, window.location.origin)
+    url.searchParams.set('ref', ref)
+    url.searchParams.set('source', source)
+    const response = await fetch(url.toString())
     await validate(response)
     return response.json()
   },

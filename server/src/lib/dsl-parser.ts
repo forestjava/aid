@@ -22,6 +22,16 @@ export interface ImportInfo {
 export type ParsedEntities = Record<string, Record<string, string>>;
 
 /**
+ * Информация о найденном определении (entity или атрибут)
+ */
+export interface DefinitionInfo {
+  name: string;
+  line: number;
+  column: number;
+  type: 'entity' | 'attribute';
+}
+
+/**
  * Константы для ключевых слов DSL
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
@@ -83,6 +93,26 @@ function firstMatchFallbacks<T>(opName: string) {
     _terminal(): T | null {
       return null;
     },
+  };
+}
+
+/**
+ * Внутренний тип для информации о найденном определении с offset
+ */
+interface DefinitionMatch {
+  name: string;
+  offset: number;
+  type: 'entity' | 'attribute';
+}
+
+/**
+ * Конвертирует offset в line/column
+ */
+function offsetToLineColumn(content: string, offset: number): { line: number; column: number } {
+  const lines = content.substring(0, offset).split('\n');
+  return {
+    line: lines.length,
+    column: lines[lines.length - 1].length + 1,
   };
 }
 
@@ -236,6 +266,137 @@ export class DslParser {
     const entities: ParsedEntities = adapter.extractEntities();
 
     return { entities };
+  }
+
+  /**
+   * Ищет позицию определения entity или атрибута по пути
+   * @param content - контент файла
+   * @param targetPath - путь к определению, например ['Post'] или ['Post', 'author']
+   * @returns DefinitionInfo или null если не найдено
+   */
+  findDefinitionPosition(content: string, targetPath: string[]): DefinitionInfo | null {
+    if (!content || content.trim() === '' || targetPath.length === 0) {
+      return null;
+    }
+
+    const match = this.grammar.match(content);
+
+    if (match.failed()) {
+      return null;
+    }
+
+    // Создаём семантику для поиска определений
+    const semantics = this.grammar.createSemantics();
+
+    // Операция для сбора всех определений с их позициями
+    semantics.addOperation<DefinitionMatch[]>('collectDefinitions', {
+      ...arrayFallbacks<DefinitionMatch>('collectDefinitions'),
+
+      // entity Name { ... };
+      Entity_options(this: ohm.Node, keyword: any, name: any, block: any, _semicolon: any): DefinitionMatch[] {
+        const results: DefinitionMatch[] = [];
+
+        if (ENTITY_KEYWORDS.has(keyword.sourceString)) {
+          // Это entity - добавляем его
+          results.push({
+            name: name.sourceString,
+            offset: name.source.startIdx,
+            type: 'entity',
+          });
+
+          // Собираем атрибуты внутри entity
+          const attributes: DefinitionMatch[] = block.collectAttributes();
+          results.push(...attributes);
+        } else {
+          // Для не-entity рекурсивно ищем внутри блока
+          results.push(...block.collectDefinitions());
+        }
+
+        return results;
+      },
+
+      // entity Name;
+      Entity_simple(this: ohm.Node, keyword: any, name: any, _semicolon: any): DefinitionMatch[] {
+        if (ENTITY_KEYWORDS.has(keyword.sourceString)) {
+          return [{
+            name: name.sourceString,
+            offset: name.source.startIdx,
+            type: 'entity',
+          }];
+        }
+        return [];
+      },
+    });
+
+    // Операция для сбора атрибутов внутри entity
+    semantics.addOperation<DefinitionMatch[]>('collectAttributes', {
+      ...arrayFallbacks<DefinitionMatch>('collectAttributes'),
+
+      // attribute name;
+      Entity_simple(this: ohm.Node, keyword: any, name: any, _semicolon: any): DefinitionMatch[] {
+        if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
+          return [{
+            name: name.sourceString,
+            offset: name.source.startIdx,
+            type: 'attribute',
+          }];
+        }
+        return [];
+      },
+
+      // attribute name { ... };
+      Entity_options(this: ohm.Node, keyword: any, name: any, block: any, _semicolon: any): DefinitionMatch[] {
+        if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
+          return [{
+            name: name.sourceString,
+            offset: name.source.startIdx,
+            type: 'attribute',
+          }];
+        }
+        return [];
+      },
+    });
+
+    const adapter = semantics(match);
+    const definitions: DefinitionMatch[] = adapter.collectDefinitions();
+
+    // Ищем по targetPath
+    // targetPath[0] - имя entity
+    // targetPath[1+] - путь к атрибуту внутри entity
+    const entityName = targetPath[0];
+    const entityDef = definitions.find(d => d.name === entityName && d.type === 'entity');
+
+    if (!entityDef) {
+      return null;
+    }
+
+    // Если нужен только entity
+    if (targetPath.length === 1) {
+      const pos = offsetToLineColumn(content, entityDef.offset);
+      return {
+        name: entityDef.name,
+        line: pos.line,
+        column: pos.column,
+        type: 'entity',
+      };
+    }
+
+    // Ищем атрибут
+    // Для простоты сейчас поддерживаем только один уровень вложенности (entity.attribute)
+    const attrName = targetPath[1];
+    const attrDef = definitions.find(d => d.name === attrName && d.type === 'attribute');
+
+    if (!attrDef) {
+      return null;
+    }
+
+    const pos = offsetToLineColumn(content, attrDef.offset);
+    return {
+      name: attrDef.name,
+      line: pos.line,
+      column: pos.column,
+      type: 'attribute',
+    };
   }
 }
 

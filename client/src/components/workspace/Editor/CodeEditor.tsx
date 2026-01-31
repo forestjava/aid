@@ -4,15 +4,18 @@ import { EditorState } from '@codemirror/state';
 import { highlightActiveLine, highlightActiveLineGutter, keymap } from '@codemirror/view';
 import { indentWithTab, toggleComment } from '@codemirror/commands';
 import { dslSupport } from './dsl-support';
+import { sourceFacet } from './dsl-click-to-navigate';
 
 interface CodeEditorProps {
   value: string;
   onChange: (value: string) => void;
+  currentFile: string;
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({
   value,
   onChange,
+  currentFile,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -31,6 +34,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           indentWithTab,
         ]),
         ...dslSupport,
+        sourceFacet.of(currentFile),
         highlightActiveLine(),
         highlightActiveLineGutter(),
         EditorView.updateListener.of((update) => {
