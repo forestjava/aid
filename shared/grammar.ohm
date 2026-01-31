@@ -12,6 +12,7 @@ DSL {
   // Описываем особенности для ключевых слов type, строковых и числовых значений
   Entity = annotationKeyword name? AnnotationBlock ";"?  --annotation
          | typeKeyword typeRef ";"                       --type
+         | refKeyword ref Block ";"?                     --refOptions
          | refKeyword ref ";"                            --ref
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number

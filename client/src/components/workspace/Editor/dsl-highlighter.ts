@@ -27,6 +27,23 @@ interface ParseCache {
 let parseCache: ParseCache | null = null;
 
 /**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
+ */
+function arrayFallbacks<T>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _iter(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _terminal(): T[] {
+      return [];
+    },
+  };
+}
+
+/**
  * Semantic visitor для извлечения токенов из Ohm дерева разбора
  * 
  * В Ohm semantics работает так:
@@ -38,21 +55,7 @@ let parseCache: ParseCache | null = null;
 const semantics = dslGrammar.createSemantics();
 
 semantics.addOperation<Token[]>('getTokens', {
-  _terminal(this: Node): Token[] {
-    // Терминальные узлы не обрабатываем напрямую
-    return [];
-  },
-
-  _iter(...children: any[]): Token[] {
-    // Итераторы (*, +, ?) - собираем токены от всех детей
-    // Дочерние элементы уже обёрнуты в semantic adapter
-    return children.flatMap(child => child.getTokens());
-  },
-
-  Program(entities: any): Token[] {
-    // entities - это уже semantic adapter с операцией getTokens
-    return entities.getTokens();
-  },
+  ...arrayFallbacks<Token>('getTokens'),
 
   Entity_annotation(this: Node, keyword: any, name: any, block: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
@@ -108,6 +111,25 @@ semantics.addOperation<Token[]>('getTokens', {
       type: 'punctuation'
     });
 
+    return tokens;
+  },
+
+  Entity_ref(refKeyword: any, ref: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+    tokens.push({ from: refKeyword.source.startIdx, to: refKeyword.source.endIdx, type: 'keyword' });
+    tokens.push(...ref.getTokens());
+    tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
+    return tokens;
+  },
+
+  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+    tokens.push({ from: refKeyword.source.startIdx, to: refKeyword.source.endIdx, type: 'keyword' });
+    tokens.push(...ref.getTokens());
+    tokens.push(...block.getTokens());
+    if (_semicolon && _semicolon.source && _semicolon.source.endIdx > _semicolon.source.startIdx) {
+      tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
+    }
     return tokens;
   },
 
@@ -235,17 +257,13 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  Item(entity: any): Token[] {
-    return entity.getTokens();
-  },
-
-  // typeRef = typeIdentifier ("(" digit+ ("," digit+)* ")")? "[]"?
-  // Арность: 7 (typeIdentifier + размерность + квадратные скобки)
-  typeRef(typeIdentifier: any, openParen: any, firstDigits: any, commas: any, additionalDigits: any, closeParen: any, brackets: any): Token[] {
+  // typeRef = ref ("(" digit+ ("," digit+)* ")")? "[]"?
+  // Арность: 7 (ref + размерность + квадратные скобки)
+  typeRef(ref: any, openParen: any, firstDigits: any, commas: any, additionalDigits: any, closeParen: any, brackets: any): Token[] {
     const tokens: Token[] = [];
 
-    // Добавляем идентификатор типа (может быть путём или обычным идентификатором)
-    tokens.push(...typeIdentifier.getTokens());
+    // Добавляем ref (универсальная ссылка)
+    tokens.push(...ref.getTokens());
 
     // Все остальное обрабатываем пока как пунктуацию
     const all_the_rest = [openParen, firstDigits, commas, additionalDigits, closeParen, brackets];
@@ -274,18 +292,17 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  // typeIdentifier = relativePrefix pathBody -- relativePath | pathBody -- path
-  // Для пути с префиксом ./  или ../
-  typeIdentifier_relativePath(this: Node, relativePrefix: any, pathBody: any): Token[] {
+
+  // ref = relativePrefix? pathBody
+  // Универсальная ссылка на идентификатор
+  ref(relativePrefix: any, pathBody: any): Token[] {
     const tokens: Token[] = [];
-    tokens.push(...relativePrefix.getTokens());
+    // relativePrefix опциональный - проверяем, есть ли он
+    if (relativePrefix.source.endIdx > relativePrefix.source.startIdx) {
+      tokens.push(...relativePrefix.getTokens());
+    }
     tokens.push(...pathBody.getTokens());
     return tokens;
-  },
-
-  // Для пути без префикса (включая простые идентификаторы типа string)
-  typeIdentifier_path(pathBody: any): Token[] {
-    return pathBody.getTokens();
   },
 
   // relativePrefix = "./" | ("../")+
@@ -329,13 +346,6 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  // stringValue = stringLiteral
-  // Арность: 1 (только stringLiteral)
-  stringValue(stringLiteral: any): Token[] {
-    // Делегируем обработку stringLiteral
-    return stringLiteral.getTokens();
-  },
-
   // numberValue = digit+ ("." digit+)?
   // Арность: 3 (целая часть + опциональная точка + опциональная дробная часть)
   numberValue(this: Node, _integerPart: any, _dot: any, _fractionalPart: any): Token[] {
@@ -372,13 +382,6 @@ semantics.addOperation<Token[]>('getTokens', {
       to: this.source.endIdx,
       type: 'string'
     }];
-  },
-
-  // comment = multiLineComment | singleLineComment
-  // Арность: 1 (выбор одного из вариантов)
-  comment(this: Node, commentNode: any): Token[] {
-    // Делегируем обработку конкретному типу комментария
-    return commentNode.getTokens();
   },
 
   // singleLineComment = "//" (~"\n" any)*

@@ -29,6 +29,65 @@ const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
 
 /**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
+ */
+function arrayFallbacks<T>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _iter(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _terminal(): T[] {
+      return [];
+    },
+  };
+}
+
+/**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих объекты (merge)
+ */
+function objectFallbacks<T extends object>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T {
+      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+    },
+    _iter(...children: any[]): T {
+      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+    },
+    _terminal(): T {
+      return {} as T;
+    },
+  };
+}
+
+/**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих первое найденное значение
+ */
+function firstMatchFallbacks<T>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T | null {
+      for (const child of children) {
+        const result = child[opName]();
+        if (result) return result;
+      }
+      return null;
+    },
+    _iter(...children: any[]): T | null {
+      for (const child of children) {
+        const result = child[opName]();
+        if (result) return result;
+      }
+      return null;
+    },
+    _terminal(): T | null {
+      return null;
+    },
+  };
+}
+
+/**
  * DSL Parser - парсер грамматики DSL
  */
 export class DslParser {
@@ -54,64 +113,19 @@ export class DslParser {
     const semantics = this.grammar.createSemantics();
 
     semantics.addOperation<ImportInfo[]>('findImports', {
-      _terminal(): ImportInfo[] {
-        return [];
-      },
+      ...arrayFallbacks<ImportInfo>('findImports'),
 
-      _iter(...children: any[]): ImportInfo[] {
-        return children.flatMap(child => child.findImports());
-      },
-
-      Program(entities: any): ImportInfo[] {
-        return entities.findImports();
-      },
-
-      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): ImportInfo[] {
-        return [];
-      },
-
-      Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): ImportInfo[] {
-        return [];
-      },
-
+      // import "path";
       Entity_string(this: ohm.Node, stringKeyword: any, stringValue: any, _semicolon: any): ImportInfo[] {
-        const keywordStr = stringKeyword.sourceString;
-
-        if (IMPORT_MODIFIERS.has(keywordStr)) {
-          const importPath = stringValue.sourceString.slice(1, -1);
-
+        if (IMPORT_MODIFIERS.has(stringKeyword.sourceString)) {
           return [{
-            keyword: keywordStr,
-            path: importPath,
+            keyword: stringKeyword.sourceString,
+            path: stringValue.sourceString.slice(1, -1),
             fullText: this.sourceString,
-            position: {
-              start: this.source.startIdx,
-              end: this.source.endIdx,
-            },
+            position: { start: this.source.startIdx, end: this.source.endIdx },
           }];
         }
-
         return [];
-      },
-
-      Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): ImportInfo[] {
-        return [];
-      },
-
-      Entity_simple(_keyword: any, _name: any, _semicolon: any): ImportInfo[] {
-        return [];
-      },
-
-      Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): ImportInfo[] {
-        return block.findImports();
-      },
-
-      Block(_open: any, items: any, _close: any): ImportInfo[] {
-        return items.findImports();
-      },
-
-      Item(entity: any): ImportInfo[] {
-        return entity.findImports();
       },
     });
 
@@ -126,165 +140,45 @@ export class DslParser {
 
     // Операция для извлечения entities с атрибутами
     semantics.addOperation<ParsedEntities>('extractEntities', {
-      _terminal(): ParsedEntities {
-        return {};
-      },
+      ...objectFallbacks<ParsedEntities>('extractEntities'),
 
-      _iter(...children: any[]): ParsedEntities {
-        return children.reduce((acc, child) => ({ ...acc, ...child.extractEntities() }), {});
-      },
-
-      Program(entities: any): ParsedEntities {
-        return entities.extractEntities();
-      },
-
-      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): ParsedEntities {
-        return {};
-      },
-
-      Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): ParsedEntities {
-        return {};
-      },
-
-      Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): ParsedEntities {
-        return {};
-      },
-
-      Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): ParsedEntities {
-        return {};
-      },
-
-      Entity_simple(_keyword: any, _name: any, _semicolon: any): ParsedEntities {
-        return {};
-      },
-
+      // entity Name { ... };
       Entity_options(keyword: any, name: any, block: any, _semicolon: any): ParsedEntities {
-        const keywordStr = keyword.sourceString;
-        const nameStr = name.sourceString;
-
-        // Обрабатываем только entity
-        if (ENTITY_KEYWORDS.has(keywordStr)) {
-          const attributes = block.extractAttributes();
-          return { [nameStr]: attributes };
+        if (ENTITY_KEYWORDS.has(keyword.sourceString)) {
+          return { [name.sourceString]: block.extractAttributes() };
         }
-
-        // Для остальных (service, etc.) - рекурсивно извлекаем вложенные entities
         return block.extractEntities();
-      },
-
-      Block(_open: any, items: any, _close: any): ParsedEntities {
-        return items.extractEntities();
-      },
-
-      Item(entity: any): ParsedEntities {
-        return entity.extractEntities();
       },
     });
 
     // Операция для извлечения атрибутов внутри entity
     semantics.addOperation<Record<string, string>>('extractAttributes', {
-      _terminal(): Record<string, string> {
-        return {};
-      },
+      ...objectFallbacks<Record<string, string>>('extractAttributes'),
 
-      _iter(...children: any[]): Record<string, string> {
-        return children.reduce((acc, child) => ({ ...acc, ...child.extractAttributes() }), {});
-      },
-
-      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Record<string, string> {
-        return {};
-      },
-
-      Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Record<string, string> {
-        return {};
-      },
-
-      Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): Record<string, string> {
-        return {};
-      },
-
-      Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Record<string, string> {
-        return {};
-      },
-
+      // attribute name;
       Entity_simple(keyword: any, name: any, _semicolon: any): Record<string, string> {
-        const keywordStr = keyword.sourceString;
-        const nameStr = name.sourceString;
-
-        // Обрабатываем только attribute без блока опций
-        if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
-          return { [nameStr]: 'unknown' };
+        if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
+          return { [name.sourceString]: 'unknown' };
         }
-
         return {};
       },
 
+      // attribute name { type SomeType; };
       Entity_options(keyword: any, name: any, block: any, _semicolon: any): Record<string, string> {
-        const keywordStr = keyword.sourceString;
-        const nameStr = name.sourceString;
-
-        // Обрабатываем только attribute с блоком опций
-        if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
-          const type = block.extractType();
-          return { [nameStr]: type || 'unknown' };
+        if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
+          return { [name.sourceString]: block.extractType() || 'unknown' };
         }
-
         return {};
-      },
-
-      Block(_open: any, items: any, _close: any): Record<string, string> {
-        return items.extractAttributes();
-      },
-
-      Item(entity: any): Record<string, string> {
-        return entity.extractAttributes();
       },
     });
 
     // Операция для извлечения типа из блока атрибута
     semantics.addOperation<string | null>('extractType', {
-      _terminal(): string | null {
-        return null;
-      },
+      ...firstMatchFallbacks<string>('extractType'),
 
-      _iter(...children: any[]): string | null {
-        for (const child of children) {
-          const type = child.extractType();
-          if (type) return type;
-        }
-        return null;
-      },
-
-      Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): string | null {
-        return null;
-      },
-
+      // type SomeType;
       Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): string | null {
         return typeRef.sourceString;
-      },
-
-      Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): string | null {
-        return null;
-      },
-
-      Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): string | null {
-        return null;
-      },
-
-      Entity_simple(_keyword: any, _name: any, _semicolon: any): string | null {
-        return null;
-      },
-
-      Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): string | null {
-        return block.extractType();
-      },
-
-      Block(_open: any, items: any, _close: any): string | null {
-        return items.extractType();
-      },
-
-      Item(entity: any): string | null {
-        return entity.extractType();
       },
     });
 

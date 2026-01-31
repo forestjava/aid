@@ -15,49 +15,53 @@ const SEPARATE_MODIFIERS = new Set(['separate', 'промежуток']);
 const RANK_MODIFIERS = new Set(['rank', 'позиция']);
 
 /**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
+ */
+function arrayFallbacks<T>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _iter(...children: any[]): T[] {
+      return children.flatMap(child => child[opName]());
+    },
+    _terminal(): T[] {
+      return [];
+    },
+  };
+}
+
+/**
+ * Helper: генерирует fallback-обработчики для операций, возвращающих объекты (merge)
+ */
+function objectFallbacks<T extends object>(opName: string) {
+  return {
+    _nonterminal(...children: any[]): T {
+      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+    },
+    _iter(...children: any[]): T {
+      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+    },
+    _terminal(): T {
+      return {} as T;
+    },
+  };
+}
+
+/**
  * Семантика для парсинга DSL в схему БД
  */
 const semantics = dslGrammar.createSemantics();
 
 // Операция для извлечения сущностей
 semantics.addOperation<Entity[]>('extractEntities', {
-  _terminal(): Entity[] {
-    return [];
-  },
+  ...arrayFallbacks<Entity>('extractEntities'),
 
-  _iter(...children: any[]): Entity[] {
-    return children.flatMap(child => child.extractEntities());
-  },
-
-  Program(entities: any): Entity[] {
-    return entities.extractEntities();
-  },
-
-  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Entity[] {
-    return [];
-  },
-
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Entity[] {
-    return [];
-  },
-
-  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): Entity[] {
-    return [];
-  },
-
-  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Entity[] {
-    return [];
-  },
-
-  Entity_simple(_keyword: any, _name: any, _semicolon: any): Entity[] {
-    return [];
-  },
-
+  // Только Entity_options создаёт сущности
   Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): Entity[] {
     const keywordStr = keyword.sourceString;
     const nameStr = name.sourceString;
 
-    // Обрабатываем только entity
     if (ENTITY_KEYWORDS.has(keywordStr)) {
       const attributes = block.extractAttributes();
       const entityProps = block.extractEntityProps();
@@ -65,316 +69,145 @@ semantics.addOperation<Entity[]>('extractEntities', {
         name: nameStr,
         label: entityProps.label || '',
         attributes,
-        rank: entityProps.rank, // Опциональный rank для layout
+        rank: entityProps.rank,
       }];
     }
 
     // Для остальных (service, etc.) - рекурсивно извлекаем вложенные entity
     return block.extractEntities();
   },
-
-  Block(_open: any, items: any, _close: any): Entity[] {
-    return items.extractEntities();
-  },
-
-  Item(entity: any): Entity[] {
-    return entity.extractEntities();
-  },
 });
 
 // Операция для извлечения атрибутов внутри entity
 semantics.addOperation<EntityAttribute[]>('extractAttributes', {
-  _terminal(): EntityAttribute[] {
-    return [];
-  },
+  ...arrayFallbacks<EntityAttribute>('extractAttributes'),
 
-  _iter(...children: any[]): EntityAttribute[] {
-    return children.flatMap(child => child.extractAttributes());
-  },
-
-  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): EntityAttribute[] {
-    return [];
-  },
-
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): EntityAttribute[] {
-    return [];
-  },
-
-  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): EntityAttribute[] {
-    return [];
-  },
-
-  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): EntityAttribute[] {
-    return [];
-  },
-
+  // attribute без блока опций
   Entity_simple(keyword: any, name: any, _semicolon: any): EntityAttribute[] {
     const keywordStr = keyword.sourceString;
-    const nameStr = name.sourceString;
-
-    // Обрабатываем только attribute без блока опций
     if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
-      return [{
-        name: nameStr,
-        label: '',
-      }];
+      return [{ name: name.sourceString, label: '' }];
     }
-
     return [];
   },
 
+  // attribute с блоком опций
   Entity_options(this: Node, keyword: any, name: any, block: any, _semicolon: any): EntityAttribute[] {
     const keywordStr = keyword.sourceString;
-    const nameStr = name.sourceString;
-
-    // Обрабатываем только attribute с блоком опций
     if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       const props = block.extractAttributeProps();
-      return [{
-        name: nameStr,
-        label: props.label || '',
-        ...props,
-      }];
+      return [{ name: name.sourceString, label: props.label || '', ...props }];
     }
-
     return [];
-  },
-
-  Block(_open: any, items: any, _close: any): EntityAttribute[] {
-    return items.extractAttributes();
-  },
-
-  Item(entity: any): EntityAttribute[] {
-    return entity.extractAttributes();
   },
 });
 
 // Операция для извлечения свойств атрибута (type, is navigation, key primary, etc.)
 semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
-  _terminal(): Partial<EntityAttribute> {
-    return {};
-  },
+  ...objectFallbacks<Partial<EntityAttribute>>('extractAttributeProps'),
 
-  _iter(...children: any[]): Partial<EntityAttribute> {
-    return children.reduce((acc, child) => ({ ...acc, ...child.extractAttributeProps() }), {});
-  },
-
-  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<EntityAttribute> {
-    return {};
-  },
-
+  // type SomeType;
   Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<EntityAttribute> {
     const typeStr = typeRef.sourceString;
-    // Проверяем, является ли тип коллекцией (заканчивается на [])
-    const isCollection = typeStr.endsWith('[]');
-
-    return {
-      type: typeStr,
-      isCollection,
-    };
+    return { type: typeStr, isCollection: typeStr.endsWith('[]') };
   },
 
-  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<EntityAttribute> {
-    const keywordStr = stringKeyword.sourceString;
-
-    // Обрабатываем label - извлекаем значение
-    if (LABEL_MODIFIERS.has(keywordStr)) {
-      const valueStr = stringValue.sourceString;
-      // Убираем кавычки из строкового литерала
-      const label = valueStr.slice(1, -1);
-      return { label };
+  // sync Entity.attr; / map Entity.attr; / relates Entity.attr;
+  Entity_ref(refKeyword: any, ref: any, _semicolon: any): Partial<EntityAttribute> {
+    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
+      return { sync: ref.sourceString };
     }
-
-    // Для других строковых модификаторов (import и т.д.)
     return {};
   },
 
-  Entity_number(_numberKeyword: any, _numberValue: any, _semicolon: any): Partial<EntityAttribute> {
+  // sync Entity.attr { ... }; / map Entity.attr { ... };
+  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): Partial<EntityAttribute> {
+    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
+      return { sync: ref.sourceString, ...block.extractAttributeProps() };
+    }
+    return block.extractAttributeProps();
+  },
+
+  // label "...";
+  Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<EntityAttribute> {
+    if (LABEL_MODIFIERS.has(stringKeyword.sourceString)) {
+      return { label: stringValue.sourceString.slice(1, -1) };
+    }
     return {};
   },
 
+  // is navigation; / is nullable; / key primary; / key foreign;
   Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<EntityAttribute> {
     const keywordStr = _keyword.sourceString;
     const nameStr = name.sourceString;
 
-    // Обрабатываем "is navigation", "is nullable", "is required"
     if (keywordStr === 'is' && IS_MODIFIERS.has(nameStr)) {
-      if (nameStr === 'navigation') {
-        return { isNavigation: true };
-      }
-      if (nameStr === 'nullable') {
-        return { isNullable: true };
-      }
-      if (nameStr === 'required') {
-        return { isRequired: true };
-      }
+      if (nameStr === 'navigation') return { isNavigation: true };
+      if (nameStr === 'nullable') return { isNullable: true };
+      if (nameStr === 'required') return { isRequired: true };
     }
 
-    // Обрабатываем "key primary", "key foreign"
     if (keywordStr === 'key' && KEY_MODIFIERS.has(nameStr)) {
-      if (nameStr === 'primary') {
-        return { isPrimaryKey: true };
-      }
-      if (nameStr === 'foreign') {
-        return { isForeignKey: true };
-      }
-    }
-
-    // Обрабатываем "sync ExternalEntity.externalAttr"
-    if (SYNC_KEYWORDS.has(keywordStr)) {
-      return { sync: nameStr };
+      if (nameStr === 'primary') return { isPrimaryKey: true };
+      if (nameStr === 'foreign') return { isForeignKey: true };
     }
 
     return {};
   },
 
+  // key primary { ... }; / key foreign { ... };
   Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<EntityAttribute> {
     const keywordStr = _keyword.sourceString;
     const nameStr = _name.sourceString;
 
-    // Обрабатываем "key primary" и "key foreign" с блоком опций
     if (keywordStr === 'key' && KEY_MODIFIERS.has(nameStr)) {
-      if (nameStr === 'primary') {
-        return { isPrimaryKey: true, ...block.extractAttributeProps() };
-      }
-      if (nameStr === 'foreign') {
-        return { isForeignKey: true, ...block.extractAttributeProps() };
-      }
+      const props = block.extractAttributeProps();
+      if (nameStr === 'primary') return { isPrimaryKey: true, ...props };
+      if (nameStr === 'foreign') return { isForeignKey: true, ...props };
     }
 
-    // Рекурсивно собираем свойства из вложенных блоков
     return block.extractAttributeProps();
   },
-
-  Block(_open: any, items: any, _close: any): Partial<EntityAttribute> {
-    return items.extractAttributeProps();
-  },
-
-  Item(entity: any): Partial<EntityAttribute> {
-    return entity.extractAttributeProps();
-  },
 });
 
-// Операция для извлечения свойств самой entity (label, и т.д.)
+// Операция для извлечения свойств самой entity (label, rank)
 semantics.addOperation<Partial<Entity>>('extractEntityProps', {
-  _terminal(): Partial<Entity> {
-    return {};
-  },
+  ...objectFallbacks<Partial<Entity>>('extractEntityProps'),
 
-  _iter(...children: any[]): Partial<Entity> {
-    return children.reduce((acc, child) => ({ ...acc, ...child.extractEntityProps() }), {});
-  },
-
-  Entity_annotation(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<Entity> {
-    return {};
-  },
-
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<Entity> {
-    return {};
-  },
-
+  // label "...";
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Entity> {
-    const keywordStr = stringKeyword.sourceString;
-
-    // Обрабатываем label - извлекаем значение
-    if (LABEL_MODIFIERS.has(keywordStr)) {
-      const valueStr = stringValue.sourceString;
-      // Убираем кавычки из строкового литерала
-      const label = valueStr.slice(1, -1);
-      return { label };
+    if (LABEL_MODIFIERS.has(stringKeyword.sourceString)) {
+      return { label: stringValue.sourceString.slice(1, -1) };
     }
-
-    // Для других строковых модификаторов (import и т.д.)
     return {};
   },
 
+  // rank 1;
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<Entity> {
-    const keywordStr = numberKeyword.sourceString;
-    const valueStr = numberValue.sourceString;
-
-    // Обрабатываем rank - извлекаем числовое значение
-    if (RANK_MODIFIERS.has(keywordStr)) {
-      const rank = parseInt(valueStr, 10);
-      return { rank };
+    if (RANK_MODIFIERS.has(numberKeyword.sourceString)) {
+      return { rank: parseInt(numberValue.sourceString, 10) };
     }
-
     return {};
-  },
-
-  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<Entity> {
-    return {};
-  },
-
-  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<Entity> {
-    return block.extractEntityProps();
-  },
-
-  Block(_open: any, items: any, _close: any): Partial<Entity> {
-    return items.extractEntityProps();
-  },
-
-  Item(entity: any): Partial<Entity> {
-    return entity.extractEntityProps();
   },
 });
 
-// Операция для извлечения свойств схемы (separate и т.д.)
+// Операция для извлечения свойств схемы (separate, annotation)
 semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
-  _terminal(): Partial<DatabaseSchema> {
-    return {};
-  },
+  ...objectFallbacks<Partial<DatabaseSchema>>('extractSchemaProps'),
 
-  _iter(...children: any[]): Partial<DatabaseSchema> {
-    return children.reduce((acc, child) => ({ ...acc, ...child.extractSchemaProps() }), {});
-  },
-
-  Program(entities: any): Partial<DatabaseSchema> {
-    return entities.extractSchemaProps();
-  },
-
+  // annotation { ... };
   Entity_annotation(_keyword: any, _name: any, block: any, _semicolon: any): Partial<DatabaseSchema> {
-    // Извлекаем содержимое блока (без фигурных скобок)
     const blockContent = block.sourceString;
-    // Убираем { и } и переводы строк в начале/конце
     const annotation = blockContent.slice(1, -1).replace(/^[\r\n]+|[\r\n]+$/g, '');
     return { annotation };
   },
 
-  Entity_type(_typeKeyword: any, _typeRef: any, _semicolon: any): Partial<DatabaseSchema> {
-    return {};
-  },
-
-  Entity_string(_stringKeyword: any, _stringValue: any, _semicolon: any): Partial<DatabaseSchema> {
-    return {};
-  },
-
+  // separate 1.5;
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<DatabaseSchema> {
-    const keywordStr = numberKeyword.sourceString;
-    const valueStr = numberValue.sourceString;
-
-    // Обрабатываем separate - извлекаем числовое значение
-    if (SEPARATE_MODIFIERS.has(keywordStr)) {
-      const separate = parseFloat(valueStr);
-      return { separate };
+    if (SEPARATE_MODIFIERS.has(numberKeyword.sourceString)) {
+      return { separate: parseFloat(numberValue.sourceString) };
     }
-
     return {};
-  },
-
-  Entity_simple(_keyword: any, _name: any, _semicolon: any): Partial<DatabaseSchema> {
-    return {};
-  },
-
-  Entity_options(_keyword: any, _name: any, block: any, _semicolon: any): Partial<DatabaseSchema> {
-    return block.extractSchemaProps();
-  },
-
-  Block(_open: any, items: any, _close: any): Partial<DatabaseSchema> {
-    return items.extractSchemaProps();
-  },
-
-  Item(entity: any): Partial<DatabaseSchema> {
-    return entity.extractSchemaProps();
   },
 });
 
