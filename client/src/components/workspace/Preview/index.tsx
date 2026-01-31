@@ -22,18 +22,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils'
 
 interface PreviewProps {
-  currentFile: string | null // файл, который нужно открыть (приходит извне)
+  selectedPath: string | null // путь к файлу или каталогу (приходит извне)
 }
 
 // Внутренний компонент для автоматического fitView и центрирования на выбранном узле
 const AutoFitView: React.FC<{
-  currentFile: string | null
+  selectedPath: string | null
   nodes: Node[]
   selectedNodeId: string
-}> = ({ currentFile, nodes, selectedNodeId }) => {
+}> = ({ selectedPath, nodes, selectedNodeId }) => {
   const reactFlowInstance = useReactFlow()
 
-  // fitView при изменении currentFile
+  // fitView при изменении selectedPath
   useEffect(() => {
     if (nodes.length > 0) {
       // Небольшая задержка для завершения рендера
@@ -41,7 +41,7 @@ const AutoFitView: React.FC<{
         reactFlowInstance.fitView({ duration: 800 })
       }, 200)
     }
-  }, [currentFile, nodes.length, reactFlowInstance])
+  }, [selectedPath, nodes.length, reactFlowInstance])
 
   // fitView при изменении размера контейнера (например, при ресайзе панели)
   useEffect(() => {
@@ -75,16 +75,16 @@ const AutoFitView: React.FC<{
   return null
 }
 
-export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
+export const Preview: React.FC<PreviewProps> = ({ selectedPath }) => {
   // Состояние для combobox выбора узлов
   const [open, setOpen] = useState(false)
   const [selectedNodeId, setSelectedNodeId] = useState<string>('')
 
-  // Шаг 1: Получение контента текущего файла (с разрешёнными импортами)
+  // Шаг 1: Получение контента текущего пути (файл или каталог с index-файлом)
   const { data: fileData, isLoading } = useQuery({
-    queryKey: ['parseText', currentFile],
-    queryFn: () => parseApi.parseText(currentFile!),
-    enabled: !!currentFile,
+    queryKey: ['parseText', selectedPath],
+    queryFn: () => parseApi.parseText(selectedPath!),
+    enabled: !!selectedPath,
   })
 
   // Шаги 2-5: Асинхронная обработка содержимого файла (парсинг, размеры, layout)
@@ -121,11 +121,11 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
       {/* Заголовок */}
       <div className="h-10 border-b px-3 flex items-center gap-2 min-w-0 shrink-0">
         <span className="text-sm font-medium">Схема</span>
-        {currentFile ? (
+        {selectedPath ? (
           <>
             <span className="text-xs text-muted-foreground">•</span>
-            <span className="text-xs text-muted-foreground truncate" title={currentFile}>
-              {currentFile}
+            <span className="text-xs text-muted-foreground truncate" title={selectedPath}>
+              {selectedPath}
             </span>
             {(isLoading || isProcessing) && (
               <>
@@ -137,7 +137,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
             )}
           </>
         ) : (
-          <span className="text-xs text-muted-foreground">• Файл не выбран</span>
+          <span className="text-xs text-muted-foreground">• Не выбрано</span>
         )}
 
         {/* Combobox для выбора узлов и меню экспорта - в правой части заголовка */}
@@ -196,10 +196,10 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
       </div>
 
       {/* Область схемы */}
-      {!currentFile ? (
+      {!selectedPath ? (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-muted-foreground">
-            Выберите файл в файловом менеджере для просмотра схемы
+            Выберите файл или каталог в файловом менеджере для просмотра схемы
           </p>
         </div>
       ) : isLoading ? (
@@ -223,7 +223,7 @@ export const Preview: React.FC<PreviewProps> = ({ currentFile }) => {
           >
             <Background />
             <Controls />
-            <AutoFitView currentFile={currentFile} nodes={previewNodes} selectedNodeId={selectedNodeId} />
+            <AutoFitView selectedPath={selectedPath} nodes={previewNodes} selectedNodeId={selectedNodeId} />
 
             {/* Плашка аннотации - absolute positioned в левом верхнем углу */}
             {schema?.annotation && (

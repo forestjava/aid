@@ -104,7 +104,7 @@ export const App = () => {
   if (onlyPreview) {
     return (
       <Only>
-        <Preview currentFile={currentFile} />
+        <Preview selectedPath={selectedPath} />
       </Only>
     )
   }
@@ -119,7 +119,7 @@ export const App = () => {
           selectedIsDirectory={selectedIsDirectory}
         />
         <Editor currentFile={currentFile} />
-        <Preview currentFile={currentFile} />
+        <Preview selectedPath={selectedPath} />
       </Main>
       <Footer>© 2025 ОЭЗ Алабуга</Footer>
     </Layout>
