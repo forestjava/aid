@@ -18,6 +18,7 @@ DSL {
          | importKeyword stringValue ";"                 --importString
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number
+         | valueKeyword anyValue ";"                     --value
          | keyword name ";"                              --simple
          | keyword name Block ";"?                       --options
 
@@ -41,32 +42,28 @@ DSL {
   importKeyword = "import" | "из"
   stringKeyword = "label" | "заголовок" | "description" | "описание"
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
-  keyword = 
-    // Английские ключевые слова
-      "service"
-      | "set"
-      | "scheme"
-      | "group"
+  valueKeyword = "value" | "значение"
+  keyword = "entity" | "сущность"      
+      | "class"      | "класс"
+      | "set"        | "набор"
+      | "group"      | "группа"
+      | "scheme"     | "схема"
+      | "service"    | "сервис"
+      | "system"     | "система"
+
+      | "attribute"  | "реквизит"
+      | "method"     | "метод"
+
+      | "is"         | "это"
+      | "key"        | "ключ"
+
+      | "table"
+      | "json"
       | "dto"
       | "api"
+      | "endpoint"
       | "interface"
-      | "entity"
-      | "class"
-      | "method"
-      | "attribute"
-      | "value"
-      | "is"
-      | "key"      
-    // Русские ключевые слова
-      | "сервис"
-      | "набор"
-      | "схема"
-      | "группа"
-      | "сущность"
-      | "реквизит"
-      | "метод"
-      | "значение"      
-  
+
   // Имя в общем случае может быть только идентификатором
   name = identifier
 
@@ -89,6 +86,9 @@ DSL {
 
   // Числовое значение - это целое или дробное число
   numberValue = digit+ ("." digit+)?
+
+  // Универсальное значение - строка, число или ссылка
+  anyValue = stringValue | numberValue | ref
 
   // Идентификатор может быть составным через точку (неограниченная вложенность)
   identifier = simpleIdentifier ("." simpleIdentifier)*

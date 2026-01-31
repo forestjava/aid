@@ -199,6 +199,29 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_value(valueKeyword: any, anyValue: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+
+    // Добавляем valueKeyword (терминальный узел)
+    tokens.push({
+      from: valueKeyword.source.startIdx,
+      to: valueKeyword.source.endIdx,
+      type: 'keyword'
+    });
+
+    // Добавляем anyValue (делегируем обработку string/number/ref)
+    tokens.push(...anyValue.getTokens());
+
+    // Добавляем пунктуацию (терминальный узел)
+    tokens.push({
+      from: _semicolon.source.startIdx,
+      to: _semicolon.source.endIdx,
+      type: 'punctuation'
+    });
+
+    return tokens;
+  },
+
   Entity_simple(keyword: any, name: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
@@ -370,6 +393,12 @@ semantics.addOperation<Token[]>('getTokens', {
       to: this.source.endIdx,
       type: 'number'
     }];
+  },
+
+  // anyValue = stringValue | numberValue | ref
+  // Делегируем обработку дочернему узлу
+  anyValue(content: any): Token[] {
+    return content.getTokens();
   },
 
   // identifier = simpleIdentifier ("." simpleIdentifier)*
