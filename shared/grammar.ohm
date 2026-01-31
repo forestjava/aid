@@ -12,6 +12,7 @@ DSL {
   // Описываем особенности для ключевых слов type, строковых и числовых значений
   Entity = annotationKeyword name? AnnotationBlock ";"?  --annotation
          | typeKeyword typeRef ";"                       --type
+         | refKeyword ref ";"                            --ref
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number
          | keyword name ";"                              --simple
@@ -33,6 +34,7 @@ DSL {
   // Ключевые слова
   annotationKeyword = "annotation" | "аннотация"
   typeKeyword = "type" | "тип"
+  refKeyword = "sync" | "обмен" | "map" | "relates" | "связь" | "относится"
   stringKeyword = "import" | "из" | "label" | "заголовок" | "description" | "описание"
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   keyword = 
@@ -48,8 +50,6 @@ DSL {
       | "class"
       | "method"
       | "attribute"
-      | "method"
-      | "sync"
       | "value"
       | "is"
       | "key"      
@@ -61,22 +61,18 @@ DSL {
       | "сущность"
       | "реквизит"
       | "метод"
-      | "обмен"
-      | "связь"
-      | "относится"
       | "значение"      
   
   // Имя в общем случае может быть только идентификатором
   name = identifier
 
-  // Имя типа может быть относительным путём или обычным идентификатором
-  // Примеры: string, MyEntity.Field, ./local/MyType, ../shared/Dotted.Folder/Type, Demo/Post
-  // Также может содержать размерность (200) или (10,2) и/или признак [] collection 
-  typeRef = typeIdentifier ("(" digit+ ("," digit+)* ")")? "[]"?
+  // Универсальная ссылка на идентификатор (сущность, атрибут, путь)
+  // Примеры: string, MyEntity.Field, ./local/MyType, ../shared/Type, Demo/Post.attribute
+  ref = relativePrefix? pathBody
 
-  // Идентификатор типа: путь с префиксом ./ или ../, либо путь без префикса
-  typeIdentifier = relativePrefix pathBody   -- relativePath
-                 | pathBody                   -- path
+  // Ссылка на тип — это ref + опциональная размерность + опциональный признак коллекции
+  // Примеры: string, Demo/Post[], decimal(10,2), varchar(200)
+  typeRef = ref ("(" digit+ ("," digit+)* ")")? "[]"?
 
   // Префикс относительного пути: / root, ./ или один или несколько ../
   relativePrefix = "/" | "./" | ("../")+
