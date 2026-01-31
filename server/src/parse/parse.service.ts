@@ -118,11 +118,18 @@ export class ParseService {
         new Set(visitedFiles)
       );
 
-      // Заменяем импорт на содержимое файла с комментарием
-      const replacement =
-        `\n// ===== BEGIN: ${imp.path} =====\n` +
-        resolvedContent +
-        `\n// ===== END: ${imp.path} =====\n`;
+      // Вычисляем отступ перед import (пробелы/табы от начала строки)
+      const lineStart = resultContent.lastIndexOf('\n', imp.position.start - 1) + 1;
+      const indent = resultContent.substring(lineStart, imp.position.start).match(/^(\s*)/)?.[1] || '';
+
+      // Добавляем отступ к каждой строке импортируемого контента
+      const indentedContent = resolvedContent
+        .split('\n')
+        .map(line => indent + line)
+        .join('\n');
+
+      // Простой комментарий + контент с отступами
+      const replacement = `// imported from ${imp.path}\n${indentedContent}\n`;
 
       resultContent =
         resultContent.substring(0, imp.position.start) +

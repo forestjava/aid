@@ -14,6 +14,8 @@ DSL {
          | typeKeyword typeRef ";"                       --type
          | refKeyword ref Block ";"?                     --refOptions
          | refKeyword ref ";"                            --ref
+         | importKeyword ref ";"                         --importRef
+         | importKeyword stringValue ";"                 --importString
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number
          | keyword name ";"                              --simple
@@ -36,7 +38,8 @@ DSL {
   annotationKeyword = "annotation" | "аннотация"
   typeKeyword = "type" | "тип"
   refKeyword = "sync" | "обмен" | "map" | "relates" | "связь" | "относится"
-  stringKeyword = "import" | "из" | "label" | "заголовок" | "description" | "описание"
+  importKeyword = "import" | "из"
+  stringKeyword = "label" | "заголовок" | "description" | "описание"
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   keyword = 
     // Английские ключевые слова

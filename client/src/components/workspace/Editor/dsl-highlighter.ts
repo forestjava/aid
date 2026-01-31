@@ -133,6 +133,22 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_importRef(importKeyword: any, ref: any, _semicolon: any): Token[] {
+    return [
+      { from: importKeyword.source.startIdx, to: importKeyword.source.endIdx, type: 'keyword' },
+      ...ref.getTokens(),
+      { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
+    ];
+  },
+
+  Entity_importString(importKeyword: any, stringValue: any, _semicolon: any): Token[] {
+    return [
+      { from: importKeyword.source.startIdx, to: importKeyword.source.endIdx, type: 'keyword' },
+      { from: stringValue.source.startIdx, to: stringValue.source.endIdx, type: 'string' },
+      { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
+    ];
+  },
+
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 

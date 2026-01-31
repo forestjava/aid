@@ -24,7 +24,6 @@ export type ParsedEntities = Record<string, Record<string, string>>;
 /**
  * Константы для ключевых слов DSL
  */
-const IMPORT_MODIFIERS = new Set(['import', 'из']);
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
 
@@ -116,16 +115,23 @@ export class DslParser {
       ...arrayFallbacks<ImportInfo>('findImports'),
 
       // import "path";
-      Entity_string(this: ohm.Node, stringKeyword: any, stringValue: any, _semicolon: any): ImportInfo[] {
-        if (IMPORT_MODIFIERS.has(stringKeyword.sourceString)) {
-          return [{
-            keyword: stringKeyword.sourceString,
-            path: stringValue.sourceString.slice(1, -1),
-            fullText: this.sourceString,
-            position: { start: this.source.startIdx, end: this.source.endIdx },
-          }];
-        }
-        return [];
+      Entity_importString(this: ohm.Node, importKeyword: any, stringValue: any, _semicolon: any): ImportInfo[] {
+        return [{
+          keyword: importKeyword.sourceString,
+          path: stringValue.sourceString.slice(1, -1),
+          fullText: this.sourceString,
+          position: { start: this.source.startIdx, end: this.source.endIdx },
+        }];
+      },
+
+      // import Demo/Post;
+      Entity_importRef(this: ohm.Node, importKeyword: any, ref: any, _semicolon: any): ImportInfo[] {
+        return [{
+          keyword: importKeyword.sourceString,
+          path: ref.sourceString,
+          fullText: this.sourceString,
+          position: { start: this.source.startIdx, end: this.source.endIdx },
+        }];
       },
     });
 
