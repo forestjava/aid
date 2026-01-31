@@ -11,7 +11,8 @@ const TOKEN_CLASS_MAP: Record<TokenType, string> = {
   comment: 'tok-comment',
   identifier: 'tok-variableName',
   punctuation: 'tok-punctuation',
-  number: 'tok-number'
+  number: 'tok-number',
+  ref: 'tok-ref'
 };
 
 /**

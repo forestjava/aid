@@ -99,6 +99,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           '.tok-number': {
             color: 'hsl(30, 80%, 50%)',
           },
+          '.tok-ref': {
+            color: 'hsl(180, 50%, 45%)',
+          },
         }),
       ],
     });

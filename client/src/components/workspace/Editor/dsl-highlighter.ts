@@ -5,7 +5,7 @@ import type { Node } from 'ohm-js';
 /**
  * Тип токена для подсветки синтаксиса
  */
-export type TokenType = 'keyword' | 'string' | 'comment' | 'identifier' | 'punctuation' | 'number';
+export type TokenType = 'keyword' | 'string' | 'comment' | 'identifier' | 'punctuation' | 'number' | 'ref';
 
 /**
  * Токен с позицией в документе
@@ -333,15 +333,13 @@ semantics.addOperation<Token[]>('getTokens', {
 
 
   // ref = relativePrefix? pathBody
-  // Универсальная ссылка на идентификатор
-  ref(relativePrefix: any, pathBody: any): Token[] {
-    const tokens: Token[] = [];
-    // relativePrefix опциональный - проверяем, есть ли он
-    if (relativePrefix.source.endIdx > relativePrefix.source.startIdx) {
-      tokens.push(...relativePrefix.getTokens());
-    }
-    tokens.push(...pathBody.getTokens());
-    return tokens;
+  // Универсальная ссылка на идентификатор - подсвечивается как единый токен
+  ref(this: Node, _relativePrefix: any, _pathBody: any): Token[] {
+    return [{
+      from: this.source.startIdx,
+      to: this.source.endIdx,
+      type: 'ref'
+    }];
   },
 
   // relativePrefix = "./" | ("../")+
