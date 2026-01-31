@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { FilePlus, FolderPlus } from 'lucide-react'
 import { filesystemApi } from '@/api/filesystem'
@@ -12,7 +12,7 @@ import { useDragAndDrop } from './useDragAndDrop'
 import { cn } from '@/lib/utils'
 
 interface FileExplorerProps {
-  onSelect?: (path: string, isDirectory: boolean) => void
+  onSelect: (path: string, isDirectory: boolean) => void
   selectedPath: string | null // Полностью управляемый компонент
   selectedIsDirectory: boolean // Полностью управляемый компонент
 }
@@ -23,6 +23,26 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   selectedIsDirectory
 }) => {
   // Компонент теперь полностью управляемый, состояния приходят извне
+
+  // Централизованное состояние раскрытых каталогов
+  const [expanded, setExpanded] = useState<Record<string, boolean | undefined>>({})
+
+  // Авто-раскрытие родительских каталогов при изменении selectedPath
+  useEffect(() => {
+    if (selectedPath) {
+      const parts = selectedPath.split('/')
+      // Все родительские пути: "Demo", "Demo/users", ...
+      const parents = parts.slice(0, -1).map((_, i) => parts.slice(0, i + 1).join('/'))
+      const paths = selectedIsDirectory ? [...parents, selectedPath] : parents
+
+      let expanding: Record<string, boolean | undefined> = {}
+      for (const path of paths) {
+        expanding = { ...expanding, [path]: path === selectedPath && expanded[path] === false ? false : true }
+      }
+
+      setExpanded({ ...expanded, ...expanding })
+    }
+  }, [selectedPath, selectedIsDirectory])
 
   // Диалоги
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -95,9 +115,11 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
   // Обработчики
 
   const handleSelect = (path: string, isDirectory: boolean) => {
-    // Просто уведомляем родительский компонент
-    // Родитель обновит URL, который вернётся обратно через пропы
-    if (onSelect) {
+    if (isDirectory) {
+      setExpanded({ ...expanded, [path]: expanded[path] === true ? false : true })
+    }
+
+    if (path !== selectedPath) {
       onSelect(path, isDirectory)
     }
   }
@@ -204,6 +226,7 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({
                 path=""
                 level={0}
                 selectedPath={selectedPath}
+                expanded={expanded}
                 onSelect={handleSelect}
                 onRename={handleRename}
                 onDelete={handleDelete}

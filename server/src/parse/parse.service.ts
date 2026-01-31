@@ -45,8 +45,9 @@ export class ParseService {
 
   /**
    * Получает путь к файлу (добавляет index если это каталог)
+   * Возвращает null если это каталог без index-файла
    */
-  private async getFilePath(relativePath: string): Promise<string> {
+  private async getFilePath(relativePath: string): Promise<string | null> {
     const fullPath = this.resolvePath(relativePath);
     const stats = await fs.stat(fullPath);
 
@@ -54,8 +55,13 @@ export class ParseService {
       // Если каталог - ищем файл index
       const indexPath = path.join(fullPath, 'index');
 
-      await fs.access(indexPath);
-      return indexPath;
+      try {
+        await fs.access(indexPath);
+        return indexPath;
+      } catch {
+        // Index-файл не найден — это нормально для каталога
+        return null;
+      }
     }
 
     return fullPath;
@@ -154,9 +160,16 @@ export class ParseService {
 
   /**
    * Парсит файл и возвращает текст с разрешенными импортами
+   * Для каталога без index-файла возвращает content: null
    */
-  async parseText(relativePath: string): Promise<{ path: string; content: string }> {
+  async parseText(relativePath: string): Promise<{ path: string; content: string | null }> {
     const filePath = await this.getFilePath(relativePath);
+
+    if (filePath === null) {
+      // Каталог без index-файла
+      return { path: relativePath, content: null };
+    }
+
     const content = await fs.readFile(filePath, 'utf-8');
     const resolvedContent = await this.resolveImports(content, filePath);
 
@@ -169,9 +182,14 @@ export class ParseService {
   /**
    * Парсит файл и возвращает JSON с entities и их атрибутами
    */
-  async parseJson(relativePath: string): Promise<{ path: string; entities: ParsedEntities }> {
+  async parseJson(relativePath: string): Promise<{ path: string; entities: ParsedEntities | null }> {
     // Сначала получаем текст с разрешенными импортами
     const { content } = await this.parseText(relativePath);
+
+    if (content === null) {
+      // Каталог без index-файла
+      return { path: relativePath, entities: null };
+    }
 
     // Парсим контент
     const result = this.parser.parseEntities(content);

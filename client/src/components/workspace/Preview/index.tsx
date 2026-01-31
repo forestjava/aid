@@ -196,7 +196,7 @@ export const Preview: React.FC<PreviewProps> = ({ selectedPath }) => {
       </div>
 
       {/* Область схемы */}
-      {!selectedPath ? (
+      {!selectedPath || fileData?.content === null ? (
         <div className="flex-1 flex items-center justify-center">
           <p className="text-sm text-muted-foreground">
             Выберите файл или каталог в файловом менеджере для просмотра схемы

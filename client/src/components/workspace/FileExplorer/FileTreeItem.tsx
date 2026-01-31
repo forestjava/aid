@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ChevronRight, ChevronDown, File, Folder, MoreVertical } from 'lucide-react'
 import { filesystemApi } from '@/api/filesystem'
@@ -19,6 +19,7 @@ interface FileTreeItemProps {
   path: string
   level: number
   selectedPath: string | null
+  expanded: Record<string, boolean | undefined>
   onSelect: (path: string, isDirectory: boolean) => void
   onRename: (path: string, name: string) => void
   onDelete: (path: string) => void
@@ -37,6 +38,7 @@ export function FileTreeItem({
   path,
   level,
   selectedPath,
+  expanded,
   onSelect,
   onRename,
   onDelete,
@@ -50,14 +52,9 @@ export function FileTreeItem({
 }: FileTreeItemProps) {
   const fullPath = path ? `${path}/${item.name}` : item.name
   const isSelected = selectedPath === fullPath
+  const isExpanded = expanded[fullPath] === true
   const isDraggedOver = dragOverPath === fullPath
   const itemRef = useRef<HTMLDivElement>(null)
-
-  const [isExpanded, setIsExpanded] = useState(false);
-  
-  useEffect(() => {
-    if (isSelected && item.isDirectory) setIsExpanded(!isExpanded);
-  }, [item, isSelected])
 
   // Загружаем содержимое папки только когда она раскрыта
   const { data, isLoading } = useQuery({
@@ -68,8 +65,7 @@ export function FileTreeItem({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (isSelected && item.isDirectory) setIsExpanded(!isExpanded);
-    else onSelect(fullPath, item.isDirectory);
+    onSelect(fullPath, item.isDirectory)
   }
 
   const handleMenuAction = (e: React.MouseEvent, action: 'rename' | 'delete') => {
@@ -172,6 +168,7 @@ export function FileTreeItem({
                 path={fullPath}
                 level={level + 1}
                 selectedPath={selectedPath}
+                expanded={expanded}
                 onSelect={onSelect}
                 onRename={onRename}
                 onDelete={onDelete}
