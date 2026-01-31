@@ -100,7 +100,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             color: 'hsl(30, 80%, 50%)',
           },
           '.tok-ref': {
-            color: 'hsl(180, 50%, 45%)',
+            color: '#0645ad', //wikipedia.org's hyperlink color
+          },
+          // Стиль для ref при Ctrl+hover (как кликабельная ссылка)
+          '.cm-ref-link': {
+            textDecoration: 'underline #0645ad',
+            cursor: 'pointer',
           },
         }),
       ],
