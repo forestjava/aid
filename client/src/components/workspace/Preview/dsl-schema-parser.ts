@@ -5,14 +5,14 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
-const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'table', 'json', 'dto']);
+const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
 const SYNC_KEYWORDS = new Set(['sync', 'обмен', 'map', 'relates', 'связь', 'относится']);
-const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']);
-const KEY_MODIFIERS = new Set(['primary', 'foreign']);
-const LABEL_MODIFIERS = new Set(['label', 'заголовок']);
-const SEPARATE_MODIFIERS = new Set(['separate', 'промежуток']);
-const RANK_MODIFIERS = new Set(['rank', 'позиция']);
+const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']); // used for UI
+const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI
+const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
+const SEPARATE_KEYWORDS = new Set(['separate', 'промежуток']);
+const RANK_KEYWORDS = new Set(['rank', 'позиция']);
 
 /**
  * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
@@ -130,7 +130,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
   // label "...";
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<EntityAttribute> {
-    if (LABEL_MODIFIERS.has(stringKeyword.sourceString)) {
+    if (LABEL_KEYWORDS.has(stringKeyword.sourceString)) {
       return { label: stringValue.sourceString.slice(1, -1) };
     }
     return {};
@@ -176,7 +176,7 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
 
   // label "...";
   Entity_string(stringKeyword: any, stringValue: any, _semicolon: any): Partial<Entity> {
-    if (LABEL_MODIFIERS.has(stringKeyword.sourceString)) {
+    if (LABEL_KEYWORDS.has(stringKeyword.sourceString)) {
       return { label: stringValue.sourceString.slice(1, -1) };
     }
     return {};
@@ -184,7 +184,7 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
 
   // rank 1;
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<Entity> {
-    if (RANK_MODIFIERS.has(numberKeyword.sourceString)) {
+    if (RANK_KEYWORDS.has(numberKeyword.sourceString)) {
       return { rank: parseInt(numberValue.sourceString, 10) };
     }
     return {};
@@ -204,7 +204,7 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
 
   // separate 1.5;
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<DatabaseSchema> {
-    if (SEPARATE_MODIFIERS.has(numberKeyword.sourceString)) {
+    if (SEPARATE_KEYWORDS.has(numberKeyword.sourceString)) {
       return { separate: parseFloat(numberValue.sourceString) };
     }
     return {};

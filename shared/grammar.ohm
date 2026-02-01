@@ -60,9 +60,18 @@ DSL {
       | "table"
       | "json"
       | "dto"
+      
       | "api"
       | "endpoint"
+      | "request"
+      | "response"
+      | "view"
       | "interface"
+
+      | "through"    | "через"
+      | "using"      | "используя"
+      | "for"        | "для"
+      | "property"   | "свойство"
 
   // Имя в общем случае может быть только идентификатором
   name = identifier

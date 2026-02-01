@@ -34,8 +34,8 @@ export interface DefinitionInfo {
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class']);
-const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'table', 'json', 'dto']);
+const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
 
 /**
  * Helper: генерирует fallback-обработчики для операций, возвращающих массивы

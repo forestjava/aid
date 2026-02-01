@@ -3,9 +3,20 @@ import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-// Регулярное выражение для валидного идентификатора:
-// начинается с буквы (латиница или кириллица), далее буквы, цифры или _
-const VALID_IDENTIFIER_REGEX = /^[a-zA-Zа-яА-ЯёЁ_][a-zA-Zа-яА-ЯёЁ0-9_]*$/;
+// Имена файлов и каталогов в файловой системе = Идентификаторы
+//
+// Идентификатор может быть составным через точку (неограниченная вложенность)
+// identifier = simpleIdentifier ("." simpleIdentifier)*
+//
+// Простой идентификатор начинается с буквы и содержит буквы/цифры
+// simpleIdentifier = letter (letter | digit | "_")*
+
+const LETTER = '[a-zA-Zа-яА-ЯёЁ]';
+const LETTER_OR_DIGIT_OR_UNDERSCORE = '[a-zA-Zа-яА-ЯёЁ0-9_]';
+const SIMPLE_IDENTIFIER = `${LETTER}${LETTER_OR_DIGIT_OR_UNDERSCORE}*`;
+const IDENTIFIER = `${SIMPLE_IDENTIFIER}(\\.${SIMPLE_IDENTIFIER})*`;
+
+const VALID_IDENTIFIER_REGEX = new RegExp(`^${IDENTIFIER}$`);
 
 @Injectable()
 export class FileSystemService {
@@ -21,7 +32,8 @@ export class FileSystemService {
 
   /**
    * Проверяет, является ли имя валидным идентификатором DSL.
-   * Имя должно начинаться с буквы и содержать только буквы, цифры и _.
+   * Формат: simpleIdentifier ("." simpleIdentifier)*
+   * где simpleIdentifier начинается с буквы и содержит буквы, цифры и _.
    */
   private validateIdentifierName(name: string, context: string): void {
     if (!name) {
@@ -29,8 +41,7 @@ export class FileSystemService {
     }
     if (!VALID_IDENTIFIER_REGEX.test(name)) {
       throw new BadRequestException(
-        `${context}: "${name}" не является валидным идентификатором. ` +
-        `Имя должно начинаться с буквы и содержать только буквы, цифры и символ подчёркивания.`
+        `${context}: "${name}" не является валидным идентификатором.`
       );
     }
   }
@@ -83,7 +94,7 @@ export class FileSystemService {
   async createFile(relativePath: string, content: string) {
     const fileName = this.getBaseName(relativePath);
     this.validateIdentifierName(fileName, 'Создание файла');
-    
+
     const fullPath = this.resolvePath(relativePath);
     await fs.writeFile(fullPath, content, { encoding: 'utf-8', flag: 'wx' });
     return { path: relativePath };
@@ -102,7 +113,7 @@ export class FileSystemService {
   async mkdir(relativePath: string, recursive = true) {
     const dirName = this.getBaseName(relativePath);
     this.validateIdentifierName(dirName, 'Создание каталога');
-    
+
     const fullPath = this.resolvePath(relativePath);
     await fs.mkdir(fullPath, { recursive });
     return { path: relativePath };
@@ -111,7 +122,7 @@ export class FileSystemService {
   async rename(oldPath: string, newPath: string) {
     const newName = this.getBaseName(newPath);
     this.validateIdentifierName(newName, 'Переименование');
-    
+
     const fullOldPath = this.resolvePath(oldPath);
     const fullNewPath = this.resolvePath(newPath);
 
