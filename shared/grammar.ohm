@@ -19,6 +19,7 @@ DSL {
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number
          | valueKeyword anyValue ";"                     --value
+         | throughKeyword ref anyValue ";"              --condition
          | keyword name ";"                              --simple
          | keyword name Block ";"?                       --options
 
@@ -37,12 +38,25 @@ DSL {
     
   // Ключевые слова
   annotationKeyword = "annotation" | "аннотация"
+  
   typeKeyword = "type" | "тип"
+  
   refKeyword = "sync" | "обмен" | "map" | "relates" | "связь" | "относится"
+  
   importKeyword = "import" | "из"
+  
   stringKeyword = "label" | "заголовок" | "description" | "описание"
+  
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
+  
   valueKeyword = "value" | "значение"
+  
+  throughKeyword = "through" | "через" 
+      | "using" | "используя" 
+      | "for" | "для" 
+      | "if" | "если" 
+      | "when" | "когда"
+  
   keyword = "entity" | "сущность"      
       | "class"      | "класс"
       | "set"        | "набор"
@@ -52,6 +66,7 @@ DSL {
       | "system"     | "система"
 
       | "attribute"  | "реквизит"
+      | "property"   | "свойство"
       | "method"     | "метод"
 
       | "is"         | "это"
@@ -67,11 +82,6 @@ DSL {
       | "response"
       | "view"
       | "interface"
-
-      | "through"    | "через"
-      | "using"      | "используя"
-      | "for"        | "для"
-      | "property"   | "свойство"
 
   // Имя в общем случае может быть только идентификатором
   name = identifier

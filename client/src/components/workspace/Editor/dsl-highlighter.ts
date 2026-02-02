@@ -222,6 +222,15 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_condition(throughKeyword: any, ref: any, anyValue: any, _semicolon: any): Token[] {
+    return [
+      { from: throughKeyword.source.startIdx, to: throughKeyword.source.endIdx, type: 'keyword' },
+      ...ref.getTokens(),
+      ...anyValue.getTokens(),
+      { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
+    ];
+  },
+
   Entity_simple(keyword: any, name: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 

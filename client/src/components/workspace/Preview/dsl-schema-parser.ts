@@ -168,6 +168,7 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
 
     return block.extractAttributeProps();
   },
+
 });
 
 // Операция для извлечения свойств самой entity (label, rank)
@@ -189,6 +190,7 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     }
     return {};
   },
+
 });
 
 // Операция для извлечения свойств схемы (separate, annotation)
@@ -209,6 +211,7 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
     }
     return {};
   },
+
 });
 
 /**

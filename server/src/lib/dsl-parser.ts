@@ -206,6 +206,7 @@ export class DslParser {
         }
         return {};
       },
+
     });
 
     // Операция для извлечения типа из блока атрибута
@@ -216,6 +217,7 @@ export class DslParser {
       Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): string | null {
         return typeRef.sourceString;
       },
+
     });
 
     return semantics;
