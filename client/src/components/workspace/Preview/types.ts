@@ -1,5 +1,12 @@
 // Типы для описания схемы БД
 
+// Цель sync-связи с опциональным условием и именем клона
+export interface SyncTarget {
+  target: string           // "EntityName.attributeName" или "EntityName(clone).attributeName"
+  condition?: string       // "operation:SHIPPING" — информационное
+  clone?: string           // "shipping" — имя клона для группировки
+}
+
 export interface EntityAttribute {
   name: string
   label: string
@@ -13,7 +20,7 @@ export interface EntityAttribute {
   isCollection?: boolean // Коллекция (массив) сущностей
   hasConnection?: 'source' | 'target' | 'both' // Роль в связи: source (справа), target (слева), both (для external связей)
   paletteIndex?: number // Индекс в палитре цветов для связи
-  sync?: string // Цель синхронизации для external связей: "EntityName.attributeName"
+  sync?: SyncTarget[] // Массив sync-связей атрибута (для external связей)
 }
 
 export interface EntityRelation {

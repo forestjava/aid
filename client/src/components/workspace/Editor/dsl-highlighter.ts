@@ -408,9 +408,9 @@ semantics.addOperation<Token[]>('getTokens', {
     return content.getTokens();
   },
 
-  // identifier = simpleIdentifier ("." simpleIdentifier)*
-  // Арность: 3 (первый simpleIdentifier + итератор точек + итератор simpleIdentifier'ов)
-  identifier(this: Node, _firstIdentifier: any, _dots: any, _restIdentifiers: any): Token[] {
+  // identifier = identifierPart ("." identifierPart)*
+  // Арность: 3 (первый identifierPart + итератор точек + итератор identifierPart'ов)
+  identifier(this: Node, _firstPart: any, _dots: any, _restParts: any): Token[] {
     return [{
       from: this.source.startIdx,
       to: this.source.endIdx,
@@ -418,10 +418,26 @@ semantics.addOperation<Token[]>('getTokens', {
     }];
   },
 
-  // simpleIdentifier = letter (letter | digit)*
+  // identifierPart = simpleIdentifier cloneSuffix?
+  // Арность: 2 (simpleIdentifier + опциональный cloneSuffix)
+  identifierPart(this: Node, _simpleName: any, _cloneSuffix: any): Token[] {
+    // Часть идентификатора не обрабатываем отдельно,
+    // она является частью составного identifier
+    return [];
+  },
+
+  // simpleIdentifier = letter (letter | digit | "_")*
   // Арность: 2 (первая буква + итератор остальных)
   simpleIdentifier(this: Node, _firstLetter: any, _rest: any): Token[] {
     // Простой идентификатор не обрабатываем отдельно,
+    // он является частью составного identifier
+    return [];
+  },
+
+  // cloneSuffix = "(" name ")"
+  // Арность: 3 (открывающая скобка + имя клона + закрывающая скобка)
+  cloneSuffix(this: Node, _openParen: any, _name: any, _closeParen: any): Token[] {
+    // Суффикс клона не обрабатываем отдельно,
     // он является частью составного identifier
     return [];
   },

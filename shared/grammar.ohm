@@ -49,7 +49,7 @@ DSL {
   
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   
-  valueKeyword = "value" | "значение"
+  valueKeyword = "value" | "значение" | "clone" | "клон"
   
   throughKeyword = "through" | "через" 
       | "using" | "используя" 
@@ -88,7 +88,11 @@ DSL {
 
   // Универсальная ссылка на идентификатор (сущность, атрибут, путь)
   // Примеры: string, MyEntity.Field, ./local/MyType, ../shared/Type, Demo/Post.attribute
+  // С опциональным суффиксом клона внутри: Entity(cloneName).attribute
   ref = relativePrefix? pathBody
+  
+  // Суффикс клона: (cloneName) — используется в identifierPart
+  cloneSuffix = "(" name ")"
 
   // Ссылка на тип — это ref + опциональная размерность + опциональный признак коллекции
   // Примеры: string, Demo/Post[], decimal(10,2), varchar(200)
@@ -110,7 +114,11 @@ DSL {
   anyValue = stringValue | numberValue | ref
 
   // Идентификатор может быть составным через точку (неограниченная вложенность)
-  identifier = simpleIdentifier ("." simpleIdentifier)*
+  // Каждая часть может иметь опциональный суффикс клона: Entity(clone).attribute
+  identifier = identifierPart ("." identifierPart)*
+  
+  // Часть идентификатора: имя + опциональный суффикс клона
+  identifierPart = simpleIdentifier cloneSuffix?
 
   // Простой идентификатор начинается с буквы и содержит буквы/цифры
   simpleIdentifier = letter (letter | digit | "_")*

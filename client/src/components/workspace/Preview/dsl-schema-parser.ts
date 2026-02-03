@@ -1,6 +1,7 @@
 import type { Node } from 'ohm-js';
 import { dslGrammar } from '@/lib/grammar';
-import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation } from './types';
+import { buildInternalRelations, buildExternalRelations } from '@/lib/relations';
+import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './types';
 
 /**
  * Константы для ключевых слов DSL
@@ -13,6 +14,8 @@ const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI
 const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
 const SEPARATE_KEYWORDS = new Set(['separate', 'промежуток']);
 const RANK_KEYWORDS = new Set(['rank', 'позиция']);
+const CONDITION_KEYWORDS = new Set(['through', 'через', 'using', 'используя', 'for', 'для', 'if', 'если', 'when', 'когда']);
+const CLONE_KEYWORDS = new Set(['clone', 'клон']);
 
 /**
  * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
@@ -96,9 +99,106 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     const keywordStr = keyword.sourceString;
     if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       const props = block.extractAttributeProps();
-      return [{ name: name.sourceString, label: props.label || '', ...props }];
+      const syncs = block.extractSyncs();
+      return [{ 
+        name: name.sourceString, 
+        label: props.label || '', 
+        ...props,
+        sync: syncs.length > 0 ? syncs : undefined 
+      }];
     }
     return [];
+  },
+});
+
+// Операция для извлечения всех sync-связей атрибута
+semantics.addOperation<SyncTarget[]>('extractSyncs', {
+  ...arrayFallbacks<SyncTarget>('extractSyncs'),
+
+  // sync Entity.attr;
+  Entity_ref(refKeyword: any, ref: any, _semicolon: any): SyncTarget[] {
+    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
+      return [{ target: ref.sourceString }];
+    }
+    return [];
+  },
+
+  // sync Entity.attr { clone shipping; using operation "SHIPPING"; };
+  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): SyncTarget[] {
+    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
+      const condition = block.extractCondition();
+      const clone = block.extractClone();
+      return [{ 
+        target: ref.sourceString, 
+        condition: condition || undefined,
+        clone: clone || undefined 
+      }];
+    }
+    return [];
+  },
+});
+
+// Операция для извлечения условия из блока sync (through/using/for/if/when)
+semantics.addOperation<string | null>('extractCondition', {
+  _nonterminal(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractCondition();
+      if (result) return result;
+    }
+    return null;
+  },
+  _iter(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractCondition();
+      if (result) return result;
+    }
+    return null;
+  },
+  _terminal(): string | null {
+    return null;
+  },
+
+  // through operation "SHIPPING"; / using operation "SHIPPING";
+  Entity_condition(condKeyword: any, ref: any, value: any, _semicolon: any): string | null {
+    if (CONDITION_KEYWORDS.has(condKeyword.sourceString)) {
+      const refStr = ref.sourceString;
+      let valueStr = value.sourceString;
+      // Убираем кавычки если это строка
+      if (valueStr.startsWith('"') && valueStr.endsWith('"')) {
+        valueStr = valueStr.slice(1, -1);
+      }
+      return `${refStr}:${valueStr}`;
+    }
+    return null;
+  },
+});
+
+// Операция для извлечения имени клона из блока sync (clone shipping;)
+semantics.addOperation<string | null>('extractClone', {
+  _nonterminal(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractClone();
+      if (result) return result;
+    }
+    return null;
+  },
+  _iter(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractClone();
+      if (result) return result;
+    }
+    return null;
+  },
+  _terminal(): string | null {
+    return null;
+  },
+
+  // clone shipping;
+  Entity_value(valueKeyword: any, value: any, _semicolon: any): string | null {
+    if (CLONE_KEYWORDS.has(valueKeyword.sourceString)) {
+      return value.sourceString;
+    }
+    return null;
   },
 });
 
@@ -112,19 +212,13 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
     return { type: typeStr, isCollection: typeStr.endsWith('[]') };
   },
 
-  // sync Entity.attr; / map Entity.attr; / relates Entity.attr;
-  Entity_ref(refKeyword: any, ref: any, _semicolon: any): Partial<EntityAttribute> {
-    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
-      return { sync: ref.sourceString };
-    }
+  // sync обрабатывается в extractSyncs, здесь пропускаем
+  Entity_ref(_refKeyword: any, _ref: any, _semicolon: any): Partial<EntityAttribute> {
     return {};
   },
 
-  // sync Entity.attr { ... }; / map Entity.attr { ... };
-  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): Partial<EntityAttribute> {
-    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
-      return { sync: ref.sourceString, ...block.extractAttributeProps() };
-    }
+  // sync с блоком обрабатывается в extractSyncs, здесь рекурсивно обрабатываем блок для других свойств
+  Entity_refOptions(_refKeyword: any, _ref: any, block: any, _semicolon: any): Partial<EntityAttribute> {
     return block.extractAttributeProps();
   },
 
@@ -213,159 +307,6 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
   },
 
 });
-
-/**
- * Создает internal relations между сущностями на основе навигационных свойств
- */
-function buildInternalRelations(entities: Entity[]): EntityRelation[] {
-  const entityMap = new Map(entities.map(e => [e.name, e]));
-  const relationsMap = new Map<string, EntityRelation>();
-
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      // Пропускаем атрибуты без типа
-      if (!attr.type) continue;
-
-      // Выделяем тип (имя целевой сущности)
-      let type = attr.type;
-      if (type.endsWith('[]')) {
-        attr.isCollection = true;
-        type = type.replace('[]', '');
-      };
-      const targetEntityName = type;
-      const targetEntity = entityMap.get(targetEntityName);
-      if (!targetEntity) {
-        continue;
-      }
-
-      // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
-      const canonicalKey = [entity.name, targetEntity.name].sort().join('::');
-
-      // Сохраняем связь в Map по ключу (первая встреченная)
-      if (!relationsMap.has(canonicalKey)) {
-        // Ищем обратный навигационный атрибут (используем первый подходящий)
-        const reverseAttr = targetEntity.attributes.find(a =>
-          a.type && (a.type.replace('[]', '') === entity.name) && a.name !== attr.name
-        );
-        if (!reverseAttr) {
-          continue;
-        }
-
-        // Текущий размер Map = индекс новой связи
-        const paletteIndex = relationsMap.size;
-
-        attr.hasConnection = 'source';
-        attr.isNavigation = true;
-        attr.paletteIndex = paletteIndex;
-
-        reverseAttr.hasConnection = 'target';
-        reverseAttr.isNavigation = true;
-        reverseAttr.paletteIndex = paletteIndex;
-
-        relationsMap.set(canonicalKey, {
-          source: entity.name,
-          sourceNavigation: attr.name,
-          target: targetEntity.name,
-          targetNavigation: reverseAttr.name,
-          paletteIndex,
-          type: 'internal',
-        });
-      }
-    }
-  }
-
-  return Array.from(relationsMap.values());
-}
-
-/**
- * Объединяет роли связи для атрибута (для external связей атрибут может быть и source, и target)
- */
-function mergeConnectionRole(
-  current: 'source' | 'target' | 'both' | undefined,
-  newRole: 'source' | 'target'
-): 'source' | 'target' | 'both' {
-  if (!current) return newRole;
-  if (current === 'both') return 'both';
-  if (current === newRole) return current;
-  return 'both'; // current и newRole разные → 'both'
-}
-
-/**
- * Создает external relations между сущностями на основе sync-атрибутов
- */
-function buildExternalRelations(entities: Entity[]): EntityRelation[] {
-  // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
-  const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
-
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      const fullPath = `${entity.name}.${attr.name}`;
-      attributesMap.set(fullPath, { entity, attr });
-    }
-  }
-
-  const relationsMap = new Map<string, EntityRelation>();
-
-  // Перебираем все атрибуты и ищем sync
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      if (!attr.sync) continue;
-
-      // Ищем целевой атрибут по полному пути в Map
-      const target = attributesMap.get(attr.sync);
-
-      if (!target) {
-        console.warn(`Sync target not found: ${attr.sync}`);
-        continue;
-      }
-
-      // Создаём канонический ключ связи (включаем атрибуты для поддержки нескольких связей между сущностями)
-      const canonicalKey = [
-        `${entity.name}.${attr.name}`,
-        `${target.entity.name}.${target.attr.name}`
-      ].sort().join('::');
-
-      // Сохраняем связь в Map по ключу (первая встреченная)
-      if (!relationsMap.has(canonicalKey)) {
-        // Определяем направление связи на основе rank сущностей
-        // source должен иметь меньший или равный rank, чтобы связь шла слева направо
-        const sourceRank = entity.rank ?? 0;
-        const targetRank = target.entity.rank ?? 0;
-
-        const isForward = sourceRank <= targetRank;
-
-        // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
-        const [sourceEntity, sourceAttr, targetEntity, targetAttr] = isForward
-          ? [entity, attr, target.entity, target.attr]
-          : [target.entity, target.attr, entity, attr];
-
-        // Определяем paletteIndex: используем существующий у атрибутов или генерируем новый
-        const paletteIndex = sourceAttr.paletteIndex ?? targetAttr.paletteIndex ?? relationsMap.size;
-
-        // Помечаем атрибуты (учитываем, что атрибут может участвовать в нескольких связях)
-        sourceAttr.hasConnection = mergeConnectionRole(sourceAttr.hasConnection, 'source');
-        sourceAttr.paletteIndex = paletteIndex;
-        sourceAttr.sync = `${targetEntity.name}.${targetAttr.name}`;
-
-        targetAttr.hasConnection = mergeConnectionRole(targetAttr.hasConnection, 'target');
-        targetAttr.paletteIndex = paletteIndex;
-        targetAttr.sync = `${sourceEntity.name}.${sourceAttr.name}`;
-
-        // Создаем external связь
-        relationsMap.set(canonicalKey, {
-          source: sourceEntity.name,
-          sourceNavigation: sourceAttr.name,
-          target: targetEntity.name,
-          targetNavigation: targetAttr.name,
-          paletteIndex,
-          type: 'external',
-        });
-      }
-    }
-  }
-
-  return Array.from(relationsMap.values());
-}
 
 /**
  * Парсит DSL-контент (уже обработанный, без импортов) в схему базы данных
