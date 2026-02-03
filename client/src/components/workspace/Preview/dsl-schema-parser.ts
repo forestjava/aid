@@ -144,6 +144,23 @@ semantics.addOperation<SyncTarget[]>('extractSyncs', {
     }
     return [];
   },
+
+  // key foreign { attribute Entity.attr; } -> создаём internal sync
+  Entity_options(keyword: any, name: any, block: any, _semicolon: any): SyncTarget[] {
+    const keywordStr = keyword.sourceString;
+    const nameStr = name.sourceString;
+
+    // key foreign { attribute Entity.attr; } -> создаём internal sync
+    if (keywordStr === 'key' && nameStr === 'foreign') {
+      const target = block.extractForeignKeyTarget();
+      if (target) {
+        return [{ target, type: 'internal' }];
+      }
+    }
+
+    // Рекурсивно обходим вложенные блоки
+    return block.extractSyncs();
+  },
 });
 
 // Операция для извлечения условия из блока sync (through/using/for/if/when)
@@ -205,6 +222,35 @@ semantics.addOperation<string | null>('extractClone', {
   Entity_value(valueKeyword: any, value: any, _semicolon: any): string | null {
     if (CLONE_KEYWORDS.has(valueKeyword.sourceString)) {
       return value.sourceString;
+    }
+    return null;
+  },
+});
+
+// Операция для извлечения ссылки на атрибут из блока key foreign
+semantics.addOperation<string | null>('extractForeignKeyTarget', {
+  _nonterminal(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractForeignKeyTarget();
+      if (result) return result;
+    }
+    return null;
+  },
+  _iter(...children: any[]): string | null {
+    for (const child of children) {
+      const result = child.extractForeignKeyTarget();
+      if (result) return result;
+    }
+    return null;
+  },
+  _terminal(): string | null {
+    return null;
+  },
+
+  // attribute Entity.attr;
+  Entity_simple(keyword: any, name: any, _semicolon: any): string | null {
+    if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
+      return name.sourceString;
     }
     return null;
   },
