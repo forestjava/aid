@@ -135,7 +135,7 @@ async function layoutGraph(
         },
       }
     }),
-    // Направление edges уже корректно определено в buildExternalRelations (source.rank <= target.rank)
+    // Направление edges уже корректно определено в buildLinkRelations (source.rank <= target.rank)
     edges: schema.relations.map((relation, index) => ({
       id: `e${index}-${relation.source}-${relation.target}`,
       sources: [relation.source],

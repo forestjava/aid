@@ -1,10 +1,14 @@
 // Типы для описания схемы БД
 
+// Тип связи: internal (внутренняя) или external (внешняя)
+export type RelationType = 'internal' | 'external'
+
 // Цель sync-связи с опциональным условием и именем клона
 export interface SyncTarget {
   target: string           // "EntityName.attributeName" или "EntityName(clone).attributeName"
   condition?: string       // "operation:SHIPPING" — информационное
   clone?: string           // "shipping" — имя клона для группировки
+  type?: RelationType      // 'external' для sync/обмен, 'internal' для map/связь/relates/относится
 }
 
 export interface EntityAttribute {
@@ -29,7 +33,7 @@ export interface EntityRelation {
   target: string // Имя сущности-цели связи (справа)
   targetNavigation: string // Имя навигационного свойства цели
   paletteIndex: number // Индекс в палитре цветов
-  type: 'internal' | 'external' // Тип связи
+  type: RelationType // Тип связи
 }
 
 export interface Entity {

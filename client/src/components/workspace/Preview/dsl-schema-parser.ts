@@ -1,6 +1,6 @@
 import type { Node } from 'ohm-js';
 import { dslGrammar } from '@/lib/grammar';
-import { buildInternalRelations, buildExternalRelations } from '@/lib/relations';
+import { buildNavigationRelations, buildLinkRelations } from '@/lib/relations';
 import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './types';
 
 /**
@@ -8,7 +8,9 @@ import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './type
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'json', 'dto']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
-const SYNC_KEYWORDS = new Set(['sync', 'обмен', 'map', 'relates', 'связь', 'относится']);
+const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен']);
+const INTERNAL_LINK_KEYWORDS = new Set(['map', 'связь', 'relates', 'относится']);
+const ALL_LINK_KEYWORDS = new Set([...EXTERNAL_LINK_KEYWORDS, ...INTERNAL_LINK_KEYWORDS]);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']); // used for UI
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI
 const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
@@ -117,21 +119,27 @@ semantics.addOperation<SyncTarget[]>('extractSyncs', {
 
   // sync Entity.attr;
   Entity_ref(refKeyword: any, ref: any, _semicolon: any): SyncTarget[] {
-    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
-      return [{ target: ref.sourceString }];
+    const keyword = refKeyword.sourceString;
+    if (ALL_LINK_KEYWORDS.has(keyword)) {
+      return [{ 
+        target: ref.sourceString,
+        type: EXTERNAL_LINK_KEYWORDS.has(keyword) ? 'external' : 'internal'
+      }];
     }
     return [];
   },
 
   // sync Entity.attr { clone shipping; using operation "SHIPPING"; };
   Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): SyncTarget[] {
-    if (SYNC_KEYWORDS.has(refKeyword.sourceString)) {
+    const keyword = refKeyword.sourceString;
+    if (ALL_LINK_KEYWORDS.has(keyword)) {
       const condition = block.extractCondition();
       const clone = block.extractClone();
       return [{ 
         target: ref.sourceString, 
         condition: condition || undefined,
-        clone: clone || undefined 
+        clone: clone || undefined,
+        type: EXTERNAL_LINK_KEYWORDS.has(keyword) ? 'external' : 'internal'
       }];
     }
     return [];
@@ -345,19 +353,19 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
       });
     });
 
-    // Строим internal relations
-    const internalRelations = buildInternalRelations(entities);
+    // Строим relations по навигационным свойствам
+    const navigationRelations = buildNavigationRelations(entities);
 
-    // Строим external relations
-    const externalRelations = buildExternalRelations(entities);
+    // Строим relations по односторонним ссылкам (sync/map)
+    const linkRelations = buildLinkRelations(entities);
 
     // Объединяем все связи
-    const relations = [...internalRelations, ...externalRelations];
+    const relations = [...navigationRelations, ...linkRelations];
 
     return {
       entities,
       relations,
-      hasExternalRelations: externalRelations.length > 0,
+      hasExternalRelations: relations.some(r => r.type === 'external'),
       separate: schemaProps.separate,
       annotation: schemaProps.annotation,
     };

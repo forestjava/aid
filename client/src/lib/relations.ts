@@ -1,9 +1,9 @@
 import type { Entity, EntityAttribute, EntityRelation } from '@/components/workspace/Preview/types';
 
 /**
- * Создает internal relations между сущностями на основе навигационных свойств
+ * Создает relations между сущностями на основе навигационных свойств (двусторонние internal связи)
  */
-export function buildInternalRelations(entities: Entity[]): EntityRelation[] {
+export function buildNavigationRelations(entities: Entity[]): EntityRelation[] {
   const entityMap = new Map(entities.map(e => [e.name, e]));
   const relationsMap = new Map<string, EntityRelation>();
 
@@ -149,9 +149,9 @@ function removeUnusedEntities(entities: Entity[]): void {
 }
 
 /**
- * Создает external relations между сущностями на основе sync-атрибутов
+ * Создает relations между сущностями на основе односторонних ссылок (sync/map атрибуты)
  */
-export function buildExternalRelations(entities: Entity[]): EntityRelation[] {
+export function buildLinkRelations(entities: Entity[]): EntityRelation[] {
   // Шаг 1: Расширяем сущности с множественными sync - создаём клоны
   expandMultipleSyncs(entities);
   
@@ -215,14 +215,14 @@ export function buildExternalRelations(entities: Entity[]): EntityRelation[] {
           targetAttr.hasConnection = mergeConnectionRole(targetAttr.hasConnection, 'target');
           targetAttr.paletteIndex = paletteIndex;
 
-          // Создаем external связь
+          // Создаем связь с типом из syncTarget
           relationsMap.set(canonicalKey, {
             source: sourceEntity.name,
             sourceNavigation: sourceAttr.name,
             target: targetEntity.name,
             targetNavigation: targetAttr.name,
             paletteIndex,
-            type: 'external',
+            type: syncTarget.type ?? 'internal',
           });
         }
       }
