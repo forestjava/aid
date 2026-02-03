@@ -6,7 +6,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './type
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'json', 'dto']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
 const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен']);
 const INTERNAL_LINK_KEYWORDS = new Set(['map', 'связь', 'relates', 'относится']);
