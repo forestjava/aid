@@ -1,0 +1,23 @@
+# Папка describer не нужна в образах
+describer/
+
+# Git
+.git
+.gitignore
+
+# Логи
+*.log
+npm-debug.log
+
+# Переменные окружения
+.env
+.env.*
+
+# IDE
+.vscode
+.idea
+.cursor
+
+# Документация
+*.md
+
