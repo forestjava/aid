@@ -376,10 +376,29 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     if (match.failed()) {
       const failurePos = match.getRightmostFailurePosition();
       const expected = match.getExpectedText();
-      const lines = content.substring(0, failurePos).split('\n');
-      const lineNumber = lines.length;
+      const lines = content.split('\n');
+      const linesBefore = content.substring(0, failurePos).split('\n');
+      const lineNumber = linesBefore.length;
+      const column = linesBefore[linesBefore.length - 1].length + 1;
 
-      console.error(`Schema parsing failed at line ${lineNumber}. Expected: ${expected}`);
+      // Формируем контекст: 2 строки до, проблемная строка, 2 строки после
+      const contextRadius = 2;
+      const startLine = Math.max(0, lineNumber - 1 - contextRadius);
+      const endLine = Math.min(lines.length - 1, lineNumber - 1 + contextRadius);
+
+      let contextStr = '\nContext:\n';
+      for (let i = startLine; i <= endLine; i++) {
+        const prefix = i === lineNumber - 1 ? '>' : ' ';
+        const lineNum = String(i + 1).padStart(6);
+        contextStr += `${prefix}${lineNum} | ${lines[i]}\n`;
+        if (i === lineNumber - 1) {
+          contextStr += `       | ${' '.repeat(column - 1)}^\n`;
+        }
+      }
+
+      console.error(
+        `Schema parsing failed at line ${lineNumber}, column ${column}. Expected: ${expected}${contextStr}`
+      );
       return null;
     }
 
