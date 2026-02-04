@@ -8,8 +8,8 @@ import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './type
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto']);
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
-const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен']);
-const INTERNAL_LINK_KEYWORDS = new Set(['map', 'связь', 'relates', 'относится']);
+const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен', 'map', 'связь']);
+const INTERNAL_LINK_KEYWORDS = new Set(['relates', 'относится']);
 const ALL_LINK_KEYWORDS = new Set([...EXTERNAL_LINK_KEYWORDS, ...INTERNAL_LINK_KEYWORDS]);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']); // used for UI
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI

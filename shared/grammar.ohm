@@ -19,7 +19,7 @@ DSL {
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number
          | valueKeyword anyValue ";"                     --value
-         | throughKeyword ref anyValue ";"              --condition
+         | throughKeyword ref anyValue ";"               --condition
          | keyword name ";"                              --simple
          | keyword name Block ";"?                       --options
 
@@ -49,7 +49,7 @@ DSL {
   
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   
-  valueKeyword = "value" | "значение" | "clone" | "клон"
+  valueKeyword = "value" | "значение" | "clone" | "клон" | "default"
   
   throughKeyword = "through" | "через" 
       | "using" | "используя" 
