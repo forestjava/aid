@@ -1,0 +1,30 @@
+// Блэкбокс заявки на поставку
+entity ALIS.ReceivingOrderBlackbox {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorderblackbox/ReceivingOrderBlackbox.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_blackbox.id;
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_blackbox.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute cargo {
+    type ALIS.Cargo;
+    is private;
+    map alis.receiving_order_blackbox.cargo_id;  // -> ALIS.Cargo.id
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_blackbox.deleted;
+  }
+}

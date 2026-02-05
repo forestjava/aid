@@ -1,0 +1,12 @@
+table alis.zone_status_catalog {
+
+  attribute zone {
+    type varchar(100);
+    is required;
+    key primary;
+  }
+
+  attribute status {
+    type varchar(50);
+  }
+}

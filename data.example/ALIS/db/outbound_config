@@ -1,0 +1,40 @@
+table alis.outbound_config {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute entity_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute message_type {
+    type varchar(250);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

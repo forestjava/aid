@@ -1,0 +1,99 @@
+// КТК заявки на поставку
+entity ALIS.ReceivingOrderContainer {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingordercontainer/ReceivingOrderContainer.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_container.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_container.deleted;
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_container.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute container {
+    type ALIS.Container;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.container_id;  // -> ALIS.Container.id
+  }
+
+  attribute receivingOrderRailwayCarriage {
+    type ALIS.ReceivingOrderRailwayCarriage;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.receiving_order_railway_carriage_id;  // -> ALIS.ReceivingOrderRailwayCarriage.id
+  }
+
+  attribute dangerClass {
+    type ALIS.DangerClass;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.danger_class_id;  // -> ALIS.DangerClass.id
+  }
+
+  attribute ktkNumberUnknown {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.ktk_number_unknown;
+  }
+
+  attribute sealType {
+    type ALIS.SealType;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.seal_type_id;  // -> ALIS.SealType.id
+  }
+
+  attribute empty {
+    type Boolean;
+    is private;
+    map alis.receiving_order_container.empty;
+  }
+
+  attribute weight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.weight;
+  }
+
+  attribute customsClearance {
+    type Boolean;
+    is private;
+    map alis.receiving_order_container.customs_clearance;
+  }
+
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.actual_quantity;
+  }
+
+  attribute status {
+    type TaskStatus;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.status;
+  }
+
+  attribute ownerContainer {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.receiving_order_container.owner_container_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+}

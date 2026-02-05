@@ -1,0 +1,56 @@
+table alis.good_package_barcode {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute good_package_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.good_package.id;
+    }
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute client_good_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+}

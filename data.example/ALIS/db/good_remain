@@ -1,0 +1,89 @@
+table alis.good_remain {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute client_id {
+    description "Relates to client.sync_id";
+    type uuid;
+  }
+
+  attribute good_id {
+    description "Relates to good_variant.sync_id";
+    type uuid;
+  }
+
+  attribute zone_id {
+    type varchar(100);
+    is required;
+    key foreign {
+      attribute alis.zone_status_catalog.zone;
+    }
+  }
+
+  attribute terminal_area_id {
+    type varchar(100);
+    is required;
+  }
+
+  attribute package_id {
+    description "Relates to good_package.sync_id";
+    type uuid;
+  }
+
+  attribute batch_id {
+    type uuid;
+  }
+
+  attribute good_status {
+    type varchar(30);
+    is required;
+  }
+
+  attribute cargo_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.cargo.id;
+    }
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute event_code {
+    type varchar(20);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+  }
+
+  attribute created_by {
+    type varchar(50);
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute processed {
+    type boolean;
+    is required;
+  }
+}

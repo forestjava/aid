@@ -1,0 +1,117 @@
+// Услуга
+entity ALIS.Service {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/service/Service.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.service.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.service.code;
+  }
+
+  attribute name {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.service.name;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.service.active;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.service.sync_id;
+  }
+
+  // Инструкция
+  attribute instruction {
+    type String;
+    is private;
+    is nullable;
+    map alis.service.instruction;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type TerminalArea;
+    is private;
+    is nullable;
+    map alis.service.terminal_area;
+  }
+
+  // Единица измерения услуги
+  attribute serviceOfMeasure {
+    type ServiceOfMeasure;
+    is private;
+    is nullable;
+    map alis.service.service_of_measure;
+  }
+
+  // Способ начисления
+  attribute accrualMethod {
+    type AccrualMethod;
+    is private;
+    is nullable;
+    map alis.service.accrual_method;
+  }
+
+  // База начисления
+  attribute accrualBase {
+    type AccrualBase;
+    is private;
+    is nullable;
+    map alis.service.accrual_base;
+  }
+
+  // Признак операции
+  attribute operation {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.service.operation;
+  }
+
+  // Признак зависимости
+  attribute dependent {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.service.dependent;
+  }
+
+  // Признак хранения
+  attribute keeping {
+    type Boolean;
+    is private;
+    map alis.service.keeping;
+  }
+
+  // Признак удаления
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.service.deleted;
+  }
+
+  // Признак комплексной услуги
+  attribute isComprehensive {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.service.is_comprehensive;
+  }
+}

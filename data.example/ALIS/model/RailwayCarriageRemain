@@ -1,0 +1,49 @@
+// Остаток вагонов
+entity ALIS.RailwayCarriageRemain {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/railwaycarriageremain/RailwayCarriageRemain.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.railway_carriage_remain.id;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.railway_carriage_remain.client_id;  // -> ALIS.Client.id
+  }
+
+  // Вагон
+  attribute railwayCarriage {
+    type ALIS.RailwayCarriage;
+    is private;
+    map alis.railway_carriage_remain.railway_carriage_id;  // -> ALIS.RailwayCarriage.id
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.railway_carriage_remain.event_code;
+  }
+
+  // Признак активности
+  attribute isActive {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.railway_carriage_remain.active;
+  }
+
+  // Время
+  attribute time {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.railway_carriage_remain.time;
+  }
+}

@@ -1,0 +1,52 @@
+table alis.cell_occupancy {
+
+  attribute id {
+    type integer;
+    is required;
+    key primary;
+  }
+
+  attribute name {
+    type varchar;
+    is required;
+  }
+
+  attribute tier {
+    type integer;
+    is required;
+  }
+
+  attribute total {
+    type integer;
+    is required;
+  }
+
+  attribute busy {
+    type integer;
+    is required;
+  }
+
+  attribute blocked {
+    type integer;
+  }
+
+  attribute free {
+    type integer;
+    is required;
+  }
+
+  attribute weight {
+    type numeric(8,3);
+    is required;
+  }
+
+  attribute height {
+    type numeric(8,3);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+}

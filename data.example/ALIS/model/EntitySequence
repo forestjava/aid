@@ -1,0 +1,17 @@
+// Последовательность сущностей
+entity ALIS.EntitySequence {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/entitysequence/EntitySequence.java";
+
+  attribute entityType {
+    key primary;
+    type String(100);
+    is private;
+    map alis.entity_sequence.entity_type;
+  }
+
+  attribute sequenceNumber {
+    type Long;
+    is private;
+    map alis.entity_sequence.sequence_number;
+  }
+}

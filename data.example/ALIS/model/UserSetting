@@ -1,0 +1,32 @@
+// Пользовательская настройка
+entity ALIS.UserSetting {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/usersetting/UserSetting.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.user_setting.id;
+  }
+
+  // Идентификатор пользователя
+  attribute userId {
+    type UUID;
+    is private;
+    map alis.user_setting.user_id;
+  }
+
+  // Ключ настройки
+  attribute key {
+    type String(255);
+    is private;
+    map alis.user_setting.key;
+  }
+
+  // Значение (JSON)
+  attribute value {
+    type JSON;
+    is private;
+    map alis.user_setting.value;
+  }
+}

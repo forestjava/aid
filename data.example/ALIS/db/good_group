@@ -1,0 +1,56 @@
+table alis.good_group {
+  label "Группы номенклатуры";
+
+  attribute id {
+    description "Идентификатор";
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    description "Наименование группы (уникально в рамках родителя)";
+    type varchar(1000);
+    is required;
+  }
+
+  attribute parent_id {
+    description "Родительская группа";
+    type uuid;
+    key foreign {
+      attribute alis.good_group.id;
+    }
+  }
+
+  attribute deleted {
+    description "Признак удаления (false - активна, true - удалена)";
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    description "Идентификатор для синхронизации";
+    type uuid;
+  }
+
+  attribute created_at {
+    description "Время создания записи";
+    type timestamp;
+  }
+
+  attribute updated_at {
+    description "Время последнего изменения записи";
+    type timestamp;
+  }
+
+  attribute created_by {
+    description "Пользователь, создавший запись";
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_by {
+    description "Пользователь, изменивший запись";
+    type varchar(50);
+  }
+}

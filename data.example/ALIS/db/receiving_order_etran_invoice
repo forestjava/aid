@@ -1,0 +1,47 @@
+table alis.receiving_order_etran_invoice {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute etran_invoice_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.etran_invoice.id;
+    }
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

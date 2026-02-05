@@ -1,0 +1,101 @@
+// Водитель клиента
+entity ALIS.ClientDriver {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.client_driver.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.client_driver.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.client_driver.active;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.client_driver.sync_id;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.client_driver.client_id;  // -> ALIS.Client.id
+  }
+
+  // Номер телефона
+  attribute phoneNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client_driver.phone_number;
+  }
+
+  // Номер паспорта
+  attribute passportNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client_driver.passport_number;
+  }
+
+  // Кем выдан паспорт
+  attribute passportIssuedBy {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.client_driver.passport_issued_by;
+  }
+
+  // Дата выдачи паспорта
+  attribute passportIssuedDate {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.client_driver.passport_issued_date;
+  }
+
+  // Номер водительского удостоверения
+  attribute drivingLicenseNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client_driver.driving_license_number;
+  }
+
+  // Дата выдачи водительского удостоверения
+  attribute drivingLicenseIssuedDate {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.client_driver.driving_license_issued_date;
+  }
+
+  // Номер доверенности
+  attribute POANumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client_driver.poa_number;
+  }
+
+  // Срок действия доверенности
+  attribute POAValidTo {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.client_driver.poa_valid_to;
+  }
+}

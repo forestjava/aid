@@ -1,0 +1,125 @@
+// Упаковка номенклатуры
+entity ALIS.GoodPackage {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodpackage/GoodPackage.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_package.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.good_package.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.good_package.active;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.good_package.sync_id;
+  }
+
+  // Номенклатура
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.good_package.client_good_id;  // -> ALIS.ClientGood.id
+  }
+
+  // Единица измерения
+  attribute unitOfMeasure {
+    type ALIS.UnitOfMeasure;
+    is private;
+    map alis.good_package.unit_of_measure_id;  // -> ALIS.UnitOfMeasure.id
+  }
+
+  // Количество в упаковке (вложенность)
+  attribute conversionQty {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.conversion_qty;
+  }
+
+  // Уровень вложенности
+  attribute level {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.level;
+  }
+
+  // Ширина (мм)
+  attribute width {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.width;
+  }
+
+  // Высота (мм)
+  attribute height {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.height;
+  }
+
+  // Глубина (мм)
+  attribute length {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.length;
+  }
+
+  // Масса (кг)
+  attribute weight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.weight;
+  }
+
+  // Объём (м³)
+  attribute volume {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.volume;
+  }
+
+  // Масса тары (кг)
+  attribute tareWeight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_package.tare_weight;
+  }
+
+  // Тип обработки
+  attribute processingType {
+    type ProcessingType;
+    is private;
+    is nullable;
+    map alis.good_package.processing_type;
+  }
+
+  // Родительская упаковка
+  attribute parentPackage {
+    type ALIS.GoodPackage;
+    is private;
+    is nullable;
+    map alis.good_package.parent_package_id;  // -> ALIS.GoodPackage.id
+  }
+}

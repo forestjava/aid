@@ -1,0 +1,76 @@
+table alis.shipping_order_container_item {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order.id;
+    }
+  }
+
+  attribute shipping_order_container_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order_container.id;
+    }
+  }
+
+  attribute etsng_code_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.etsng_code.id;
+    }
+  }
+
+  attribute description {
+    type varchar(1000);
+  }
+
+  attribute price {
+    type numeric(15,2);
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute wight_gross {
+    type numeric(15,3);
+    is required;
+  }
+
+  attribute wight_net {
+    type numeric(15,3);
+  }
+
+  attribute quantity_place {
+    type numeric(15,3);
+  }
+}

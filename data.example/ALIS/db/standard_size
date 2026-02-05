@@ -1,0 +1,34 @@
+table alis.standard_size {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(20);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+  }
+
+  attribute created_by {
+    type varchar(50);
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

@@ -1,0 +1,83 @@
+// Исходящие данные
+entity ALIS.OutboundData {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/outbounddata/OutboundData.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.outbound_data.id;
+  }
+
+  // Тип сообщения
+  attribute messageType {
+    type MessageType;
+    is private;
+    is nullable;
+    map alis.outbound_data.message_type;
+  }
+
+  // Тип сущности
+  attribute entityType {
+    type EntityType;
+    is private;
+    is nullable;
+    map alis.outbound_data.entity_type;
+  }
+
+  // Идентификатор корневого объекта
+  attribute rootObjectId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.outbound_data.root_object_id;
+  }
+
+  // Успешность
+  attribute success {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.outbound_data.success;
+  }
+
+  // Идентификатор сообщения
+  attribute messageId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.outbound_data.message_id;
+  }
+
+  // Код ответа
+  attribute responseCode {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.outbound_data.response_code;
+  }
+
+  // Сообщение об ошибке
+  attribute errorMessage {
+    type String;
+    is private;
+    is nullable;
+    map alis.outbound_data.error_message;
+  }
+
+  // Количество попыток
+  attribute attempts {
+    type Integer;
+    is private;
+    default 0;
+    map alis.outbound_data.attempts;
+  }
+
+  // Время последней попытки
+  attribute lastAttemptAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.outbound_data.last_attempt_at;
+  }
+}

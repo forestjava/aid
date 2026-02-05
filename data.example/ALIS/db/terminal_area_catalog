@@ -1,0 +1,12 @@
+table alis.terminal_area_catalog {
+
+  attribute terminal_area_id {
+    type text;
+    is required;
+    key primary;
+  }
+
+  attribute description {
+    type text;
+  }
+}

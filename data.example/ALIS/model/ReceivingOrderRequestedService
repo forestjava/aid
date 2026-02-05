@@ -1,0 +1,75 @@
+// Доп. услуга заявки на поставку
+entity ALIS.ReceivingOrderRequestedService {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorderrequestedservice/ReceivingOrderRequestedService.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_requested_service.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_requested_service.deleted;
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_requested_service.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute termOfRequestedService {
+    type ALIS.TermOfRequestedService;
+    is private;
+    map alis.receiving_order_requested_service.term_of_requested_service_id;  // -> ALIS.TermOfRequestedService.id
+  }
+
+  attribute serviceOfMeasure {
+    type ServiceOfMeasure;
+    is private;
+    is nullable;
+    map alis.receiving_order_requested_service.service_of_measure;
+  }
+
+  attribute plannedQuantity {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_requested_service.planned_quantity;
+  }
+
+  attribute rate {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_requested_service.rate;
+  }
+
+  attribute priceWithoutVAT {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_requested_service.price_without_vat;
+  }
+
+  attribute priceWithVAT {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_requested_service.price_with_vat;
+  }
+
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_requested_service.actual_quantity;
+  }
+
+  attribute systemManaged {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_requested_service.system_managed;
+  }
+}

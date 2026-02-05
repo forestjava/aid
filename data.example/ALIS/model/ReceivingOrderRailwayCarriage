@@ -1,0 +1,65 @@
+// Вагон заявки на поставку
+entity ALIS.ReceivingOrderRailwayCarriage {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorderrailwaycarriage/ReceivingOrderRailwayCarriage.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_railway_carriage.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_railway_carriage.deleted;
+  }
+
+  attribute etranInvoice {
+    type ALIS.EtranInvoice;
+    is private;
+    is nullable;
+    map alis.receiving_order_railway_carriage.etran_invoice_id;  // -> ALIS.EtranInvoice.id
+  }
+
+  attribute railwayCarriage {
+    type ALIS.RailwayCarriage;
+    is private;
+    map alis.receiving_order_railway_carriage.railway_carriage_id;  // -> ALIS.RailwayCarriage.id
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_railway_carriage.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute status {
+    type TaskStatus;
+    is private;
+    is nullable;
+    map alis.receiving_order_railway_carriage.status;
+  }
+
+  attribute dataTimeKrugloyePole {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.receiving_order_railway_carriage.data_time_krugloye_pole;
+  }
+
+  attribute customerService {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.receiving_order_railway_carriage.customer_services_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+
+  attribute ownerRailwayCarriage {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.receiving_order_railway_carriage.owner_railway_carriage_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+}

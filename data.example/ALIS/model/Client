@@ -1,0 +1,125 @@
+// Клиент
+entity ALIS.Client {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.client.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.client.code;
+  }
+
+  attribute name {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.client.name;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.client.active;
+  }
+
+  // Идентификатор для синхронизации с внешними системами
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.client.sync_id;
+  }
+
+  // ИНН
+  attribute inn {
+    type String(12);
+    is private;
+    is nullable;
+    map alis.client.inn;
+  }
+
+  // КПП
+  attribute kpp {
+    type String(9);
+    is private;
+    is nullable;
+    map alis.client.kpp;
+  }
+
+  // ОКПО
+  attribute okpo {
+    type String(10);
+    is private;
+    is nullable;
+    map alis.client.okpo;
+  }
+
+  // ОГРН
+  attribute ogrn {
+    type String(13);
+    is private;
+    is nullable;
+    map alis.client.ogrn;
+  }
+
+  // Идентификатор электронного документооборота
+  attribute edoId {
+    type String(46);
+    is private;
+    is nullable;
+    map alis.client.edo_id;
+  }
+
+  // Юридический адрес
+  attribute addressLegal {
+    type String(1000);
+    is private;
+    is nullable;
+    map alis.client.address_legal;
+  }
+
+  // Фактический адрес
+  attribute addressFact {
+    type String(1000);
+    is private;
+    is nullable;
+    map alis.client.address_fact;
+  }
+
+  // ФИО подписанта
+  attribute signatoryName {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client.signatory_name;
+  }
+
+  // Должность подписанта
+  attribute signatoryPosition {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client.signatory_position;
+  }
+
+  // Почта
+  attribute email {
+    type String(150);
+    is private;
+    is nullable;
+    map alis.client.email;
+  }
+
+  // Телефон
+  attribute phoneNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.client.phone_number;
+  }
+}

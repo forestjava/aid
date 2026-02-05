@@ -1,0 +1,63 @@
+table alis.container {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute container_type {
+    type varchar(20);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute weight {
+    type numeric(15,3);
+    is required;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute lifting_capacity {
+    type numeric(15,6);
+    is required;
+  }
+
+  attribute standard_size_id {
+    type uuid;
+    key foreign {
+      attribute alis.standard_size.id;
+    }
+  }
+}

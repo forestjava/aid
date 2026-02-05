@@ -1,0 +1,25 @@
+// Связанная услуга
+entity ALIS.RelatedService {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/relatedservice/RelatedService.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.related_service.id;
+  }
+
+  // Комплексная услуга
+  attribute comprehensiveService {
+    type ALIS.Service;
+    is private;
+    map alis.related_service.comprehensive_service_id;  // -> ALIS.Service.id
+  }
+
+  // Связанная услуга
+  attribute relatedService {
+    type ALIS.Service;
+    is private;
+    map alis.related_service.related_service_id;  // -> ALIS.Service.id
+  }
+}

@@ -1,0 +1,13 @@
+table alis.entity_sequence {
+
+  attribute entity_type {
+    type varchar(100);
+    is required;
+    key primary;
+  }
+
+  attribute sequence_number {
+    type bigint;
+    is required;
+  }
+}

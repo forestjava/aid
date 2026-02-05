@@ -1,0 +1,46 @@
+table alis.receiving_order_blackbox {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute cargo_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.cargo.id;
+    }
+  }
+
+  attribute deleted {
+    type boolean;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

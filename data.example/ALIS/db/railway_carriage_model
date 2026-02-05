@@ -1,0 +1,41 @@
+table alis.railway_carriage_model {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(50);
+    is required;
+  }
+
+  attribute conditional_length {
+    type numeric(15,4);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

@@ -1,0 +1,89 @@
+table alis.client {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute name {
+    type varchar(255);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute inn {
+    type varchar(12);
+  }
+
+  attribute kpp {
+    type varchar(9);
+  }
+
+  attribute okpo {
+    type varchar(10);
+  }
+
+  attribute ogrn {
+    type varchar(13);
+  }
+
+  attribute edo_id {
+    type varchar(46);
+  }
+
+  attribute address_legal {
+    type varchar(1000);
+  }
+
+  attribute address_fact {
+    type varchar(1000);
+  }
+
+  attribute signatory_name {
+    type varchar(50);
+  }
+
+  attribute signatory_position {
+    type varchar(50);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute email {
+    type varchar(150);
+  }
+
+  attribute phone_number {
+    type varchar(50);
+  }
+}

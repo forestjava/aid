@@ -1,0 +1,92 @@
+table alis.service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(255);
+    is required;
+  }
+
+  attribute name {
+    type varchar(255);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute instruction {
+    type text;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute accrual_base {
+    type varchar(100);
+  }
+
+  attribute accrual_method {
+    type varchar(100);
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+    is required;
+  }
+
+  attribute operation {
+    type boolean;
+    is required;
+  }
+
+  attribute dependent {
+    type boolean;
+    is required;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute service_of_measure {
+    type varchar(100);
+    is required;
+  }
+
+  attribute keeping {
+    type boolean;
+    is required;
+  }
+
+  attribute is_comprehensive {
+    type boolean;
+    is required;
+  }
+}

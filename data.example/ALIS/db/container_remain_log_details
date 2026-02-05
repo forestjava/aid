@@ -1,0 +1,24 @@
+table alis.container_remain_log_details {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute container_remain_log_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.container_remain_log.id;
+    }
+  }
+
+  attribute container {
+    type varchar(100);
+  }
+
+  attribute comment {
+    type text;
+  }
+}

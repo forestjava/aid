@@ -1,0 +1,105 @@
+table alis.receiving_order_cargo {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute receiving_order_good_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order_good.id;
+    }
+  }
+
+  attribute good_package_barcode_id {
+    type uuid;
+    key foreign {
+      attribute alis.good_package_barcode.id;
+    }
+  }
+
+  attribute good_package_id {
+    type uuid;
+    key foreign {
+      attribute alis.good_package.id;
+    }
+  }
+
+  attribute package_quantity {
+    type numeric(16,3);
+  }
+
+  attribute conversion_quantity {
+    type numeric(16,3);
+  }
+
+  attribute total_quantity {
+    type numeric(16,3);
+  }
+
+  attribute length {
+    type numeric(10,3);
+    is required;
+  }
+
+  attribute width {
+    type numeric(10,3);
+    is required;
+  }
+
+  attribute height {
+    type numeric(10,3);
+    is required;
+  }
+
+  attribute volume {
+    type numeric(17,6);
+    is required;
+  }
+
+  attribute weight {
+    type numeric(15,3);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute cargo_id {
+    type uuid;
+    key foreign {
+      attribute alis.cargo.id;
+    }
+  }
+}

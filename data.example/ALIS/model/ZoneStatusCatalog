@@ -1,0 +1,18 @@
+// Справочник статусов зон
+entity ALIS.ZoneStatusCatalog {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodremains/ZoneStatusCatalog.java";
+
+  attribute zone {
+    key primary;
+    type String(100);
+    is private;
+    map alis.zone_status_catalog.zone;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    is nullable;
+    map alis.zone_status_catalog.code;
+  }
+}

@@ -1,0 +1,67 @@
+// Вид номенклатуры, согласно классификации клиента
+entity ALIS.ClientGoodType {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.client_good_type.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.client_good_type.code;
+  }
+
+  attribute name {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.client_good_type.name;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.client_good_type.active;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.client_good_type.client_id;  // -> ALIS.Client.id
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.client_good_type.sync_id;
+  }
+
+  // Идентификатор синхронизации клиента
+  attribute clientSyncId {
+    type String(100);
+    is private;
+    is nullable;
+    map alis.client_good_type.client_sync_id;
+  }
+
+  // Является вариативным
+  attribute isVariable {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.client_good_type.is_variable;
+  }
+
+  // Имеет номенклатуры
+  attribute hasClientGoods {
+    type Boolean;
+    is private;
+    map alis.client_good_type.has_client_goods;
+  }
+}

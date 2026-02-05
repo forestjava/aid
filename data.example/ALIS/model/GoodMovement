@@ -1,0 +1,97 @@
+// Движение товара
+entity ALIS.GoodMovement {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodmovement/GoodMovement.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_movement.id;
+  }
+
+  // Идентификатор заявки
+  attribute orderId {
+    type UUID;
+    is private;
+    map alis.good_movement.order_id;
+  }
+
+  // Номенклатура
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.good_movement.client_good_id;  // -> ALIS.ClientGood.id
+  }
+
+  // Партия
+  attribute batch {
+    type Batch;
+    is private;
+    is nullable;
+    map alis.good_movement.batch_id;  // -> ALIS.Batch.id
+  }
+
+  // Фактическое количество
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_movement.actual_quantity;
+  }
+
+  // Статус товара
+  attribute goodStatus {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.good_movement.good_status;
+  }
+
+  // Грузовое место
+  attribute cargo {
+    type ALIS.Cargo;
+    is private;
+    is nullable;
+    map alis.good_movement.cargo_id;  // -> ALIS.Cargo.id
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.good_movement.event_code;
+  }
+
+  // Дата и время события
+  attribute eventDateTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.good_movement.event_date_time;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type TerminalArea;
+    is private;
+    is nullable;
+    map alis.good_movement.terminal_area;
+  }
+
+  // Идентификатор документа
+  attribute documentId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.good_movement.document_id;
+  }
+
+  // Признак активности
+  attribute active {
+    type Boolean;
+    is private;
+    default true;
+    map alis.good_movement.active;
+  }
+}

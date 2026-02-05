@@ -1,0 +1,33 @@
+// Детали лога остатков вагонов
+entity ALIS.RailwayCarriageRemainLogDetails {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/railwaycarriageremainlogdetails/RailwayCarriageRemainLogDetails.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.railway_carriage_remain_log_details.id;
+  }
+
+  // Лог остатков вагонов
+  attribute railwayCarriageRemainLog {
+    type ALIS.RailwayCarriageRemainLog;
+    is private;
+    map alis.railway_carriage_remain_log_details.railway_carriage_remain_log_id;  // -> ALIS.RailwayCarriageRemainLog.id
+  }
+
+  // Вагон
+  attribute railwayCarriage {
+    type String(100);
+    is private;
+    map alis.railway_carriage_remain_log_details.railway_carriage;
+  }
+
+  // Комментарий
+  attribute comment {
+    type String;
+    is private;
+    is nullable;
+    map alis.railway_carriage_remain_log_details.comment;
+  }
+}

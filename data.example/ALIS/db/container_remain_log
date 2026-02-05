@@ -1,0 +1,26 @@
+table alis.container_remain_log {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute status {
+    type varchar(50);
+    is required;
+  }
+
+  attribute start_time {
+    type timestamp;
+    is required;
+  }
+
+  attribute end_time {
+    type timestamp;
+  }
+
+  attribute statistic {
+    type text;
+  }
+}

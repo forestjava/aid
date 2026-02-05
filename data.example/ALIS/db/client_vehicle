@@ -1,0 +1,94 @@
+table alis.client_vehicle {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute vehicle_brand_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.vehicle_brand.id;
+    }
+  }
+
+  attribute vehicle_type_id {
+    type uuid;
+    key foreign {
+      attribute alis.vehicle_type.id;
+    }
+  }
+
+  attribute loading_type_id {
+    type uuid;
+    key foreign {
+      attribute alis.loading_type.id;
+    }
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is required;
+  }
+
+  attribute with_trailer {
+    type boolean;
+    is required;
+  }
+
+  attribute trailer_number {
+    type varchar(100);
+  }
+
+  attribute insurance_number {
+    type varchar(100);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute type_ownership_transport {
+    type varchar(50);
+    is required;
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+}

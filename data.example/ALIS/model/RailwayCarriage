@@ -1,0 +1,63 @@
+// Вагон
+entity ALIS.RailwayCarriage {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/railway/RailwayCarriage.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.railway_carriage.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.railway_carriage.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.railway_carriage.active;
+  }
+
+  // Род вагона
+  attribute type {
+    type ALIS.RailwayCarriageType;
+    is private;
+    map alis.railway_carriage.type_id;  // -> ALIS.RailwayCarriageType.id
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    is nullable;
+    map alis.railway_carriage.client_id;  // -> ALIS.Client.id
+  }
+
+  // Грузоподъемность (тн.)
+  attribute liftingCapacity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.railway_carriage.lifting_capacity;
+  }
+
+  // Модель вагона
+  attribute model {
+    type ALIS.RailwayCarriageModel;
+    is private;
+    is nullable;
+    map alis.railway_carriage.model_id;  // -> ALIS.RailwayCarriageModel.id
+  }
+
+  // Дата следующего ДР
+  attribute dateDepotRepair {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.railway_carriage.date_depot_repair;
+  }
+}

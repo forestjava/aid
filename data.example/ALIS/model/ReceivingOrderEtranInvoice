@@ -1,0 +1,30 @@
+// Накладная ЭТРАН заявки на поставку
+entity ALIS.ReceivingOrderEtranInvoice {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorderetraninvoice/ReceivingOrderEtranInvoice.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_etran_invoice.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_etran_invoice.deleted;
+  }
+
+  attribute etranInvoice {
+    type ALIS.EtranInvoice;
+    is private;
+    map alis.receiving_order_etran_invoice.etran_invoice_id;  // -> ALIS.EtranInvoice.id
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_etran_invoice.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+}

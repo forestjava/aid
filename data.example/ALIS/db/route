@@ -1,0 +1,84 @@
+table alis.route {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is required;
+  }
+
+  attribute route_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute data_time {
+    type timestamp;
+    is required;
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+    is required;
+  }
+
+  attribute transport_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute client_related_entity_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute client_driver_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_driver.id;
+    }
+  }
+
+  attribute client_vehicle_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_vehicle.id;
+    }
+  }
+
+  attribute comment {
+    type varchar(200);
+  }
+
+  attribute status {
+    type varchar(100);
+    is required;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute created_by {
+    type varchar(50);
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

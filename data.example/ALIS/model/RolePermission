@@ -1,0 +1,29 @@
+// Права роли
+entity ALIS.RolePermission {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/rolepermission/RolePermission.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.role_permission.id;
+  }
+
+  attribute roleId {
+    type UUID;
+    is private;
+    map alis.role_permission.role_id;
+  }
+
+  attribute permissionPath {
+    type ALIS.PermissionPath;
+    is private;
+    map alis.role_permission.permission_path_id;  // -> ALIS.PermissionPath.id
+  }
+
+  attribute level {
+    type String(20);
+    is private;
+    map alis.role_permission.level;
+  }
+}

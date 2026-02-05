@@ -1,0 +1,81 @@
+table alis.receiving_order_requested_service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute term_of_requested_service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.term_of_requested_service.id;
+    }
+  }
+
+  attribute planned_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute rate {
+    type numeric(10,2);
+    is required;
+  }
+
+  attribute price_without_vat {
+    type numeric(16,2);
+    is required;
+  }
+
+  attribute price_with_vat {
+    type numeric(16,2);
+    is required;
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute system_managed {
+    type boolean;
+    is required;
+  }
+
+  attribute service_of_measure {
+    type varchar(100);
+  }
+}

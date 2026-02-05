@@ -1,0 +1,44 @@
+table alis.role_permission {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute role_id {
+    type uuid;
+    is required;
+  }
+
+  attribute permission_path_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.permission_path.id;
+    }
+  }
+
+  attribute level {
+    type varchar(20);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

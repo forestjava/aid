@@ -1,0 +1,18 @@
+table alis.permission_path {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute path {
+    type USER_DEFINED;
+    is required;
+  }
+
+  attribute permission_type {
+    type varchar(20);
+    is required;
+  }
+}

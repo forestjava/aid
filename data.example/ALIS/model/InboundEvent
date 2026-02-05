@@ -1,0 +1,83 @@
+// Входящее событие
+entity ALIS.InboundEvent {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/datareoninbound/InboundEvent.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.inbound_event.id;
+  }
+
+  // Идентификатор задачи
+  attribute taskId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.inbound_event.task_id;
+  }
+
+  // Идентификатор заявки
+  attribute orderId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.inbound_event.order_id;
+  }
+
+  // Номер заявки
+  attribute orderNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.inbound_event.order_number;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type TerminalArea;
+    is private;
+    is nullable;
+    map alis.inbound_event.terminal_area;
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.inbound_event.event_code;
+  }
+
+  // Наименование события
+  attribute eventName {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.inbound_event.event_name;
+  }
+
+  // Дата и время события
+  attribute eventDateTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.inbound_event.event_date_time;
+  }
+
+  // Статус обработки
+  attribute status {
+    type InboundEventProcessingStatus;
+    is private;
+    is nullable;
+    map alis.inbound_event.status;
+  }
+
+  // Детали статуса
+  attribute statusDetails {
+    type String;
+    is private;
+    is nullable;
+    map alis.inbound_event.status_details;
+  }
+}

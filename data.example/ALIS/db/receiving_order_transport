@@ -1,0 +1,65 @@
+table alis.receiving_order_transport {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute shipper_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute carrier_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute client_driver_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_driver.id;
+    }
+  }
+
+  attribute client_vehicle_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_vehicle.id;
+    }
+  }
+
+  attribute waybill {
+    type varchar(50);
+  }
+}

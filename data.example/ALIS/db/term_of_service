@@ -1,0 +1,68 @@
+table alis.term_of_service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute contract_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.contract.id;
+    }
+  }
+
+  attribute valid_from {
+    type timestamp;
+    is required;
+  }
+
+  attribute valid_to {
+    type timestamp;
+  }
+
+  attribute indefinitely {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+    is required;
+  }
+}

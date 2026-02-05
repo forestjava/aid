@@ -1,0 +1,57 @@
+// Условие оказания периодической услуги
+entity ALIS.TermOfPeriodicService {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/termofperiodicservice/TermOfPeriodicService.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.term_of_periodic_service.id;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.term_of_periodic_service.sync_id;
+  }
+
+  // Признак удаления
+  attribute deleted {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.term_of_periodic_service.deleted;
+  }
+
+  // Услуга
+  attribute service {
+    type ALIS.Service;
+    is private;
+    map alis.term_of_periodic_service.service_id;  // -> ALIS.Service.id
+  }
+
+  // Условие оказания услуги
+  attribute termOfService {
+    type ALIS.TermOfService;
+    is private;
+    map alis.term_of_periodic_service.term_of_service_id;  // -> ALIS.TermOfService.id
+  }
+
+  // Периодичность
+  attribute frequencyOfServices {
+    type ALIS.FrequencyOfServices;
+    is private;
+    is nullable;
+    map alis.term_of_periodic_service.frequency_of_services_id;  // -> ALIS.FrequencyOfServices.id
+  }
+
+  // Тариф
+  attribute rate {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.term_of_periodic_service.rate;
+  }
+}

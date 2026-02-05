@@ -1,0 +1,13 @@
+table alis.container_remain_status {
+
+  attribute id {
+    type varchar(30);
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(30);
+    is required;
+  }
+}

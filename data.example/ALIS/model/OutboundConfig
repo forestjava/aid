@@ -1,0 +1,34 @@
+// Конфигурация исходящих данных
+entity ALIS.OutboundConfig {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/outboundconfig/OutboundConfig.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.outbound_config.id;
+  }
+
+  // Тип сущности
+  attribute entityType {
+    type EntityType;
+    is private;
+    is nullable;
+    map alis.outbound_config.entity_type;
+  }
+
+  // Тип сообщения
+  attribute messageType {
+    type MessageType;
+    is private;
+    is nullable;
+    map alis.outbound_config.message_type;
+  }
+
+  // Активность
+  attribute active {
+    type Boolean;
+    is private;
+    map alis.outbound_config.active;
+  }
+}

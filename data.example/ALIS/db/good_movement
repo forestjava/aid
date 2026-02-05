@@ -1,0 +1,87 @@
+table alis.good_movement {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute order_id {
+    type uuid;
+    is required;
+  }
+
+  attribute batch_id {
+    type uuid;
+    key foreign {
+      attribute alis.batch.id;
+    }
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute good_status {
+    type varchar(30);
+    is required;
+  }
+
+  attribute event_code {
+    type varchar(20);
+    is required;
+  }
+
+  attribute event_date_time {
+    type timestamp;
+    is required;
+  }
+
+  attribute document_id {
+    type uuid;
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute terminal_area {
+    type varchar(50);
+    is required;
+  }
+
+  attribute cargo_id {
+    type uuid;
+    key foreign {
+      attribute alis.cargo.id;
+    }
+  }
+
+  attribute client_good_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+}

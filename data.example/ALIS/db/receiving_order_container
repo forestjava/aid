@@ -1,0 +1,106 @@
+table alis.receiving_order_container {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute container_id {
+    type uuid;
+    key foreign {
+      attribute alis.container.id;
+    }
+  }
+
+  attribute empty {
+    type boolean;
+    is required;
+  }
+
+  attribute weight {
+    type numeric(15,3);
+  }
+
+  attribute customs_clearance {
+    type boolean;
+    is required;
+  }
+
+  attribute deleted {
+    description "Мягкое удаление для историчности";
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute seal_numbers {
+    type ARRAY;
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+  }
+
+  attribute receiving_order_railway_carriage_id {
+    type uuid;
+    key foreign {
+      attribute alis.receiving_order_railway_carriage.id;
+    }
+  }
+
+  attribute status {
+    type varchar(20);
+  }
+
+  attribute danger_class_id {
+    type uuid;
+    key foreign {
+      attribute alis.danger_class.id;
+    }
+  }
+
+  attribute ktk_number_unknown {
+    description "Номер КТК неизвестен";
+    type boolean;
+  }
+
+  attribute owner_container_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute seal_type_id {
+    type uuid;
+    key foreign {
+      attribute alis.seal_type.id;
+    }
+  }
+}

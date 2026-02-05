@@ -1,0 +1,40 @@
+// Коэффициент конвертации единиц измерения
+entity ALIS.UnitOfMeasureConversion {
+  source "wms-layer/src/main/java/ru/korusconsulting/wms/model/uom/UnitOfMeasureConversion.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.unit_of_measure_conversion.id;
+  }
+
+  // Единица измерения - источник
+  attribute fromUom {
+    type ALIS.UnitOfMeasure;
+    is private;
+    map alis.unit_of_measure_conversion.from_uom_id;  // -> ALIS.UnitOfMeasure.id
+  }
+
+  // Единица измерения - назначение
+  attribute toUom {
+    type ALIS.UnitOfMeasure;
+    is private;
+    map alis.unit_of_measure_conversion.to_uom_id;  // -> ALIS.UnitOfMeasure.id
+  }
+
+  // Коэффициент конвертации
+  attribute conversionFactor {
+    type BigDecimal;
+    is private;
+    map alis.unit_of_measure_conversion.conversion_factor;
+  }
+
+  // Активность
+  attribute active {
+    type Boolean;
+    is private;
+    default true;
+    map alis.unit_of_measure_conversion.active;
+  }
+}

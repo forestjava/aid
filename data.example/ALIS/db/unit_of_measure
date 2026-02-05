@@ -1,0 +1,50 @@
+table alis.unit_of_measure {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute name {
+    type varchar(255);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute unit_of_measure_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute code_okei {
+    type varchar(4);
+    is required;
+  }
+}

@@ -1,0 +1,37 @@
+// Лог остатков номенклатуры
+entity ALIS.GoodRemainLog {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodremainlog/GoodRemainLog.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_remain_log.id;
+  }
+
+  attribute status {
+    type String(50);
+    is private;
+    map alis.good_remain_log.status;
+  }
+
+  attribute startTime {
+    type Instant;
+    is private;
+    map alis.good_remain_log.start_time;
+  }
+
+  attribute endTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.good_remain_log.end_time;
+  }
+
+  attribute statistic {
+    type String;
+    is private;
+    is nullable;
+    map alis.good_remain_log.statistic;
+  }
+}

@@ -1,0 +1,42 @@
+table alis.related_service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute comprehensive_service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.service.id;
+    }
+  }
+
+  attribute related_service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.service.id;
+    }
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

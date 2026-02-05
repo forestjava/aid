@@ -1,0 +1,67 @@
+// Дополнительное соглашение
+entity ALIS.AdditionalAgreement {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/additionalagreement/AdditionalAgreement.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.additional_agreement.id;
+  }
+
+  // Номер соглашения
+  attribute number {
+    type Integer;
+    is private;
+    map alis.additional_agreement.number;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.additional_agreement.client_id;  // -> ALIS.Client.id
+  }
+
+  // Компания
+  attribute company {
+    type ALIS.Company;
+    is private;
+    map alis.additional_agreement.company_id;  // -> ALIS.Company.id
+  }
+
+  // Договор
+  attribute contract {
+    type ALIS.Contract;
+    is private;
+    map alis.additional_agreement.contract_id;  // -> ALIS.Contract.id
+  }
+
+  // Валюта
+  attribute currency {
+    type ALIS.Currency;
+    is private;
+    map alis.additional_agreement.currency_id;  // -> ALIS.Currency.id
+  }
+
+  // Дата начала действия
+  attribute validFrom {
+    type Instant;
+    is private;
+    map alis.additional_agreement.valid_from;
+  }
+
+  // Дата окончания действия
+  attribute validTo {
+    type Instant;
+    is private;
+    map alis.additional_agreement.valid_to;
+  }
+
+  // Признак активности
+  attribute active {
+    type Boolean;
+    is private;
+    map alis.additional_agreement.active;
+  }
+}

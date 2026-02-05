@@ -1,0 +1,72 @@
+// Условие оказания запрашиваемой услуги
+entity ALIS.TermOfRequestedService {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/termofrequestedservice/TermOfRequestedService.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.term_of_requested_service.id;
+  }
+
+  // Признак удаления
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.term_of_requested_service.deleted;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.term_of_requested_service.sync_id;
+  }
+
+  // Условие оказания услуги
+  attribute termOfService {
+    type ALIS.TermOfService;
+    is private;
+    map alis.term_of_requested_service.term_of_service_id;  // -> ALIS.TermOfService.id
+  }
+
+  // Услуга
+  attribute service {
+    type ALIS.Service;
+    is private;
+    map alis.term_of_requested_service.service_id;  // -> ALIS.Service.id
+  }
+
+  // Метод расчёта
+  attribute calculationMethod {
+    type CalculationMethod;
+    is private;
+    is nullable;
+    map alis.term_of_requested_service.calculation_method;
+  }
+
+  // Тип заявки клиента
+  attribute clientOrderType {
+    type ClientOrderType;
+    is private;
+    is nullable;
+    map alis.term_of_requested_service.client_order_type;
+  }
+
+  // Обязательность
+  attribute required {
+    type Boolean;
+    is private;
+    map alis.term_of_requested_service.required;
+  }
+
+  // Тариф
+  attribute rate {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.term_of_requested_service.rate;
+  }
+}

@@ -1,0 +1,23 @@
+// Штрихкоды остатков номенклатуры
+entity ALIS.GoodRemainBarcodes {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodremainbarcodes/GoodRemainBarcodes.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_remain_barcodes.id;
+  }
+
+  attribute goodRemain {
+    type ALIS.GoodRemain;
+    is private;
+    map alis.good_remain_barcodes.good_remain_id;  // -> ALIS.GoodRemain.id
+  }
+
+  attribute barcode {
+    type String(255);
+    is private;
+    map alis.good_remain_barcodes.barcode;
+  }
+}

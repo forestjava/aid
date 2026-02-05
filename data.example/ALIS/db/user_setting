@@ -1,0 +1,33 @@
+table alis.user_setting {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute user_id {
+    type uuid;
+    is required;
+  }
+
+  attribute key {
+    type varchar(128);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute value {
+    type jsonb;
+    is required;
+  }
+}

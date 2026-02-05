@@ -1,0 +1,70 @@
+// Груз в КТК заявки на вывоз
+entity ALIS.ShippingOrderContainerItem {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/shippingordercontainer/ShippingOrderContainerItem.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.shipping_order_container_item.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.shipping_order_container_item.deleted;
+  }
+
+  attribute shippingOrder {
+    type ALIS.ShippingOrder;
+    is private;
+    map alis.shipping_order_container_item.shipping_order_id;  // -> ALIS.ShippingOrder.id
+  }
+
+  attribute shippingOrderContainer {
+    type ALIS.ShippingOrderContainer;
+    is private;
+    map alis.shipping_order_container_item.shipping_order_container_id;  // -> ALIS.ShippingOrderContainer.id
+  }
+
+  attribute etsngCode {
+    type ALIS.EtsngCode;
+    is private;
+    map alis.shipping_order_container_item.etsng_code_id;  // -> ALIS.EtsngCode.id
+  }
+
+  attribute description {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.shipping_order_container_item.description;
+  }
+
+  attribute price {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_container_item.price;
+  }
+
+  attribute wightGross {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_container_item.wight_gross;
+  }
+
+  attribute wightNet {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_container_item.wight_net;
+  }
+
+  attribute quantityPlace {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_container_item.quantity_place;
+  }
+}

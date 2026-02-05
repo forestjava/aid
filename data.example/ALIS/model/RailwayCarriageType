@@ -1,0 +1,24 @@
+// Род вагона
+entity ALIS.RailwayCarriageType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/railway/RailwayCarriageType.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.railway_carriage_type.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.railway_carriage_type.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.railway_carriage_type.active;
+  }
+}

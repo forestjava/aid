@@ -1,0 +1,23 @@
+// Путь права доступа
+entity ALIS.PermissionPath {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/permissionpath/PermissionPath.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.permission_path.id;
+  }
+
+  attribute path {
+    type LTree;
+    is private;
+    map alis.permission_path.path;
+  }
+
+  attribute permissionType {
+    type String(20);
+    is private;
+    map alis.permission_path.permission_type;
+  }
+}

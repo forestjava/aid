@@ -1,0 +1,250 @@
+// Заявка на поставку
+entity ALIS.ReceivingOrder {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorder/ReceivingOrder.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order.id;
+  }
+
+  // Номер заявки
+  attribute number {
+    type Long;
+    is private;
+    map alis.receiving_order.number;
+  }
+
+  // Статус заявки
+  attribute orderStatus {
+    type OrderStatus;
+    is private;
+    map alis.receiving_order.order_status;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.receiving_order.client_id;  // -> ALIS.Client.id
+  }
+
+  // Договор
+  attribute contract {
+    type ALIS.Contract;
+    is private;
+    map alis.receiving_order.contract_id;  // -> ALIS.Contract.id
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type TerminalArea;
+    is private;
+    map alis.receiving_order.terminal_area;
+  }
+
+  // Тип транспорта
+  attribute transportType {
+    type TransportType;
+    is private;
+    map alis.receiving_order.transport_type;
+  }
+
+  // Валюта
+  attribute currency {
+    type ALIS.Currency;
+    is private;
+    is nullable;
+    map alis.receiving_order.currency_id;  // -> ALIS.Currency.id
+  }
+
+  // Контактное имя
+  attribute contactName {
+    type String(100);
+    is private;
+    is nullable;
+    map alis.receiving_order.contact_name;
+  }
+
+  // Контактный телефон
+  attribute contactPhone {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.receiving_order.contact_phone;
+  }
+
+  // Контактный email
+  attribute contactEmail {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.receiving_order.contact_email;
+  }
+
+  // Плановая дата поставки
+  attribute planReceivingDateTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.receiving_order.plan_receiving_date_time;
+  }
+
+  // Фактическая дата поставки
+  attribute actualReceivingDateTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.receiving_order.actual_receiving_date_time;
+  }
+
+  // Срок хранения
+  attribute storagePeriod {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order.storage_period;
+  }
+
+  // Комментарий
+  attribute comment {
+    type String(512);
+    is private;
+    is nullable;
+    map alis.receiving_order.comment;
+  }
+
+  // Общее кол-во уникальных артикулов
+  attribute totalSKUQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_sku_quantity;
+  }
+
+  // Общий вес
+  attribute totalWeight {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order.total_weight;
+  }
+
+  // Общее кол-во грузовых мест
+  attribute totalCargoQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_cargo_quantity;
+  }
+
+  // Общее кол-во паллет
+  attribute totalPalletQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_pallet_quantity;
+  }
+
+  // Общее кол-во не-паллет
+  attribute totalNotPalletQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_not_pallet_quantity;
+  }
+
+  // Общее кол-во вагонов
+  attribute totalRailwayCarriageQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_railway_carriage_quantity;
+  }
+
+  // Общее кол-во контейнеров
+  attribute totalContainerQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_container_quantity;
+  }
+
+  // Общая стоимость товаров
+  attribute totalGoodsPrice {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order.total_goods_price;
+  }
+
+  // Общее кол-во доп. операций
+  attribute totalRequestedServiceQuantity {
+    type Long;
+    is private;
+    default 0;
+    map alis.receiving_order.total_requested_service_quantity;
+  }
+
+  // Общая стоимость доп. операций
+  attribute totalRequestedServicePrice {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order.total_requested_service_price;
+  }
+
+  // Вид поставки
+  attribute deliveryType {
+    type ReceivingOrderDeliveryType;
+    is private;
+    is nullable;
+    map alis.receiving_order.delivery_type;
+  }
+
+  // Рейс
+  attribute route {
+    type ALIS.Route;
+    is private;
+    is nullable;
+    map alis.receiving_order.route_id;  // -> ALIS.Route.id
+  }
+
+  // Необходимость транспорта
+  attribute needTransport {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order.need_transport;
+  }
+
+  // Номер транспортной накладной
+  attribute waybill {
+    type String(100);
+    is private;
+    is nullable;
+    map alis.receiving_order.waybill;
+  }
+
+  // Перевозчик / экспедитор
+  attribute carrier {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.receiving_order.carrier_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+
+  // Документ подтвержден
+  attribute documentConfirmed {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.receiving_order.document_confirmed;
+  }
+
+  // Номер КТК неизвестен
+  attribute ktkNumberUnknown {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order.ktk_number_unknown;
+  }
+}

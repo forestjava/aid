@@ -1,0 +1,85 @@
+table alis.client_driver {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute phone_number {
+    type varchar(50);
+    is required;
+  }
+
+  attribute passport_number {
+    type varchar(50);
+    is required;
+  }
+
+  attribute passport_issued_by {
+    type varchar(100);
+    is required;
+  }
+
+  attribute passport_issued_date {
+    type timestamp;
+    is required;
+  }
+
+  attribute poa_number {
+    type varchar(50);
+  }
+
+  attribute poa_valid_to {
+    type timestamp;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute driving_license_number {
+    type varchar(50);
+  }
+
+  attribute driving_license_issued_date {
+    type timestamp;
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+table alis.shipping_order_blackbox {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order.id;
+    }
+  }
+
+  attribute cargo_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.cargo.id;
+    }
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

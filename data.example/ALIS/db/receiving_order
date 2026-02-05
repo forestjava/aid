@@ -1,0 +1,179 @@
+table alis.receiving_order {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is required;
+  }
+
+  attribute order_status {
+    type varchar(100);
+    is required;
+  }
+
+  attribute contract_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.contract.id;
+    }
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+    is required;
+  }
+
+  attribute transport_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute currency_id {
+    type uuid;
+    key foreign {
+      attribute alis.currency.id;
+    }
+  }
+
+  attribute contact_name {
+    type varchar(100);
+  }
+
+  attribute contact_phone {
+    type varchar(50);
+  }
+
+  attribute contact_email {
+    type varchar(255);
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute plan_receiving_date_time {
+    type timestamp;
+  }
+
+  attribute comment {
+    type varchar(512);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute total_sku_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_weight {
+    type numeric(15,3);
+  }
+
+  attribute total_cargo_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_pallet_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_not_pallet_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_goods_price {
+    type numeric(15,2);
+    is required;
+  }
+
+  attribute total_requested_service_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_requested_service_price {
+    type numeric(15,2);
+    is required;
+  }
+
+  attribute storage_period {
+    type numeric(4);
+  }
+
+  attribute total_container_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_railway_carriage_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute actual_receiving_date_time {
+    type timestamp;
+  }
+
+  attribute delivery_type {
+    type varchar(64);
+  }
+
+  attribute route_id {
+    type uuid;
+    key foreign {
+      attribute alis.route.id;
+    }
+  }
+
+  attribute need_transport {
+    type boolean;
+    is required;
+  }
+
+  attribute carrier_id {
+    type uuid;
+  }
+
+  attribute waybill {
+    type varchar(200);
+  }
+
+  attribute document_confirmed {
+    type boolean;
+  }
+
+  attribute ktk_number_unknown {
+    description "Номер КТК неизвестен";
+    type boolean;
+  }
+}

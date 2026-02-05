@@ -1,0 +1,52 @@
+table alis.inbound_event_config {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute event_code {
+    type varchar(150);
+    is required;
+  }
+
+  attribute event_name {
+    type varchar(255);
+  }
+
+  attribute action_code {
+    type varchar(21);
+    is required;
+  }
+
+  attribute order_type {
+    type ARRAY;
+  }
+
+  attribute transport_type {
+    type ARRAY;
+  }
+
+  attribute terminal_area {
+    type ARRAY;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

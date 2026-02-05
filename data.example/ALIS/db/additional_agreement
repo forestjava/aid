@@ -1,0 +1,78 @@
+table alis.additional_agreement {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is required;
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute company_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.company.id;
+    }
+  }
+
+  attribute contract_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.contract.id;
+    }
+  }
+
+  attribute currency_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.currency.id;
+    }
+  }
+
+  attribute valid_from {
+    type timestamp;
+    is required;
+  }
+
+  attribute valid_to {
+    type timestamp;
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

@@ -1,0 +1,32 @@
+// Модель вагона
+entity ALIS.RailwayCarriageModel {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/railway/RailwayCarriageModel.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.railway_carriage_model.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.railway_carriage_model.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.railway_carriage_model.active;
+  }
+
+  // Условная длина
+  attribute conditionalLength {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.railway_carriage_model.conditional_length;
+  }
+}

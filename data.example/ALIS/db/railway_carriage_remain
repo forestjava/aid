@@ -1,0 +1,57 @@
+table alis.railway_carriage_remain {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute railway_carriage_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage.id;
+    }
+  }
+
+  attribute event_code {
+    type varchar(20);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute time {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

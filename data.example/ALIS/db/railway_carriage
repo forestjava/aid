@@ -1,0 +1,68 @@
+table alis.railway_carriage {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute type_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage_type.id;
+    }
+  }
+
+  attribute lifting_capacity {
+    type numeric(15,3);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute model_id {
+    type uuid;
+    key foreign {
+      attribute alis.railway_carriage_model.id;
+    }
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute date_depot_repair {
+    type timestamp;
+  }
+}

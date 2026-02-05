@@ -1,6 +1,5 @@
-service ALIS {
-
-  import "ALIS/orders";
-  import "ALIS/remains";
+system ALIS {
+  import ./db;
+  import ./model;
   
-}
+}  

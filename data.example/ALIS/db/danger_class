@@ -1,0 +1,49 @@
+table alis.danger_class {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute name {
+    type varchar(255);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute code_danger_class {
+    type varchar(9);
+    is required;
+  }
+
+  attribute group_name {
+    type varchar(50);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

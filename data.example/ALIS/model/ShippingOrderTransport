@@ -1,0 +1,46 @@
+// Транспорт заявки на вывоз
+entity ALIS.ShippingOrderTransport {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/shippingordertransport/ShippingOrderTransport.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.shipping_order_transport.id;
+  }
+
+  attribute consigneeAddress {
+    type String(200);
+    is private;
+    is nullable;
+    map alis.shipping_order_transport.consignee_address;
+  }
+
+  attribute consignee {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.shipping_order_transport.consignee_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+
+  attribute carrier {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.shipping_order_transport.carrier_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+
+  attribute clientVehicle {
+    type ALIS.ClientVehicle;
+    is private;
+    is nullable;
+    map alis.shipping_order_transport.client_vehicle_id;  // -> ALIS.ClientVehicle.id
+  }
+
+  attribute clientDriver {
+    type ALIS.ClientDriver;
+    is private;
+    is nullable;
+    map alis.shipping_order_transport.client_driver_id;  // -> ALIS.ClientDriver.id
+  }
+}

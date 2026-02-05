@@ -1,0 +1,35 @@
+// Конфигурация входящих событий
+entity ALIS.InboundEventConfig {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/datareoninbound/InboundEventConfig.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.inbound_event_config.id;
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.inbound_event_config.event_code;
+  }
+
+  // Наименование события
+  attribute eventName {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.inbound_event_config.event_name;
+  }
+
+  // Код действия
+  attribute actionCode {
+    type InboundEventActionHandlingCode;
+    is private;
+    is nullable;
+    map alis.inbound_event_config.action_code;
+  }
+}

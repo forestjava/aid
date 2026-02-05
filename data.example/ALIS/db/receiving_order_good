@@ -1,0 +1,73 @@
+table alis.receiving_order_good {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute client_good_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+
+  attribute batch_id {
+    type uuid;
+    key foreign {
+      attribute alis.batch.id;
+    }
+  }
+
+  attribute planned_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute price {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_price {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

@@ -1,0 +1,80 @@
+table alis.batch {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute client_good_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+
+  attribute batch_accounting_type {
+    type varchar(16);
+    is required;
+  }
+
+  attribute manufacture_date {
+    type timestamp;
+    is required;
+  }
+
+  attribute batch_barcode {
+    type varchar(50);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute variant {
+    type uuid;
+  }
+
+  attribute expiration_date {
+    type timestamp;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+}

@@ -1,0 +1,74 @@
+// Занятость ячеек
+entity ALIS.CellOccupancy {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/cell_occupancy/CellOccupancy.java";
+
+  attribute id {
+    key primary;
+    type Integer;
+    is private;
+    map alis.cell_occupancy.id;
+  }
+
+  attribute name {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.cell_occupancy.name;
+  }
+
+  // Ярус
+  attribute tier {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.tier;
+  }
+
+  // Всего ячеек
+  attribute total {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.total;
+  }
+
+  // Занято
+  attribute busy {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.busy;
+  }
+
+  // Заблокировано
+  attribute blocked {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.blocked;
+  }
+
+  // Свободно
+  attribute free {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.free;
+  }
+
+  // Вес
+  attribute weight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.weight;
+  }
+
+  // Высота
+  attribute height {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.cell_occupancy.height;
+  }
+}

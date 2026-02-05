@@ -1,0 +1,63 @@
+// Цифровая марка
+entity ALIS.ClientGoodDigitalSign {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.client_good_digital_sign.id;
+  }
+
+  // Номенклатура
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.client_good_digital_sign.client_good_id;  // -> ALIS.ClientGood.id
+  }
+
+  // Движение товара
+  attribute goodMovement {
+    type ALIS.GoodMovement;
+    is private;
+    is nullable;
+    map alis.client_good_digital_sign.good_movement_id;  // -> ALIS.GoodMovement.id
+  }
+
+  // Транспортная упаковка
+  attribute transportPackage {
+    type ALIS.TransportPackage;
+    is private;
+    is nullable;
+    map alis.client_good_digital_sign.transport_package_id;  // -> ALIS.TransportPackage.id
+  }
+
+  // Штрихкод
+  attribute barcode {
+    type String(255);
+    is private;
+    map alis.client_good_digital_sign.barcode;
+  }
+
+  // Признак отсутствия на складе
+  attribute outOfStock {
+    type Boolean;
+    is private;
+    map alis.client_good_digital_sign.out_of_stock;
+  }
+
+  // Признак активности
+  attribute active {
+    type Boolean;
+    is private;
+    default true;
+    map alis.client_good_digital_sign.active;
+  }
+
+  // Тип продукта
+  attribute productType {
+    type ALIS.ProductType;
+    is private;
+    is nullable;
+    map alis.client_good_digital_sign.product_type_id;  // -> ALIS.ProductType.id
+  }
+}

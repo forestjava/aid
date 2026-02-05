@@ -1,0 +1,76 @@
+table alis.receiving_order_railway_carriage {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute receiving_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.receiving_order.id;
+    }
+  }
+
+  attribute etran_invoice_id {
+    type uuid;
+    key foreign {
+      attribute alis.etran_invoice.id;
+    }
+  }
+
+  attribute railway_carriage_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage.id;
+    }
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute status {
+    type varchar(20);
+  }
+
+  attribute data_time_krugloye_pole {
+    type timestamp;
+  }
+
+  attribute customer_services_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute owner_railway_carriage_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+}

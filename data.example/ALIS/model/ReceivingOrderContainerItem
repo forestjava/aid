@@ -1,0 +1,70 @@
+// Груз в КТК заявки на поставку
+entity ALIS.ReceivingOrderContainerItem {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingordercontainer/ReceivingOrderContainerItem.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_container_item.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_container_item.deleted;
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_container_item.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute receivingOrderContainer {
+    type ALIS.ReceivingOrderContainer;
+    is private;
+    map alis.receiving_order_container_item.receiving_order_container_id;  // -> ALIS.ReceivingOrderContainer.id
+  }
+
+  attribute etsngCode {
+    type ALIS.EtsngCode;
+    is private;
+    map alis.receiving_order_container_item.etsng_code_id;  // -> ALIS.EtsngCode.id
+  }
+
+  attribute description {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.receiving_order_container_item.description;
+  }
+
+  attribute price {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_container_item.price;
+  }
+
+  attribute wightGross {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_container_item.wight_gross;
+  }
+
+  attribute wightNet {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_container_item.wight_net;
+  }
+
+  attribute quantityPlace {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_container_item.quantity_place;
+  }
+}

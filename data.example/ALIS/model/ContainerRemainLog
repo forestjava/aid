@@ -1,0 +1,41 @@
+// Лог остатков контейнеров
+entity ALIS.ContainerRemainLog {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/containerremainlog/ContainerRemainLog.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.container_remain_log.id;
+  }
+
+  // Статус
+  attribute status {
+    type String(50);
+    is private;
+    map alis.container_remain_log.status;
+  }
+
+  // Время начала
+  attribute startTime {
+    type Instant;
+    is private;
+    map alis.container_remain_log.start_time;
+  }
+
+  // Время окончания
+  attribute endTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.container_remain_log.end_time;
+  }
+
+  // Статистика
+  attribute statistic {
+    type String;
+    is private;
+    is nullable;
+    map alis.container_remain_log.statistic;
+  }
+}

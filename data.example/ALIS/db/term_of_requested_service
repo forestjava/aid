@@ -1,0 +1,72 @@
+table alis.term_of_requested_service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute term_of_service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.term_of_service.id;
+    }
+  }
+
+  attribute service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.service.id;
+    }
+  }
+
+  attribute required {
+    type boolean;
+    is required;
+  }
+
+  attribute rate {
+    type numeric(16,2);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute client_order_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute calculation_method {
+    type USER_DEFINED;
+    is required;
+  }
+}

@@ -1,5 +1,7 @@
 # Папка describer не нужна в образах
 describer/
+data/
+data.example/
 
 # Git
 .git

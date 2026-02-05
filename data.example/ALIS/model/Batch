@@ -1,0 +1,81 @@
+// Партия
+entity ALIS.Batch {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.batch.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.batch.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.batch.active;
+  }
+
+  // Идентификатор для синхронизации с внешними системами
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.batch.sync_id;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.batch.client_id;  // -> ALIS.Client.id
+  }
+
+  // Номенклатура
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.batch.client_good_id;  // -> ALIS.ClientGood.id
+  }
+
+  // Вариант товара
+  attribute variant {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.batch.variant;
+  }
+
+  // Тип учёта партии
+  attribute batchAccountingType {
+    type BatchAccountingType;
+    is private;
+    map alis.batch.batch_accounting_type;
+  }
+
+  // Дата производства
+  attribute manufactureDate {
+    type Instant;
+    is private;
+    map alis.batch.manufacture_date;
+  }
+
+  // Срок годности
+  attribute expirationDate {
+    type Instant;
+    is private;
+    map alis.batch.expiration_date;
+  }
+
+  // Штрихкод партии
+  attribute batchBarcode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.batch.batch_barcode;
+  }
+}

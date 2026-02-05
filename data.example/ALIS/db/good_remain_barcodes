@@ -1,0 +1,17 @@
+table alis.good_remain_barcodes {
+
+  attribute good_remain_id {
+    type uuid;
+    is required;
+    key primary;
+    key foreign {
+      attribute alis.good_remain.id;
+    }
+  }
+
+  attribute barcode {
+    type varchar(255);
+    is required;
+    key primary;
+  }
+}

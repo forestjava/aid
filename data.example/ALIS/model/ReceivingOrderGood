@@ -1,0 +1,62 @@
+// Номенклатура заявки на поставку
+entity ALIS.ReceivingOrderGood {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingordergood/ReceivingOrderGood.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.receiving_order_good.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.receiving_order_good.deleted;
+  }
+
+  attribute receivingOrder {
+    type ALIS.ReceivingOrder;
+    is private;
+    map alis.receiving_order_good.receiving_order_id;  // -> ALIS.ReceivingOrder.id
+  }
+
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.receiving_order_good.client_good_id;  // -> ALIS.ClientGood.id
+  }
+
+  attribute batch {
+    type ALIS.Batch;
+    is private;
+    is nullable;
+    map alis.receiving_order_good.batch_id;  // -> ALIS.Batch.id
+  }
+
+  attribute plannedQuantity {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_good.planned_quantity;
+  }
+
+  attribute price {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_good.price;
+  }
+
+  attribute totalPrice {
+    type BigDecimal;
+    is private;
+    map alis.receiving_order_good.total_price;
+  }
+
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.receiving_order_good.actual_quantity;
+  }
+}

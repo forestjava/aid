@@ -1,0 +1,25 @@
+// Транспортная упаковка
+entity ALIS.TransportPackage {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/transportpackage/TransportPackage.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.transport_package.id;
+  }
+
+  // Штрихкод
+  attribute barcode {
+    type String(255);
+    is private;
+    map alis.transport_package.barcode;
+  }
+
+  // Единица измерения
+  attribute unitOfMeasure {
+    type ALIS.UnitOfMeasure;
+    is private;
+    map alis.transport_package.unit_of_measure_id;  // -> ALIS.UnitOfMeasure.id
+  }
+}

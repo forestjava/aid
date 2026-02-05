@@ -1,0 +1,24 @@
+table alis.railway_carriage_remain_log_details {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute railway_carriage_remain_log_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage_remain_log.id;
+    }
+  }
+
+  attribute railway_carriage {
+    type varchar(100);
+  }
+
+  attribute comment {
+    type text;
+  }
+}

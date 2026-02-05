@@ -1,0 +1,73 @@
+// Движение контейнера
+entity ALIS.ContainerMovement {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/containermovement/ContainerMovement.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.container_movement.id;
+  }
+
+  // Идентификатор заявки
+  attribute orderId {
+    type UUID;
+    is private;
+    map alis.container_movement.order_id;
+  }
+
+  // Контейнер
+  attribute container {
+    type ALIS.Container;
+    is private;
+    map alis.container_movement.container_id;  // -> ALIS.Container.id
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.container_movement.event_code;
+  }
+
+  // Дата и время события
+  attribute eventDateTime {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.container_movement.event_date_time;
+  }
+
+  // Тип транспорта
+  attribute transportType {
+    type TransportType;
+    is private;
+    is nullable;
+    map alis.container_movement.transport_type;
+  }
+
+  // Номер транспорта
+  attribute transportNumber {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.container_movement.transport_number;
+  }
+
+  // Признак активности
+  attribute active {
+    type Boolean;
+    is private;
+    default true;
+    map alis.container_movement.active;
+  }
+
+  // Идентификатор документа
+  attribute documentId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.container_movement.document_id;
+  }
+}

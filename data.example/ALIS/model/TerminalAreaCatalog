@@ -1,0 +1,18 @@
+// Справочник площадок
+entity ALIS.TerminalAreaCatalog {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/terminalarealcatalog/TerminalAreaCatalog.java";
+
+  attribute terminalAreaId {
+    key primary;
+    type String(100);
+    is private;
+    map alis.terminal_area_catalog.terminal_area_id;
+  }
+
+  attribute description {
+    type String;
+    is private;
+    is nullable;
+    map alis.terminal_area_catalog.description;
+  }
+}

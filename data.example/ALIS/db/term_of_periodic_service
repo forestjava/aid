@@ -1,0 +1,65 @@
+table alis.term_of_periodic_service {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute deleted {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.service.id;
+    }
+  }
+
+  attribute term_of_service_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.term_of_service.id;
+    }
+  }
+
+  attribute frequency_of_services_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.frequency_of_services.id;
+    }
+  }
+
+  attribute rate {
+    type numeric(16,2);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

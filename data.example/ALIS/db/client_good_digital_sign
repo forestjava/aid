@@ -1,0 +1,70 @@
+table alis.client_good_digital_sign {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute client_good_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+
+  attribute good_movement_id {
+    type uuid;
+    key foreign {
+      attribute alis.good_movement.id;
+    }
+  }
+
+  attribute transport_package_id {
+    type uuid;
+    key foreign {
+      attribute alis.transport_package.id;
+    }
+  }
+
+  attribute product_type_id {
+    type uuid;
+    key foreign {
+      attribute alis.product_type.id;
+    }
+  }
+
+  attribute barcode {
+    type varchar(200);
+    is required;
+  }
+
+  attribute out_of_stock {
+    type boolean;
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

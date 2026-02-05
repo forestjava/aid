@@ -1,0 +1,24 @@
+table alis.good_remain_log_details {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute good_remain_log_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.good_remain_log.id;
+    }
+  }
+
+  attribute good_id {
+    type uuid;
+  }
+
+  attribute comment {
+    type text;
+  }
+}

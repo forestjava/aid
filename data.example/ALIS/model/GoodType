@@ -1,0 +1,38 @@
+// Вид номенклатуры ОЭЗ Алабуга
+entity ALIS.GoodType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodtype/GoodType.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_type.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.good_type.code;
+  }
+
+  attribute name {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.good_type.name;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.good_type.active;
+  }
+
+  // Идентификатор для синхронизации
+  attribute syncId {
+    type UUID;
+    is private;
+    map alis.good_type.sync_id;
+  }
+}

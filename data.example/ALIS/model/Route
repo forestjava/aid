@@ -1,0 +1,93 @@
+// Рейс
+entity ALIS.Route {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/route/Route.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.route.id;
+  }
+
+  // Номер рейса
+  attribute number {
+    type Long;
+    is private;
+    map alis.route.number;
+  }
+
+  // Тип рейса
+  attribute routeType {
+    type RouteType;
+    is private;
+    map alis.route.route_type;
+  }
+
+  // Дата и время
+  attribute dataTime {
+    type Instant;
+    is private;
+    map alis.route.data_time;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type TerminalArea;
+    is private;
+    map alis.route.terminal_area;
+  }
+
+  // Тип транспорта
+  attribute transportType {
+    type TransportType;
+    is private;
+    map alis.route.transport_type;
+  }
+
+  // Перевозчик / экспедитор
+  attribute clientRelatedEntity {
+    type ALIS.ClientRelatedEntity;
+    is private;
+    is nullable;
+    map alis.route.client_related_entity_id;  // -> ALIS.ClientRelatedEntity.id
+  }
+
+  // Водитель
+  attribute clientDriver {
+    type ALIS.ClientDriver;
+    is private;
+    is nullable;
+    map alis.route.client_driver_id;  // -> ALIS.ClientDriver.id
+  }
+
+  // Транспортное средство
+  attribute clientVehicle {
+    type ALIS.ClientVehicle;
+    is private;
+    is nullable;
+    map alis.route.client_vehicle_id;  // -> ALIS.ClientVehicle.id
+  }
+
+  // Комментарий
+  attribute comment {
+    type String(200);
+    is private;
+    is nullable;
+    map alis.route.comment;
+  }
+
+  // Статус рейса
+  attribute status {
+    type RouteStatus;
+    is private;
+    map alis.route.status;
+  }
+
+  // Признак удаления
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.route.deleted;
+  }
+}

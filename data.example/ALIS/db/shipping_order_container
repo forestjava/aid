@@ -1,0 +1,134 @@
+table alis.shipping_order_container {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order.id;
+    }
+  }
+
+  attribute container_id {
+    type uuid;
+    key foreign {
+      attribute alis.container.id;
+    }
+  }
+
+  attribute seal_numbers {
+    type ARRAY;
+  }
+
+  attribute empty {
+    type boolean;
+    is required;
+  }
+
+  attribute weight {
+    type numeric(15,3);
+  }
+
+  attribute customs_clearance {
+    type boolean;
+    is required;
+  }
+
+  attribute deleted {
+    description "Мягкое удаление для историчности";
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute actual_quantity {
+    type numeric(16,3);
+  }
+
+  attribute shipping_order_railway_carriage_id {
+    type uuid;
+    key foreign {
+      attribute alis.shipping_order_railway_carriage.id;
+    }
+  }
+
+  attribute status {
+    type varchar(20);
+  }
+
+  attribute seal_type_id {
+    type uuid;
+    key foreign {
+      attribute alis.seal_type.id;
+    }
+  }
+
+  attribute customs_control {
+    type boolean;
+    is required;
+  }
+
+  attribute danger_class_id {
+    type uuid;
+    key foreign {
+      attribute alis.danger_class.id;
+    }
+  }
+
+  attribute random {
+    type boolean;
+    is required;
+  }
+
+  attribute ktk_number_unknown {
+    description "Номер КТК неизвестен";
+    type boolean;
+  }
+
+  attribute data_time_krugloye_pole {
+    type timestamp;
+  }
+
+  attribute customer_services_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute owner_railway_carriage_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+
+  attribute owner_container_id {
+    type uuid;
+    key foreign {
+      attribute alis.client_related_entity.id;
+    }
+  }
+}

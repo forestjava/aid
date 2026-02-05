@@ -1,0 +1,104 @@
+// Остаток номенклатуры
+entity ALIS.GoodRemain {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/goodremains/GoodRemain.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.good_remain.id;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.good_remain.client_id;  // -> ALIS.Client.id
+  }
+
+  // Номенклатура
+  attribute clientGood {
+    type ALIS.ClientGood;
+    is private;
+    map alis.good_remain.good_id;  // -> ALIS.ClientGood.id
+  }
+
+  // Зона
+  attribute zoneStatusCatalog {
+    type ALIS.ZoneStatusCatalog;
+    is private;
+    map alis.good_remain.zone_id;  // -> ALIS.ZoneStatusCatalog.zone
+  }
+
+  // Площадка
+  attribute terminalAreaId {
+    type String(100);
+    is private;
+    is nullable;
+    map alis.good_remain.terminal_area_id;
+  }
+
+  // Упаковка
+  attribute goodPackage {
+    type ALIS.GoodPackage;
+    is private;
+    is nullable;
+    map alis.good_remain.package_id;  // -> ALIS.GoodPackage.id
+  }
+
+  // Партия
+  attribute batch {
+    type ALIS.Batch;
+    is private;
+    is nullable;
+    map alis.good_remain.batch_id;  // -> ALIS.Batch.id
+  }
+
+  // Статус товара
+  attribute goodStatus {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.good_remain.good_status;
+  }
+
+  // Грузовое место
+  attribute cargo {
+    type ALIS.Cargo;
+    is private;
+    is nullable;
+    map alis.good_remain.cargo_id;  // -> ALIS.Cargo.id
+  }
+
+  // Фактическое количество
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.good_remain.actual_quantity;
+  }
+
+  // Признак активности
+  attribute isActive {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.good_remain.active;
+  }
+
+  // Код события
+  attribute eventCode {
+    type String(50);
+    is private;
+    is nullable;
+    map alis.good_remain.event_code;
+  }
+
+  // Обработан
+  attribute processed {
+    type Boolean;
+    is private;
+    default false;
+    map alis.good_remain.processed;
+  }
+}

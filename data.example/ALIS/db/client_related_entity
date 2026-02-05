@@ -1,0 +1,84 @@
+table alis.client_related_entity {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute name {
+    type varchar(255);
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute inn {
+    type varchar(12);
+  }
+
+  attribute kpp {
+    type varchar(9);
+  }
+
+  attribute is_shipper {
+    type boolean;
+    is required;
+  }
+
+  attribute is_consignee {
+    type boolean;
+    is required;
+  }
+
+  attribute is_carrier {
+    type boolean;
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute address_legal {
+    type varchar(1000);
+  }
+
+  attribute address_fact {
+    type varchar(1000);
+  }
+}

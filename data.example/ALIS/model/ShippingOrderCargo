@@ -1,0 +1,117 @@
+// Грузовое место заявки на вывоз
+entity ALIS.ShippingOrderCargo {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/shippingordercargo/ShippingOrderCargo.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.shipping_order_cargo.id;
+  }
+
+  attribute deleted {
+    type Boolean;
+    is private;
+    default false;
+    map alis.shipping_order_cargo.deleted;
+  }
+
+  attribute shippingOrder {
+    type ALIS.ShippingOrder;
+    is private;
+    map alis.shipping_order_cargo.shipping_order_id;  // -> ALIS.ShippingOrder.id
+  }
+
+  attribute shippingOrderGood {
+    type ALIS.ShippingOrderGood;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.shipping_order_good_id;  // -> ALIS.ShippingOrderGood.id
+  }
+
+  attribute barcode {
+    type ALIS.GoodPackageBarcode;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.good_package_barcode_id;  // -> ALIS.GoodPackageBarcode.id
+  }
+
+  attribute goodPackage {
+    type ALIS.GoodPackage;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.good_package_id;  // -> ALIS.GoodPackage.id
+  }
+
+  attribute cargo {
+    type ALIS.Cargo;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.cargo_id;  // -> ALIS.Cargo.id
+  }
+
+  attribute packageQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.package_quantity;
+  }
+
+  attribute conversionQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.conversion_quantity;
+  }
+
+  attribute totalQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.total_quantity;
+  }
+
+  attribute length {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_cargo.length;
+  }
+
+  attribute width {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_cargo.width;
+  }
+
+  attribute height {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_cargo.height;
+  }
+
+  attribute volume {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_cargo.volume;
+  }
+
+  attribute weight {
+    type BigDecimal;
+    is private;
+    map alis.shipping_order_cargo.weight;
+  }
+
+  attribute executor {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.executor;
+  }
+
+  attribute actualQuantity {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.shipping_order_cargo.actual_quantity;
+  }
+}

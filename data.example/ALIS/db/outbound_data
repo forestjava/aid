@@ -1,0 +1,66 @@
+table alis.outbound_data {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute root_object_id {
+    type uuid;
+    is required;
+  }
+
+  attribute message_type {
+    type varchar(255);
+    is required;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute success {
+    type boolean;
+  }
+
+  attribute entity_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute message_id {
+    type uuid;
+  }
+
+  attribute response_code {
+    type integer;
+  }
+
+  attribute error_message {
+    type text;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute attempts {
+    type smallint;
+    is required;
+  }
+
+  attribute last_attempt_at {
+    type timestamp;
+  }
+}

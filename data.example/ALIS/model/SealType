@@ -1,0 +1,32 @@
+// Тип пломбы
+entity ALIS.SealType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/sealtype/SealType.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.seal_type.id;
+  }
+
+  attribute code {
+    type String(100);
+    is private;
+    map alis.seal_type.code;
+  }
+
+  attribute active {
+    type Boolean;
+    is protected;
+    default true;
+    map alis.seal_type.active;
+  }
+
+  // Описание
+  attribute description {
+    type String(255);
+    is private;
+    is nullable;
+    map alis.seal_type.description;
+  }
+}

@@ -1,0 +1,102 @@
+table alis.good_package {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute sync_id {
+    type uuid;
+    is required;
+  }
+
+  attribute client_good_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client_good.id;
+    }
+  }
+
+  attribute unit_of_measure_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.unit_of_measure.id;
+    }
+  }
+
+  attribute conversion_qty {
+    type numeric(10,3);
+    is required;
+  }
+
+  attribute level {
+    type numeric(10);
+    is required;
+  }
+
+  attribute length {
+    type numeric(10,3);
+  }
+
+  attribute width {
+    type numeric(10,3);
+  }
+
+  attribute height {
+    type numeric(10,3);
+  }
+
+  attribute weight {
+    type numeric(15,3);
+  }
+
+  attribute volume {
+    type numeric(17,6);
+  }
+
+  attribute tare_weight {
+    type numeric(15,3);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute processing_type {
+    type USER_DEFINED;
+  }
+
+  attribute parent_package_id {
+    type uuid;
+    key foreign {
+      attribute alis.good_package.id;
+    }
+  }
+}

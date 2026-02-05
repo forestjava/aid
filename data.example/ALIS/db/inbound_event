@@ -1,0 +1,70 @@
+table alis.inbound_event {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute task_id {
+    type uuid;
+    is required;
+  }
+
+  attribute order_id {
+    type uuid;
+  }
+
+  attribute order_number {
+    type varchar(9);
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+  }
+
+  attribute event_code {
+    type varchar(20);
+    is required;
+  }
+
+  attribute event_name {
+    type varchar(50);
+  }
+
+  attribute event_date_time {
+    type timestamp;
+    is required;
+  }
+
+  attribute status {
+    type varchar(9);
+    is required;
+  }
+
+  attribute status_details {
+    type varchar(1000);
+  }
+
+  attribute action_codes {
+    type ARRAY;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

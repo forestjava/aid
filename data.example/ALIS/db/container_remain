@@ -1,0 +1,78 @@
+table alis.container_remain {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute client_id {
+    description "Клиент";
+    type uuid;
+    is required;
+  }
+
+  attribute container {
+    description "КТК";
+    type varchar(100);
+    is required;
+  }
+
+  attribute zone_id {
+    description "Зона";
+    type varchar(30);
+    key foreign {
+      attribute alis.container_remain_status.id;
+    }
+  }
+
+  attribute etsng_code {
+    description "Код ЕТСНГ";
+    type varchar(100);
+    is required;
+  }
+
+  attribute actual_quantity {
+    description "Масса нетто, кг";
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute event_code {
+    description "Система";
+    type varchar(20);
+    is required;
+  }
+
+  attribute active {
+    description "Активность";
+    type boolean;
+    is required;
+  }
+
+  attribute time {
+    description "Время создания пакета";
+    type timestamp;
+    is required;
+  }
+
+  attribute created_at {
+    description "Время создания";
+    type timestamp;
+  }
+
+  attribute created_by {
+    description "Кем создано";
+    type varchar(50);
+  }
+
+  attribute updated_at {
+    description "Время изменения";
+    type timestamp;
+  }
+
+  attribute updated_by {
+    description "Кем изменено";
+    type varchar(50);
+  }
+}

@@ -1,0 +1,25 @@
+// Связь клиент - пользовательская группа
+// Ограничение доступа пользователю к записям по клиентам, привязанным к группе
+entity ALIS.ClientUserGroup {
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.client_user_group.id;
+  }
+
+  // Идентификатор пользовательской группы
+  attribute groupId {
+    type UUID;
+    is private;
+    map alis.client_user_group.group_id;
+  }
+
+  // Клиент
+  attribute client {
+    type ALIS.Client;
+    is private;
+    map alis.client_user_group.client_id;  // -> ALIS.Client.id
+  }
+}
