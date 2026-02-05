@@ -45,7 +45,7 @@ export function getAttributeStyle(
     return undefined
   }
 
-  const isExternalAttribute = attribute.sync?.some(s => s.type === 'external') ?? false
+  const isExternalAttribute = attribute.hasConnectionType === 'external'
   const { hasExternalRelations } = schema
   
   // Если есть external связи в схеме, раскрашиваем только атрибуты external связей

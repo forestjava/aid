@@ -210,9 +210,11 @@ export function buildLinkRelations(entities: Entity[]): EntityRelation[] {
 
           // Помечаем атрибуты (учитываем, что атрибут может участвовать в нескольких связях)
           sourceAttr.hasConnection = mergeConnectionRole(sourceAttr.hasConnection, 'source');
+          sourceAttr.hasConnectionType = syncTarget.type;
           sourceAttr.paletteIndex = paletteIndex;
 
           targetAttr.hasConnection = mergeConnectionRole(targetAttr.hasConnection, 'target');
+          targetAttr.hasConnectionType = syncTarget.type;
           targetAttr.paletteIndex = paletteIndex;
 
           // Создаем связь с типом из syncTarget
@@ -222,7 +224,7 @@ export function buildLinkRelations(entities: Entity[]): EntityRelation[] {
             target: targetEntity.name,
             targetNavigation: targetAttr.name,
             paletteIndex,
-            type: syncTarget.type ?? 'internal',
+            type: syncTarget.type,
           });
         }
       }

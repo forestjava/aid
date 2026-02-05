@@ -8,7 +8,7 @@ export interface SyncTarget {
   target: string           // "EntityName.attributeName" или "EntityName(clone).attributeName"
   condition?: string       // "operation:SHIPPING" — информационное
   clone?: string           // "shipping" — имя клона для группировки
-  type?: RelationType      // 'external' для sync/обмен, 'internal' для map/связь/relates/относится
+  type: RelationType       // 'external' для sync/обмен, 'internal' для map/связь/relates/относится
 }
 
 export interface EntityAttribute {
@@ -23,6 +23,7 @@ export interface EntityAttribute {
   isNavigation?: boolean // Навигационное свойство (ссылка на другую сущность)
   isCollection?: boolean // Коллекция (массив) сущностей
   hasConnection?: 'source' | 'target' | 'both' // Роль в связи: source (справа), target (слева), both (для external связей)
+  hasConnectionType?: RelationType // Тип связи, в которой участвует атрибут
   paletteIndex?: number // Индекс в палитре цветов для связи
   sync?: SyncTarget[] // Массив sync-связей атрибута (для external связей)
 }
