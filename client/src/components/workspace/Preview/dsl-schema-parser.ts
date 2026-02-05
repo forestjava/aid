@@ -1,12 +1,23 @@
 import type { Node } from 'ohm-js';
 import { dslGrammar } from '@/lib/grammar';
 import { buildNavigationRelations, buildLinkRelations } from '@/lib/relations';
-import type { DatabaseSchema, Entity, EntityAttribute, SyncTarget } from './types';
+import type { DatabaseSchema, Entity, EntityAttribute, EntityType, SyncTarget } from './types';
 
 /**
  * Константы для ключевых слов DSL
  */
 const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto']);
+
+// Маппинг ключевых слов к нормализованному английскому типу сущности
+const ENTITY_TYPE_NORMALIZE: Record<string, EntityType> = {
+  'entity': 'entity', 'сущность': 'entity',
+  'class': 'class', 'класс': 'class',
+  'table': 'table', 'таблица': 'table',
+  'model': 'model', 'модель': 'model',
+  'json': 'json',
+  'dto': 'dto',
+};
+
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
 const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен', 'map', 'связь']);
 const INTERNAL_LINK_KEYWORDS = new Set(['relates', 'относится']);
@@ -73,6 +84,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
       return [{
         name: nameStr,
         label: entityProps.label || '',
+        type: ENTITY_TYPE_NORMALIZE[keywordStr] || 'entity',
         attributes,
         rank: entityProps.rank,
       }];

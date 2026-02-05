@@ -45,7 +45,7 @@ DSL {
   
   importKeyword = "import" | "из"
   
-  stringKeyword = "label" | "заголовок" | "description" | "описание"
+  stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник"
   
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   

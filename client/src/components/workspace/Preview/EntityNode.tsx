@@ -2,6 +2,7 @@ import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
 import { type Entity, type DatabaseSchema } from './types'
 import { getAttributeStyle } from './styles'
+import { getEntityHeaderColor } from './colors'
 
 interface EntityNodeProps extends NodeProps<Entity> {
   schema: DatabaseSchema
@@ -11,7 +12,10 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
       {/* Заголовок таблицы */}
-      <div className="bg-primary text-primary-foreground px-3 py-2 rounded-t-md">
+      <div 
+        className="text-white px-3 py-2 rounded-t-md"
+        style={{ backgroundColor: getEntityHeaderColor(data.type) }}
+      >
         <div className="font-semibold text-sm">{data.name}</div>
         {data.label && (
           <div className="text-xs opacity-75 mt-0.5">{data.label}</div>

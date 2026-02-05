@@ -1,6 +1,8 @@
 // Палитра цветов для визуализации связей в ERD
 // Цвета подобраны так, чтобы быть явно различимыми друг от друга
 
+import type { EntityType } from './types'
+
 export const EDGE_COLORS = [
   '#3b82f6', // blue-500
   '#ef4444', // red-500
@@ -62,5 +64,22 @@ export const EDGE_COLORS = [
  */
 export const getEdgeColor = (index: number): string => {
   return EDGE_COLORS[index % EDGE_COLORS.length]
+}
+
+// Цвета заголовков для разных типов сущностей (тёмные оттенки -800)
+export const ENTITY_HEADER_COLORS: Record<EntityType, string> = {
+  entity: '#4b5563',  // gray-600 — базовый серый
+  class: '#5b21b6',   // violet-800 — фиолетовый (ООП)
+  table: '#1e40af',   // blue-800 — синий (БД, default)
+  model: '#065f46',   // emerald-800 — изумрудный (данные)
+  json: '#92400e',    // amber-800 — янтарный (JSON)
+  dto: '#9d174d',     // pink-800 — розовый (transfer objects)
+}
+
+/**
+ * Получить цвет заголовка для типа сущности
+ */
+export function getEntityHeaderColor(type: EntityType): string {
+  return ENTITY_HEADER_COLORS[type] ?? ENTITY_HEADER_COLORS.table
 }
 

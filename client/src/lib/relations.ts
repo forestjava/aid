@@ -111,6 +111,7 @@ function expandMultipleSyncs(entities: Entity[]): void {
       clonesToAdd.push({
         name: `${entity.name}(${cloneName})`,
         label: entity.label ? `${entity.label} (${cloneName})` : `(${cloneName})`,
+        type: entity.type,
         rank: entity.rank,
         attributes: entity.attributes.map(attr => ({
           ...attr,

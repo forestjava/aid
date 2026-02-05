@@ -3,6 +3,9 @@
 // Тип связи: internal (внутренняя) или external (внешняя)
 export type RelationType = 'internal' | 'external'
 
+// Тип сущности: одно из ключевых слов, определяющих сущность (нормализованное к английскому)
+export type EntityType = 'entity' | 'class' | 'table' | 'model' | 'json' | 'dto'
+
 // Цель sync-связи с опциональным условием и именем клона
 export interface SyncTarget {
   target: string           // "EntityName.attributeName" или "EntityName(clone).attributeName"
@@ -40,6 +43,7 @@ export interface EntityRelation {
 export interface Entity {
   name: string
   label: string
+  type: EntityType // Ключевое слово, определившее сущность (нормализованное к английскому)
   rank?: number // Позиция в layout для dagre (опционально, указывается явно в DSL)
 
   attributes: EntityAttribute[]
