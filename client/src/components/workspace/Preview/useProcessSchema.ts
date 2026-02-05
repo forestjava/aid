@@ -55,11 +55,9 @@ export const useProcessSchema = (
     const processContent = async () => {
       try {
         // Шаг 2: Парсинг текста в объект схемы
-        console.log('Шаг 2: Парсинг схемы...')
         const schema = await parseSchema(content)
 
         if (!schema) {
-          console.log('Schema parsing failed or empty result')
           setNodes([])
           setEdges([])
           setSchema(null)
@@ -67,11 +65,9 @@ export const useProcessSchema = (
         }
 
         // Шаг 3: Оценка размеров всех узлов на основе их содержимого
-        console.log('Шаг 3: Оценка размеров узлов...')
         const nodeDimensions = calculateAllNodeDimensions(schema.entities)
 
         // Шаг 4: Размещение узлов и связей на схеме
-        console.log('Шаг 4: Размещение узлов и связей (ELK.layout)...')
         const { nodes: layoutNodes, edges: layoutEdges } = await layoutGraph(
           schema,
           nodeDimensions
@@ -80,7 +76,6 @@ export const useProcessSchema = (
         setNodes(layoutNodes)
         setEdges(layoutEdges)
         setSchema(schema)
-        console.log('Обработка завершена. Готово к рендеру (Шаг 5)')
       } catch (error) {
         console.error('DSL processing error:', error)
         setNodes([])

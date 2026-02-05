@@ -263,7 +263,11 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
   // type SomeType;
   Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<EntityAttribute> {
     const typeStr = typeRef.sourceString;
-    return { type: typeStr, isCollection: typeStr.endsWith('[]') };
+    const isCollection = typeStr.endsWith('[]');
+    return { 
+      type: isCollection ? typeStr.slice(0, -2) : typeStr, 
+      isCollection 
+    };
   },
 
   // sync обрабатывается в extractSyncs, здесь пропускаем

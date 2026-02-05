@@ -78,7 +78,7 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
               </span>
             </div>
             <span className="text-muted-foreground text-[10px] whitespace-nowrap">
-              {attr.type}
+              {attr.type}{attr.isCollection && '[]'}
             </span>
           </div>
         )})}

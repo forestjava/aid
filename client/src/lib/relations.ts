@@ -1,7 +1,8 @@
 import type { Entity, EntityAttribute, EntityRelation } from '@/components/workspace/Preview/types';
 
 /**
- * Создает relations между сущностями на основе навигационных свойств (двусторонние internal связи)
+ * Создает relations между сущностями на основе типа атрибута (односторонние internal связи).
+ * Атрибут со сложным типом соединяется с primary key целевой сущности.
  */
 export function buildNavigationRelations(entities: Entity[]): EntityRelation[] {
   const entityMap = new Map(entities.map(e => [e.name, e]));
@@ -12,47 +13,55 @@ export function buildNavigationRelations(entities: Entity[]): EntityRelation[] {
       // Пропускаем атрибуты без типа
       if (!attr.type) continue;
 
-      // Выделяем тип (имя целевой сущности)
-      let type = attr.type;
-      if (type.endsWith('[]')) {
-        attr.isCollection = true;
-        type = type.replace('[]', '');
-      };
-      const targetEntityName = type;
-      const targetEntity = entityMap.get(targetEntityName);
+      // Имя целевой сущности (type уже без '[]', isCollection установлен парсером)
+      const targetEntity = entityMap.get(attr.type);
       if (!targetEntity) {
         continue;
       }
 
-      // Создаём канонический ключ связи (сортируем имена для инвариантности направления)
-      const canonicalKey = [entity.name, targetEntity.name].sort().join('::');
+      // Ищем primary key целевой сущности
+      const primaryKeyAttr = targetEntity.attributes.find(a => a.isPrimaryKey);
+      if (!primaryKeyAttr) {
+        console.warn(`Navigation relation skipped: ${entity.name}.${attr.name} -> ${targetEntity.name} (no primary key found)`);
+        continue;
+      }
 
-      // Сохраняем связь в Map по ключу (первая встреченная)
-      if (!relationsMap.has(canonicalKey)) {
-        // Ищем обратный навигационный атрибут (используем первый подходящий)
-        const reverseAttr = targetEntity.attributes.find(a =>
-          a.type && (a.type.replace('[]', '') === entity.name) && a.name !== attr.name
-        );
-        if (!reverseAttr) {
-          continue;
-        }
+      // Создаём ключ связи (односторонняя связь, без сортировки)
+      const relationKey = `${entity.name}.${attr.name}->${targetEntity.name}.${primaryKeyAttr.name}`;
 
-        // Текущий размер Map = индекс новой связи
-        const paletteIndex = relationsMap.size;
+      // Сохраняем связь в Map по ключу
+      if (!relationsMap.has(relationKey)) {
+        // Определяем направление связи на основе rank сущностей
+        const entityRank = entity.rank ?? 0;
+        const targetRank = targetEntity.rank ?? 0;
+        const isForward = entityRank <= targetRank;
 
-        attr.hasConnection = 'source';
+        // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
+        const [sourceEntity, sourceAttrName, destEntity, destAttrName] = isForward
+          ? [entity, attr.name, targetEntity, primaryKeyAttr.name]
+          : [targetEntity, primaryKeyAttr.name, entity, attr.name];
+
+        // Если у primary key уже есть paletteIndex — используем его,
+        // иначе назначаем новый (все связи на один PK будут одного цвета)
+        const paletteIndex = primaryKeyAttr.paletteIndex ?? relationsMap.size;
+
+        // Помечаем оба атрибута для создания Handles (ReactFlow требует Handle на обоих концах edge)
+        attr.hasConnection = isForward ? 'source' : 'target';
         attr.isNavigation = true;
         attr.paletteIndex = paletteIndex;
 
-        reverseAttr.hasConnection = 'target';
-        reverseAttr.isNavigation = true;
-        reverseAttr.paletteIndex = paletteIndex;
+        // Помечаем primary key для создания target Handle
+        primaryKeyAttr.hasConnection = mergeConnectionRole(
+          primaryKeyAttr.hasConnection,
+          isForward ? 'target' : 'source'
+        );
+        primaryKeyAttr.paletteIndex = paletteIndex;
 
-        relationsMap.set(canonicalKey, {
-          source: entity.name,
-          sourceNavigation: attr.name,
-          target: targetEntity.name,
-          targetNavigation: reverseAttr.name,
+        relationsMap.set(relationKey, {
+          source: sourceEntity.name,
+          sourceNavigation: sourceAttrName,
+          target: destEntity.name,
+          targetNavigation: destAttrName,
           paletteIndex,
           type: 'internal',
         });
