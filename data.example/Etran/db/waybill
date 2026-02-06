@@ -1,0 +1,178 @@
+table alis.waybill {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute status {
+    type varchar;
+    is required;
+  }
+
+  attribute type {
+    type varchar;
+  }
+
+  attribute number {
+    type varchar;
+    is required;
+  }
+
+  attribute waybill_identifier {
+    type integer;
+    is required;
+    is unique;
+  }
+
+  attribute shipment_type {
+    type varchar;
+  }
+
+  attribute shipment_speed {
+    type varchar;
+  }
+
+  attribute form_type {
+    type varchar;
+  }
+
+  attribute delivery_deadline {
+    type timestamp;
+  }
+
+  attribute waybill_created_at {
+    type timestamp;
+  }
+
+  attribute submitted_at {
+    type timestamp;
+  }
+
+  attribute approved_at {
+    type timestamp;
+  }
+
+  attribute accepted_at {
+    type timestamp;
+  }
+
+  attribute cargo_accepted_at {
+    type timestamp;
+  }
+
+  attribute departure_at {
+    type timestamp;
+  }
+
+  attribute departure_country {
+    type varchar;
+  }
+
+  attribute departure_station_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_station.id;
+    }
+  }
+
+  attribute departure_route {
+    type varchar;
+  }
+
+  attribute destination_station_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_station.id;
+    }
+  }
+
+  attribute destination_route {
+    type varchar;
+  }
+
+  attribute destination_country {
+    type varchar;
+  }
+
+  attribute shipper_name {
+    type varchar;
+  }
+
+  attribute shipper_address {
+    type varchar;
+  }
+
+  attribute shipper_tgnl {
+    type integer;
+  }
+
+  attribute shipper_okpo {
+    type integer;
+  }
+
+  attribute consignee_name {
+    type varchar;
+  }
+
+  attribute consignee_address {
+    type varchar;
+  }
+
+  attribute consignee_tgnl {
+    type integer;
+  }
+
+  attribute consignee_okpo {
+    type integer;
+  }
+
+  attribute payer {
+    type varchar;
+  }
+
+  attribute payer_code {
+    type integer;
+  }
+
+  attribute payment_form {
+    type varchar;
+  }
+
+  attribute payment_place {
+    type varchar;
+  }
+
+  attribute railway_carriage_ownership_type {
+    type varchar;
+  }
+
+  attribute planned_railway_carriages {
+    type integer;
+  }
+
+  attribute responsible_person {
+    type varchar;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+}

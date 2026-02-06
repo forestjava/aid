@@ -1,0 +1,13 @@
+// Специальная отметка
+json Datareon.Package.WaybillSpecialMarkItem {
+
+  attribute mark {
+    type string;
+    map ALIS.WaybillSpecialMark.mark;
+  }
+
+  attribute info {
+    type string;
+    map ALIS.WaybillSpecialMark.info;
+  }
+}

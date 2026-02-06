@@ -1,0 +1,66 @@
+// Вагон накладной
+json Datareon.Package.WaybillRailwayCarriageItem {
+
+  // Номер вагона - lookup
+  attribute railway_number {
+    type string;
+    is required;
+    map ALIS.RailwayCarriage.code;
+  }
+
+  attribute sort {
+    type string;
+    map ALIS.RailwayCarriage.type;
+  }
+
+  attribute railway_lifting_capacity {
+    type string;
+    is required;
+    map ALIS.RailwayCarriage.liftingCapacity;
+  }
+
+  attribute railway_volume {
+    type string;
+    map ALIS.RailwayCarriage.volume;
+  }
+
+  attribute axles_count {
+    type string;
+    map ALIS.RailwayCarriage.axlesCount;
+  }
+
+  attribute ownership {
+    type string;
+    map ALIS.WaybillRailwayCarriage.ownership;
+  }
+
+  attribute renter {
+    type string;
+    map ALIS.WaybillRailwayCarriage.renter;
+  }
+
+  attribute previously_transported {
+    type string;
+    map ALIS.WaybillRailwayCarriage.previouslyTransported;
+  }
+
+  attribute railway_weight_gross {
+    type string;
+    map ALIS.WaybillRailwayCarriage.grossWeight;
+  }
+
+  attribute railway_weight_net {
+    type string;
+    map ALIS.WaybillRailwayCarriage.netWeight;
+  }
+
+  attribute place_count {
+    type number;
+    map ALIS.WaybillRailwayCarriage.placeCount;
+  }
+
+  // Контейнеры вагона (массив)
+  attribute containers {
+    type Datareon.Package.WaybillContainerItem[];
+  }
+}

@@ -1,0 +1,34 @@
+// Специальная отметка накладной
+entity ALIS.WaybillSpecialMark {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybillspecialmark/WaybillSpecialMark.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_special_mark.id;
+  }
+
+  // Накладная
+  attribute waybill {
+    type ALIS.Waybill;
+    is private;
+    map alis.waybill_special_mark.waybill_id;  // -> ALIS.Waybill.id
+  }
+
+  // Отметка
+  attribute mark {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_special_mark.mark;
+  }
+
+  // Информация
+  attribute info {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_special_mark.info;
+  }
+}

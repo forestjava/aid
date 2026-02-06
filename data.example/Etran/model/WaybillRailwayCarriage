@@ -1,0 +1,73 @@
+// Вагон накладной
+entity ALIS.WaybillRailwayCarriage {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybillrailwaycarriage/WaybillRailwayCarriage.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_railway_carriage.id;
+  }
+
+  // Накладная
+  attribute waybill {
+    type ALIS.Waybill;
+    is private;
+    map alis.waybill_railway_carriage.waybill_id;  // -> ALIS.Waybill.id
+  }
+
+  // ЖД вагон
+  attribute railwayCarriage {
+    type ALIS.RailwayCarriage;
+    is private;
+    map alis.waybill_railway_carriage.railway_carriage_id;  // -> ALIS.RailwayCarriage.id
+  }
+
+  // Собственник
+  attribute ownership {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.ownership;
+  }
+
+  // Арендатор
+  attribute renter {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.renter;
+  }
+
+  // Ранее перевозимый груз
+  attribute previouslyTransported {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.previously_transported;
+  }
+
+  // Масса брутто
+  attribute grossWeight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.gross_weight;
+  }
+
+  // Масса нетто
+  attribute netWeight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.net_weight;
+  }
+
+  // Количество мест
+  attribute placeCount {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_railway_carriage.place_count;
+  }
+}

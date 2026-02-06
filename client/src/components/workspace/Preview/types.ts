@@ -7,7 +7,7 @@ export const HEADER_HANDLE_ID = '_header';
 export type RelationType = 'internal' | 'external'
 
 // Тип сущности: одно из ключевых слов, определяющих сущность (нормализованное к английскому)
-export type EntityType = 'entity' | 'class' | 'table' | 'model' | 'json' | 'dto'
+export type EntityType = 'entity' | 'class' | 'table' | 'model' | 'json' | 'dto' | 'endpoint'
 
 // Цель sync-связи с опциональным условием и именем клона
 export interface SyncTarget {

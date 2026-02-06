@@ -1,0 +1,66 @@
+// DTO.Container - КТК (контейнер)
+dto DTO.Container {
+  description "КТК (контейнер)";
+
+  attribute id {
+    type uuid;
+    map ALIS.Container.id;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.Container.code;
+  }
+
+  attribute active {
+    type boolean;
+    map ALIS.Container.active;
+  }
+
+  attribute client {
+    type DTO.IdCode;
+    is nullable;
+  }
+
+  attribute containerType {
+    type string;
+    is nullable;
+    map ALIS.Container.containerType;
+  }
+
+  attribute weight {
+    type number;
+    is nullable;
+    map ALIS.Container.weight;
+  }
+
+  attribute liftingCapacity {
+    type number;
+    is nullable;
+    map ALIS.Container.liftingCapacity;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is nullable;
+    map ALIS.Container.refrigerator;
+  }
+
+  attribute standardSize {
+    type DTO.IdCode;
+    is nullable;
+  }
+}
+
+// DTO.Zpu - ЗПУ
+dto DTO.Zpu {
+  description "ЗПУ";
+
+  attribute id {
+    type uuid;
+  }
+
+  attribute code {
+    type string;
+  }
+}

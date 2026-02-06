@@ -1,0 +1,34 @@
+table alis.waybill_special_mark {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute waybill_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill.id;
+    }
+  }
+
+  attribute mark {
+    type varchar;
+  }
+
+  attribute info {
+    type varchar;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+}

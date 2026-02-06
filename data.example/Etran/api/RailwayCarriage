@@ -1,0 +1,77 @@
+// DTO.RailwayCarriage - ЖД вагон
+dto DTO.RailwayCarriage {
+  description "ЖД вагон";
+
+  attribute id {
+    type uuid;
+    map ALIS.RailwayCarriage.id;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.RailwayCarriage.code;
+  }
+
+  attribute active {
+    type boolean;
+    map ALIS.RailwayCarriage.active;
+  }
+
+  attribute client {
+    type DTO.IdCode;
+    is nullable;
+  }
+
+  attribute type {
+    type DTO.IdCode;
+    is nullable;
+  }
+
+  attribute liftingCapacity {
+    type number;
+    is nullable;
+    map ALIS.RailwayCarriage.liftingCapacity;
+  }
+
+  attribute model {
+    type DTO.IdCode;
+    is nullable;
+  }
+
+  attribute dateDepotRepair {
+    type datetime;
+    is nullable;
+    map ALIS.RailwayCarriage.dateDepotRepair;
+  }
+
+  attribute sort {
+    type string;
+    is nullable;
+    map ALIS.RailwayCarriage.sort;
+  }
+
+  attribute volume {
+    type number;
+    is nullable;
+    map ALIS.RailwayCarriage.volume;
+  }
+
+  attribute axlesCount {
+    type integer;
+    is nullable;
+    map ALIS.RailwayCarriage.axlesCount;
+  }
+}
+
+// DTO.IdCode - Универсальный DTO для справочников
+dto DTO.IdCode {
+  description "Универсальный DTO";
+
+  attribute id {
+    type uuid;
+  }
+
+  attribute code {
+    type string;
+  }
+}

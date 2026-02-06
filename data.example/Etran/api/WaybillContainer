@@ -1,0 +1,21 @@
+// DTO.WaybillContainer - КТК накладной
+dto DTO.WaybillContainer {
+  description "КТК накладной";
+
+  attribute container {
+    type DTO.Container;
+    map ALIS.WaybillContainer.container;
+  }
+
+  attribute owner {
+    type string;
+    is nullable;
+    map ALIS.WaybillContainer.owner;
+  }
+
+  attribute zpu {
+    type DTO.Zpu[];
+    is nullable;
+    description "ЗПУ";
+  }
+}

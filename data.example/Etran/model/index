@@ -1,0 +1,9 @@
+scheme ALIS.ETRAN {
+  import ./Waybill;
+  import ./WaybillContainer;
+  import ./WaybillProduct;
+  import ./WaybillRailwayCarriage;
+  import ./WaybillSpecialMark;
+  import ./WaybillTariffMark;
+  import ./WaybillZpu;
+}

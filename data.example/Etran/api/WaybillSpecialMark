@@ -1,0 +1,21 @@
+// DTO.WaybillSpecialMark - Специальная отметка накладной
+dto DTO.WaybillSpecialMark {
+  description "Специальная отметка накладной";
+
+  attribute id {
+    type uuid;
+    map ALIS.WaybillSpecialMark.id;
+  }
+
+  attribute mark {
+    type string;
+    is nullable;
+    map ALIS.WaybillSpecialMark.mark;
+  }
+
+  attribute info {
+    type string;
+    is nullable;
+    map ALIS.WaybillSpecialMark.info;
+  }
+}

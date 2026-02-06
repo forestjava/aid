@@ -1,0 +1,50 @@
+// DTO.RailwayStation - Станция
+dto DTO.RailwayStation {
+  description "Станция";
+
+  attribute id {
+    type uuid;
+    map ALIS.RailwayStation.id;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.RailwayStation.code;
+  }
+
+  attribute name {
+    type string;
+    map ALIS.RailwayStation.name;
+  }
+
+  attribute esrCode {
+    type string;
+    map ALIS.RailwayStation.esrCode;
+  }
+}
+
+// DTO.WaybillRailwayStation - Станция в контексте накладной
+dto DTO.WaybillRailwayStation {
+  description "Станция в контексте накладной";
+
+  attribute country {
+    type string;
+    is nullable;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.RailwayStation.code;
+  }
+
+  attribute esrCode {
+    type string;
+    map ALIS.RailwayStation.esrCode;
+  }
+
+  attribute route {
+    type string;
+    is nullable;
+    description "Подъездной путь";
+  }
+}

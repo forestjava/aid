@@ -1,0 +1,58 @@
+table alis.waybill_railway_carriage {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute waybill_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill.id;
+    }
+  }
+
+  attribute railway_carriage_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage.id;
+    }
+  }
+
+  attribute ownership {
+    type varchar;
+  }
+
+  attribute renter {
+    type varchar;
+  }
+
+  attribute previously_transported {
+    type varchar;
+  }
+
+  attribute gross_weight {
+    type numeric(16,3);
+  }
+
+  attribute net_weight {
+    type numeric(16,3);
+  }
+
+  attribute place_count {
+    type integer;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+}

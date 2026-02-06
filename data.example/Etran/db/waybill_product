@@ -1,0 +1,114 @@
+table alis.waybill_product {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute waybill_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill.id;
+    }
+  }
+
+  attribute etsng_code_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.etsng_code.id;
+    }
+  }
+
+  attribute gng_code {
+    type integer;
+  }
+
+  attribute cargo_full_name {
+    type varchar;
+  }
+
+  attribute additional {
+    type varchar;
+  }
+
+  attribute packaging_type {
+    type varchar;
+  }
+
+  attribute volume {
+    type numeric(16,3);
+  }
+
+  attribute weight {
+    type numeric(16,3);
+  }
+
+  attribute weight_loaded {
+    type numeric(16,3);
+  }
+
+  attribute net_weight {
+    type numeric(16,3);
+  }
+
+  attribute gross_weight {
+    type numeric(16,3);
+  }
+
+  attribute length {
+    type numeric(16,3);
+  }
+
+  attribute width {
+    type numeric(16,3);
+  }
+
+  attribute height {
+    type numeric(16,3);
+  }
+
+  attribute marks_stamps_shipper {
+    type varchar;
+  }
+
+  attribute sign_danger {
+    type varchar;
+  }
+
+  attribute packages_count {
+    type integer;
+  }
+
+  attribute places_count {
+    type integer;
+  }
+
+  attribute is_dangerous {
+    type varchar;
+  }
+
+  attribute emergency_card_number {
+    type varchar;
+  }
+
+  attribute customs_declaration_number {
+    type varchar;
+  }
+
+  attribute customs_declaration_product_number {
+    type varchar;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+}

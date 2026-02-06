@@ -1,0 +1,13 @@
+// ЗПУ контейнера
+json Datareon.Package.WaybillZpuItem {
+
+  // Номер контейнера - для связи
+  attribute container_number_zpu {
+    type string;
+  }
+
+  attribute zpu {
+    type string;
+    map ALIS.WaybillZpu.zpu;
+  }
+}

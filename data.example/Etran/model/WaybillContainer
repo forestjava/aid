@@ -1,0 +1,64 @@
+// КТК накладной
+entity ALIS.WaybillContainer {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybillcontainer/WaybillContainer.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_container.id;
+  }
+
+  // Накладная
+  attribute waybill {
+    type ALIS.Waybill;
+    is private;
+    map alis.waybill_container.waybill_id;  // -> ALIS.Waybill.id
+  }
+
+  // Вагон в накладной
+  attribute waybillRailwayCarriage {
+    type ALIS.WaybillRailwayCarriage;
+    is private;
+    map alis.waybill_container.waybill_railway_carriage_id;  // -> ALIS.WaybillRailwayCarriage.id
+  }
+
+  // КТК
+  attribute container {
+    type ALIS.Container;
+    is private;
+    map alis.waybill_container.container_id;  // -> ALIS.Container.id
+  }
+
+  // Номер подачи в заявке
+  attribute supplyRequestNumber {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_container.supply_request_number;
+  }
+
+  // Номер отправки в заявке
+  attribute sendingRequestNumber {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_container.sending_request_number;
+  }
+
+  // Собственник
+  attribute owner {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_container.owner;
+  }
+
+  // Длина
+  attribute length {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_container.length;
+  }
+}

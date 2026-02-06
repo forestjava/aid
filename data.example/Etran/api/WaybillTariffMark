@@ -1,0 +1,27 @@
+// DTO.WaybillTariffMark - Тарифная отметка накладной
+dto DTO.WaybillTariffMark {
+  description "Тарифная отметка накладной";
+
+  attribute id {
+    type uuid;
+    map ALIS.WaybillTariffMark.id;
+  }
+
+  attribute name {
+    type string;
+    is nullable;
+    map ALIS.WaybillTariffMark.name;
+  }
+
+  attribute code {
+    type integer;
+    is nullable;
+    map ALIS.WaybillTariffMark.code;
+  }
+
+  attribute note {
+    type string;
+    is nullable;
+    map ALIS.WaybillTariffMark.note;
+  }
+}

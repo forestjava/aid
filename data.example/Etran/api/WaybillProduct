@@ -1,0 +1,173 @@
+// DTO.WaybillProduct - Груз накладной (список)
+dto DTO.WaybillProduct {
+  description "Груз накладной";
+
+  attribute id {
+    type uuid;
+    map ALIS.WaybillProduct.id;
+  }
+
+  attribute etsngCode {
+    type DTO.EtsngCode;
+    map ALIS.WaybillProduct.etsngCode;
+  }
+
+  attribute weight {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.weight;
+  }
+
+  attribute volume {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.volume;
+  }
+
+  attribute length {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.length;
+  }
+
+  attribute width {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.width;
+  }
+
+  attribute height {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.height;
+  }
+
+  attribute additional {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.additional;
+  }
+}
+
+// DTO.WaybillProductDetailed - Детальный груз накладной
+dto DTO.WaybillProductDetailed {
+  description "Детальный груз накладной";
+
+  attribute id {
+    type uuid;
+    map ALIS.WaybillProduct.id;
+  }
+
+  attribute etsngCode {
+    type DTO.EtsngCode;
+    map ALIS.WaybillProduct.etsngCode;
+  }
+
+  attribute gngCode {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.gngCode;
+  }
+
+  attribute cargoFullName {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.cargoFullName;
+  }
+
+  attribute marksStampsShipper {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.marksStampsShipper;
+  }
+
+  attribute signDanger {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.signDanger;
+  }
+
+  attribute isDangerous {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.isDangerous;
+  }
+
+  attribute emergencyCardNumber {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.emergencyCardNumber;
+  }
+
+  attribute customsDeclarationNumber {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.customsDeclarationNumber;
+  }
+
+  attribute packagingType {
+    type string;
+    is nullable;
+    map ALIS.WaybillProduct.packagingType;
+  }
+
+  attribute packagesCount {
+    type integer;
+    is nullable;
+    map ALIS.WaybillProduct.packagesCount;
+  }
+
+  attribute placesCount {
+    type integer;
+    is nullable;
+    map ALIS.WaybillProduct.placesCount;
+  }
+
+  attribute weight {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.weight;
+  }
+
+  attribute volume {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.volume;
+  }
+
+  attribute weightLoaded {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.weightLoaded;
+  }
+
+  attribute grossWeight {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.grossWeight;
+  }
+
+  attribute netWeight {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.netWeight;
+  }
+
+  attribute length {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.length;
+  }
+
+  attribute width {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.width;
+  }
+
+  attribute height {
+    type number;
+    is nullable;
+    map ALIS.WaybillProduct.height;
+  }
+}

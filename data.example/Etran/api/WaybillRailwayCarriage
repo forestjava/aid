@@ -1,0 +1,61 @@
+// DTO.WaybillRailwayCarriage - Вагон накладной (список)
+dto DTO.WaybillRailwayCarriage {
+  description "Вагон накладной";
+
+  attribute railwayCarriage {
+    type DTO.RailwayCarriage;
+    map ALIS.WaybillRailwayCarriage.railwayCarriage;
+  }
+
+  attribute ownership {
+    type string;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.ownership;
+  }
+
+  attribute previouslyTransported {
+    type string;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.previouslyTransported;
+  }
+}
+
+// DTO.WaybillRailwayCarriageDetailed - Детальный вагон накладной
+dto DTO.WaybillRailwayCarriageDetailed {
+  description "Детальный вагон накладной";
+
+  attribute railwayCarriage {
+    type DTO.RailwayCarriage;
+    map ALIS.WaybillRailwayCarriage.railwayCarriage;
+  }
+
+  attribute ownership {
+    type string;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.ownership;
+  }
+
+  attribute renter {
+    type string;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.renter;
+  }
+
+  attribute grossWeight {
+    type number;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.grossWeight;
+  }
+
+  attribute netWeight {
+    type number;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.netWeight;
+  }
+
+  attribute placeCount {
+    type integer;
+    is nullable;
+    map ALIS.WaybillRailwayCarriage.placeCount;
+  }
+}

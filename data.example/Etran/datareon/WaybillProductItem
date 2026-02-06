@@ -1,0 +1,113 @@
+// Груз накладной
+json Datareon.Package.WaybillProductItem {
+
+  attribute etsng_name {
+    type string;
+    map ALIS.EtsngCode.name;
+  }
+
+  attribute etsng_code {
+    type string;
+    map ALIS.EtsngCode.code;
+  }
+
+  attribute gng_code {
+    type string;
+    map ALIS.WaybillProduct.gngCode;
+  }
+
+  attribute cargo_full_name {
+    type string;
+    map ALIS.WaybillProduct.cargoFullName;
+  }
+
+  attribute additional {
+    type string;
+    map ALIS.WaybillProduct.additional;
+  }
+
+  attribute packaging_type {
+    type string;
+    map ALIS.WaybillProduct.packagingType;
+  }
+
+  attribute cargo_volume {
+    type string;
+    map ALIS.WaybillProduct.volume;
+  }
+
+  attribute cargo_weight {
+    type number;
+    map ALIS.WaybillProduct.weight;
+  }
+
+  attribute weight_loaded {
+    type number;
+    map ALIS.WaybillProduct.weightLoaded;
+  }
+
+  attribute cargo_weight_net {
+    type number;
+    map ALIS.WaybillProduct.netWeight;
+  }
+
+  attribute cargo_weight_gross {
+    type number;
+    map ALIS.WaybillProduct.grossWeight;
+  }
+
+  attribute length {
+    type string;
+    map ALIS.WaybillProduct.length;
+  }
+
+  attribute width {
+    type string;
+    map ALIS.WaybillProduct.width;
+  }
+
+  attribute height {
+    type string;
+    map ALIS.WaybillProduct.height;
+  }
+
+  attribute marks_stamps_shipper {
+    type string;
+    map ALIS.WaybillProduct.marksStampsShipper;
+  }
+
+  attribute sign_danger {
+    type string;
+    map ALIS.WaybillProduct.signDanger;
+  }
+
+  attribute packages_count {
+    type number;
+    map ALIS.WaybillProduct.packagesCount;
+  }
+
+  attribute places_count {
+    type number;
+    map ALIS.WaybillProduct.placesCount;
+  }
+
+  attribute is_dangerous {
+    type string;
+    map ALIS.WaybillProduct.isDangerous;
+  }
+
+  attribute emergency_card_number {
+    type string;
+    map ALIS.WaybillProduct.emergencyCardNumber;
+  }
+
+  attribute customs_declaration_number {
+    type string;
+    map ALIS.WaybillProduct.customsDeclarationNumber;
+  }
+
+  attribute customs_declaration_product_number {
+    type string;
+    map ALIS.WaybillProduct.customsDeclarationProductNumber;
+  }
+}

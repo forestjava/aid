@@ -1,0 +1,185 @@
+// Груз накладной
+entity ALIS.WaybillProduct {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybillproduct/WaybillProduct.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_product.id;
+  }
+
+  // Накладная
+  attribute waybill {
+    type ALIS.Waybill;
+    is private;
+    map alis.waybill_product.waybill_id;  // -> ALIS.Waybill.id
+  }
+
+  // ЕТСНГ код
+  attribute etsngCode {
+    type ALIS.EtsngCode;
+    is private;
+    map alis.waybill_product.etsng_code_id;  // -> ALIS.EtsngCode.id
+  }
+
+  // Груз по ГНГ
+  attribute gngCode {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_product.gng_code;
+  }
+
+  // Точное наименование груза
+  attribute cargoFullName {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.cargo_full_name;
+  }
+
+  // Дополнительная информация
+  attribute additional {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.additional;
+  }
+
+  // Вид упаковки
+  attribute packagingType {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.packaging_type;
+  }
+
+  // Объем
+  attribute volume {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.volume;
+  }
+
+  // Масса (кг)
+  attribute weight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.weight;
+  }
+
+  // Масса погруженного груза
+  attribute weightLoaded {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.weight_loaded;
+  }
+
+  // Масса места нетто
+  attribute netWeight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.net_weight;
+  }
+
+  // Масса места брутто
+  attribute grossWeight {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.gross_weight;
+  }
+
+  // Максимальная длина груза
+  attribute length {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.length;
+  }
+
+  // Максимальная ширина груза
+  attribute width {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.width;
+  }
+
+  // Максимальная высота груза
+  attribute height {
+    type BigDecimal;
+    is private;
+    is nullable;
+    map alis.waybill_product.height;
+  }
+
+  // Знаки и марки грузоотправителя
+  attribute marksStampsShipper {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.marks_stamps_shipper;
+  }
+
+  // Признак опасности
+  attribute signDanger {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.sign_danger;
+  }
+
+  // Количество пакетов
+  attribute packagesCount {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_product.packages_count;
+  }
+
+  // Количество мест
+  attribute placesCount {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_product.places_count;
+  }
+
+  // Аварийный груз
+  attribute isDangerous {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.is_dangerous;
+  }
+
+  // Номер аварийной карты
+  attribute emergencyCardNumber {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.emergency_card_number;
+  }
+
+  // Номер декларации на товар
+  attribute customsDeclarationNumber {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.customs_declaration_number;
+  }
+
+  // Номер позиции груза в декларации
+  attribute customsDeclarationProductNumber {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_product.customs_declaration_product_number;
+  }
+}

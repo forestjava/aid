@@ -1,0 +1,239 @@
+// DTO.WaybillGrouped - Сгруппированная накладная
+dto DTO.WaybillGrouped {
+  description "Сгруппированная накладная";
+
+  attribute departureStation {
+    type DTO.RailwayStation;
+    map ALIS.Waybill.departureStation;
+  }
+
+  attribute destinationStation {
+    type DTO.RailwayStation;
+    map ALIS.Waybill.destinationStation;
+  }
+
+  attribute payer {
+    type string;
+    is nullable;
+    map ALIS.Waybill.payer;
+  }
+
+  attribute products {
+    type DTO.EtsngCode[];
+    description "Уникальные ЕТСНГ коды грузов";
+  }
+
+  attribute railwayCarriageCount {
+    type integer;
+    description "Количество вагонов";
+  }
+
+  attribute containerCount {
+    type integer;
+    description "Количество контейнеров";
+  }
+
+  attribute waybillCount {
+    type integer;
+    description "Количество накладных в группе";
+  }
+
+  attribute waybills {
+    type DTO.WaybillShort[];
+  }
+}
+
+// DTO.WaybillShort - Краткая информация о накладной
+dto DTO.WaybillShort {
+  description "Краткая информация о накладной";
+
+  attribute id {
+    type uuid;
+    map ALIS.Waybill.id;
+  }
+
+  attribute number {
+    type string;
+    map ALIS.Waybill.number;
+  }
+}
+
+// DTO.WaybillDetailed - Детальная накладная
+dto DTO.WaybillDetailed {
+  description "Детальная накладная";
+
+  attribute id {
+    type uuid;
+    map ALIS.Waybill.id;
+  }
+
+  attribute status {
+    type string;
+    map ALIS.Waybill.status;
+  }
+
+  attribute waybillIdentifier {
+    type integer;
+    map ALIS.Waybill.waybillIdentifier;
+  }
+
+  attribute type {
+    type string;
+    is nullable;
+    map ALIS.Waybill.type;
+  }
+
+  attribute shipmentType {
+    type string;
+    is nullable;
+    map ALIS.Waybill.shipmentType;
+  }
+
+  attribute shipmentSpeed {
+    type string;
+    is nullable;
+    map ALIS.Waybill.shipmentSpeed;
+  }
+
+  attribute formType {
+    type string;
+    is nullable;
+    map ALIS.Waybill.formType;
+  }
+
+  attribute deliveryDeadline {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.deliveryDeadline;
+  }
+
+  attribute departure {
+    type DTO.WaybillRailwayStation;
+    description "Станция отправления";
+  }
+
+  attribute shipperName {
+    type string;
+    is nullable;
+    map ALIS.Waybill.shipperName;
+  }
+
+  attribute shipperAddress {
+    type string;
+    is nullable;
+    map ALIS.Waybill.shipperAddress;
+  }
+
+  attribute shipperTgnl {
+    type integer;
+    is nullable;
+    map ALIS.Waybill.shipperTgnl;
+  }
+
+  attribute shipperOkpo {
+    type integer;
+    is nullable;
+    map ALIS.Waybill.shipperOkpo;
+  }
+
+  attribute payer {
+    type string;
+    is nullable;
+    map ALIS.Waybill.payer;
+  }
+
+  attribute paymentForm {
+    type string;
+    is nullable;
+    map ALIS.Waybill.paymentForm;
+  }
+
+  attribute railwayCarriageOwnershipType {
+    type string;
+    is nullable;
+    map ALIS.Waybill.railwayCarriageOwnershipType;
+  }
+
+  attribute responsiblePerson {
+    type string;
+    is nullable;
+    map ALIS.Waybill.responsiblePerson;
+  }
+
+  attribute waybillCreatedAt {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.waybillCreatedAt;
+  }
+
+  attribute submittedAt {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.submittedAt;
+  }
+
+  attribute acceptedAt {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.acceptedAt;
+  }
+
+  attribute cargoAcceptedAt {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.cargoAcceptedAt;
+  }
+
+  attribute departureAt {
+    type datetime;
+    is nullable;
+    map ALIS.Waybill.departureAt;
+  }
+
+  attribute destination {
+    type DTO.WaybillRailwayStation;
+    description "Станция назначения";
+  }
+
+  attribute consigneeName {
+    type string;
+    is nullable;
+    map ALIS.Waybill.consigneeName;
+  }
+
+  attribute consigneeAddress {
+    type string;
+    is nullable;
+    map ALIS.Waybill.consigneeAddress;
+  }
+
+  attribute consigneeTgnl {
+    type string;
+    is nullable;
+    map ALIS.Waybill.consigneeTgnl;
+  }
+
+  attribute consigneeOkpo {
+    type string;
+    is nullable;
+    map ALIS.Waybill.consigneeOkpo;
+  }
+
+  attribute payerCode {
+    type integer;
+    is nullable;
+    map ALIS.Waybill.payerCode;
+  }
+
+  attribute paymentPlace {
+    type string;
+    is nullable;
+    map ALIS.Waybill.paymentPlace;
+  }
+
+  attribute plannedRailwayCarriages {
+    type integer;
+    is nullable;
+    map ALIS.Waybill.plannedRailwayCarriages;
+  }
+}

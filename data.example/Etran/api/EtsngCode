@@ -1,0 +1,19 @@
+// DTO.EtsngCode - ЕТСНГ код
+dto DTO.EtsngCode {
+  description "ЕТСНГ код";
+
+  attribute id {
+    type uuid;
+    map ALIS.EtsngCode.id;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.EtsngCode.code;
+  }
+
+  attribute name {
+    type string;
+    map ALIS.EtsngCode.name;
+  }
+}

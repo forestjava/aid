@@ -1,0 +1,18 @@
+// Тарифная отметка
+json Datareon.Package.WaybillTariffMarkItem {
+
+  attribute name {
+    type string;
+    map ALIS.WaybillTariffMark.name;
+  }
+
+  attribute code {
+    type string;
+    map ALIS.WaybillTariffMark.code;
+  }
+
+  attribute note {
+    type string;
+    map ALIS.WaybillTariffMark.note;
+  }
+}

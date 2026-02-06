@@ -1,0 +1,25 @@
+// ЗПУ контейнеров в накладной
+entity ALIS.WaybillZpu {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybillzpu/WaybillZpu.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_zpu.id;
+  }
+
+  // КТК в накладной
+  attribute waybillContainer {
+    type ALIS.WaybillContainer;
+    is private;
+    map alis.waybill_zpu.waybill_container_id;  // -> ALIS.WaybillContainer.id
+  }
+
+  // ЗПУ
+  attribute zpu {
+    type String;
+    is private;
+    map alis.waybill_zpu.zpu;
+  }
+}

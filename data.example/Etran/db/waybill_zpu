@@ -1,0 +1,30 @@
+table alis.waybill_zpu {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute waybill_container_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill_container.id;
+    }
+  }
+
+  attribute zpu {
+    type varchar;
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+}

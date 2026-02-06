@@ -1,0 +1,58 @@
+table alis.waybill_container {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute waybill_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill.id;
+    }
+  }
+
+  attribute waybill_railway_carriage_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.waybill_railway_carriage.id;
+    }
+  }
+
+  attribute container_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.container.id;
+    }
+  }
+
+  attribute supply_request_number {
+    type integer;
+  }
+
+  attribute sending_request_number {
+    type integer;
+  }
+
+  attribute owner {
+    type varchar;
+  }
+
+  attribute length {
+    type numeric(16,3);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+}

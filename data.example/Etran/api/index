@@ -1,0 +1,129 @@
+api ETRAN.WaybillApi {
+  description "API для работы с накладными";
+
+  // Импорт Response DTO
+  import ./Waybill;
+  import ./WaybillProduct;
+  import ./WaybillRailwayCarriage;
+  import ./WaybillContainer;
+  import ./WaybillSpecialMark;
+  import ./WaybillTariffMark;
+  import ./RailwayStation;
+  import ./RailwayCarriage;
+  import ./Container;
+  import ./EtsngCode;
+
+  // Импорт входящего пакета Datareon
+  import ../datareon/IntegrationPackage;
+
+  // ========================================
+  // Интеграционный endpoint
+  // ========================================
+  endpoint createWaybill {
+    label "POST /datareon/waybill";
+    description "Создать/обновить накладную из ЭТРАН";
+    
+    attribute request {
+      type Datareon.Package;
+    }
+  }
+
+  // ========================================
+  // Накладные
+  // ========================================
+  endpoint getGroupedWaybillsPage {
+    label "POST /waybill/grouped/page";
+    description "Получить страницу с сгруппированными накладными";
+    
+    attribute response {
+      type DTO.WaybillGrouped[];
+    }
+  }
+
+  endpoint getWaybillById {
+    label "GET /waybill/{id}";
+    description "Получить конкретную накладную";
+    
+    attribute response {
+      type DTO.WaybillDetailed;
+    }
+  }
+
+  // ========================================
+  // Грузы
+  // ========================================
+  endpoint getWaybillProductsPage {
+    label "POST /waybill-product/page";
+    description "Получить страницу с грузами накладных";
+    
+    attribute response {
+      type DTO.WaybillProduct[];
+    }
+  }
+
+  endpoint getWaybillProductById {
+    label "GET /waybill-product/{id}";
+    description "Получить конкретный груз";
+    
+    attribute response {
+      type DTO.WaybillProductDetailed;
+    }
+  }
+
+  // ========================================
+  // Вагоны
+  // ========================================
+  endpoint getWaybillRailwayCarriagesPage {
+    label "POST /waybill-railway-carriage/page";
+    description "Получить страницу с вагонами накладных";
+    
+    attribute response {
+      type DTO.WaybillRailwayCarriage[];
+    }
+  }
+
+  endpoint getWaybillRailwayCarriageById {
+    label "GET /waybill-railway-carriage/{id}";
+    description "Получить конкретный вагон накладной";
+    
+    attribute response {
+      type DTO.WaybillRailwayCarriageDetailed;
+    }
+  }
+
+  // ========================================
+  // КТК
+  // ========================================
+  endpoint getWaybillContainersPage {
+    label "POST /waybill-container/page";
+    description "Получить страницу с КТК накладных";
+    
+    attribute response {
+      type DTO.WaybillContainer[];
+    }
+  }
+
+  // ========================================
+  // Специальные отметки
+  // ========================================
+  endpoint getWaybillSpecialMarksPage {
+    label "POST /waybill-special-mark/page";
+    description "Получить страницу со специальными отметками";
+    
+    attribute response {
+      type DTO.WaybillSpecialMark[];
+    }
+  }
+
+  // ========================================
+  // Тарифные отметки
+  // ========================================
+  endpoint getWaybillTariffMarksPage {
+    label "POST /waybill-tariff-mark/page";
+    description "Получить страницу с тарифными отметками";
+    
+    attribute response {
+      type DTO.WaybillTariffMark[];
+    }
+  }
+}

@@ -1,0 +1,42 @@
+// Тарифная отметка накладной
+entity ALIS.WaybillTariffMark {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybilltariffmark/WaybillTariffMark.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill_tariff_mark.id;
+  }
+
+  // Накладная
+  attribute waybill {
+    type ALIS.Waybill;
+    is private;
+    map alis.waybill_tariff_mark.waybill_id;  // -> ALIS.Waybill.id
+  }
+
+  // Код
+  attribute code {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill_tariff_mark.code;
+  }
+
+  // Наименование
+  attribute name {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_tariff_mark.name;
+  }
+
+  // Замечание
+  attribute note {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill_tariff_mark.note;
+  }
+}

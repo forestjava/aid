@@ -6,7 +6,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityType, SyncTarget } 
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto', 'endpoint']);
 
 // Маппинг ключевых слов к нормализованному английскому типу сущности
 const ENTITY_TYPE_NORMALIZE: Record<string, EntityType> = {
@@ -16,6 +16,7 @@ const ENTITY_TYPE_NORMALIZE: Record<string, EntityType> = {
   'model': 'model', 'модель': 'model',
   'json': 'json',
   'dto': 'dto',
+  'endpoint': 'endpoint',
 };
 
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);

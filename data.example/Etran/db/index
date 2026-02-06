@@ -1,0 +1,9 @@
+scheme alis.etran {
+  import ./waybill;
+  import ./waybill_container;
+  import ./waybill_product;
+  import ./waybill_railway_carriage;
+  import ./waybill_special_mark;
+  import ./waybill_tariff_mark;
+  import ./waybill_zpu;
+}

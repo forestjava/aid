@@ -1,0 +1,9 @@
+scheme Datareon.ETRAN {
+  import ./IntegrationPackage;
+  import ./WaybillProductItem;
+  import ./WaybillRailwayCarriageItem;
+  import ./WaybillContainerItem;
+  import ./WaybillZpuItem;
+  import ./WaybillSpecialMarkItem;
+  import ./WaybillTariffMarkItem;
+}

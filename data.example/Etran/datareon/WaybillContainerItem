@@ -1,0 +1,49 @@
+// Контейнер в накладной
+json Datareon.Package.WaybillContainerItem {
+
+  // Номер вагона - для связи с waybill_railway_carriage
+  attribute carriage_number {
+    type string;
+  }
+
+  // Номер контейнера - lookup
+  attribute container_number {
+    type string;
+    map ALIS.Container.code;
+  }
+
+  attribute lifting_capacity {
+    type string;
+    map ALIS.Container.liftingCapacity;
+  }
+
+  attribute weight {
+    type number;
+    map ALIS.Container.weight;
+  }
+
+  attribute sending_request_number {
+    type string;
+    map ALIS.WaybillContainer.sendingRequestNumber;
+  }
+
+  attribute supply_request_number {
+    type string;
+    map ALIS.WaybillContainer.supplyRequestNumber;
+  }
+
+  attribute owner {
+    type string;
+    map ALIS.WaybillContainer.owner;
+  }
+
+  attribute container_length {
+    type string;
+    map ALIS.WaybillContainer.length;
+  }
+
+  // ЗПУ контейнера (массив)
+  attribute zpu_list {
+    type Datareon.Package.WaybillZpuItem[];
+  }
+}
