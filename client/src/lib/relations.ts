@@ -1,10 +1,15 @@
-import type { Entity, EntityAttribute, EntityRelation } from '@/components/workspace/Preview/types';
+import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation, RelationType } from '@/components/workspace/Preview/types';
 
 /**
  * Создает relations между сущностями на основе типа атрибута (односторонние internal связи).
  * Атрибут со сложным типом соединяется с primary key целевой сущности.
  */
-export function buildNavigationRelations(entities: Entity[]): EntityRelation[] {
+export function buildNavigationRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
+  // Если filter === 'external', internal связи не нужны
+  if (schema?.filter === 'external') {
+    return [];
+  }
+
   const entityMap = new Map(entities.map(e => [e.name, e]));
   const relationsMap = new Map<string, EntityRelation>();
 
@@ -161,7 +166,7 @@ function removeUnusedEntities(entities: Entity[]): void {
 /**
  * Создает relations между сущностями на основе односторонних ссылок (sync/map атрибуты)
  */
-export function buildLinkRelations(entities: Entity[]): EntityRelation[] {
+export function buildLinkRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
   // Шаг 1: Расширяем сущности с множественными sync - создаём клоны
   expandMultipleSyncs(entities);
   
@@ -187,6 +192,10 @@ export function buildLinkRelations(entities: Entity[]): EntityRelation[] {
 
       // Теперь sync - это массив, но после expandMultipleSyncs в каждом атрибуте максимум 1 элемент
       for (const syncTarget of attr.sync) {
+        // Фильтруем по типу связи, если указан filter
+        const filter = schema?.filter as RelationType | undefined;
+        if (filter && syncTarget.type !== filter) continue;
+
         // Ищем целевой атрибут по полному пути в Map
         const target = attributesMap.get(syncTarget.target);
 

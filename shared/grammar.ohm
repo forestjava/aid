@@ -49,7 +49,11 @@ DSL {
   
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
   
-  valueKeyword = "value" | "значение" | "clone" | "клон" | "default"
+  valueKeyword = "value" | "значение" 
+    | "clone" | "клон" 
+    | "default" 
+    | "only" | "только"
+    | "filter" | "фильтр"
   
   throughKeyword = "through" | "через" 
       | "using" | "используя" 

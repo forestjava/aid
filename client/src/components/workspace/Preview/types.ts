@@ -55,4 +55,5 @@ export interface DatabaseSchema {
   hasExternalRelations: boolean // Есть ли в схеме external связи
   separate?: number
   annotation?: string // Текст аннотации схемы
+  filter?: string // Фильтр схемы (only/filter)
 }

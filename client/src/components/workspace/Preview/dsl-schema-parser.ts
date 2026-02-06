@@ -29,6 +29,7 @@ const SEPARATE_KEYWORDS = new Set(['separate', 'промежуток']);
 const RANK_KEYWORDS = new Set(['rank', 'позиция']);
 const CONDITION_KEYWORDS = new Set(['through', 'через', 'using', 'используя', 'for', 'для', 'if', 'если', 'when', 'когда']);
 const CLONE_KEYWORDS = new Set(['clone', 'клон']);
+const FILTER_KEYWORDS = new Set(['only', 'только', 'filter', 'фильтр']);
 
 /**
  * Helper: генерирует fallback-обработчики для операций, возвращающих массивы
@@ -53,10 +54,10 @@ function arrayFallbacks<T>(opName: string) {
 function objectFallbacks<T extends object>(opName: string) {
   return {
     _nonterminal(...children: any[]): T {
-      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+      return children.reduce((acc, child) => ({ ...child[opName](), ...acc }), {} as T);
     },
     _iter(...children: any[]): T {
-      return children.reduce((acc, child) => ({ ...acc, ...child[opName]() }), {} as T);
+      return children.reduce((acc, child) => ({ ...child[opName](), ...acc }), {} as T);
     },
     _terminal(): T {
       return {} as T;
@@ -376,6 +377,14 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
     return {};
   },
 
+  // only external; / filter external;
+  Entity_value(valueKeyword: any, value: any, _semicolon: any): Partial<DatabaseSchema> {
+    if (FILTER_KEYWORDS.has(valueKeyword.sourceString)) {
+      return { filter: value.sourceString };
+    }
+    return {};
+  },
+
 });
 
 /**
@@ -423,7 +432,7 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     const entities: Entity[] = adapter.extractEntities();
 
     // Извлекаем свойства схемы (напр., separate)
-    const schemaProps = adapter.extractSchemaProps();
+    const schema = adapter.extractSchemaProps();
 
     // Устанавливаем значение по умолчанию для атрибутов без типа
     entities.forEach(entity => {
@@ -435,10 +444,10 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     });
 
     // Строим relations по навигационным свойствам
-    const navigationRelations = buildNavigationRelations(entities);
+    const navigationRelations = buildNavigationRelations(entities, schema);
 
     // Строим relations по односторонним ссылкам (sync/map)
-    const linkRelations = buildLinkRelations(entities);
+    const linkRelations = buildLinkRelations(entities, schema);
 
     // Объединяем все связи
     const relations = [...navigationRelations, ...linkRelations];
@@ -447,8 +456,9 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
       entities,
       relations,
       hasExternalRelations: relations.some(r => r.type === 'external'),
-      separate: schemaProps.separate,
-      annotation: schemaProps.annotation,
+      separate: schema.separate,
+      annotation: schema.annotation,
+      filter: schema.filter,
     };
   } catch (error) {
     console.error('Schema parsing error:', error);
