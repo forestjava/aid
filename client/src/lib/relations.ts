@@ -1,4 +1,4 @@
-import type { DatabaseSchema, Entity, EntityAttribute, EntityRelation, RelationType } from '@/components/workspace/Preview/types';
+import { HEADER_HANDLE_ID, type DatabaseSchema, type Entity, type EntityAttribute, type EntityRelation, type RelationType } from '@/components/workspace/Preview/types';
 
 /**
  * Создает relations между сущностями на основе типа атрибута (односторонние internal связи).
@@ -24,15 +24,12 @@ export function buildNavigationRelations(entities: Entity[], schema?: Partial<Da
         continue;
       }
 
-      // Ищем primary key целевой сущности
+      // Ищем primary key целевой сущности (если нет — связь пойдёт к заголовку)
       const primaryKeyAttr = targetEntity.attributes.find(a => a.isPrimaryKey);
-      if (!primaryKeyAttr) {
-        console.warn(`Navigation relation skipped: ${entity.name}.${attr.name} -> ${targetEntity.name} (no primary key found)`);
-        continue;
-      }
+      const targetAttrName = primaryKeyAttr?.name ?? HEADER_HANDLE_ID;
 
       // Создаём ключ связи (односторонняя связь, без сортировки)
-      const relationKey = `${entity.name}.${attr.name}->${targetEntity.name}.${primaryKeyAttr.name}`;
+      const relationKey = `${entity.name}.${attr.name}->${targetEntity.name}.${targetAttrName}`;
 
       // Сохраняем связь в Map по ключу
       if (!relationsMap.has(relationKey)) {
@@ -43,24 +40,32 @@ export function buildNavigationRelations(entities: Entity[], schema?: Partial<Da
 
         // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
         const [sourceEntity, sourceAttrName, destEntity, destAttrName] = isForward
-          ? [entity, attr.name, targetEntity, primaryKeyAttr.name]
-          : [targetEntity, primaryKeyAttr.name, entity, attr.name];
+          ? [entity, attr.name, targetEntity, targetAttrName]
+          : [targetEntity, targetAttrName, entity, attr.name];
 
         // Если у primary key уже есть paletteIndex — используем его,
         // иначе назначаем новый (все связи на один PK будут одного цвета)
-        const paletteIndex = primaryKeyAttr.paletteIndex ?? relationsMap.size;
+        const paletteIndex = primaryKeyAttr?.paletteIndex ?? relationsMap.size;
 
         // Помечаем оба атрибута для создания Handles (ReactFlow требует Handle на обоих концах edge)
         attr.hasConnection = isForward ? 'source' : 'target';
         attr.isNavigation = true;
         attr.paletteIndex = paletteIndex;
 
-        // Помечаем primary key для создания target Handle
-        primaryKeyAttr.hasConnection = mergeConnectionRole(
-          primaryKeyAttr.hasConnection,
-          isForward ? 'target' : 'source'
-        );
-        primaryKeyAttr.paletteIndex = paletteIndex;
+        if (primaryKeyAttr) {
+          // Помечаем primary key для создания target Handle
+          primaryKeyAttr.hasConnection = mergeConnectionRole(
+            primaryKeyAttr.hasConnection,
+            isForward ? 'target' : 'source'
+          );
+          primaryKeyAttr.paletteIndex = paletteIndex;
+        } else {
+          // Нет PK — связь идёт к заголовку сущности
+          targetEntity.hasHeaderConnection = mergeConnectionRole(
+            targetEntity.hasHeaderConnection,
+            isForward ? 'target' : 'source'
+          );
+        }
 
         relationsMap.set(relationKey, {
           source: sourceEntity.name,
