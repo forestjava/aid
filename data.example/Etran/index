@@ -3,20 +3,26 @@
 Интеграция с системой электронных перевозочных документов ОАО "РЖД"
 Пожалуйста, не изменяйте этот файл, его использует Антон Михеев в автоматизированном режиме
 */
-scheme ETRAN {
+scheme ETRAN.external {
   only external;
   
   import ./db;
   import ./model;
   import ./datareon;
+  import ./dto;
 
+  // ранее существующие используемые модели 
   import ALIS/model/RailwayStation;
-  import ALIS/model/EtsngCode;
   import ALIS/model/RailwayCarriage;
-
+  import ALIS/model/EtsngCode;
+  import ALIS/model/Container;
+  
+  // ранее существующие используемые таблицы 
   import ALIS/db/railway_station;
-  import ALIS/db/etsng_code;
   import ALIS/db/railway_carriage;
+  import ALIS/db/etsng_code;
+  import ALIS/db/container;  
 
-  //import ./api;
+  // схема из 1С
+  import ./GU28;
 }  

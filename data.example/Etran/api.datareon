@@ -1,0 +1,20 @@
+
+scheme ETRAN.internal {
+  //only internal;
+  
+  // Импорт входящего пакета Datareon
+  import ./datareon;
+
+  // ========================================
+  // Интеграционный endpoint
+  // ========================================
+  endpoint createWaybill {
+    label "POST /datareon/waybill";
+    description "Создать/обновить накладную из ЭТРАН";
+    
+    attribute request {
+      type Datareon.Package;
+    }
+  }
+
+}

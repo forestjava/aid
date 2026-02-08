@@ -1,32 +1,23 @@
-api ETRAN.WaybillApi {
-  description "API для работы с накладными";
+api ETRAN.API.client {
+  description "API для работы с накладными на клиенте";
 
   // Импорт Response DTO
-  import ./Waybill;
-  import ./WaybillProduct;
-  import ./WaybillRailwayCarriage;
-  import ./WaybillContainer;
-  import ./WaybillSpecialMark;
-  import ./WaybillTariffMark;
-  import ./RailwayStation;
-  import ./RailwayCarriage;
-  import ./Container;
-  import ./EtsngCode;
+  import ./dto;
 
-  // Импорт входящего пакета Datareon
-  import ../datareon/IntegrationPackage;
-
-  // ========================================
-  // Интеграционный endpoint
-  // ========================================
-  endpoint createWaybill {
-    label "POST /datareon/waybill";
-    description "Создать/обновить накладную из ЭТРАН";
-    
-    attribute request {
-      type Datareon.Package;
+  /*
+  // DTO.IdCode - Универсальный DTO для справочников
+  dto DTO.IdCode {
+    description "Универсальный DTO";
+  
+    attribute id {
+      type uuid;
+    }
+  
+    attribute code {
+      type string;
     }
   }
+  */
 
   // ========================================
   // Накладные

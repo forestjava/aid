@@ -62,16 +62,3 @@ dto DTO.RailwayCarriage {
     map ALIS.RailwayCarriage.axlesCount;
   }
 }
-
-// DTO.IdCode - Универсальный DTO для справочников
-dto DTO.IdCode {
-  description "Универсальный DTO";
-
-  attribute id {
-    type uuid;
-  }
-
-  attribute code {
-    type string;
-  }
-}
