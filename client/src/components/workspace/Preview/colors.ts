@@ -74,6 +74,7 @@ export const ENTITY_HEADER_COLORS: Record<EntityType, string> = {
   model: '#065f46',   // emerald-800 — изумрудный (данные)
   json: '#92400e',    // amber-800 — янтарный (JSON)
   dto: '#9d174d',     // pink-800 — розовый (transfer objects)
+  endpoint: '#3730a3', // indigo-800 — индиго (API endpoints)
 }
 
 /**
