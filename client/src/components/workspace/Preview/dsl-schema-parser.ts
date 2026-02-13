@@ -6,7 +6,7 @@ import type { DatabaseSchema, Entity, EntityAttribute, EntityType, SyncTarget } 
 /**
  * Константы для ключевых слов DSL
  */
-const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto', 'endpoint']);
+const ENTITY_KEYWORDS = new Set(['entity', 'сущность', 'class', 'класс', 'table', 'таблица', 'model', 'модель', 'json', 'dto', 'endpoint', 'enum', 'перечисление']);
 
 // Маппинг ключевых слов к нормализованному английскому типу сущности
 const ENTITY_TYPE_NORMALIZE: Record<string, EntityType> = {
@@ -17,9 +17,11 @@ const ENTITY_TYPE_NORMALIZE: Record<string, EntityType> = {
   'json': 'json',
   'dto': 'dto',
   'endpoint': 'endpoint',
+  'enum': 'enum', 'перечисление': 'enum',
 };
 
 const ATTRIBUTE_KEYWORDS = new Set(['attribute', 'реквизит', 'method', 'метод', 'property', 'свойство']);
+const ENUM_VALUE_KEYWORDS = new Set(['value', 'значение']);
 const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен', 'map', 'связь']);
 const INTERNAL_LINK_KEYWORDS = new Set(['relates', 'относится']);
 const ALL_LINK_KEYWORDS = new Set([...EXTERNAL_LINK_KEYWORDS, ...INTERNAL_LINK_KEYWORDS]);
@@ -122,6 +124,19 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
         ...props,
         sync: syncs.length > 0 ? syncs : undefined 
       }];
+    }
+    // value Name { label "..."; }; — значение перечисления с блоком опций
+    if (ENUM_VALUE_KEYWORDS.has(keywordStr)) {
+      const props = block.extractAttributeProps();
+      return [{ name: name.sourceString, label: props.label || '', ...props }];
+    }
+    return [];
+  },
+
+  // value Name; — значение перечисления без блока опций
+  Entity_value(valueKeyword: any, anyValue: any, _semicolon: any): EntityAttribute[] {
+    if (ENUM_VALUE_KEYWORDS.has(valueKeyword.sourceString)) {
+      return [{ name: anyValue.sourceString, label: '' }];
     }
     return [];
   },
@@ -357,6 +372,16 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     return {};
   },
 
+  // Не рекурсируем в блоки вложенных элементов —
+  // их label/rank не должны подменять свойства сущности
+  Entity_options(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<Entity> {
+    return {};
+  },
+
+  Entity_value(_valueKeyword: any, _anyValue: any, _semicolon: any): Partial<Entity> {
+    return {};
+  },
+
 });
 
 // Операция для извлечения свойств схемы (separate, annotation)
@@ -436,9 +461,10 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     const schema = adapter.extractSchemaProps();
 
     // Устанавливаем значение по умолчанию для атрибутов без типа
+    // Для enum-сущностей пропускаем — их значения не имеют типа
     entities.forEach(entity => {
       entity.attributes.forEach(attr => {
-        if (!attr.type) {
+        if (!attr.type && entity.type !== 'enum') {
           attr.type = 'unknown';
         }
       });

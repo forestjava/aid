@@ -47,7 +47,7 @@ DSL {
   
   stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник"
   
-  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция"
+  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция" | "priority" | "приоритет" | "code" | "код"
   
   valueKeyword = "value" | "значение" 
     | "clone" | "клон" 
@@ -63,6 +63,7 @@ DSL {
   
   keyword = "entity" | "сущность"      
       | "class"      | "класс"
+      | "enum"       | "перечисление"
       | "set"        | "набор"
       | "group"      | "группа"
       | "scheme"     | "схема"
@@ -87,6 +88,8 @@ DSL {
       | "response"
       | "view"
       | "interface"
+
+      | "value"      | "значение"
 
   // Имя в общем случае может быть только идентификатором
   name = identifier
