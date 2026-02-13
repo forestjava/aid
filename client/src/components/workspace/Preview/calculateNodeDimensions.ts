@@ -48,7 +48,7 @@ const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
   width += METRICS.GAP_WIDTH * 2
 
   // Ширина типа (text-[10px])
-  width += (attr.type || 'unknown').length * METRICS.TYPE_CHAR_WIDTH
+  width += (attr.type?.length ?? 0) * METRICS.TYPE_CHAR_WIDTH
 
   return width
 }

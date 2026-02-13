@@ -194,7 +194,7 @@ export class DslParser {
       // attribute name;
       Entity_simple(keyword: any, name: any, _semicolon: any): Record<string, string> {
         if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
-          return { [name.sourceString]: 'unknown' };
+          return { [name.sourceString]: '' };
         }
         return {};
       },
@@ -202,7 +202,7 @@ export class DslParser {
       // attribute name { type SomeType; };
       Entity_options(keyword: any, name: any, block: any, _semicolon: any): Record<string, string> {
         if (ATTRIBUTE_KEYWORDS.has(keyword.sourceString)) {
-          return { [name.sourceString]: block.extractType() || 'unknown' };
+          return { [name.sourceString]: block.extractType() || '' };
         }
         return {};
       },

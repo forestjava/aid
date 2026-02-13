@@ -460,15 +460,7 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     // Извлекаем свойства схемы (напр., separate)
     const schema = adapter.extractSchemaProps();
 
-    // Устанавливаем значение по умолчанию для атрибутов без типа
-    // Для enum-сущностей пропускаем — их значения не имеют типа
-    entities.forEach(entity => {
-      entity.attributes.forEach(attr => {
-        if (!attr.type && entity.type !== 'enum') {
-          attr.type = 'unknown';
-        }
-      });
-    });
+    
 
     // Строим relations по навигационным свойствам
     const navigationRelations = buildNavigationRelations(entities, schema);
