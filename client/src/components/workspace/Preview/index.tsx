@@ -14,6 +14,7 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { parseApi } from '@/api/filesystem'
 import EntityNode from './EntityNode'
+import UiNode from './UiNode'
 import { useProcessSchema } from './useProcessSchema'
 import { ExportMenu } from './ExportMenu'
 import { Button } from '@/components/ui/button'
@@ -93,6 +94,7 @@ export const Preview: React.FC<PreviewProps> = ({ selectedPath }) => {
   // Создаем nodeTypes с замыканием на schema
   const nodeTypes: NodeTypes = useMemo(() => ({
     entity: (props) => schema && <EntityNode {...props} schema={schema} />,
+    ui: (props) => schema && <UiNode {...props} schema={schema} />,
   }), [schema])
 
   // Локальное состояние для возможности перемещения узлов

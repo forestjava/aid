@@ -32,6 +32,7 @@ const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI
 const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
 const SEPARATE_KEYWORDS = new Set(['separate', 'промежуток']);
 const RANK_KEYWORDS = new Set(['rank', 'позиция']);
+const OFFSET_KEYWORDS = new Set(['offset', 'сдвиг']);
 const CONDITION_KEYWORDS = new Set(['through', 'через', 'using', 'используя', 'for', 'для', 'if', 'если', 'when', 'когда']);
 const CLONE_KEYWORDS = new Set(['clone', 'клон']);
 const FILTER_KEYWORDS = new Set(['only', 'только', 'filter', 'фильтр']);
@@ -93,6 +94,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
         type: ENTITY_TYPE_NORMALIZE[keywordStr] || 'entity',
         attributes,
         rank: entityProps.rank,
+        offset: entityProps.offset,
       }];
     }
 
@@ -366,10 +368,13 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     return {};
   },
 
-  // rank 1;
+  // rank 1; offset 80;
   Entity_number(numberKeyword: any, numberValue: any, _semicolon: any): Partial<Entity> {
     if (RANK_KEYWORDS.has(numberKeyword.sourceString)) {
       return { rank: parseInt(numberValue.sourceString, 10) };
+    }
+    if (OFFSET_KEYWORDS.has(numberKeyword.sourceString)) {
+      return { offset: parseInt(numberValue.sourceString, 10) };
     }
     return {};
   },

@@ -392,9 +392,9 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  // numberValue = digit+ ("." digit+)?
-  // Арность: 3 (целая часть + опциональная точка + опциональная дробная часть)
-  numberValue(this: Node, _integerPart: any, _dot: any, _fractionalPart: any): Token[] {
+  // numberValue = "-"? digit+ ("." digit+)?
+  // Арность: 4 (опциональный минус + целая часть + опциональная точка + опциональная дробная часть)
+  numberValue(this: Node, _minus: any, _integerPart: any, _dot: any, _fractionalPart: any): Token[] {
     return [{
       from: this.source.startIdx,
       to: this.source.endIdx,

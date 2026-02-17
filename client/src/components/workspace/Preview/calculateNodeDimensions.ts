@@ -88,6 +88,70 @@ export const calculateNodeDimensions = (entity: Entity): { width: number; height
 }
 
 /**
+ * Константы для расчёта размеров ui-узлов (горизонтальная раскладка)
+ */
+const UI_METRICS = {
+  HEADER_ROTATED_WIDTH: 32,    // ширина повёрнутого заголовка (line-height + px-2 padding)
+  HEADER_PADDING_VERTICAL: 24, // py-3 = 12px с каждой стороны
+  CELL_MIN_WIDTH: 50,          // минимальная ширина ячейки атрибута
+  CELL_HEIGHT_BASE: 36,        // высота ячейки без label (name + padding)
+  CELL_HEIGHT_WITH_LABEL: 50,  // высота ячейки с label (label + name + padding)
+  BORDER_WIDTH: 4,             // border-2 = 2px с каждой стороны
+}
+
+/**
+ * Вычисляет ширину одной ячейки атрибута для горизонтального ui-узла
+ * Учитывает label (заголовок колонки) и name (значение)
+ */
+const calculateUiCellWidth = (attr: EntityAttribute): number => {
+  let nameWidth = METRICS.PADDING_HORIZONTAL
+
+  if (attr.isPrimaryKey || attr.isForeignKey || attr.isNavigation) {
+    nameWidth += METRICS.ICON_WIDTH
+    nameWidth += METRICS.GAP_WIDTH
+  }
+
+  nameWidth += estimateTextWidth(attr.name, true)
+
+  // Ширина label (text-[10px], обычный шрифт)
+  const labelWidth = attr.label
+    ? METRICS.PADDING_HORIZONTAL + attr.label.length * METRICS.TYPE_CHAR_WIDTH
+    : 0
+
+  return Math.max(UI_METRICS.CELL_MIN_WIDTH, nameWidth, labelWidth)
+}
+
+/**
+ * Вычисляет размеры одного ui-узла (горизонтальная раскладка, как шапка таблицы)
+ * Заголовок повёрнут на 90° (writing-mode: vertical-rl)
+ */
+export const calculateUiNodeDimensions = (entity: Entity): { width: number; height: number } => {
+  // Ширина заголовка — фиксированная (определяется line-height повёрнутого текста)
+  const headerWidth = UI_METRICS.HEADER_ROTATED_WIDTH
+
+  // Высота заголовка — определяется длиной текста (повёрнутого)
+  const nameTextHeight = estimateTextWidth(entity.name, false) + UI_METRICS.HEADER_PADDING_VERTICAL
+  const labelTextHeight = entity.label
+    ? estimateTextWidth(entity.label, false) + UI_METRICS.HEADER_PADDING_VERTICAL
+    : 0
+  const headerHeight = Math.max(nameTextHeight, labelTextHeight)
+
+  // Высота ячеек атрибутов — зависит от наличия label
+  const hasAnyLabel = entity.attributes.some(attr => attr.label)
+  const cellsHeight = hasAnyLabel ? UI_METRICS.CELL_HEIGHT_WITH_LABEL : UI_METRICS.CELL_HEIGHT_BASE
+
+  // Ширина всех ячеек атрибутов
+  const cellsWidth = entity.attributes.reduce((sum, attr) => {
+    return sum + calculateUiCellWidth(attr)
+  }, 0)
+
+  const width = headerWidth + cellsWidth + UI_METRICS.BORDER_WIDTH
+  const height = Math.max(headerHeight, cellsHeight) + UI_METRICS.BORDER_WIDTH
+
+  return { width, height }
+}
+
+/**
  * Вычисляет размеры всех узлов в схеме
  * Возвращает Map с именем узла и его размерами
  */
@@ -97,7 +161,9 @@ export const calculateAllNodeDimensions = (
   const dimensionsMap = new Map<string, { width: number; height: number }>()
 
   entities.forEach((entity) => {
-    const dimensions = calculateNodeDimensions(entity)
+    const dimensions = entity.type === 'ui'
+      ? calculateUiNodeDimensions(entity)
+      : calculateNodeDimensions(entity)
     dimensionsMap.set(entity.name, dimensions)
   })
 

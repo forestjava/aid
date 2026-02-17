@@ -48,6 +48,7 @@ export interface Entity {
   label: string
   type: EntityType // Ключевое слово, определившее сущность (нормализованное к английскому)
   rank?: number // Позиция в layout для dagre (опционально, указывается явно в DSL)
+  offset?: number // Вертикальное смещение узла в пикселях (опционально, указывается явно в DSL)
   hasHeaderConnection?: 'source' | 'target' | 'both' // Роль заголовка в связи (для сущностей без primary key)
 
   attributes: EntityAttribute[]

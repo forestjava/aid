@@ -113,17 +113,35 @@ async function layoutGraph(
       'elk.spacing.nodeNode': String(ELK_SPACING_NODE),
       'elk.layered.spacing.nodeNodeBetweenLayers': String(layerSpacing),
       'elk.partitioning.activate': 'true',
+      'elk.layered.allowNonFlowPortsToSwitchSides': 'true',
+      'elk.portAlignment.north': 'DISTRIBUTED',
+      'elk.portAlignment.south': 'DISTRIBUTED',
     },
     children: schema.entities.map((entity) => {
       const dimensions = nodeDimensions.get(entity.name) || {
         width: DEFAULT_NODE_WIDTH,
         height: DEFAULT_NODE_HEIGHT,
       }
+      const isUi = entity.type === 'ui'
 
       return {
         id: entity.name,
         width: dimensions.width,
         height: dimensions.height,
+        // Для ui-узлов: порты на NORTH/SOUTH с фиксированной стороной
+        ...(isUi && {
+          properties: {
+            'portConstraints': 'FIXED_SIDE',
+          },
+          ports: entity.attributes
+            .filter(attr => attr.hasConnection)
+            .map((attr) => ({
+              id: `${entity.name}-${attr.name}`,
+              properties: {
+                'port.side': 'NORTH',
+              },
+            })),
+        }),
         // Передаём rank как partition для ELK
         layoutOptions: {
             'elk.partitioning.partition': String(entity.rank),
@@ -148,11 +166,11 @@ async function layoutGraph(
     
     return {
       id: entity.name,
-      type: 'entity',
+      type: entity.type === 'ui' ? 'ui' : 'entity',
       data: entity,
       position: {
         x: elkNode?.x ?? 0,
-        y: elkNode?.y ?? 0,
+        y: (elkNode?.y ?? 0) + (entity.offset ?? 0),
       },
     }
   })

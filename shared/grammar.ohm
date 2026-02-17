@@ -47,7 +47,7 @@ DSL {
   
   stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник"
   
-  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция" | "priority" | "приоритет" | "code" | "код"
+  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция" | "offset" | "сдвиг" | "priority" | "приоритет" | "code" | "код"
   
   valueKeyword = "value" | "значение" 
     | "clone" | "клон" 
@@ -118,7 +118,7 @@ DSL {
   stringValue = stringLiteral
 
   // Числовое значение - это целое или дробное число
-  numberValue = digit+ ("." digit+)?
+  numberValue = "-"? digit+ ("." digit+)?
 
   // Универсальное значение - строка, число или ссылка
   anyValue = stringValue | numberValue | ref
