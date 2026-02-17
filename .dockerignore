@@ -2,6 +2,8 @@
 describer/
 data/
 data.example/
+backup/
+scripts/
 
 # Git
 .git
