@@ -1,0 +1,37 @@
+scheme Datareon {
+
+  /*
+  import ./item;
+  import ./item_package;
+  import ./contractor;
+  import ./vehicle;
+  import ./driver;
+  import ./service;
+  import ./group_hierarchy;
+  */
+  import ./receiving_transport_manifest;
+  import ./shipment_transport_manifest;
+  import ./item_receiving_task;
+  import ./receiving_task_item;
+  import ./receiving_task_item_batch;
+  import ./cargo_receiving_task;
+  import ./receiving_task_cargo;
+  import ./receiving_task_cargo_spec;
+  import ./receiving_task_service;
+  import ./item_shipment_task;
+  import ./shipment_task_item;
+  import ./shipment_task_item_batch;
+  import ./cargo_shipment_task;
+  import ./shipment_task_cargo;
+  import ./shipment_task_cargo_spec;
+  import ./shipment_task_service;
+  //import ./route_task;
+  import ./route_order;
+  import ./client_order;
+  import ./contract;
+  //import ./confirm_docs;
+
+  import ALIS/model/ReceivingOrder;
+  import ALIS/model/ShippingOrder;  
+  import ALIS/model/OutboundData;  
+}

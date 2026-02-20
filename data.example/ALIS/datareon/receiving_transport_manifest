@@ -1,0 +1,229 @@
+// Транспортная накладная (приёмка) -> 1С
+dto Datareon.ReceivingTransportManifest {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/transportmanifest/TransportManifestDto.java";
+  using messageType "RECEIVING_TRANSPORT_MANIFEST";
+  route "/transport";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.OutboundData(RECEIVING_TRANSPORT_MANIFEST).rootObjectId;
+  }
+
+  // Рейс
+  attribute route {
+    type Datareon.RouteExport;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrder.route.id;
+    }
+
+    attribute routeNumber {
+      type Long;
+      sync ALIS.ReceivingOrder.route.number;
+    }
+
+    attribute trainNumber {
+      type String;
+      sync ALIS.ReceivingOrder.route.comment;
+    }
+  }
+
+  attribute _shipper {
+    type UUID;
+    sync ALIS.ReceivingOrderTransport.shipper.syncId {
+      using entityType "RECEIVING_ORDER_TRANSPORT";
+      clone RECEIVING_ORDER_TRANSPORT;
+    }
+    sync ALIS.ReceivingOrderRailwayCarriage.etranInvoice.shipper.syncId {
+      using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+      clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+    }
+  }
+
+  attribute _carrier {
+    type UUID;
+    sync ALIS.ReceivingOrderTransport.carrier.syncId {
+      using entityType "RECEIVING_ORDER_TRANSPORT";
+    }
+  }
+
+  // Плановая дата (формат yyyy-MM-dd)
+  attribute planningDate {
+    type String;
+    sync ALIS.ReceivingOrder.planReceivingDateTime;
+
+  }
+
+  // Плановое время (формат HH:mm)
+  attribute planningTime {
+    type String;
+    sync ALIS.ReceivingOrder.planReceivingDateTime;
+
+  }
+
+  // Площадка (транслируется: CONTAINER -> "Терминал", WAREHOUSE -> "Склад", WAREHOUSE_428 -> "Склад 4.2.8")
+  attribute site {
+    type String;
+    sync ALIS.ReceivingOrder.terminalArea;
+    translate TerminalArea;
+  }
+
+  // Тип транспорта (транслируется: RAILWAY -> "ЖД", VEHICLE -> "АВТО")
+  attribute transportType {
+    type String;
+    sync ALIS.ReceivingOrder.transportType;
+    translate TransportType;
+  }
+
+  // Операция
+  attribute operation {
+    type String;
+    const "UnLoad";
+  }
+
+  // Транспортное средство
+  attribute vehicle {
+    type Datareon.Vehicle;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.syncId {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+        clone RECEIVING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ReceivingOrderRailwayCarriage.railwayCarriage.id {
+        using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+        clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute mainPlate {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.code {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+        clone RECEIVING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ReceivingOrderRailwayCarriage.railwayCarriage.code {
+        using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+        clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute vehicleType {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.vehicleType.code {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+        clone RECEIVING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ReceivingOrderRailwayCarriage.railwayCarriage.type.code {
+        using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+        clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute model {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.vehicleBrand.code {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute reefer {
+      type Boolean;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.refrigerator {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute trailerPlate {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.trailerNumber {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute insuranceNumber {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.insuranceNumber {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute loadingType {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientVehicle.loadingType.code {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+  }
+
+  // Водитель (null для ЖД)
+  attribute driver {
+    type Datareon.Driver;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrderTransport.clientDriver.syncId {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientDriver.code {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute phone {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientDriver.phoneNumber {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute POA {
+      type String;
+      sync ALIS.ReceivingOrderTransport.clientDriver.POANumber {
+        using entityType "RECEIVING_ORDER_TRANSPORT";
+      }
+    }
+  }
+
+  // Заказ клиента
+  attribute order {
+    type Datareon.ClientOrder(RECEIVING);
+  }
+
+  // Станция отправления (только для ЖД)
+  attribute stationFrom {
+    type Datareon.CodeNameDto;
+    sync ALIS.ReceivingOrderRailwayCarriage.etranInvoice.departureStation.code {
+      using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+    }
+  }
+
+  // Станция назначения (только для ЖД)
+  attribute stationTo {
+    type Datareon.CodeNameDto;
+    sync ALIS.ReceivingOrderRailwayCarriage.etranInvoice.destinationStation.code {
+      using entityType "RECEIVING_ORDER_RAILWAY_CARRIAGE";
+    }
+  }
+
+  // Список грузов (КТК)
+  attribute cargo {
+    type Datareon.IdNameDto[];
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrderContainer.id;
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ReceivingOrderContainer.container.code;
+    }
+  }
+}

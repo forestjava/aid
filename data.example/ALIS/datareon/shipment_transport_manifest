@@ -1,0 +1,229 @@
+// Транспортная накладная (отгрузка) -> 1С
+dto Datareon.ShipmentTransportManifest {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/transportmanifest/TransportManifestDto.java";
+  using messageType "SHIPMENT_TRANSPORT_MANIFEST";
+  route "/transport";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.OutboundData(SHIPMENT_TRANSPORT_MANIFEST).rootObjectId;
+  }
+
+  // Рейс
+  attribute route {
+    type Datareon.RouteExport;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ShippingOrder.route.id;
+    }
+
+    attribute routeNumber {
+      type Long;
+      sync ALIS.ShippingOrder.route.number;
+    }
+
+    attribute trainNumber {
+      type String;
+      sync ALIS.ShippingOrder.route.comment;
+    }
+  }
+
+  attribute _shipper {
+    type UUID;
+    sync ALIS.ShippingOrder.contract.company.syncId;
+  }
+
+  attribute _carrier {
+    type UUID;
+    sync ALIS.ShippingOrderTransport.carrier.syncId {
+      using entityType "SHIPPING_ORDER_TRANSPORT";
+    }
+  }
+
+  attribute _consignee {
+    type UUID;
+    sync ALIS.ShippingOrderTransport.consignee.syncId {
+      using entityType "SHIPPING_ORDER_TRANSPORT";
+    }
+  }
+
+  // Плановая дата (формат yyyy-MM-dd)
+  attribute planningDate {
+    type String;
+    sync ALIS.ShippingOrder.plannedShippingDateTime;
+
+  }
+
+  // Плановое время (формат HH:mm)
+  attribute planningTime {
+    type String;
+    sync ALIS.ShippingOrder.plannedShippingDateTime;
+
+  }
+
+  // Площадка (транслируется: CONTAINER -> "Терминал", WAREHOUSE -> "Склад", WAREHOUSE_428 -> "Склад 4.2.8")
+  attribute site {
+    type String;
+    sync ALIS.ShippingOrder.terminalArea;
+    translate TerminalArea;
+  }
+
+  // Тип транспорта (транслируется: RAILWAY -> "ЖД", VEHICLE -> "АВТО")
+  attribute transportType {
+    type String;
+    sync ALIS.ShippingOrder.transportType;
+    translate TransportType;
+  }
+
+  // Операция
+  attribute operation {
+    type String;
+    const "Load";
+  }
+
+  // Транспортное средство
+  attribute vehicle {
+    type Datareon.Vehicle;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ShippingOrderTransport.clientVehicle.syncId {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+        clone SHIPPING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ShippingOrderRailwayCarriage.railwayCarriage.id {
+        using entityType "SHIPPING_ORDER_RAILWAY_CARRIAGE";
+        clone SHIPPING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute mainPlate {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.code {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+        clone SHIPPING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ShippingOrderRailwayCarriage.railwayCarriage.code {
+        using entityType "SHIPPING_ORDER_RAILWAY_CARRIAGE";
+        clone SHIPPING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute vehicleType {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.vehicleType.code {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+        clone SHIPPING_ORDER_TRANSPORT;
+      }
+      sync ALIS.ShippingOrderRailwayCarriage.railwayCarriage.type.code {
+        using entityType "SHIPPING_ORDER_RAILWAY_CARRIAGE";
+        clone SHIPPING_ORDER_RAILWAY_CARRIAGE;
+      }
+    }
+
+    attribute model {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.vehicleBrand.code {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute reefer {
+      type Boolean;
+      sync ALIS.ShippingOrderTransport.clientVehicle.refrigerator {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute trailerPlate {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.trailerNumber {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute insuranceNumber {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.insuranceNumber {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute loadingType {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientVehicle.loadingType.code {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+  }
+
+  // Водитель (null для ЖД)
+  attribute driver {
+    type Datareon.Driver;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ShippingOrderTransport.clientDriver.syncId {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientDriver.code {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute phone {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientDriver.phoneNumber {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+
+    attribute POA {
+      type String;
+      sync ALIS.ShippingOrderTransport.clientDriver.POANumber {
+        using entityType "SHIPPING_ORDER_TRANSPORT";
+      }
+    }
+  }
+
+  // Заказ клиента
+  attribute order {
+    type Datareon.ClientOrder(SHIPPING);
+  }
+
+  // Станция отправления (только для ЖД)
+  attribute stationFrom {
+    type Datareon.CodeNameDto;
+    sync ALIS.ShippingOrderRailwayCarriage.etranInvoice.departureStation.code {
+      using entityType "SHIPPING_ORDER_RAILWAY_CARRIAGE";
+    }
+  }
+
+  // Станция назначения (только для ЖД)
+  attribute stationTo {
+    type Datareon.CodeNameDto;
+    sync ALIS.ShippingOrderRailwayCarriage.etranInvoice.destinationStation.code {
+      using entityType "SHIPPING_ORDER_RAILWAY_CARRIAGE";
+    }
+  }
+
+  // Список грузов (КТК)
+  attribute cargo {
+    type Datareon.IdNameDto[];
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ShippingOrderContainer.id;
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ShippingOrderContainer.container.code;
+    }
+  }
+}

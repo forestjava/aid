@@ -1,6 +1,6 @@
 import type { Node } from 'ohm-js';
 import { dslGrammar } from '@/lib/grammar';
-import { buildNavigationRelations, buildLinkRelations } from '@/lib/relations';
+import { buildNavigationRelations, buildLinkRelations, expandMultipleSyncs, removeUnusedEntities } from '@/lib/relations';
 import type { DatabaseSchema, Entity, EntityAttribute, EntityType, SyncTarget } from './types';
 
 /**
@@ -122,11 +122,13 @@ semantics.addOperation<EntityAttribute[]>('extractAttributes', {
     if (ATTRIBUTE_KEYWORDS.has(keywordStr)) {
       const props = block.extractAttributeProps();
       const syncs = block.extractSyncs();
+      const typeClones = block.extractTypeClones();
       return [{ 
         name: name.sourceString, 
         label: props.label || '', 
         ...props,
-        sync: syncs.length > 0 ? syncs : undefined 
+        sync: syncs.length > 0 ? syncs : undefined,
+        typeClones: typeClones.length > 0 ? typeClones : undefined,
       }];
     }
     // value Name { label "..."; }; — значение перечисления с блоком опций
@@ -260,6 +262,21 @@ semantics.addOperation<string | null>('extractClone', {
   },
 });
 
+// Операция для извлечения type-with-clone из блока атрибута
+semantics.addOperation<Array<{ type: string; isCollection: boolean; clone: string }>>('extractTypeClones', {
+  ...arrayFallbacks<{ type: string; isCollection: boolean; clone: string }>('extractTypeClones'),
+
+  Entity_typeOptions(_typeKeyword: any, typeRef: any, block: any, _semicolon: any): Array<{ type: string; isCollection: boolean; clone: string }> {
+    const typeStr = typeRef.sourceString;
+    const isCollection = typeStr.endsWith('[]');
+    const clone = block.extractClone();
+    if (clone) {
+      return [{ type: isCollection ? typeStr.slice(0, -2) : typeStr, isCollection, clone }];
+    }
+    return [];
+  },
+});
+
 // Операция для извлечения ссылки на атрибут из блока key foreign
 semantics.addOperation<string | null>('extractForeignKeyTarget', {
   _nonterminal(...children: any[]): string | null {
@@ -292,6 +309,11 @@ semantics.addOperation<string | null>('extractForeignKeyTarget', {
 // Операция для извлечения свойств атрибута (type, is navigation, key primary, etc.)
 semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
   ...objectFallbacks<Partial<EntityAttribute>>('extractAttributeProps'),
+
+  // type SomeType { clone X; }; — обрабатывается в extractTypeClones, здесь пропускаем
+  Entity_typeOptions(_typeKeyword: any, _typeRef: any, _block: any, _semicolon: any): Partial<EntityAttribute> {
+    return {};
+  },
 
   // type SomeType;
   Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): Partial<EntityAttribute> {
@@ -467,9 +489,11 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     // Извлекаем свойства схемы (напр., separate)
     const schema = adapter.extractSchemaProps();
 
-    
+    // Clone expansion: создаём клоны из sync с clone, удаляем ненужные оригиналы
+    expandMultipleSyncs(entities);
+    removeUnusedEntities(entities);
 
-    // Строим relations по навигационным свойствам
+    // Строим relations по финальному списку entities "as is"
     const navigationRelations = buildNavigationRelations(entities, schema);
 
     // Строим relations по односторонним ссылкам (sync/map)

@@ -1,0 +1,80 @@
+// Задание на приёмку (товарная) -> 1С
+dto Datareon.ItemReceivingTask {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/itemreceivingtask/ItemReceivingTaskDto.java";
+  using messageType "ITEM_RECEIVING_TASK";
+  route "/itemrec";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ReceivingOrder.id;
+  }
+
+  attribute _shipper {
+    type UUID;
+    sync ALIS.ReceivingOrderTransport.shipper.syncId;
+  }
+
+  // Рейс
+  attribute route {
+    type Datareon.RouteExport;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrder.route.id;
+    }
+
+    attribute routeNumber {
+      type Long;
+      sync ALIS.ReceivingOrder.route.number;
+    }
+
+    attribute trainNumber {
+      type String;
+      sync ALIS.ReceivingOrder.route.comment;
+    }
+  }
+
+  // Плановая дата (формат yyyy-MM-dd)
+  attribute planningDate {
+    type String;
+    sync ALIS.ReceivingOrder.planReceivingDateTime;
+
+  }
+
+  // Плановое время (формат HH:mm)
+  attribute planningTime {
+    type String;
+    sync ALIS.ReceivingOrder.planReceivingDateTime;
+
+  }
+
+  // Площадка
+  attribute site {
+    type String;
+    sync ALIS.ReceivingOrder.terminalArea;
+    translate TerminalArea;
+  }
+
+  // Заказ клиента
+  attribute order {
+    type Datareon.ClientOrder(RECEIVING);
+  }
+
+  // Позиции номенклатуры (зависят от deliveryType)
+  // BY_GOOD, BY_GOOD_WITH_CARGO_WITHOUT_DETAILS -> из ReceivingOrderGood
+  // BY_CARGO -> из ReceivingOrderBlackbox
+  // BY_GOOD_WITH_CARGO_WITH_DETAILS, CONTAINER -> из ReceivingOrderCargo
+  attribute items {
+    type Datareon.ReceivingTaskItem[];
+  }
+
+  // Доп. услуги
+  attribute service {
+    type Datareon.ReceivingTaskService[];
+  }
+
+  attribute cargoQty {
+    type Long;
+    sync ALIS.ReceivingOrder.totalCargoQuantity;
+  }
+}

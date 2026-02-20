@@ -1,0 +1,56 @@
+// Контракт (вложенный в ClientOrder)
+dto Datareon.Contract {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/order/ContractDto.java";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ReceivingOrder.contract.syncId {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.contract.syncId {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.contract.syncId {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute number {
+    type String;
+    sync ALIS.ReceivingOrder.contract.contractNumber {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.contract.contractNumber {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.contract.contractNumber {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute date {
+    type String;
+    sync ALIS.ReceivingOrder.contract.contractDate {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.contract.contractDate {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.contract.contractDate {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute dateTo {
+    type String;
+    sync ALIS.ReceivingOrder.contract.validTo {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.contract.validTo {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.contract.validTo {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+}

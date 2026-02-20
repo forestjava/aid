@@ -1,0 +1,82 @@
+dto Datareon.ReceivingTaskItem {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/receivingtask/ReceivingTaskItemDto.java";
+
+  attribute _item {
+    type UUID;
+    sync ALIS.ReceivingOrderGood.clientGood.syncId {
+      using deliveryType "BY_GOOD";
+      clone BY_GOOD;
+    }
+    sync ALIS.ReceivingOrderCargo.receivingOrderGood.clientGood.syncId {
+      using deliveryType "BY_GOOD_WITH_CARGO_WITH_DETAILS";
+      clone BY_GOOD_WITH_CARGO_WITH_DETAILS;
+    }
+    sync ALIS.ReceivingOrder.deliveryType {
+      using ALIS.ReceivingOrder.deliveryType "BY_CARGO";
+      const "00000000-0000-0000-0000-000000000000";
+      clone BY_CARGO;
+    }
+  }
+
+  attribute _package {
+    type UUID;
+    sync ALIS.GoodPackage.syncId {
+      using clientGood ALIS.ReceivingOrderGood.clientGood;
+      using deliveryType "BY_GOOD";
+      clone BY_GOOD;
+    }
+    sync ALIS.ReceivingOrderCargo.goodPackage.syncId {
+      using deliveryType "BY_GOOD_WITH_CARGO_WITH_DETAILS";
+      clone BY_GOOD_WITH_CARGO_WITH_DETAILS;
+    }
+    sync ALIS.ReceivingOrder.deliveryType {
+      using ALIS.ReceivingOrder.deliveryType "BY_CARGO";
+      const "00000000-0000-0000-0000-000000000000";
+      clone BY_CARGO;
+    }
+  }
+
+  attribute status {
+    type String;
+  }
+
+  attribute cargoNumber {
+    type String;
+    sync ALIS.ReceivingOrderBlackbox.cargo.code {
+      using deliveryType "BY_CARGO";
+      clone BY_CARGO;
+    }
+    sync ALIS.ReceivingOrderCargo.cargo.code {
+      using deliveryType "BY_GOOD_WITH_CARGO_WITH_DETAILS";
+      clone BY_GOOD_WITH_CARGO_WITH_DETAILS;
+    }
+  }
+
+  attribute batch {
+    type Datareon.ReceivingTaskItemBatch;
+  }
+
+  attribute pkgQty {
+    type BigDecimal;
+    sync ALIS.ReceivingOrderGood.plannedQuantity {
+      using deliveryType "BY_GOOD";
+      clone BY_GOOD;
+    }
+    sync ALIS.ReceivingOrderCargo.packageQuantity {
+      using deliveryType "BY_GOOD_WITH_CARGO_WITH_DETAILS";
+      clone BY_GOOD_WITH_CARGO_WITH_DETAILS;
+    }
+  }
+
+  attribute qty {
+    type BigDecimal;
+    sync ALIS.ReceivingOrderGood.plannedQuantity {
+      using deliveryType "BY_GOOD";
+      clone BY_GOOD;
+    }
+    sync ALIS.ReceivingOrderCargo.totalQuantity {
+      using deliveryType "BY_GOOD_WITH_CARGO_WITH_DETAILS";
+      clone BY_GOOD_WITH_CARGO_WITH_DETAILS;
+    }
+  }
+}

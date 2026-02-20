@@ -11,7 +11,9 @@ DSL {
 
   // Описываем особенности для ключевых слов type, строковых и числовых значений
   Entity = annotationKeyword name? AnnotationBlock ";"?  --annotation
+         | typeKeyword typeRef Block ";"?                --typeOptions
          | typeKeyword typeRef ";"                       --type
+         | translate typeRef stringValue? ";"            --translate
          | refKeyword ref Block ";"?                     --refOptions
          | refKeyword ref ";"                            --ref
          | importKeyword ref ";"                         --importRef
@@ -40,12 +42,13 @@ DSL {
   annotationKeyword = "annotation" | "аннотация"
   
   typeKeyword = "type" | "тип"
+  translate = "translate"
   
   refKeyword = "sync" | "обмен" | "map" | "relates" | "связь" | "относится"
   
   importKeyword = "import" | "из"
   
-  stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник"
+  stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник" | "route"
   
   numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция" | "offset" | "сдвиг" | "priority" | "приоритет" | "code" | "код"
   
@@ -54,6 +57,7 @@ DSL {
     | "default" 
     | "only" | "только"
     | "filter" | "фильтр"
+    | "const"
   
   throughKeyword = "through" | "через" 
       | "using" | "используя" 
@@ -130,8 +134,8 @@ DSL {
   // Часть идентификатора: имя + опциональный суффикс клона
   identifierPart = simpleIdentifier cloneSuffix?
 
-  // Простой идентификатор начинается с буквы и содержит буквы/цифры
-  simpleIdentifier = letter (letter | digit | "_")*
+  // Простой идентификатор начинается с буквы или "_" и содержит буквы/цифры
+  simpleIdentifier = ("_" | letter) (letter | digit | "_")*
 
   // Строковый литерал в двойных кавычках
   stringLiteral = "\"" stringChar* "\""

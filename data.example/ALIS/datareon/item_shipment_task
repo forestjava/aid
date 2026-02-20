@@ -1,0 +1,80 @@
+// Задание на отгрузку (товарная) -> 1С
+dto Datareon.ItemShipmentTask {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/itemshipmenttask/ItemShipmentTaskDto.java";
+  using messageType "ITEM_SHIPMENT_TASK";
+  route "/itemship";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ShippingOrder.id;
+  }
+
+  attribute _shipper {
+    type UUID;
+    sync ALIS.ShippingOrder.contract.company.syncId;
+  }
+
+  // Рейс
+  attribute route {
+    type Datareon.RouteExport;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ShippingOrder.route.id;
+    }
+
+    attribute routeNumber {
+      type Long;
+      sync ALIS.ShippingOrder.route.number;
+    }
+
+    attribute trainNumber {
+      type String;
+      sync ALIS.ShippingOrder.route.comment;
+    }
+  }
+
+  // Плановая дата (формат yyyy-MM-dd)
+  attribute planningDate {
+    type String;
+    sync ALIS.ShippingOrder.plannedShippingDateTime;
+
+  }
+
+  // Плановое время (формат HH:mm)
+  attribute planningTime {
+    type String;
+    sync ALIS.ShippingOrder.plannedShippingDateTime;
+
+  }
+
+  // Площадка
+  attribute site {
+    type String;
+    sync ALIS.ShippingOrder.terminalArea;
+    translate TerminalArea;
+  }
+
+  // Заказ клиента
+  attribute order {
+    type Datareon.ClientOrder(SHIPPING);
+  }
+
+  // Позиции номенклатуры (зависят от deliveryType)
+  // BY_GOOD -> из ShippingOrderGood
+  // BY_CARGO -> из ShippingOrderBlackbox
+  // BY_GOOD_WITH_CARGO_WITH_DETAILS, CONTAINER -> из ShippingOrderCargo
+  attribute items {
+    type Datareon.ShipmentTaskItem[];
+  }
+
+  // Доп. услуги
+  attribute service {
+    type Datareon.ShipmentTaskService[];
+  }
+
+  attribute cargoQty {
+    type Long;
+    sync ALIS.ShippingOrder.totalCargoQuantity;
+  }
+}

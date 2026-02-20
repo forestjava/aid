@@ -1,0 +1,26 @@
+// Иерархия групп номенклатуры -> 1С
+dto Datareon.GroupHierarchy {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/grouphierarchy/GroupHierarchyDto.java";
+  using messageType "GROUP_HIERARCHY";
+  route "/group-hierarchy";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.GoodGroup.syncId;
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.GoodGroup.code;
+  }
+
+  attribute parentId {
+    type UUID;
+    sync ALIS.GoodGroup.parent.syncId;
+  }
+
+  attribute deleted {
+    type Boolean;
+    sync ALIS.GoodGroup.deleted;
+  }
+}

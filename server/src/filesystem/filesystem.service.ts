@@ -8,12 +8,12 @@ import * as path from 'path';
 // Идентификатор может быть составным через точку (неограниченная вложенность)
 // identifier = simpleIdentifier ("." simpleIdentifier)*
 //
-// Простой идентификатор начинается с буквы и содержит буквы/цифры
-// simpleIdentifier = letter (letter | digit | "_")*
+// Простой идентификатор начинается с буквы или "_" и содержит буквы/цифры
+// simpleIdentifier = ("_" | letter) (letter | digit | "_")*
 
 const LETTER = '[a-zA-Zа-яА-ЯёЁ]';
 const LETTER_OR_DIGIT_OR_UNDERSCORE = '[a-zA-Zа-яА-ЯёЁ0-9_]';
-const SIMPLE_IDENTIFIER = `${LETTER}${LETTER_OR_DIGIT_OR_UNDERSCORE}*`;
+const SIMPLE_IDENTIFIER = `(?:_|${LETTER})${LETTER_OR_DIGIT_OR_UNDERSCORE}*`;
 const IDENTIFIER = `${SIMPLE_IDENTIFIER}(\\.${SIMPLE_IDENTIFIER})*`;
 
 const VALID_IDENTIFIER_REGEX = new RegExp(`^${IDENTIFIER}$`);
@@ -33,7 +33,7 @@ export class FileSystemService {
   /**
    * Проверяет, является ли имя валидным идентификатором DSL.
    * Формат: simpleIdentifier ("." simpleIdentifier)*
-   * где simpleIdentifier начинается с буквы и содержит буквы, цифры и _.
+   * где simpleIdentifier начинается с буквы или "_" и содержит буквы, цифры и _.
    */
   private validateIdentifierName(name: string, context: string): void {
     if (!name) {

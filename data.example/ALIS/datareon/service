@@ -1,0 +1,33 @@
+// Услуга -> 1С
+dto Datareon.Service {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/service/ServiceDto.java";
+  using messageType "SERVICE";
+  route "/service";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.Service.syncId;
+  }
+
+  attribute code {
+    type String;
+    sync ALIS.Service.code;
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.Service.name;
+  }
+
+  attribute active {
+    type Boolean;
+    sync ALIS.Service.active;
+  }
+
+  // Площадка (транслируется: CONTAINER -> "Терминал", WAREHOUSE -> "Склад", WAREHOUSE_428 -> "Склад 4.2.8")
+  attribute site {
+    type String;
+    sync ALIS.Service.terminalArea;
+    translate TerminalArea;
+  }
+}

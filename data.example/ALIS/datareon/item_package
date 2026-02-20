@@ -1,0 +1,75 @@
+dto Datareon.ItemPackage {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/item/ItemPackageDto.java";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.GoodPackage.syncId;
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.GoodPackage.code;
+  }
+
+  attribute uom {
+    type String;
+    sync ALIS.GoodPackage.unitOfMeasure.codeOkei;
+  }
+
+  attribute ratio {
+    type BigDecimal;
+    sync ALIS.GoodPackage.conversionQty;
+  }
+
+  attribute nesting {
+    type BigDecimal;
+    sync ALIS.GoodPackage.level;
+  }
+
+  attribute netWeight {
+    type BigDecimal;
+    sync ALIS.GoodPackage.weight;
+  }
+
+  // ALIS.GoodPackage.weight + ALIS.GoodPackage.tareWeight (или одно из них при отсутствии другого)
+  attribute grossWeight {
+    type BigDecimal;
+  }
+
+  attribute volume {
+    type BigDecimal;
+    sync ALIS.GoodPackage.volume;
+  }
+
+  attribute length {
+    type BigDecimal;
+    sync ALIS.GoodPackage.length;
+  }
+
+  attribute width {
+    type BigDecimal;
+    sync ALIS.GoodPackage.width;
+  }
+
+  attribute height {
+    type BigDecimal;
+    sync ALIS.GoodPackage.height;
+  }
+
+  attribute barcodes {
+    type String[];
+    sync ALIS.GoodPackageBarcode.code {
+      using goodPackage ALIS.GoodPackage;
+    }
+  }
+
+  attribute processingType {
+    type String;
+    sync ALIS.GoodPackage.processingType;
+  }
+
+  attribute parent_package_id {
+    type UUID;
+    sync ALIS.GoodPackage.parentPackage.syncId;
+  }
+}

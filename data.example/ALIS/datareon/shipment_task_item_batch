@@ -1,0 +1,35 @@
+dto Datareon.ShipmentTaskItemBatch {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/shipmenttask/ShipmentTaskItemBatchDto.java";
+
+  attribute syncId {
+    type UUID;
+    sync ALIS.ShippingOrderGood.batch.syncId;
+  }
+
+  attribute type {
+    type String;
+    sync ALIS.ShippingOrderGood.batch.batchAccountingType;
+  }
+
+  attribute number {
+    type String;
+    sync ALIS.ShippingOrderGood.batch.code;
+  }
+
+  attribute issueDate {
+    type String;
+    sync ALIS.ShippingOrderGood.batch.manufactureDate;
+
+  }
+
+  attribute expirationDate {
+    type String;
+    sync ALIS.ShippingOrderGood.batch.expirationDate;
+
+  }
+
+  attribute barcode {
+    type String;
+    sync ALIS.ShippingOrderGood.batch.batchBarcode;
+  }
+}

@@ -1,0 +1,63 @@
+// Склад (entityType = RECEIVING_ORDER): из ReceivingOrderCargo
+dto Datareon.ReceivingTaskCargo {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/receivingtask/ReceivingTaskCargoDto.java";
+
+  attribute type {
+    type String;
+    sync ALIS.ReceivingOrderCargo.goodPackage.code {
+      using entityType "RECEIVING_ORDER";
+      clone RECEIVING_ORDER;
+    }
+    sync ALIS.ReceivingOrderContainer.container.containerType.tosType {
+      using entityType "RECEIVING_ORDER_CONTAINER";
+      clone RECEIVING_ORDER_CONTAINER;
+    }
+  }
+
+  attribute quantity {
+    type Number;
+    sync ALIS.ReceivingOrderCargo.packageQuantity {
+      using entityType "RECEIVING_ORDER";
+      clone RECEIVING_ORDER;
+    }
+    sync ALIS.OutboundData(CARGO_RECEIVING_TASK).entityType {
+      using ALIS.OutboundData(CARGO_RECEIVING_TASK).entityType "RECEIVING_ORDER_CONTAINER";
+      const 1;
+      clone RECEIVING_ORDER_CONTAINER;
+    }
+  }
+
+  attribute liftingCapacity {
+    type BigDecimal;
+    sync ALIS.ReceivingOrderContainer.container.liftingCapacity {
+      using entityType "RECEIVING_ORDER_CONTAINER";
+    }
+  }
+
+  attribute tareWeight {
+    type BigDecimal;
+    sync ALIS.ReceivingOrderContainer.container.weight {
+      using entityType "RECEIVING_ORDER_CONTAINER";
+    }
+  }
+
+  attribute cargoNumber {
+    type String;
+    sync ALIS.ReceivingOrderContainer.container.code {
+      using entityType "RECEIVING_ORDER_CONTAINER";
+    }
+  }
+
+  // Спецификация груза (только для КТК)
+  attribute cargoSpec {
+    type Datareon.ReceivingTaskCargoSpec[];
+  }
+
+  // Пломбы (только для КТК)
+  attribute seals {
+    type String[];
+    sync ALIS.ReceivingOrderContainer.sealNumbers {
+      using entityType "RECEIVING_ORDER_CONTAINER";
+    }
+  }
+}

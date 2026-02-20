@@ -1,0 +1,32 @@
+dto Datareon.ReceivingTaskService {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/receivingtask/ReceivingTaskServiceDto.java";
+
+  attribute operationType {
+    type Datareon.ServiceOperationType;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ReceivingOrderRequestedService.termOfRequestedService.service.syncId;
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ReceivingOrderRequestedService.termOfRequestedService.service.code;
+    }
+  }
+
+  attribute qty {
+    type Number;
+    sync ALIS.ReceivingOrderRequestedService.plannedQuantity;
+  }
+
+  attribute unit {
+    type String;
+    sync ALIS.ReceivingOrderRequestedService.serviceOfMeasure;
+  }
+
+  attribute instruction {
+    type String;
+    const null;
+  }
+}

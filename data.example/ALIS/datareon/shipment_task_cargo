@@ -1,0 +1,38 @@
+dto Datareon.ShipmentTaskCargo {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/shipmenttask/ShipmentTaskCargoDto.java";
+
+  attribute type {
+    type String;
+    sync ALIS.ShippingOrderContainer.container.containerType.tosType;
+  }
+
+  attribute quantity {
+    type BigDecimal;
+    const 1;
+  }
+
+  attribute liftingCapacity {
+    type BigDecimal;
+    sync ALIS.ShippingOrderContainer.container.liftingCapacity;
+  }
+
+  attribute tareWeight {
+    type BigDecimal;
+    sync ALIS.ShippingOrderContainer.container.weight;
+  }
+
+  attribute cargoNumber {
+    type String;
+    sync ALIS.ShippingOrderContainer.container.code;
+  }
+
+  attribute random {
+    type Boolean;
+    sync ALIS.ShippingOrderContainer.random;
+  }
+
+  // Спецификация груза
+  attribute cargoSpec {
+    type Datareon.ShipmentTaskCargoSpec[];
+  }
+}

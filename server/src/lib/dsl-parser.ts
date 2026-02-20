@@ -213,6 +213,11 @@ export class DslParser {
     semantics.addOperation<string | null>('extractType', {
       ...firstMatchFallbacks<string>('extractType'),
 
+      // type SomeType { clone X; };
+      Entity_typeOptions(_typeKeyword: any, typeRef: any, _block: any, _semicolon: any): string | null {
+        return typeRef.sourceString;
+      },
+
       // type SomeType;
       Entity_type(_typeKeyword: any, typeRef: any, _semicolon: any): string | null {
         return typeRef.sourceString;

@@ -102,16 +102,21 @@ function mergeConnectionRole(
  * В оригинальной сущности sync с clone удаляются (связи только с клонами).
  * Модифицирует массив entities, добавляя клоны.
  */
-function expandMultipleSyncs(entities: Entity[]): void {
+export function expandMultipleSyncs(entities: Entity[]): void {
   const clonesToAdd: Entity[] = [];
   
   for (const entity of entities) {
-    // Собираем уникальные имена клонов
+    // Собираем уникальные имена клонов из sync и typeClones
     const cloneNames = new Set<string>();
     for (const attr of entity.attributes) {
       if (attr.sync) {
         for (const s of attr.sync) {
           if (s.clone) cloneNames.add(s.clone);
+        }
+      }
+      if (attr.typeClones) {
+        for (const tc of attr.typeClones) {
+          cloneNames.add(tc.clone);
         }
       }
     }
@@ -123,18 +128,32 @@ function expandMultipleSyncs(entities: Entity[]): void {
         label: entity.label ? `${entity.label} (${cloneName})` : `(${cloneName})`,
         type: entity.type,
         rank: entity.rank,
-        attributes: entity.attributes.map(attr => ({
-          ...attr,
-          sync: attr.sync?.filter(s => s.clone === cloneName) || undefined
-        })),
+        attributes: entity.attributes.map(attr => {
+          const cloneAttr = {
+            ...attr,
+            sync: attr.sync?.filter(s => s.clone === cloneName) || undefined,
+          };
+          if (attr.typeClones) {
+            const match = attr.typeClones.find(tc => tc.clone === cloneName);
+            if (match) {
+              cloneAttr.type = match.type;
+              cloneAttr.isCollection = match.isCollection;
+            }
+            delete cloneAttr.typeClones;
+          }
+          return cloneAttr;
+        }),
       });
     }
     
-    // В оригинале оставляем только sync без clone
+    // В оригинале оставляем только sync без clone и убираем typeClones
     for (const attr of entity.attributes) {
       if (attr.sync) {
         const syncsWithoutClone = attr.sync.filter(s => !s.clone);
         attr.sync = syncsWithoutClone.length > 0 ? syncsWithoutClone : undefined;
+      }
+      if (attr.typeClones) {
+        delete attr.typeClones;
       }
     }
   }
@@ -143,11 +162,11 @@ function expandMultipleSyncs(entities: Entity[]): void {
 }
 
 /**
- * Удаляет оригиналы без sync, у которых есть клоны (полностью заменённые клонами).
- * Обычные сущности без sync не затрагиваются.
+ * Удаляет неиспользуемые сущности: оригиналы, полностью заменённые клонами,
+ * и клоны «про запас», на которые никто не ссылается.
+ * Обычные сущности без клонов не затрагиваются.
  */
-function removeUnusedEntities(entities: Entity[]): void {
-  // Собираем базовые имена клонов: "Entity(clone)" -> "Entity"
+export function removeUnusedEntities(entities: Entity[]): void {
   const clonedBaseNames = new Set<string>();
   for (const entity of entities) {
     const match = entity.name.match(/^(.+)\(.+\)$/);
@@ -155,14 +174,49 @@ function removeUnusedEntities(entities: Entity[]): void {
       clonedBaseNames.add(match[1]);
     }
   }
-  
-  // Удаляем оригиналы без sync, у которых есть клоны
+
+  const entityNames = new Set(entities.map(e => e.name));
+
+  // Собираем имена сущностей, на которые ссылаются через type или как цель sync
+  const referencedNames = new Set<string>();
+  for (const entity of entities) {
+    for (const attr of entity.attributes) {
+      if (attr.type) {
+        referencedNames.add(attr.type);
+      }
+      if (attr.sync) {
+        for (const s of attr.sync) {
+          const parts = s.target.split('.');
+          for (let i = parts.length; i >= 1; i--) {
+            const prefix = parts.slice(0, i).join('.');
+            if (entityNames.has(prefix)) {
+              referencedNames.add(prefix);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
   for (let i = entities.length - 1; i >= 0; i--) {
     const entity = entities[i];
-    const hasSync = entity.attributes.some(attr => attr.sync && attr.sync.length > 0);
+    const isClone = /\(.+\)$/.test(entity.name);
     const hasClones = clonedBaseNames.has(entity.name);
-    
-    if (!hasSync && hasClones) {
+    if (!hasClones && !isClone) continue;
+
+    // Проверяем, есть ли хотя бы один sync, резолвящийся в известную сущность
+    const hasResolvableSync = entity.attributes.some(attr =>
+      attr.sync && attr.sync.some(s => {
+        const parts = s.target.split('.');
+        for (let j = parts.length; j >= 1; j--) {
+          if (entityNames.has(parts.slice(0, j).join('.'))) return true;
+        }
+        return false;
+      })
+    );
+
+    if (!hasResolvableSync && !referencedNames.has(entity.name)) {
       entities.splice(i, 1);
     }
   }
@@ -172,13 +226,7 @@ function removeUnusedEntities(entities: Entity[]): void {
  * Создает relations между сущностями на основе односторонних ссылок (sync/map атрибуты)
  */
 export function buildLinkRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
-  // Шаг 1: Расширяем сущности с множественными sync - создаём клоны
-  expandMultipleSyncs(entities);
-  
-  // Шаг 2: Удаляем оригиналы без sync (полностью заменённые клонами)
-  removeUnusedEntities(entities);
-
-  // Шаг 2: Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
+  // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
   const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
 
   for (const entity of entities) {
@@ -202,7 +250,17 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
         if (filter && syncTarget.type !== filter) continue;
 
         // Ищем целевой атрибут по полному пути в Map
-        const target = attributesMap.get(syncTarget.target);
+        // Если точный путь не найден, пробуем укороченные префиксы —
+        // глубокая навигация (Entity.attr.subAttr.field) резолвится до ближайшего Entity.attr
+        let target = attributesMap.get(syncTarget.target);
+        if (!target) {
+          const parts = syncTarget.target.split('.');
+          for (let i = parts.length - 1; i >= 2; i--) {
+            const shorter = parts.slice(0, i).join('.');
+            target = attributesMap.get(shorter);
+            if (target) break;
+          }
+        }
 
         if (!target) {
           console.warn(`Sync target not found: ${syncTarget.target}`);

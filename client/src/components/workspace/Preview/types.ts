@@ -31,6 +31,7 @@ export interface EntityAttribute {
   hasConnection?: 'source' | 'target' | 'both' // Роль в связи: source (справа), target (слева), both (для external связей)
   hasConnectionType?: RelationType // Тип связи, в которой участвует атрибут
   paletteIndex?: number // Индекс в палитре цветов для связи
+  typeClones?: Array<{ type: string; isCollection: boolean; clone: string }>
   sync?: SyncTarget[] // Массив sync-связей атрибута (для external связей)
 }
 

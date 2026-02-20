@@ -1,0 +1,40 @@
+// Подтверждение документов -> 1С
+dto Datareon.ConfirmDocs {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/confirmdocs/ConfirmDocsDto.java";
+  using messageType "CONFIRM_DOCS";
+  route "/confirm-docs";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ReceivingOrderContainer.id;
+  }
+
+  attribute _order {
+    type UUID;
+    sync ALIS.ReceivingOrderContainer.receivingOrder.id;
+  }
+
+  attribute eventName {
+    type String;
+    const "Документы подтверждены";
+  }
+
+  attribute eventCode {
+    type String;
+    const "CONFIRM_DOCS";
+  }
+
+  attribute eventDateTime {
+    type String;
+  }
+
+  attribute orderNumber {
+    type String;
+    sync ALIS.ReceivingOrderContainer.receivingOrder.number;
+  }
+
+  attribute confirm {
+    type Boolean;
+    sync ALIS.ReceivingOrderContainer.receivingOrder.documentConfirmed;
+  }
+}

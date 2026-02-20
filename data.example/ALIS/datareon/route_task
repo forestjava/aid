@@ -1,0 +1,34 @@
+// Маршрутное задание -> 1С
+dto Datareon.RouteTask {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/route/RouteOrderDto.java";
+  using messageType "ROUTE_TASK";
+  route "/route";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.Route.id;
+  }
+
+  // Площадка
+  attribute site {
+    type String;
+    sync ALIS.Route.terminalArea;
+    translate TerminalArea;
+  }
+
+  attribute routeNumber {
+    type Long;
+    sync ALIS.Route.number;
+  }
+
+  // Список заказов (контейнеров) в рейсе
+  // Зависит от routeType: RECEIVING -> ReceivingOrderContainer, SHIPPING -> ShippingOrderContainer
+  attribute orders {
+    type Datareon.RouteOrder(RECEIVING)[] {
+      clone RECEIVING;
+    }
+    type Datareon.RouteOrder(SHIPPING)[] {
+      clone SHIPPING;
+    }
+  }
+}

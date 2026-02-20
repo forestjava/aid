@@ -1,0 +1,121 @@
+// Заказ клиента (вложенный в задачи и ТМ)
+dto Datareon.ClientOrder {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/order/ClientOrderDto.java";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ReceivingOrder.id {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.id {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.id {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute _client {
+    type UUID;
+    sync ALIS.ReceivingOrder.client.syncId {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.client.syncId {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.client.syncId {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute orderNumber {
+    type String;
+    sync ALIS.ReceivingOrder.number {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.number {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.number {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute orderDate {
+    type String;
+    sync ALIS.ReceivingOrder.createdAt {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.createdAt {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.createdAt {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  // "Поставка АВТО"/"Поставка ЖД" или "Вывоз АВТО"/"Вывоз ЖД"
+  attribute orderType {
+    type String;
+    sync ALIS.ReceivingOrder.transportType {
+      translate ClientOrderType "RECEIVING";
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.transportType {
+      translate ClientOrderType "SHIPMENT";
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.transportType {
+      translate ClientOrderType "SHIPMENT";
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute comment {
+    type String;
+    sync ALIS.ReceivingOrder.comment {
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.comment {
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.comment {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute contract {
+    type Datareon.Contract(RECEIVING) {
+      clone RECEIVING;
+    }
+    type Datareon.Contract(SHIPPING) {
+      clone SHIPPING;
+    }
+    type Datareon.Contract(SHIPPING_CONTAINER) {
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute isBlackBox {
+    type Boolean;
+    sync ALIS.ReceivingOrder.deliveryType {
+      using ALIS.ReceivingOrder.deliveryType "BY_CARGO";
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.deliveryType {
+      using ALIS.ShippingOrder.deliveryType "BY_CARGO";
+      clone SHIPPING;
+    }
+    sync ALIS.ShippingOrderContainer.shippingOrder.deliveryType {
+      using ALIS.ShippingOrderContainer.shippingOrder.deliveryType "BY_CARGO";
+      clone SHIPPING_CONTAINER;
+    }
+  }
+
+  attribute waybill {
+    type String;
+    sync ALIS.ReceivingOrder.waybill {
+      clone RECEIVING;
+    }
+  }
+}

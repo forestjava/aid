@@ -1,0 +1,121 @@
+// Номенклатура -> 1С
+dto Datareon.Item {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/item/ItemDto.java";
+  using messageType "ITEM";
+  route "/item";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ClientGood.syncId;
+  }
+
+  attribute _client {
+    type UUID;
+    sync ALIS.ClientGood.client.syncId;
+  }
+
+  attribute article {
+    type String;
+    sync ALIS.ClientGood.item;
+  }
+
+  attribute GTIN {
+    type String;
+    sync ALIS.ClientGood.gtin;
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.ClientGood.code;
+  }
+
+  attribute fullName {
+    type String;
+    sync ALIS.ClientGood.name;
+  }
+
+  attribute UOM {
+    type String;
+    sync ALIS.ClientGood.unitOfMeasure.codeOkei;
+  }
+
+  // Группа номенклатуры
+  attribute group {
+    type Datareon.IdNameDto;
+
+    attribute _id {
+      type UUID;
+      sync ALIS.ClientGood.goodGroup.syncId;
+    }
+
+    attribute name {
+      type String;
+      sync ALIS.ClientGood.goodGroup.code;
+    }
+  }
+
+  // Вид обработки
+  attribute processingType {
+    type Datareon.IdNameDto;
+
+    attribute _id {
+      type UUID;
+      const null;
+    }
+
+    attribute name {
+      type String;
+      const null;
+    }
+  }
+
+  attribute batchingType {
+    type String;
+    sync ALIS.ClientGood.batchAccountingType;
+  }
+
+  attribute labelingType {
+    type String;
+    const "NO";
+  }
+
+  attribute temperatureRate {
+    type String;
+    sync ALIS.ClientGood.tempRegime.code;
+  }
+
+  attribute dangerClass {
+    type String;
+    sync ALIS.ClientGood.dangerClass.code;
+  }
+
+  attribute shelfLife {
+    type BigDecimal;
+    sync ALIS.ClientGood.shelfLife;
+  }
+
+  attribute price {
+    type BigDecimal;
+    sync ALIS.ClientGood.price;
+  }
+
+  attribute certificateRequired {
+    type Boolean;
+    const false;
+  }
+
+  attribute description {
+    type String;
+    sync ALIS.ClientGood.description;
+  }
+
+  attribute codeKis {
+    type String;
+    sync ALIS.ClientGood.codeKis;
+  }
+
+  // Упаковки номенклатуры
+  attribute packages {
+    type Datareon.ItemPackage[];
+  }
+}

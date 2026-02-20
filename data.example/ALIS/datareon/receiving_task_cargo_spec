@@ -1,0 +1,18 @@
+dto Datareon.ReceivingTaskCargoSpec {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/receiving/receivingtask/ReceivingTaskCargoSpecDto.java";
+
+  attribute code {
+    type String;
+    sync ALIS.ReceivingOrderContainerItem.etsngCode.code;
+  }
+
+  attribute EOM {
+    type String;
+    const "168";
+  }
+
+  attribute qty {
+    type BigDecimal;
+    sync ALIS.ReceivingOrderContainerItem.wightGross;
+  }
+}

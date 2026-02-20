@@ -1,0 +1,27 @@
+dto Datareon.RouteOrder {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/route/OrderDto.java";
+
+  attribute _idCargo {
+    type UUID;
+    sync ALIS.ReceivingOrderContainer.id {
+      using routeType "RECEIVING";
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrderContainer.id {
+      using routeType "SHIPPING";
+      clone SHIPPING;
+    }
+  }
+
+  attribute orderNumber {
+    type Long;
+    sync ALIS.ReceivingOrder.number {
+      using routeType "RECEIVING";
+      clone RECEIVING;
+    }
+    sync ALIS.ShippingOrder.number {
+      using routeType "SHIPPING";
+      clone SHIPPING;
+    }
+  }
+}

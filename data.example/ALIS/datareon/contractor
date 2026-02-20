@@ -1,0 +1,152 @@
+// Контрагент -> 1С
+dto Datareon.Contractor {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/contractor/ContractorDto.java";
+  using messageType "CONTRACTOR";
+  route "/contractor";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.Client.syncId {
+      using entityType "CLIENT";
+      clone CLIENT;
+    }
+    sync ALIS.ClientRelatedEntity.syncId {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute _client {
+    type UUID;
+    sync ALIS.ClientRelatedEntity.client.syncId {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.Client.code {
+      using entityType "CLIENT";
+      clone CLIENT;
+    }
+    sync ALIS.ClientRelatedEntity.code {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute fullName {
+    type String;
+    sync ALIS.Client.name {
+      using entityType "CLIENT";
+      clone CLIENT;
+    }
+    sync ALIS.ClientRelatedEntity.name {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute INN {
+    type String;
+    sync ALIS.ClientRelatedEntity.inn {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute KPP {
+    type String;
+    sync ALIS.ClientRelatedEntity.kpp {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute OKPO {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.okpo {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute OGRN {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.ogrn {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute addressLegal {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.addressLegal {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute addressFact {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.addressFact {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute signatoryName {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.signatoryName {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute signatoryPosition {
+    type String;
+    sync ALIS.ClientRelatedEntity.client.signatoryPosition {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute isClient {
+    type Boolean;
+    sync ALIS.OutboundData(CONTRACTOR).entityType {
+      using ALIS.OutboundData(CONTRACTOR).entityType "CLIENT";
+      const true;
+      clone CLIENT;
+    }
+    sync ALIS.ClientRelatedEntity.client {
+      using ALIS.ClientRelatedEntity.client exists;
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute isShipper {
+    type Boolean;
+    sync ALIS.ClientRelatedEntity.isShipper {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute isConsignee {
+    type Boolean;
+    sync ALIS.ClientRelatedEntity.isConsignee {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+
+  attribute isCarrier {
+    type Boolean;
+    sync ALIS.ClientRelatedEntity.isCarrier {
+      using entityType "CLIENT_RELATED_ENTITY";
+      clone CLIENT_RELATED_ENTITY;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+// Транспортное средство -> 1С
+dto Datareon.Vehicle {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/transportmanifest/VehicleDto.java";
+  using messageType "VEHICLE";
+  route "/vehicle";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ClientVehicle.syncId;
+  }
+
+  attribute mainPlate {
+    type String;
+    sync ALIS.ClientVehicle.code;
+  }
+
+  attribute vehicleType {
+    type String;
+    sync ALIS.ClientVehicle.vehicleType.code;
+  }
+
+  attribute model {
+    type String;
+    sync ALIS.ClientVehicle.vehicleBrand.code;
+  }
+
+  attribute reefer {
+    type Boolean;
+    sync ALIS.ClientVehicle.refrigerator;
+  }
+
+  attribute trailerPlate {
+    type String;
+    sync ALIS.ClientVehicle.trailerNumber;
+  }
+
+  attribute insuranceNumber {
+    type String;
+    sync ALIS.ClientVehicle.insuranceNumber;
+  }
+
+  attribute loadingType {
+    type String;
+    sync ALIS.ClientVehicle.loadingType.code;
+  }
+}

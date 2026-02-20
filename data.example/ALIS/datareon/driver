@@ -1,0 +1,26 @@
+// Водитель -> 1С
+dto Datareon.Driver {
+  source "web-layer/src/main/java/ru/korusconsulting/alis/datareon/dto/shipping/transportmanifest/DriverDto.java";
+  using messageType "DRIVER";
+  route "/driver";
+
+  attribute _id {
+    type UUID;
+    sync ALIS.ClientDriver.syncId;
+  }
+
+  attribute name {
+    type String;
+    sync ALIS.ClientDriver.code;
+  }
+
+  attribute phone {
+    type String;
+    sync ALIS.ClientDriver.phoneNumber;
+  }
+
+  attribute POA {
+    type String;
+    sync ALIS.ClientDriver.POANumber;
+  }
+}

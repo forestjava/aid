@@ -91,6 +91,28 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_translate(translateKeyword: any, typeRef: any, stringValue: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+    tokens.push({ from: translateKeyword.source.startIdx, to: translateKeyword.source.endIdx, type: 'keyword' });
+    tokens.push(...typeRef.getTokens());
+    if (stringValue.source.endIdx > stringValue.source.startIdx) {
+      tokens.push(...stringValue.getTokens());
+    }
+    tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
+    return tokens;
+  },
+
+  Entity_typeOptions(typeKeyword: any, typeRef: any, block: any, _semicolon: any): Token[] {
+    const tokens: Token[] = [];
+    tokens.push({ from: typeKeyword.source.startIdx, to: typeKeyword.source.endIdx, type: 'keyword' });
+    tokens.push(...typeRef.getTokens());
+    tokens.push(...block.getTokens());
+    if (_semicolon && _semicolon.source && _semicolon.source.endIdx > _semicolon.source.startIdx) {
+      tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
+    }
+    return tokens;
+  },
+
   Entity_type(typeKeyword: any, typeRef: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
 
@@ -426,8 +448,8 @@ semantics.addOperation<Token[]>('getTokens', {
     return [];
   },
 
-  // simpleIdentifier = letter (letter | digit | "_")*
-  // Арность: 2 (первая буква + итератор остальных)
+  // simpleIdentifier = ("_" | letter) (letter | digit | "_")*
+  // Арность: 2 (первый символ + итератор остальных)
   simpleIdentifier(this: Node, _firstLetter: any, _rest: any): Token[] {
     // Простой идентификатор не обрабатываем отдельно,
     // он является частью составного identifier
