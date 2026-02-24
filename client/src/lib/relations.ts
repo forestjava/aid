@@ -36,7 +36,7 @@ export function buildNavigationRelations(entities: Entity[], schema?: Partial<Da
         // Определяем направление связи на основе rank сущностей
         const entityRank = entity.rank ?? 0;
         const targetRank = targetEntity.rank ?? 0;
-        const isForward = entityRank <= targetRank;
+        const isForward = entityRank < targetRank;
 
         // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
         const [sourceEntity, sourceAttrName, destEntity, destAttrName] = isForward
@@ -280,7 +280,7 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
           const sourceRank = entity.rank ?? 0;
           const targetRank = target.entity.rank ?? 0;
 
-          const isForward = syncTarget.type === 'external'
+          const isForward = attr.isForeignKey
             ? sourceRank < targetRank
             : sourceRank <= targetRank;
 
