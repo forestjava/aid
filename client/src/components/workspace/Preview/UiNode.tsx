@@ -20,18 +20,18 @@ const UiNode: React.FC<UiNodeProps> = ({ data, schema }) => {
         {(data.hasHeaderConnection === 'target' || data.hasHeaderConnection === 'both') && (
           <Handle
             type="target"
-            position={Position.Top}
+            position={Position.Bottom}
             id={`${data.name}-${HEADER_HANDLE_ID}`}
-            className="w-2 h-2 !-top-1"
+            className="w-2 h-2 !-bottom-1"
             style={{ left: '50%', transform: 'translateX(-50%)' }}
           />
         )}
         {(data.hasHeaderConnection === 'source' || data.hasHeaderConnection === 'both') && (
           <Handle
             type="source"
-            position={Position.Bottom}
+            position={Position.Top}
             id={`${data.name}-${HEADER_HANDLE_ID}`}
-            className="w-2 h-2 !-bottom-1"
+            className="w-2 h-2 !-top-1"
             style={{ left: '50%', transform: 'translateX(-50%)' }}
           />
         )}
@@ -52,22 +52,21 @@ const UiNode: React.FC<UiNodeProps> = ({ data, schema }) => {
             className="py-1.5 text-xs flex flex-col items-stretch justify-start relative min-w-[50px]"
             style={style}
           >
-            {/* Handle: target сверху, source снизу */}
             {(attr.hasConnection === 'target' || attr.hasConnection === 'both') && (
               <Handle
                 type="target"
-                position={Position.Top}
+                position={Position.Bottom}
                 id={`${data.name}-${attr.name}`}
-                className="w-2 h-2 !-top-1"
+                className="w-2 h-2 !-bottom-1"
                 style={{ left: '50%', transform: 'translateX(-50%)' }}
               />
             )}
             {(attr.hasConnection === 'source' || attr.hasConnection === 'both') && (
               <Handle
                 type="source"
-                position={Position.Bottom}
+                position={Position.Top}
                 id={`${data.name}-${attr.name}`}
-                className="w-2 h-2 !-bottom-1"
+                className="w-2 h-2 !-top-1"
                 style={{ left: '50%', transform: 'translateX(-50%)' }}
               />
             )}

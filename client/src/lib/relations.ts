@@ -280,7 +280,9 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
           const sourceRank = entity.rank ?? 0;
           const targetRank = target.entity.rank ?? 0;
 
-          const isForward = sourceRank <= targetRank;
+          const isForward = syncTarget.type === 'external'
+            ? sourceRank < targetRank
+            : sourceRank <= targetRank;
 
           // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
           const [sourceEntity, sourceAttr, targetEntity, targetAttr] = isForward
