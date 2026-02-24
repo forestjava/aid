@@ -50,7 +50,14 @@ DSL {
   
   stringKeyword = "label" | "заголовок" | "description" | "описание" | "source" | "источник" | "route"
   
-  numberKeyword = "width" | "ширина" | "height" | "высота" | "separate" | "промежуток" | "rank" | "позиция" | "offset" | "сдвиг" | "priority" | "приоритет" | "code" | "код"
+  numberKeyword = "width" | "ширина" 
+    | "height" | "высота" 
+    | "separate" | "промежуток" 
+    | "rank" | "позиция" 
+    | "offset" | "сдвиг" 
+    | "priority" | "приоритет" 
+    | "code" | "код"
+    | "limit" | "лимит"
   
   valueKeyword = "value" | "значение" 
     | "clone" | "клон" 

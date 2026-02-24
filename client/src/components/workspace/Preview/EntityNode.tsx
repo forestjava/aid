@@ -43,7 +43,7 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
 
       {/* Атрибуты */}
       <div className="divide-y divide-border">
-        {data.attributes.map((attr, idx) => {
+        {(data.limit != null ? data.attributes.slice(0, data.limit) : data.attributes).map((attr, idx) => {
           const style = getAttributeStyle(attr, schema)
           return (
             <div
@@ -107,6 +107,11 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
             )}
           </div>
         )})}
+        {data.limit != null && data.attributes.length > data.limit && (
+          <div className="px-3 py-1.5 text-xs text-center text-muted-foreground">
+            ... +{data.attributes.length - data.limit} more
+          </div>
+        )}
       </div>
     </div>
   )

@@ -44,7 +44,7 @@ const UiNode: React.FC<UiNodeProps> = ({ data, schema }) => {
       </div>
 
       {/* Атрибуты — горизонтальный ряд ячеек (label сверху, name снизу) */}
-      {data.attributes.map((attr, idx) => {
+      {(data.limit != null ? data.attributes.slice(0, data.limit) : data.attributes).map((attr, idx) => {
         const style = getAttributeStyle(attr, schema)
         return (
           <div
@@ -100,6 +100,11 @@ const UiNode: React.FC<UiNodeProps> = ({ data, schema }) => {
           </div>
         )
       })}
+      {data.limit != null && data.attributes.length > data.limit && (
+        <div className="py-1.5 text-xs flex items-center justify-center text-muted-foreground min-w-[50px]">
+          ...+{data.attributes.length - data.limit}
+        </div>
+      )}
     </div>
   )
 }

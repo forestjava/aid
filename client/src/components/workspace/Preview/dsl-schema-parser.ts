@@ -33,6 +33,7 @@ const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
 const SEPARATE_KEYWORDS = new Set(['separate', 'промежуток']);
 const RANK_KEYWORDS = new Set(['rank', 'позиция']);
 const OFFSET_KEYWORDS = new Set(['offset', 'сдвиг']);
+const LIMIT_KEYWORDS = new Set(['limit', 'лимит']);
 const CONDITION_KEYWORDS = new Set(['through', 'через', 'using', 'используя', 'for', 'для', 'if', 'если', 'when', 'когда']);
 const CLONE_KEYWORDS = new Set(['clone', 'клон']);
 const FILTER_KEYWORDS = new Set(['only', 'только', 'filter', 'фильтр']);
@@ -95,6 +96,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
         attributes,
         rank: entityProps.rank,
         offset: entityProps.offset,
+        limit: entityProps.limit,
       }];
     }
 
@@ -397,6 +399,9 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     }
     if (OFFSET_KEYWORDS.has(numberKeyword.sourceString)) {
       return { offset: parseInt(numberValue.sourceString, 10) };
+    }
+    if (LIMIT_KEYWORDS.has(numberKeyword.sourceString)) {
+      return { limit: parseInt(numberValue.sourceString, 10) };
     }
     return {};
   },

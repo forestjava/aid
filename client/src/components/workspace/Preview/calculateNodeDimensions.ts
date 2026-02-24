@@ -57,21 +57,28 @@ const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
  * Вычисляет размеры одного узла (entity)
  */
 export const calculateNodeDimensions = (entity: Entity): { width: number; height: number } => {
-  // Высота = заголовок + (label если есть) + (количество атрибутов * высота строки) + границы
+  const displayedCount = entity.limit != null
+    ? Math.min(entity.attributes.length, entity.limit)
+    : entity.attributes.length
+  const hasEllipsis = entity.limit != null && entity.attributes.length > entity.limit
+
+  // Высота = заголовок + (label если есть) + (количество видимых атрибутов * высота строки) + (ellipsis строка) + границы
   const height =
     METRICS.HEADER_HEIGHT +
     (entity.label ? METRICS.HEADER_LABEL_HEIGHT : 0) +
-    (entity.attributes.length * METRICS.ATTRIBUTE_ROW_HEIGHT) +
+    (displayedCount * METRICS.ATTRIBUTE_ROW_HEIGHT) +
+    (hasEllipsis ? METRICS.ATTRIBUTE_ROW_HEIGHT : 0) +
     METRICS.BORDER_WIDTH
 
   // Ширина = максимальная ширина среди:
   // 1. Ширина заголовка (имя entity и label, если есть)
-  // 2. Ширина самой длинной строки атрибута
+  // 2. Ширина самой длинной строки видимого атрибута
   const nameWidth = estimateTextWidth(entity.name, false)
   const labelWidth = entity.label ? estimateTextWidth(entity.label, false) : 0
   const headerWidth = Math.max(nameWidth, labelWidth) + METRICS.PADDING_HORIZONTAL
 
-  const maxAttributeWidth = entity.attributes.reduce((max, attr) => {
+  const visibleAttrs = entity.attributes.slice(0, displayedCount)
+  const maxAttributeWidth = visibleAttrs.reduce((max, attr) => {
     const attrWidth = calculateAttributeRowWidth(attr)
     return Math.max(max, attrWidth)
   }, 0)
@@ -126,6 +133,11 @@ const calculateUiCellWidth = (attr: EntityAttribute): number => {
  * Заголовок повёрнут на 90° (writing-mode: vertical-rl)
  */
 export const calculateUiNodeDimensions = (entity: Entity): { width: number; height: number } => {
+  const displayedCount = entity.limit != null
+    ? Math.min(entity.attributes.length, entity.limit)
+    : entity.attributes.length
+  const hasEllipsis = entity.limit != null && entity.attributes.length > entity.limit
+
   // Ширина заголовка — фиксированная (определяется line-height повёрнутого текста)
   const headerWidth = UI_METRICS.HEADER_ROTATED_WIDTH
 
@@ -137,13 +149,14 @@ export const calculateUiNodeDimensions = (entity: Entity): { width: number; heig
   const headerHeight = Math.max(nameTextHeight, labelTextHeight)
 
   // Высота ячеек атрибутов — зависит от наличия label
-  const hasAnyLabel = entity.attributes.some(attr => attr.label)
+  const visibleAttrs = entity.attributes.slice(0, displayedCount)
+  const hasAnyLabel = visibleAttrs.some(attr => attr.label)
   const cellsHeight = hasAnyLabel ? UI_METRICS.CELL_HEIGHT_WITH_LABEL : UI_METRICS.CELL_HEIGHT_BASE
 
-  // Ширина всех ячеек атрибутов
-  const cellsWidth = entity.attributes.reduce((sum, attr) => {
+  // Ширина видимых ячеек атрибутов + ячейка ellipsis
+  const cellsWidth = visibleAttrs.reduce((sum, attr) => {
     return sum + calculateUiCellWidth(attr)
-  }, 0)
+  }, 0) + (hasEllipsis ? UI_METRICS.CELL_MIN_WIDTH : 0)
 
   const width = headerWidth + cellsWidth + UI_METRICS.BORDER_WIDTH
   const height = Math.max(headerHeight, cellsHeight) + UI_METRICS.BORDER_WIDTH
