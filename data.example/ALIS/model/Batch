@@ -52,7 +52,7 @@ entity ALIS.Batch {
 
   // Тип учёта партии
   attribute batchAccountingType {
-    type BatchAccountingType;
+    type ALIS.BatchAccountingType;
     is private;
     map alis.batch.batch_accounting_type;
   }

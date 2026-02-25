@@ -1,0 +1,39 @@
+store alertStore {
+   type Store;
+   label "Уведомление";
+   
+   attribute id {
+     type varchar(36);
+     is required;
+   }
+
+   attribute alert_mode {
+     type varchar(50);
+     is required;
+   }
+
+   attribute message {
+     type varchar(1000);
+     is required;
+   }
+
+   attribute context {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute close_time {
+     type integer;
+     is nullable;
+   }
+
+   attribute custom_title {
+     type varchar(500);
+     is nullable;
+   }
+
+   attribute is_delete {
+     type boolean;
+     is nullable;
+   }
+}

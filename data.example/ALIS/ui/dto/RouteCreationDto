@@ -1,0 +1,41 @@
+dto DTO.RouteCreationDto {
+  type Interface;
+  label "DTO создания маршрута";
+
+  attribute routeType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute dataTime {
+    type timestamp;
+    is required;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is required;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is required;
+  }
+
+  method clientRelatedEntity {
+    type clientRelatedEntity;
+  }
+
+  method clientDriver {
+    type clientDriver;
+  }
+
+  method clientVehicle {
+    type clientVehicle;
+  }
+}

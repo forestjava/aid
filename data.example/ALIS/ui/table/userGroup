@@ -1,0 +1,15 @@
+ui userGroupsTable {
+label "UI таблица с группами пользователей";
+
+  attribute name {
+    type String(200);
+    is public;
+    map alis.user_groups.name;
+  }
+
+  attribute description {
+    type String(200);
+    is public;
+    map alis.user_groups.description;
+  }
+}

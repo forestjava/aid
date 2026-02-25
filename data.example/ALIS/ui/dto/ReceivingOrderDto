@@ -1,0 +1,145 @@
+dto DTO.ReceivingOrderDto {
+  type Table;
+  label "Заказ на приемку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+    map ALIS.ReceivingOrder.id;
+  }
+
+  attribute number {
+    type integer;
+    is nullable;
+    map ALIS.ReceivingOrder.number;
+  }
+
+  attribute orderStatus {
+    type varchar(50);
+    is nullable;
+    map ALIS.ReceivingOrder.orderStatus;
+  }
+
+  attribute planReceivingDateTime {
+    type timestamp;
+    is nullable;
+    map ALIS.ReceivingOrder.planReceivingDateTime;
+  }
+
+  attribute actualReceivingDateTime {
+    type timestamp;
+    is nullable;
+    map ALIS.ReceivingOrder.actualReceivingDateTime;
+  }
+
+  attribute storagePeriod {
+    type numeric;
+    is nullable;
+    map ALIS.ReceivingOrder.storagePeriod;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is nullable;
+    map ALIS.ReceivingOrder.createdAt;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+    map ALIS.ReceivingOrder.comment;
+  }
+
+  attribute waybill {
+    type varchar(500);
+    is nullable;
+    map ALIS.ReceivingOrder.waybill;
+  }
+
+  attribute documentConfirmed {
+    type boolean;
+    is nullable;
+    map ALIS.ReceivingOrder.documentConfirmed;
+  }
+
+  attribute ktkNumberUnknown {
+    type boolean;
+    is nullable;
+    map ALIS.ReceivingOrder.ktkNumberUnknown;
+  }
+
+  attribute needTransport {
+    type boolean;
+    is nullable;
+    map ALIS.ReceivingOrder.needTransport;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+    map ALIS.ReceivingOrder.terminalArea;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ReceivingOrder.transportType;
+  }
+
+  attribute deliveryType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ReceivingOrder.deliveryType;
+  }
+
+  method client {
+    type client;
+    map ALIS.ReceivingOrder.client;
+  }
+
+  method contract {
+    type contractShort;
+    map ALIS.ReceivingOrder.contract;
+  }
+
+  method currency {
+    type currency;
+    map ALIS.ReceivingOrder.currency;
+  }
+
+  method contact {
+    type contact;
+    map ALIS.ReceivingOrder.contact;
+  }
+
+  method route {
+    type route;
+    map ALIS.ReceivingOrder.route;
+  }
+
+  method carrier {
+    type clientRelatedEntityShort;
+    map ALIS.ReceivingOrder.carrier;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

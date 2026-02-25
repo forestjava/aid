@@ -1,0 +1,4 @@
+dto DTO.BaseCreationDto {
+  type Interface;
+  label "Базовый интерфейс создания";
+}

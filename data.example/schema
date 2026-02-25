@@ -1,0 +1,4 @@
+scheme Example {
+  import ./example;
+  import ./example1C;
+}

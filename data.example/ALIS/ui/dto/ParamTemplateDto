@@ -1,0 +1,94 @@
+dto DTO.ParamTemplateDto {
+  type Table;
+  label "Параметры шаблона";
+
+  attribute etranInvoices {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute shippers {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute consignees {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute railwayStations {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute containerCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute dangerClasses {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute railwayCarriageCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute railwayCarriageTypes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute railwayCarriageModels {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute etsngCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute transportationTypes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute containerTypes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute clientGoodItems {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute batchCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute goodPackageCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute sealTypeCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute standardSizeCodes {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute partners {
+    type varchar(500)[];
+    is nullable;
+  }
+}

@@ -1,0 +1,37 @@
+dto DTO.ReceivingOrderGoodUpdateDto {
+  type Table;
+  label "Товар заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute plannedQuantity {
+    type numeric;
+    is required;
+  }
+
+  attribute price {
+    type numeric;
+    is required;
+  }
+
+  attribute totalPrice {
+    type numeric;
+    is required;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method clientGood {
+    type id;
+  }
+
+  method batch {
+    type id;
+  }
+}

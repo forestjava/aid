@@ -1,0 +1,12 @@
+dto DTO.ShippingOrderEtranInvoiceCreationDto {
+  type Interface;
+  label "ЭТРАН накладная заказа на отгрузку создание";
+
+  method etranInvoice {
+    type id;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+}

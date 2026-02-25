@@ -1,0 +1,42 @@
+entity People {
+   type Table;
+
+   attribute id {
+     type UUID;
+     is required;
+     key primary;    
+   }
+
+   attribute name {
+     type varchar(50);
+     is required;
+   }
+   
+   attribute age {
+     type int;
+     is required;
+   }
+   
+   attribute company {
+     type UUID;
+     key foreign {
+       attribute Company.id;
+     }
+   }   
+   
+    method children {
+      type People[];
+    }
+}
+
+entity Company {
+   type Table;
+
+   attribute id{
+     type UUID;
+     is required;
+     key primary;
+   }
+   
+}
+

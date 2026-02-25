@@ -1,0 +1,87 @@
+dto DTO.GoodPackageUpdateDto {
+  type Table;
+  label "DTO обновления упаковки товара";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is required;
+  }
+
+  attribute conversionQty {
+    type numeric;
+    is required;
+  }
+
+  attribute level {
+    type numeric;
+    is required;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute tareWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute processingType {
+    type varchar(50);
+    is nullable;
+  }
+
+  method clientGood {
+    type id;
+  }
+
+  method unitOfMeasure {
+    type id;
+  }
+
+  method parentPackage {
+    type id;
+  }
+}

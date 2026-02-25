@@ -1,0 +1,30 @@
+dto DTO.VehicleInfoDto {
+  type Table;
+  label "Информация о транспорте";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute trailerNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute insuranceNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute withTrailer {
+    type boolean;
+    is nullable;
+  }
+}

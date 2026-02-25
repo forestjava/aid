@@ -1,0 +1,30 @@
+// Код ЕТСНГ
+dto JSON.EtsngCode {
+  label "Справочник. Товары";
+  
+  attribute id {
+    type UUID;
+    map ALIS.EtsngCode.id;
+    key primary;
+  }
+
+  // Код
+  attribute code {
+    type String;
+    map ALIS.EtsngCode.code;
+    key primary;
+  }
+
+  // Наименование
+  attribute name {
+    type String;
+    is nullable;
+    map ALIS.EtsngCode.name;
+  }
+
+  // Активность
+  attribute active {
+    type Boolean;
+    map ALIS.EtsngCode.active;
+  }
+}

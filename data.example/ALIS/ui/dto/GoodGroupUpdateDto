@@ -1,0 +1,25 @@
+dto DTO.GoodGroupUpdateDto {
+  type Table;
+  label "DTO обновления группы товаров";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute parentId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+}

@@ -1,0 +1,119 @@
+store clientRelatedEntityStore {
+   type Store;
+   label "Стор контрагентов";
+   
+   attribute state {
+     type store_state;
+     is required;
+   }
+
+   attribute data {
+     type clientRelatedEntityData[];
+     is required;
+   }
+
+   attribute pagination {
+     type pagination;
+     is required;
+   }
+
+   attribute sorting {
+     type sorting;
+     is required;
+   }
+
+   attribute current {
+     type client_related_entity;
+     is nullable;
+   }
+
+   attribute previous_filters {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute suffix_url {
+     type varchar(200);
+     is nullable;
+   }
+
+   method getById {
+     type model;
+   }
+
+   method fetch {
+     type void;
+   }
+
+   method fetchWithUrlQuery {
+     type void;
+   }
+
+   method update {
+     type model;
+   }
+
+   method create {
+     type model;
+   }
+
+   method remove {
+     type void;
+   }
+
+   method setCurrent {
+     type void;
+   }
+
+   method paginationChanged {
+     type void;
+   }
+
+   method sortingChanged {
+     type void;
+   }
+
+   method getClientRelatedEntitiesData {
+     type blob;
+   }
+
+   method getAdditionalBlobData {
+     type jsonb;
+   }
+}
+
+json client {
+  attribute id {
+  type String;
+  }
+
+  attribute code {
+  type String;
+  }
+}
+
+json clientRelatedEntityData {
+  attribute code{
+  type String;
+  }
+
+  attribute client.code {
+  type client;
+  }
+
+  attribute isShipper {
+  type boolean;
+  }
+
+  attribute isConsignee {
+  type boolean;
+  }
+  
+  attribute isCarrier {
+  type boolean;
+  }
+
+  attribute active {
+  type boolean;
+  }
+}

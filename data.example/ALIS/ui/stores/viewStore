@@ -1,0 +1,75 @@
+store viewStore {
+   type Store;
+   label "Глобальный стор представления приложения";
+   
+   attribute page_title {
+     type varchar(500);
+     is required;
+   }
+
+   attribute bread_crumbs {
+     type bread_crumbs_item[];
+     is required;
+   }
+
+   attribute alerts {
+     type alert[];
+     is required;
+   }
+
+   attribute is_menu_open {
+     type boolean;
+     is required;
+   }
+
+   attribute menu_params {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute global_filters {
+     type global_filters;
+     is required;
+   }
+
+   attribute decorative_themes {
+     type decorative_themes_model;
+     is required;
+   }
+
+   method setPageTitle {
+     type void;
+   }
+
+   method setBreadCrumbs {
+     type void;
+   }
+
+   method onBreadCrumbsSet {
+     type void;
+   }
+
+   method addAlert {
+     type void;
+   }
+
+   method deleteAlert {
+     type void;
+   }
+
+   method toggleMenu {
+     type void;
+   }
+
+   method setMenuParams {
+     type void;
+   }
+
+   method isThemeEnabled {
+     type boolean;
+   }
+
+   method setThemeEnabled {
+     type void;
+   }
+}

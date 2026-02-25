@@ -1,0 +1,39 @@
+ui counterAgentsTable {
+label "UI таблица c контрагентами";
+
+  attribute code {
+    type String(200);
+    is private;
+    map alis.client_roles.code;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is private;
+    map alis.client_roles.client_code;
+  }
+
+  attribute isShipper {
+    type boolean;
+    is private;
+    map alis.client_roles.is_shipper;
+  }
+
+  attribute isConsignee {
+    type boolean;
+    is private;
+    map alis.client_roles.is_consignee;
+  }
+
+  attribute isCarrier {
+    type boolean;
+    is private;
+    map alis.client_roles.is_carrier;
+  }
+
+  attribute active {
+    type boolean;
+    is public;
+    map alis.client_roles.active;
+  }
+}

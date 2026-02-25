@@ -1,0 +1,56 @@
+dto DTO.ContainerDto {
+  type Table;
+  label "DTO контейнера";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.Container.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.Container.code;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+    map ALIS.Container.active;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+    map ALIS.Container.weight;
+  }
+
+  attribute liftingCapacity {
+    type numeric;
+    is nullable;
+    map ALIS.Container.liftingCapacity;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is nullable;
+    map ALIS.Container.refrigerator;
+  }
+
+  attribute containerType {
+    type varchar(50);
+    is nullable;
+    map ALIS.Container.containerType;
+  }
+
+  method client {
+    type client;
+  }
+
+  method standardSize {
+    type standardSize;
+    map ALIS.Container.standardSize;
+  }
+}

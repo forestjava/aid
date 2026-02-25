@@ -1,0 +1,27 @@
+store paginationStore {
+   type Store;
+   label "Стор для пагинации";
+   
+   attribute page {
+     type integer;
+     is required;
+   }
+
+   attribute size {
+     type integer;
+     is required;
+   }
+
+   attribute total {
+     type integer;
+     is required;
+   }
+
+   method setUserPagination {
+     type void;
+   }
+
+   method setTotal {
+     type void;
+   }
+}

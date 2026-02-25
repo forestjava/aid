@@ -89,14 +89,14 @@ entity ALIS.ClientGood {
 
   // Вид партионного учета
   attribute batchAccountingType {
-    type BatchAccountingType;
+    type ALIS.BatchAccountingType;
     is private;
     map alis.client_good.batch_accounting_type;
   }
 
   // Вид серийного учета
   attribute serialAccountingType {
-    type SerialAccountingType;
+    type ALIS.SerialAccountingType;
     is private;
     map alis.client_good.serial_accounting_type;
   }

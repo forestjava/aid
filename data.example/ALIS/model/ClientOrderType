@@ -1,0 +1,8 @@
+enum ALIS.ClientOrderType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/clientordertype/ClientOrderType.java";
+
+  value RECEIVING { label "Поставка"; }
+  value SHIPMENT { label "Вывоз"; }
+  value OPERATION { label "Операция"; }
+
+}

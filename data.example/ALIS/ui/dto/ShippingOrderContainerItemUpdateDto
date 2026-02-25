@@ -1,0 +1,47 @@
+dto DTO.ShippingOrderContainerItemUpdateDto {
+  type Table;
+  label "Элемент контейнера заказа на отгрузку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute wightGross {
+    type numeric;
+    is required;
+  }
+
+  attribute wightNet {
+    type numeric;
+    is nullable;
+  }
+
+  attribute quantityPlace {
+    type numeric;
+    is nullable;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method shippingOrderContainer {
+    type id;
+  }
+
+  method etsngCode {
+    type id;
+  }
+}

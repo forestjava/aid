@@ -1,0 +1,126 @@
+store clientVehicleStore {
+   type Store;
+   label "Стор транспортных средств клиента";
+   
+   attribute state {
+     type store_state;
+     is required;
+   }
+
+   attribute data {
+     type clientVehicleData[];
+     is required;
+   }
+
+   attribute pagination {
+     type pagination;
+     is required;
+   }
+
+   attribute sorting {
+     type sorting;
+     is required;
+   }
+
+   attribute current {
+     type full_client_vehicle;
+     is nullable;
+   }
+
+   attribute previous_filters {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute suffix_url {
+     type varchar(200);
+     is nullable;
+   }
+
+   method getById {
+     type model;
+   }
+
+   method fetch {
+     type void;
+   }
+
+   method fetchWithUrlQuery {
+     type void;
+   }
+
+   method update {
+     type model;
+   }
+
+   method create {
+     type model;
+   }
+
+   method remove {
+     type void;
+   }
+
+   method setCurrent {
+     type void;
+   }
+
+   method paginationChanged {
+     type void;
+   }
+
+   method sortingChanged {
+     type void;
+   }
+
+   method getClientVehiclesData {
+     type blob;
+   }
+
+   method getAdditionalBlobData {
+     type jsonb;
+   }
+}
+
+json client {
+  attribute id;
+  attribute code;
+}
+
+json vehicleType {
+  attribute id;
+  attribute code;
+}
+
+json loadingType {
+  attribute id;
+  attribute code;
+}
+
+json clientVehicleData {
+  attribute code{
+  type String;
+  map DTO.ClientVehicleDto.code;
+  }
+
+  attribute client.code {
+  type client;
+  map DTO.ClientVehicleDto.client;
+  }
+  
+  attribute vehicleType.code {
+  type vehicleType;
+  map DTO.ClientVehicleDto.vehicleType;
+  }
+
+  attribute refrigerator {
+  type boolean;
+  map DTO.ClientVehicleDto.refrigerator;
+  }
+
+  attribute loadingType.code {
+  type loadingType;
+  map DTO.ClientVehicleDto.loadingType;
+  }
+
+}

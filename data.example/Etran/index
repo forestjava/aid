@@ -6,10 +6,39 @@
 scheme ETRAN.external {
   only external;
   
-  import ./db;
-  import ./model;
-  import ./datareon;
-  import ./dto;
+  import ALIS/db/waybill;
+  import ALIS/db/waybill_container;
+  import ALIS/db/waybill_product;
+  import ALIS/db/waybill_railway_carriage;
+  import ALIS/db/waybill_special_mark;
+  import ALIS/db/waybill_tariff_mark;
+  import ALIS/db/waybill_zpu;
+
+  import ALIS/model/Waybill;
+  import ALIS/model/WaybillContainer;
+  import ALIS/model/WaybillProduct;
+  import ALIS/model/WaybillRailwayCarriage;
+  import ALIS/model/WaybillSpecialMark;
+  import ALIS/model/WaybillTariffMark;
+  import ALIS/model/WaybillZpu;
+  
+  import ALIS/datareon.new;
+  
+  // Импорт измененных DTO
+  import ALIS/dto/Container;
+  import ALIS/dto/EtsngCode;
+  import ALIS/dto/RailwayStation;
+  import ALIS/dto/RailwayCarriage;
+  import ALIS/dto/Zpu;
+
+  // Импорт Response DTO
+  import ALIS/dto/Waybill;
+  import ALIS/dto/WaybillProduct;
+  import ALIS/dto/WaybillRailwayCarriage;
+  import ALIS/dto/WaybillContainer;
+  import ALIS/dto/WaybillSpecialMark;
+  import ALIS/dto/WaybillTariffMark;
+  import ALIS/dto/Zpu;
 
   // ранее существующие используемые модели 
   import ALIS/model/RailwayStation;
@@ -24,5 +53,5 @@ scheme ETRAN.external {
   import ALIS/db/container;  
 
   // схема из 1С
-  import ./GU28;
+  import ./ОдинЭс/акс_Накладная;
 }  

@@ -1,0 +1,77 @@
+dto DTO.TermOfServiceDto {
+  type Table;
+  label "Условие услуги";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute validFrom {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute validTo {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute indefinitely {
+    type boolean;
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+  }
+
+  method client {
+    type client;
+  }
+
+  method contract {
+    type contract;
+  }
+
+  method currency {
+    type currency;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,96 @@
+dto DTO.ClientDriverDto {
+  type Table;
+  label "Водитель клиента";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.ClientDriver.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.ClientDriver.code;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+    map ALIS.ClientDriver.active;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientDriver.phoneNumber;
+  }
+
+  attribute passportNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientDriver.passportNumber;
+  }
+
+  attribute passportIssuedBy {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientDriver.passportIssuedBy;
+  }
+
+  attribute passportIssuedDate {
+    type timestamp;
+    is nullable;
+    map ALIS.ClientDriver.passportIssuedDate;
+  }
+
+  attribute drivingLicenseNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientDriver.drivingLicenseNumber;
+  }
+
+  attribute drivingLicenseIssuedDate {
+    type timestamp;
+    is nullable;
+    map ALIS.ClientDriver.drivingLicenseIssuedDate;
+  }
+
+  attribute poaNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientDriver.POANumber;
+  }
+
+  attribute poaValidTo {
+    type timestamp;
+    is nullable;
+    map ALIS.ClientDriver.POAValidTo;
+  }
+
+  method client {
+    type client;
+    map ALIS.ClientDriver.client;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

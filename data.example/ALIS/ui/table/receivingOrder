@@ -1,0 +1,57 @@
+ui receivingOrderTable {
+label "Заявки на поставку";
+
+  attribute number {
+    type Integer;
+    is private;
+    map receivingOrderData.number;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is private;
+    map client.code;
+  }
+
+  attribute planReceivingDateTime {
+    type DateTime;
+    is private;
+    map receivingOrderData.planReceivingDateTime;
+  }
+
+  attribute terminalArea {
+    type Enum;
+    is private;
+    map receivingOrderData.terminalArea;
+  }
+
+  attribute transportType {
+    type Enum;
+    is private;
+    map receivingOrderData.transportType;
+  }
+
+  attribute createdAt {
+    type DateTime;
+    is private;
+    map receivingOrderData.createdAt;
+  }
+
+  attribute routeCode {
+    type String(200);
+    is private;
+    map route.code;
+  }
+
+  attribute orderStatus {
+    type Enum;
+    is private;
+    map receivingOrderData.orderStatus;
+  }
+
+  attribute documentConfirmed {
+    type boolean;
+    is private;
+    map receivingOrderData.documentConfirmed;
+  }
+}

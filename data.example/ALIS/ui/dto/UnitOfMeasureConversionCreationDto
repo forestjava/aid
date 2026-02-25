@@ -1,0 +1,22 @@
+dto DTO.UnitOfMeasureConversionCreationDto {
+  type Table;
+  label "DTO создания конвертации единицы измерения";
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute conversionRate {
+    type numeric;
+    is required;
+  }
+
+  method fromUnitOfMeasure {
+    type id;
+  }
+
+  method toUnitOfMeasure {
+    type id;
+  }
+}

@@ -1,0 +1,48 @@
+dto DTO.GoodPackageBarcodeExcelCreationDto {
+  type Table;
+  label "Штрихкод упаковки товара Excel создание";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is required;
+  }
+
+  attribute item {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute error {
+    type varchar(500);
+    is nullable;
+  }
+
+  method goodPackage {
+    type id;
+  }
+
+  method clientGood {
+    type id;
+  }
+}

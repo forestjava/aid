@@ -1,0 +1,47 @@
+dto DTO.ReceivingOrderContainerItemUpdateDto {
+  type Table;
+  label "Элемент контейнера заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute wightGross {
+    type numeric;
+    is required;
+  }
+
+  attribute wightNet {
+    type numeric;
+    is nullable;
+  }
+
+  attribute quantityPlace {
+    type numeric;
+    is nullable;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method receivingOrderContainer {
+    type id;
+  }
+
+  method etsngCode {
+    type id;
+  }
+}

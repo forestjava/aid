@@ -1,0 +1,30 @@
+dto DTO.TermOfRequestedServiceShortDto {
+  type Table;
+  label "Условие запрашиваемой услуги краткое";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute rate {
+    type numeric;
+    is nullable;
+  }
+
+  attribute serviceOfMeasure {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute calculationMethod {
+    type varchar(50);
+    is nullable;
+  }
+}

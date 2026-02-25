@@ -1,0 +1,34 @@
+store storeState {
+   type Store;
+   label "Состояние стора";
+   
+   attribute is_initialized {
+     type boolean;
+     is required;
+   }
+
+   attribute is_fetching {
+     type boolean;
+     is required;
+   }
+
+   attribute is_updating {
+     type boolean;
+     is required;
+   }
+
+   attribute is_deleting {
+     type boolean;
+     is required;
+   }
+
+   attribute is_creating {
+     type boolean;
+     is required;
+   }
+
+   attribute is_error {
+     type boolean;
+     is required;
+   }
+}

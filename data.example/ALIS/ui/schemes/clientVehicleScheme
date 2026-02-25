@@ -1,0 +1,11 @@
+scheme ClientVehicleScheme {
+  import ALIS/model/ClientVehicle;
+  
+  import ALIS/db/client_vehicle;
+
+  import ../dto/ClientVehicleDto;
+
+  import ../table/clientVehicleTable;
+
+  import ../stores/clientVehicleStore;
+}

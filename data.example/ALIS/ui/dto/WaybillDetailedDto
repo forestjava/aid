@@ -1,0 +1,170 @@
+dto DTO.WaybillDetailedDto {
+  type Table;
+  label "Накладная детальная";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute status {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute number {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute waybillIdentifier {
+    type integer;
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shipmentType {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shipmentSpeed {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute formType {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute deliveryDeadline {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute shipperName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shipperAddress {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shipperTgnl {
+    type integer;
+    is nullable;
+  }
+
+  attribute shipperOkpo {
+    type integer;
+    is nullable;
+  }
+
+  attribute payer {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute paymentForm {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute railwayCarriageOwnershipType {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute responsiblePerson {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute waybillCreatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute submittedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute acceptedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute cargoAcceptedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute departureAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute consigneeName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute consigneeAddress {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute consigneeTgnl {
+    type integer;
+    is nullable;
+  }
+
+  attribute consigneeOkpo {
+    type integer;
+    is nullable;
+  }
+
+  attribute payerCode {
+    type integer;
+    is nullable;
+  }
+
+  attribute paymentPlace {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute plannedRailwayCarriages {
+    type integer;
+    is nullable;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

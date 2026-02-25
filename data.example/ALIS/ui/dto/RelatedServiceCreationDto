@@ -1,0 +1,12 @@
+dto DTO.RelatedServiceCreationDto {
+  type Interface;
+  label "Связанная услуга создание";
+
+  method service {
+    type id;
+  }
+
+  method relatedServices {
+    type id[];
+  }
+}

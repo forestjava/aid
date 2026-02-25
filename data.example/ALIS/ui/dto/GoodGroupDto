@@ -1,0 +1,59 @@
+dto DTO.GoodGroupDto {
+  type Table;
+  label "Группа товаров";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute parentId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  method children {
+    type goodGroup[];
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

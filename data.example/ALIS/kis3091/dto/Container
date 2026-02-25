@@ -1,0 +1,54 @@
+// Крупнотоннажный контейнер (КТК)
+dto JSON.Container {
+  label "Справочник. Контейнеры";
+
+  attribute id {
+    type UUID;
+    map ALIS.Container.id;
+    key primary;
+  }
+
+  // Номер контейнера
+  attribute code {
+    type String;
+    map ALIS.Container.code;
+    key primary;
+  }
+
+  // Активность
+  attribute active {
+    type Boolean;
+    map ALIS.Container.active;
+  }
+
+  // Тип КТК
+  attribute containerType {
+    type String;
+    map ALIS.Container.containerType;
+  }
+
+  // Масса тары (тн.)
+  attribute weight {
+    type BigDecimal;
+    map ALIS.Container.weight;
+  }
+
+  // Рефрижератор
+  attribute refrigerator {
+    type Boolean;
+    map ALIS.Container.refrigerator;
+  }
+
+  // Грузоподъемность (тн.)
+  attribute liftingCapacity {
+    type BigDecimal;
+    map ALIS.Container.liftingCapacity;
+  }
+
+  // Размер КТК
+  attribute standardSizeId {
+    type UUID;
+    is nullable;
+    map ALIS.Container.standardSize;
+  }
+}

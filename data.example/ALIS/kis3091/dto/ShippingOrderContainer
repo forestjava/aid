@@ -1,0 +1,119 @@
+// КТК заявки на вывоз
+dto JSON.ShippingOrderContainer {
+  label "Табличная часть. Контейнеры вагона";
+
+  attribute id {
+    type UUID;
+    map ALIS.ShippingOrderContainer.id;
+  }
+
+  // Заявка на вывоз
+  attribute shippingOrderId {
+    type UUID;
+    map ALIS.ShippingOrderContainer.shippingOrder;
+  }
+
+  // Контейнер
+  attribute containerId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.container;
+    sync JSON.Container.id;
+  }
+
+  // Вагон заявки
+  attribute shippingOrderRailwayCarriageId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.shippingOrderRailwayCarriage;
+    sync JSON.ShippingOrderRailwayCarriage.id;
+  }
+
+  // Тип пломбы
+  attribute sealTypeId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.sealType;
+  }
+
+  // Класс опасности
+  attribute dangerClassId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.dangerClass;
+  }
+
+  // Порожний
+  attribute empty {
+    type Boolean;
+    map ALIS.ShippingOrderContainer.empty;
+  }
+
+  // Вес
+  attribute weight {
+    type BigDecimal;
+    is nullable;
+    map ALIS.ShippingOrderContainer.weight;
+  }
+
+  // Таможенная очистка
+  attribute customsClearance {
+    type Boolean;
+    map ALIS.ShippingOrderContainer.customsClearance;
+  }
+
+  // Фактическое количество
+  attribute actualQuantity {
+    type BigDecimal;
+    is nullable;
+    map ALIS.ShippingOrderContainer.actualQuantity;
+  }
+
+  // Статус задания
+  attribute status {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrderContainer.status;
+  }
+
+  // Случайная выборка
+  attribute random {
+    type Boolean;
+    map ALIS.ShippingOrderContainer.random;
+  }
+
+  // Дата/время Круглое Поле
+  attribute dataTimeKrugloyePole {
+    type Instant;
+    is nullable;
+    map ALIS.ShippingOrderContainer.dataTimeKrugloyePole;
+  }
+
+  // Заказчик услуг
+  attribute customerServiceId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.customerService;
+  }
+
+  // Владелец вагона
+  attribute ownerRailwayCarriageId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.ownerRailwayCarriage;
+  }
+
+  // Владелец контейнера
+  attribute ownerContainerId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderContainer.ownerContainer;
+  }
+
+  // Номер КТК неизвестен
+  attribute ktkNumberUnknown {
+    type Boolean;
+    is nullable;
+    map ALIS.ShippingOrderContainer.ktkNumberUnknown;
+  }
+}

@@ -1,0 +1,19 @@
+dto DTO.ReceivingOrderEtranInvoiceShortDto {
+  type Table;
+  label "ЭТРАН накладная заказа на приемку краткая";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  method receivingOrder {
+    type receivingOrder;
+  }
+}

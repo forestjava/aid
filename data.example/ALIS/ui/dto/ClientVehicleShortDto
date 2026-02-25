@@ -1,0 +1,60 @@
+dto DTO.ClientVehicleShortDto {
+  type Table;
+  label "Транспорт клиента краткий";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute trailerNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute insuranceNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute withTrailer {
+    type boolean;
+    is nullable;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

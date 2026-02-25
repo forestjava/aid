@@ -1,0 +1,87 @@
+dto DTO.ClientGoodShortDto {
+  type Table;
+  label "Товар клиента краткий";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute item {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute codeKis {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shelfLife {
+    type numeric;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute isVariable {
+    type boolean;
+    is nullable;
+  }
+
+  attribute batchAccountingType {
+    type varchar(50);
+    is nullable;
+  }
+
+  method unitOfMeasure {
+    type unitOfMeasure;
+  }
+
+  method dangerClass {
+    type dangerClass;
+  }
+
+  method tempRegime {
+    type tempRegime;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

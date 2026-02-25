@@ -1,0 +1,315 @@
+
+annotation {
+Интеграция  Batch 1C <-> ШИНА <-> ALIS
+Создано из Монолита 1С. версия интеграции 1
+Интеграция позволяет обмениваться данными между системами   И ALIS_Scheme
+через шину данных  .
+В информационной системе - отправителе Формируется пакет обмена формата JSON и отправляется в шину и, в последующем, в информационную систему - получатель.
+Статус каждого пакета отслеживается с помощью встроенных средств в шине данных, а также информационных системах.
+}
+
+entity DatareonBatch{
+type JSON;
+rank 2;
+label "Batch";
+
+ attribute GUID {
+ type UUID;
+ is required; 
+}
+
+ attribute number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute barcode {
+ type varchar(150);
+ is required; 
+}
+
+ attribute issueDate {
+ type timestamp;
+ is required; 
+}
+
+ attribute expirationDate {
+ type timestamp;
+ is required; 
+}
+
+ attribute active {
+ type boolean;
+ is required; 
+}
+
+ attribute syncId {
+ type varchar(150);
+ is required; 
+}
+
+ attribute type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute item {
+ type varchar(150);
+ is required; 
+}
+
+ attribute client {
+ type varchar(150);
+ is required; 
+}
+}
+
+entity Справочник.усПартииНоменклатуры{
+type Таблица;
+rank 1;
+label "WMS Справочник.усПартииНоменклатуры";
+
+ attribute Ссылка {
+ type Партия;
+ sync DatareonBatch.GUID;
+}
+
+ attribute Наименование {
+ type Строка;
+ sync DatareonBatch.number;
+}
+
+ attribute Код {
+ type Строка;
+ sync DatareonBatch.barcode;
+}
+
+ attribute ДатаПроизводства {
+ type Дата;
+ sync DatareonBatch.issueDate;
+}
+
+ attribute СрокГодности {
+ type Дата;
+ sync DatareonBatch.expirationDate;
+}
+
+ attribute ПометкаУдаления {
+ type Булево;
+ sync DatareonBatch.active;
+}
+
+ attribute Идентификатор {
+ type Строка;
+ sync DatareonBatch.syncId;
+}
+
+ attribute ТипПартионногоУчета {
+ type Строка;
+ sync DatareonBatch.type;
+}
+
+ attribute Идентификатор {
+ type Строка;
+ sync DatareonBatch.item;
+}
+
+ attribute Идентификатор {
+ type Строка;
+ sync DatareonBatch.client;
+}
+
+ attribute ИмяПредопределенныхДанных {
+ type Строка;
+}
+
+ attribute Предопределенный {
+ type Булево;
+}
+
+ attribute Владелец {
+ type Номенклатура;
+}
+
+ attribute ДатаПартии {
+ type Дата;
+}
+
+ attribute СтатусПартии {
+ type Статусыпартий;
+}
+
+ attribute НомерДокументаПоступления {
+ type Строка;
+}
+
+ attribute Поклажедатель {
+ type Контрагент;
+}
+
+ attribute НомерГТД {
+ type Строка;
+}
+
+ attribute НомерСертификата {
+ type Строка;
+}
+
+ attribute ПринятаСНарушениемСрокаГодности {
+ type Булево;
+}
+
+ attribute ПринятаСНарушениемПартионности {
+ type Булево;
+}
+
+ attribute АкцизнаяМаркаСтарогоОбразца {
+ type Булево;
+}
+
+ attribute Бонус {
+ type Булево;
+}
+
+ attribute ВестиУчетПоКодамЦМТ {
+ type Булево;
+}
+
+ attribute ДополнительныеРеквизиты.Свойство {
+ type Дополнительныйреквиз;
+}
+
+ attribute ДополнительныеРеквизиты.Значение {
+ type Дополнительноезначен;
+}
+
+ attribute ДополнительныеРеквизиты.ТекстоваяСтрока {
+ type Строка;
+}
+
+ attribute ДополнительныеРеквизиты {
+ type ТабличнаяЧасть;
+}
+
+ attribute ТипОбъекта {
+ type Строка;
+}
+
+ attribute ИдентификаторВладельца {
+ type Строка;
+}
+
+ attribute ДатаИзменения {
+ type Дата;
+}
+
+ attribute Ответственный {
+ type Строка;
+}
+
+ attribute Поклажедатель {
+ type Контрагент;
+}
+
+ attribute ТипСерийногоУчета {
+ type Строка;
+}
+
+ attribute МодельУчетаНоменклатуры {
+ type Модельучетаноменклат;
+}
+
+ attribute ТипОбъекта {
+ type Строка;
+}
+
+ attribute ИдентификаторВладельца {
+ type Строка;
+}
+
+ attribute ДатаИзменения {
+ type Дата;
+}
+
+ attribute Ответственный {
+ type Строка;
+}
+
+ attribute ТипОбъекта {
+ type Строка;
+}
+
+ attribute ИдентификаторВладельца {
+ type Строка;
+}
+
+ attribute ДатаИзменения {
+ type Дата;
+}
+
+ attribute Ответственный {
+ type Строка;
+}
+}
+
+entity ALIS_Batch{
+type Table;
+rank 3;
+label "Batch";
+
+ attribute code {
+ type Строка;
+ sync DatareonBatch.number;
+}
+
+ attribute batch_barcode {
+ type Строка;
+ sync DatareonBatch.barcode;
+}
+
+ attribute manufacture_date {
+ type Дата;
+ sync DatareonBatch.issueDate;
+}
+
+ attribute active {
+ type Булево;
+ sync DatareonBatch.active;
+}
+
+ attribute id {
+ type Строка;
+ sync DatareonBatch.syncId;
+}
+
+ attribute batch_accounting_type {
+ type Строка;
+ sync DatareonBatch.type;
+}
+
+ attribute client {
+ type Строка;
+ sync DatareonBatch.client;
+}
+
+ attribute sync_id {
+}
+
+ attribute party_date {
+}
+
+ attribute client_good {
+}
+
+ attribute created_at {
+}
+
+ attribute updated_at {
+}
+
+ attribute created_by {
+}
+
+ attribute update_by {
+}
+}

@@ -1,0 +1,189 @@
+// Заявка на вывоз
+dto JSON.ShippingOrder {
+  label "Документ. Заявка";
+
+  attribute id {
+    type UUID;
+    map ALIS.ShippingOrder.id;
+  }
+
+  // Номер заявки
+  attribute number {
+    type Long;
+    map ALIS.ShippingOrder.number;
+  }
+
+  // Статус заявки
+  attribute orderStatus {
+    type String;
+    map ALIS.ShippingOrder.orderStatus;
+  }
+
+  // Клиент
+  attribute clientId {
+    type UUID;
+    map ALIS.ShippingOrder.client;
+  }
+
+  // Договор
+  attribute contractId {
+    type UUID;
+    map ALIS.ShippingOrder.contract;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type String;
+    map ALIS.ShippingOrder.terminalArea;
+  }
+
+  // Тип транспорта
+  attribute transportType {
+    type String;
+    map ALIS.ShippingOrder.transportType;
+  }
+
+  // Плановое время отгрузки
+  attribute plannedShippingDateTime {
+    type Instant;
+    is nullable;
+    map ALIS.ShippingOrder.plannedShippingDateTime;
+  }
+
+  // Фактическое время отгрузки
+  attribute actualShippingDateTime {
+    type Instant;
+    is nullable;
+    map ALIS.ShippingOrder.actualShippingDateTime;
+  }
+
+  // Валюта
+  attribute currencyId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrder.currency;
+  }
+
+  // Контактное имя
+  attribute contactName {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.contactName;
+  }
+
+  // Контактный телефон
+  attribute contactPhone {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.contactPhone;
+  }
+
+  // Контактный email
+  attribute contactEmail {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.contactEmail;
+  }
+
+  // Комментарий
+  attribute comment {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.comment;
+  }
+
+  // Общее кол-во уникальных артикулов
+  attribute totalSKUQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalSKUQuantity;
+  }
+
+  // Общий вес
+  attribute totalWeight {
+    type BigDecimal;
+    map ALIS.ShippingOrder.totalWeight;
+  }
+
+  // Общее кол-во грузовых мест
+  attribute totalCargoQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalCargoQuantity;
+  }
+
+  // Общее кол-во паллет
+  attribute totalPalletQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalPalletQuantity;
+  }
+
+  // Общее кол-во не-паллет
+  attribute totalNotPalletQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalNotPalletQuantity;
+  }
+
+  // Общая стоимость товаров
+  attribute totalGoodsPrice {
+    type BigDecimal;
+    map ALIS.ShippingOrder.totalGoodsPrice;
+  }
+
+  // Общее кол-во доп. операций
+  attribute totalRequestedServiceQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalRequestedServiceQuantity;
+  }
+
+  // Общая стоимость доп. операций
+  attribute totalRequestedServicePrice {
+    type BigDecimal;
+    map ALIS.ShippingOrder.totalRequestedServicePrice;
+  }
+
+  // Общее кол-во контейнеров
+  attribute totalContainerQuantity {
+    type Long;
+    map ALIS.ShippingOrder.totalContainerQuantity;
+  }
+
+  // Вид вывоза
+  attribute deliveryType {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.deliveryType;
+  }
+
+  // Рейс
+  attribute routeId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrder.route;
+    map JSON.Route.id;
+  }
+
+  // Необходимость транспорта
+  attribute needTransport {
+    type Boolean;
+    map ALIS.ShippingOrder.needTransport;
+  }
+
+  // Адрес грузополучателя
+  attribute consigneeAddress {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrder.consigneeAddress;
+  }
+
+  // Грузополучатель
+  attribute shipperId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrder.shipper;
+  }
+
+  // Номер КТК неизвестен
+  attribute ktkNumberUnknown {
+    type Boolean;
+    map ALIS.ShippingOrder.ktkNumberUnknown;
+  }
+}

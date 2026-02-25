@@ -1,0 +1,20 @@
+dto DTO.ClientShortDto {
+  type Table;
+  label "Клиент краткий";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute inn {
+    type varchar(500);
+    is nullable;
+  }
+}

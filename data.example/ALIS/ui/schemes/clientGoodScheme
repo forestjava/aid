@@ -1,0 +1,11 @@
+scheme ClientGoodScheme {
+  import ALIS/model/ClientGood;
+  
+  import ALIS/db/client_good;
+
+  import ../dto/ClientGoodDto;
+
+  import ../table/clientGoodsTable;
+
+  import ../stores/clientGoodStore;
+}

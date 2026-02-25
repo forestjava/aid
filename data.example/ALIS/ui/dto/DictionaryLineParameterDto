@@ -1,0 +1,23 @@
+dto DTO.DictionaryLineParameterDto {
+  type Table;
+  label "DTO параметра строки справочника";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute parameterValue {
+    type varchar(500);
+    is nullable;
+  }
+
+  method dictionaryLine {
+    type id;
+  }
+
+  method dictionaryParameter {
+    type dictionaryParameter;
+  }
+}

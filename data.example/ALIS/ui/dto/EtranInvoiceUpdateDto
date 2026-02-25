@@ -1,0 +1,59 @@
+dto DTO.EtranInvoiceUpdateDto {
+  type Table;
+  label "ЭТРАН накладная обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute code {
+    type varchar(100);
+    is required;
+  }
+
+  attribute createdInEtran {
+    type boolean;
+    is nullable;
+  }
+
+  attribute isForReceivingOrder {
+    type boolean;
+    is required;
+  }
+
+  attribute transportationType {
+    type varchar(50);
+    is required;
+  }
+
+  method client {
+    type id;
+  }
+
+  method shipper {
+    type id;
+  }
+
+  method departureStation {
+    type id;
+  }
+
+  method destinationStation {
+    type id;
+  }
+
+  method consigneeCompany {
+    type id;
+  }
+
+  method consigneeClient {
+    type id;
+  }
+}

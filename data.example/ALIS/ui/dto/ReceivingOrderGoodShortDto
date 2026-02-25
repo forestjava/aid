@@ -1,0 +1,23 @@
+dto DTO.ReceivingOrderGoodShortDto {
+  type Table;
+  label "Товар заказа на приемку краткий";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  method clientGood {
+    type clientGood;
+  }
+
+  method batch {
+    type batch;
+  }
+}

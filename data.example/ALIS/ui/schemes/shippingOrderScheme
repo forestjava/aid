@@ -1,0 +1,12 @@
+scheme ShippingOrderScheme {
+
+  import ALIS/model/ShippingOrder;
+  
+  import ALIS/db/shipping_order;
+
+  import ../dto/ShippingOrderDto;
+
+  import ../table/shippingOrder;
+
+  import ../stores/shippingOrderStore;
+}

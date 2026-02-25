@@ -1,0 +1,24 @@
+dto DTO.BaseUnitOfMeasureCreationDto {
+  type Table;
+  label "Базовый DTO создания единицы измерения";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute unitOfMeasureType {
+    type varchar(50);
+    is required;
+  }
+}

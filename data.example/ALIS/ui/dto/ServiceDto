@@ -1,0 +1,109 @@
+dto DTO.ServiceDto {
+  type Table;
+  label "Услуга";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.Service.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.Service.code;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.Service.active;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+    map ALIS.Service.name;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+    map ALIS.Service.syncId;
+  }
+
+  attribute instruction {
+    type text;
+    is nullable;
+    map ALIS.Service.instruction;
+  }
+
+  attribute operation {
+    type boolean;
+    is nullable;
+    map ALIS.Service.operation;
+  }
+
+  attribute dependent {
+    type boolean;
+    is nullable;
+    map ALIS.Service.dependent;
+  }
+
+  attribute deleted {
+    type boolean;
+    is nullable;
+    map ALIS.Service.deleted;
+  }
+
+  attribute keeping {
+    type boolean;
+    is nullable;
+    map ALIS.Service.keeping;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+    map ALIS.Service.terminalArea;
+  }
+
+  attribute serviceOfMeasure {
+    type varchar(50);
+    is nullable;
+    map ALIS.Service.serviceOfMeasure;
+  }
+
+  attribute accrualMethod {
+    type varchar(50);
+    is nullable;
+    map ALIS.Service.accrualMethod;
+  }
+
+  attribute accrualBase {
+    type varchar(50);
+    is nullable;
+    map ALIS.Service.accrualBase;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

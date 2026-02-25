@@ -1,0 +1,26 @@
+entity Datareon.Waybill {
+  type JSON;
+  label "Накладная ЭТРАН";
+
+  // Идентификатор накладной
+  attribute id {
+    type uuid;
+    key primary;
+  }
+
+  // Тип накладной
+  attribute waybillType {
+    type varchar(100);
+    is nullable;
+    sync ALIS.waybill.waybill_type;
+    sync WMS.Документы.Этран.Тип;
+  }
+
+}
+
+set demo {
+
+  inort  ALIS.waybill;
+  immport  ALIS.waybill.waybill;
+
+}

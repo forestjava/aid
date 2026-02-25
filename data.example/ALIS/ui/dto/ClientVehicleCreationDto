@@ -1,0 +1,60 @@
+dto DTO.ClientVehicleCreationDto {
+  type Table;
+  label "Транспорт клиента создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is required;
+  }
+
+  attribute withTrailer {
+    type boolean;
+    is required;
+  }
+
+  attribute trailerNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute insuranceNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute typeOwnershipTransport {
+    type varchar(50);
+    is required;
+  }
+
+  method client {
+    type client;
+  }
+
+  method vehicleBrand {
+    type vehicleBrand;
+  }
+
+  method vehicleType {
+    type vehicleType;
+  }
+
+  method loadingType {
+    type loadingType;
+  }
+}

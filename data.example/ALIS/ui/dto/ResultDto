@@ -1,0 +1,9 @@
+dto DTO.ResultDto {
+  type Table;
+  label "DTO результата";
+
+  attribute success {
+    type boolean;
+    is required;
+  }
+}

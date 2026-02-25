@@ -1,0 +1,11 @@
+scheme ServicesScheme {
+  import ALIS/model/Service;
+  
+  import ALIS/db/service;
+
+  import ../dto/ServiceDto;
+
+  import ../table/services;
+
+  import ../stores/serviceStore;
+}

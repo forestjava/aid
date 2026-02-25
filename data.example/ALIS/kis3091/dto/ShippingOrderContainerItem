@@ -1,0 +1,63 @@
+// Груз в КТК заявки на вывоз
+dto JSON.ShippingOrderContainerItem {
+  label "Табличная часть. Груз в контейнере";
+
+  attribute id {
+    type UUID;
+    map ALIS.ShippingOrderContainerItem.id;
+  }
+
+  // Заявка на вывоз
+  attribute shippingOrderId {
+    type UUID;
+    map ALIS.ShippingOrderContainerItem.shippingOrder;
+  }
+
+  // КТК заявки
+  attribute shippingOrderContainerId {
+    type UUID;
+    map ALIS.ShippingOrderContainerItem.shippingOrderContainer;
+    sync JSON.ShippingOrderContainer.id;
+  }
+
+  // Код ЕТСНГ
+  attribute etsngCodeId {
+    type UUID;
+    map ALIS.ShippingOrderContainerItem.etsngCode;
+    sync JSON.EtsngCode.id;
+  }
+
+  // Описание груза
+  attribute description {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrderContainerItem.description;
+  }
+
+  // Стоимость
+  attribute price {
+    type BigDecimal;
+    is nullable;
+    map ALIS.ShippingOrderContainerItem.price;
+  }
+
+  // Вес брутто
+  attribute wightGross {
+    type BigDecimal;
+    map ALIS.ShippingOrderContainerItem.wightGross;
+  }
+
+  // Вес нетто
+  attribute wightNet {
+    type BigDecimal;
+    is nullable;
+    map ALIS.ShippingOrderContainerItem.wightNet;
+  }
+
+  // Количество мест
+  attribute quantityPlace {
+    type BigDecimal;
+    is nullable;
+    map ALIS.ShippingOrderContainerItem.quantityPlace;
+  }
+}

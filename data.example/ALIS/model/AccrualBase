@@ -1,0 +1,7 @@
+enum ALIS.AccrualBase {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/accrualbase/AccrualBase.java";
+
+  value QUANTITY { label "Количество"; }
+  value VOLUME { label "Объём"; }
+
+}

@@ -1,0 +1,7 @@
+enum ALIS.ContractType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/contracttype/ContractType.java";
+
+  value TOE;
+  value OX;
+
+}

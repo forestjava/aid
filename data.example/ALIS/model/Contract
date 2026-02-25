@@ -75,7 +75,7 @@ entity ALIS.Contract {
 
   // Тип договора
   attribute contractType {
-    type ContractType;
+    type ALIS.ContractType;
     is private;
     is nullable;
     map alis.contract.contract_type;

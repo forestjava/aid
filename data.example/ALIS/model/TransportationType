@@ -1,0 +1,13 @@
+// Вид отправки Накладной ЭТРАН
+enum ALIS.TransportationType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/etran/TransportationType.java";
+
+  value CONTAINER_TRAIN { label "Контейнерный поезд"; }
+  value CONTAINER_SHIPMENT { label "Контейнерная"; }
+  value WAGONLOAD { label "Повагонная"; }
+  value SMALL_SHIPMENT { label "Мелкая"; }
+  value GROUP_SHIPMENT { label "Групповая"; }
+  value BLOCK_SHIPMENT { label "Маршрутная"; }
+  value COMBINED_WAGONLOAD { label "Сборная повагонная"; }
+
+}

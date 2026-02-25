@@ -1,0 +1,19 @@
+dto DTO.GroupUserDto {
+  type Table;
+  label "Пользователь группы";
+
+  attribute id {
+    type UUID;
+    is nullable;
+  }
+
+  attribute username {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute fullName {
+    type varchar(500);
+    is nullable;
+  }
+}

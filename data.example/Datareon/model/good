@@ -1,0 +1,20 @@
+entity Dateron.ClientGoods {
+   type JSON;
+   label "Товары клиента";
+   
+   // Код товара клиента
+   attribute code {
+     type varchar(100);
+     sync ALIS.client_goods.code;
+     is required;
+   }
+
+   // Наименование
+   attribute name {
+     type varchar(255);
+     sync ALIS.client_goods.name;
+     is nullable;
+     
+   }
+
+}

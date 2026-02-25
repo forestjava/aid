@@ -1,0 +1,52 @@
+dto DTO.UserGroupDetailedDto {
+  type Table;
+  label "Группа пользователей детальная";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  method clients {
+    type idCode[];
+  }
+
+  method users {
+    type groupUser[];
+  }
+
+  method userRoles {
+    type userRole[];
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

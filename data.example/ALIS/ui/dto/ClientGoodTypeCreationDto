@@ -1,0 +1,38 @@
+dto DTO.ClientGoodTypeCreationDto {
+  type Table;
+  label "DTO создания типа товара клиента";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is required;
+  }
+
+  attribute clientSyncId {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute isVariable {
+    type boolean;
+    is required;
+  }
+
+  method client {
+    type id;
+  }
+}

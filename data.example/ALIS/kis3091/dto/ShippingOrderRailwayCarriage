@@ -1,0 +1,58 @@
+// Вагон заявки на вывоз
+dto JSON.ShippingOrderRailwayCarriage {
+  label "Табличная часть. Вагоны заявки";
+
+  attribute id {
+    type UUID;
+    map ALIS.ShippingOrderRailwayCarriage.id;
+  }
+
+  // Накладная Этран
+  attribute etranInvoiceId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderRailwayCarriage.etranInvoice;
+  }
+
+  // Вагон
+  attribute railwayCarriageId {
+    type UUID;
+    map ALIS.ShippingOrderRailwayCarriage.railwayCarriage;
+    sync JSON.RailwayCarriage.id;
+  }
+
+  // Заявка на вывоз
+  attribute shippingOrderId {
+    type UUID;
+    map ALIS.ShippingOrderRailwayCarriage.shippingOrder;
+    sync JSON.ShippingOrder.id;
+  }
+
+  // Статус задания
+  attribute status {
+    type String;
+    is nullable;
+    map ALIS.ShippingOrderRailwayCarriage.status;
+  }
+
+  // Дата/время Круглое Поле
+  attribute dataTimeKrugloyePole {
+    type Instant;
+    is nullable;
+    map ALIS.ShippingOrderRailwayCarriage.dataTimeKrugloyePole;
+  }
+
+  // Заказчик услуг
+  attribute customerServiceId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderRailwayCarriage.customerService;
+  }
+
+  // Владелец вагона
+  attribute ownerRailwayCarriageId {
+    type UUID;
+    is nullable;
+    map ALIS.ShippingOrderRailwayCarriage.ownerRailwayCarriage;
+  }
+}

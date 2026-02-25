@@ -1,0 +1,28 @@
+dto DTO.ShippingOrderGoodInCargoDto {
+  type Table;
+  label "DTO товара в грузе заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  method batch {
+    type batch;
+  }
+
+  method clientGood {
+    type clientGood;
+  }
+}

@@ -1,0 +1,30 @@
+dto DTO.ContractShortDto {
+  type Table;
+  label "DTO договора краткий";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute contractType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute contractDate {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute contractNumber {
+    type varchar(500);
+    is nullable;
+  }
+}

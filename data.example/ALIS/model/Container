@@ -24,7 +24,7 @@ entity ALIS.Container {
 
   // Тип КТК
   attribute containerType {
-    type ContainerType;
+    type ALIS.ContainerType;
     is private;
     map alis.container.container_type;
   }

@@ -1,0 +1,10 @@
+dto DTO.OutBoundConfigUpdateDto {
+  type Table;
+  label "Конфигурация исходящих данных обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+}

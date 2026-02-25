@@ -1,0 +1,18 @@
+dto DTO.ReceivingOrderRequestedServiceCreationDto {
+  type Table;
+  label "Запрашиваемая услуга заказа на приемку создание";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method termOfRequestedService {
+    type id;
+  }
+}

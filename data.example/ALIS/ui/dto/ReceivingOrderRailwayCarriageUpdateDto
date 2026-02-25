@@ -1,0 +1,40 @@
+dto DTO.ReceivingOrderRailwayCarriageUpdateDto {
+  type Table;
+  label "Железнодорожный вагон заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute dataTimeKrugloyePole {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute dateDepotRepair {
+    type timestamp;
+    is nullable;
+  }
+
+  method etranInvoice {
+    type id;
+  }
+
+  method railwayCarriage {
+    type id;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method customerService {
+    type customerService;
+  }
+
+  method ownerRailwayCarriage {
+    type ownerRailwayCarriage;
+  }
+}

@@ -1,0 +1,39 @@
+dto DTO.TransportPackageDto {
+  type Table;
+  label "Транспортная упаковка";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute barcode {
+    type varchar(500);
+    is nullable;
+  }
+
+  method unitOfMeasure {
+    type unitOfMeasure;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

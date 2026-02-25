@@ -1,0 +1,19 @@
+dto DTO.SealTypeCreationDto {
+  type Table;
+  label "Тип пломбы создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+}

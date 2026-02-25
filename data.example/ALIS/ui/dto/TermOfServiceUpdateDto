@@ -1,0 +1,49 @@
+dto DTO.TermOfServiceUpdateDto {
+  type Table;
+  label "Условие услуги обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute validFrom {
+    type timestamp;
+    is required;
+  }
+
+  attribute validTo {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute indefinitely {
+    type boolean;
+    is required;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is required;
+  }
+
+  method contract {
+    type id;
+  }
+}

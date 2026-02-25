@@ -1,9 +1,21 @@
 scheme ALIS.ETRAN {
-  import ./Waybill;
-  import ./WaybillContainer;
-  import ./WaybillProduct;
-  import ./WaybillRailwayCarriage;
-  import ./WaybillSpecialMark;
-  import ./WaybillTariffMark;
-  import ./WaybillZpu;
+  import ALIS/model/Waybill;
+  import ALIS/model/WaybillContainer;
+  import ALIS/model/WaybillProduct;
+  import ALIS/model/WaybillRailwayCarriage;
+  import ALIS/model/WaybillSpecialMark;
+  import ALIS/model/WaybillTariffMark;
+  import ALIS/model/WaybillZpu;
+
+  import ALIS/model/RailwayCarriage;
+  import ALIS/model/Container;
+
+  import ALIS/model/RailwayStation;
+  
+  
+  // аналог ALIS
+  //import ALIS/model/ReceivingOrder;
+  //import ALIS/model/ReceivingOrderRailwayCarriage;
+  //import ALIS/model/ReceivingOrderContainer;
+  //import ALIS/model/ReceivingOrderCargo;
 }

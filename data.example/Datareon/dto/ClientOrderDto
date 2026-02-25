@@ -1,0 +1,110 @@
+/*
+Привет!
+
+*/
+entity Datareon.client_order {
+    label "Заказ клиента";
+
+    // Номер заказа
+    attribute order_number {
+        type varchar(255);
+        sync alis.shipping_order.number {
+          using order_type "SHIPPING";
+          clone shipping;
+        }
+        sync alis.receiving_order.number {
+          using order_type "RECEIVING";
+          clone receiving;
+        }         
+    }
+
+    // Дата заказа
+    attribute order_date {
+        type varchar(50);
+        sync alis.shipping_order.created_at {
+          using order_type "SHIPPING"; 
+          clone shipping;
+        }
+        sync alis.receiving_order.created_at {
+          using order_type "RECEIVING";
+          clone receiving;
+        }    
+    }
+
+    // Тип заказа
+    attribute order_type {
+        type varchar(50);
+        value "SHIPPING";
+		value "RECEIVING";   
+    }
+
+    // Комментарий
+    attribute comment {
+        type varchar(512);
+        is nullable;
+    }
+
+    // Черный ящик
+    attribute is_black_box {
+        type boolean;
+        is required;
+    }
+
+    // Накладная (waybill)
+    attribute waybill {
+        type varchar(255);
+        sync alis.shipping_order.id {
+          using order_type "SHIPPING"; 
+          clone shipping;
+        }
+        sync alis.receiving_order.id {
+          using order_type "RECEIVING"; 
+          clone receiving;
+        }           
+    }
+
+    /*===============================================
+
+          НАВГАЦИОННЫЕ АТРИБУТЫ
+
+    ===============================================*/
+
+    // Клиент
+    attribute client {
+        type UUID;
+        sync shipping_order.client {
+          using order_type "SHIPPING"; 
+          clone shipping;
+        }
+        sync receiving_order.client {
+          using order_type "RECEIVING";
+          clone receiving;
+        }   
+    }
+
+    // Договор
+    attribute contract {
+        type UUID;
+        sync alis.shipping_order.contract {
+          using order_type "SHIPPING";
+          clone shipping;
+        }
+        sync alis.receiving_order.contract {
+          using order_type "RECEIVING"; 
+          clone receiving;
+        }  
+    }
+
+    /*===============================================
+
+             ТЕХНИЧЕСКИЕ АТРИБУТЫ
+
+    ===============================================*/
+
+    // Идентификатор заказа
+    attribute id {
+        type transport_manifest;
+        is required;
+        key primary;
+    }
+}

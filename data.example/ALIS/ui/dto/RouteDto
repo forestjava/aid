@@ -1,0 +1,98 @@
+dto DTO.RouteDto {
+  type Table;
+  label "Маршрут";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+    map ALIS.Route.id;
+  }
+
+  attribute number {
+    type integer;
+    is nullable;
+    map ALIS.Route.number;
+  }
+
+  attribute routeType {
+    type varchar(50);
+    is nullable;
+    map ALIS.Route.routeType;
+  }
+
+  attribute dataTime {
+    type timestamp;
+    is nullable;
+    map ALIS.Route.dataTime;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+    map ALIS.Route.comment;
+  }
+
+  attribute status {
+    type varchar(50);
+    is nullable;
+    map ALIS.Route.status;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+    map ALIS.Route.terminalArea;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is nullable;
+    map ALIS.Route.transportType;
+  }
+
+  method clientRelatedEntity {
+    type clientRelatedEntity;
+    map ALIS.Route.clientRelatedEntity;
+  }
+
+  method clientDriver {
+    type clientDriver;
+    map ALIS.Route.clientDriver;
+  }
+
+  method clientVehicle {
+    type clientVehicle;
+    map ALIS.Route.clientVehicle;
+  }
+
+  method shippingOrders {
+    type idNumber[];
+    map ALIS.Route.shippingOrders;
+  }
+
+  method receivingOrders {
+    type idNumber[];
+    map ALIS.Route.receivingOrders;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

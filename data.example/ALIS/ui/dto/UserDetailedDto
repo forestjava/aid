@@ -1,0 +1,92 @@
+dto DTO.UserDetailedDto {
+  type Table;
+  label "DTO пользователя детальный";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute username {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute fullName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute readOnly {
+    type boolean;
+    is nullable;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute additionalEmail {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute lastName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute firstName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute middleName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute country {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute city {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute address {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  method groups {
+    type idCode[];
+  }
+
+  method roles {
+    type idCode[];
+  }
+
+  method clients {
+    type idCode[];
+  }
+}

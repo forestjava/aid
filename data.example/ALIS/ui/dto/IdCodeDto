@@ -1,0 +1,15 @@
+dto DTO.IdCodeDto {
+  type Table;
+  label "DTO с идентификатором и кодом";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+}

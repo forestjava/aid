@@ -1,0 +1,22 @@
+ui containerTable {
+offset 300;
+label "UI таблица с КТК";
+
+  attribute code {
+    type String(200);
+    is private;
+    map containerData.code;
+  }
+
+  attribute standardSizeCode {
+    type String(200);
+    is private;
+    map containerData.standardSize.code;
+  }
+
+  attribute loadCapacityCode {
+    type String(200);
+    is private;
+    map containerData.liftingCapacity;
+  }
+}

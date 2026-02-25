@@ -1,0 +1,133 @@
+dto DTO.ShippingOrderDto {
+  type Table;
+  label "Заказ на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+    map ALIS.ShippingOrder.id;
+  }
+
+  attribute number {
+    type integer;
+    is nullable;
+    map ALIS.ShippingOrder.number;
+  }
+
+  attribute orderStatus {
+    type varchar(50);
+    is nullable;
+    map ALIS.ShippingOrder.orderStatus;
+  }
+
+  attribute plannedShippingDateTime {
+    type timestamp;
+    is nullable;
+    map ALIS.ShippingOrder.plannedShippingDateTime;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is nullable;
+    map ALIS.ShippingOrder.createdAt;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+    map ALIS.ShippingOrder.comment;
+  }
+
+  attribute consigneeAddress {
+    type varchar(500);
+    is nullable;
+    map ALIS.ShippingOrder.consigneeAddress;
+  }
+
+  attribute documentConfirmed {
+    type boolean;
+    is nullable;
+    map ALIS.ShippingOrder.documentConfirmed;
+  }
+
+  attribute ktkNumberUnknown {
+    type boolean;
+    is nullable;
+    map ALIS.ShippingOrder.ktkNumberUnknown;
+  }
+
+  attribute needTransport {
+    type boolean;
+    is nullable;
+    map ALIS.ShippingOrder.needTransport;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+    map ALIS.ShippingOrder.terminalArea;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ShippingOrder.transportType;
+  }
+
+  attribute deliveryType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ShippingOrder.deliveryType;
+  }
+
+  method client {
+    type client;
+    map ALIS.ShippingOrder.client;
+  }
+
+  method contract {
+    type contractShort;
+    map ALIS.ShippingOrder.contract;
+  }
+
+  method currency {
+    type currency;
+    map ALIS.ShippingOrder.currency;
+  }
+
+  method contact {
+    type contact;
+    map ALIS.ShippingOrder.contact;
+  }
+
+  method route {
+    type route;
+    map ALIS.ShippingOrder.route;
+  }
+
+  method consignee {
+    type clientRelatedEntityShort;
+    map ALIS.ShippingOrder.consignee;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

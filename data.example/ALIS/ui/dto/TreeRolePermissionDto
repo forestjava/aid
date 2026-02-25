@@ -1,0 +1,22 @@
+dto DTO.TreeRolePermissionDto {
+  type Table;
+  label "DTO дерева разрешения роли";
+
+  attribute id {
+    type UUID;
+    is nullable;
+  }
+
+  attribute level {
+    type varchar(50);
+    is nullable;
+  }
+
+  method permission {
+    type treePermissionPath;
+  }
+
+  method children {
+    type treeRolePermission[];
+  }
+}

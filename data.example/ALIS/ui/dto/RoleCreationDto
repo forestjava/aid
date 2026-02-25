@@ -1,0 +1,24 @@
+dto DTO.RoleCreationDto {
+  type Table;
+  label "DTO создания роли";
+
+  attribute name {
+    type varchar(500);
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute composite {
+    type boolean;
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+}

@@ -1,0 +1,13 @@
+dto DTO.ShippingOrderBlackboxCreationDto {
+  type Interface;
+  label "Черный ящик заказа на отгрузку создание";
+
+  attribute cargo {
+    type varchar(500);
+    is required;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+}

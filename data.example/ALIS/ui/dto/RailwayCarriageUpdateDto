@@ -1,0 +1,42 @@
+dto DTO.RailwayCarriageUpdateDto {
+  type Table;
+  label "Железнодорожный вагон обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute liftingCapacity {
+    type numeric;
+    is required;
+  }
+
+  attribute dateDepotRepair {
+    type timestamp;
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+
+  method type {
+    type id;
+  }
+
+  method model {
+    type id;
+  }
+}

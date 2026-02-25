@@ -1,0 +1,27 @@
+ui clientGoodTypeTable {
+label "UI таблица с видами номенклатур";
+
+  attribute clientSyncId {
+    type String(200);
+    is public;
+    map clientGoodData.clientSyncId;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is public;
+    map clientGoodData.client.code;
+  }
+
+  attribute code {
+    type String(200);
+    is private;
+    map clientGoodData.code;
+  }
+
+  attribute active {
+    type boolean;
+    is public;
+    map clientGoodData.active;
+  }
+}

@@ -1,0 +1,14 @@
+dto DTO.PermissionPathCreationDto {
+  type Interface;
+  label "DTO создания пути разрешения";
+
+  attribute path {
+    type varchar(500);
+    is required;
+  }
+
+  attribute type {
+    type varchar(50);
+    is required;
+  }
+}

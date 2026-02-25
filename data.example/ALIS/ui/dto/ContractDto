@@ -1,0 +1,92 @@
+dto DTO.ContractDto {
+  type Table;
+  label "Договор";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute edoId {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute contractNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute contractDate {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute validFrom {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute validTo {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute contractType {
+    type varchar(50);
+    is nullable;
+  }
+
+  method legalEntity {
+    type legalEntity;
+  }
+
+  method company {
+    type company;
+  }
+
+  method currency {
+    type currency;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

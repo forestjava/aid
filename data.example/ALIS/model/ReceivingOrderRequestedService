@@ -29,7 +29,7 @@ entity ALIS.ReceivingOrderRequestedService {
   }
 
   attribute serviceOfMeasure {
-    type ServiceOfMeasure;
+    type ALIS.ServiceOfMeasure;
     is private;
     is nullable;
     map alis.receiving_order_requested_service.service_of_measure;

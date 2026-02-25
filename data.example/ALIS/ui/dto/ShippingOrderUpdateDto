@@ -1,0 +1,74 @@
+dto DTO.ShippingOrderUpdateDto {
+  type Table;
+  label "DTO обновления заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute orderStatus {
+    type varchar(50);
+    is required;
+  }
+
+  attribute plannedShippingDateTime {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+  }
+
+  attribute consigneeAddress {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is required;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute deliveryType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute needTransport {
+    type boolean;
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+
+  method contract {
+    type id;
+  }
+
+  method currency {
+    type id;
+  }
+
+  method contact {
+    type contact;
+  }
+
+  method route {
+    type route;
+  }
+
+  method consignee {
+    type id;
+  }
+}

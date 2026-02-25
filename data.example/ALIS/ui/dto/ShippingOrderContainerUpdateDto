@@ -1,0 +1,72 @@
+dto DTO.ShippingOrderContainerUpdateDto {
+  type Table;
+  label "Контейнер заказа на отгрузку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute sealNumbers {
+    type varchar(50)[];
+    is nullable;
+  }
+
+  attribute empty {
+    type boolean;
+    is required;
+  }
+
+  attribute customsClearance {
+    type boolean;
+    is nullable;
+  }
+
+  attribute random {
+    type boolean;
+    is nullable;
+  }
+
+  attribute dataTimeKrugloyePole {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute ktkNumberUnknown {
+    type boolean;
+    is nullable;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method shippingOrderRailwayCarriage {
+    type id;
+  }
+
+  method container {
+    type id;
+  }
+
+  method sealType {
+    type id;
+  }
+
+  method dangerClass {
+    type id;
+  }
+
+  method customerService {
+    type customerService;
+  }
+
+  method ownerRailwayCarriage {
+    type ownerRailwayCarriage;
+  }
+
+  method ownerContainer {
+    type ownerContainer;
+  }
+}

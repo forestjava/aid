@@ -1,0 +1,35 @@
+dto DTO.ReceivingOrderTransportUpdateDto {
+  type Table;
+  label "Транспорт заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute waybill {
+    type varchar(500);
+    is nullable;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method shipper {
+    type id;
+  }
+
+  method carrier {
+    type id;
+  }
+
+  method clientVehicle {
+    type id;
+  }
+
+  method clientDriver {
+    type id;
+  }
+}

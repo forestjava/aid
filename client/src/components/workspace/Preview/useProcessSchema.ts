@@ -113,6 +113,7 @@ async function layoutGraph(
       'elk.spacing.nodeNode': String(ELK_SPACING_NODE),
       'elk.layered.spacing.nodeNodeBetweenLayers': String(layerSpacing),
       'elk.partitioning.activate': 'true',
+      'elk.layered.nodePlacement.strategy': 'NETWORK_SIMPLEX',
       'elk.layered.allowNonFlowPortsToSwitchSides': 'true',
       'elk.portAlignment.north': 'DISTRIBUTED',
       'elk.portAlignment.south': 'DISTRIBUTED',

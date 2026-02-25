@@ -1,0 +1,34 @@
+dto DTO.DictionaryLineParameterUpdateDto {
+  type Table;
+  label "DTO обновления параметра строки справочника";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute parameterValue {
+    type varchar(500);
+    is nullable;
+  }
+
+  method dictionaryParameter {
+    type dictionaryParameter;
+  }
+}

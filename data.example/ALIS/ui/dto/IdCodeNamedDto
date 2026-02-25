@@ -1,0 +1,20 @@
+dto DTO.IdCodeNamedDto {
+  type Table;
+  label "DTO с идентификатором, кодом и именем";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+}

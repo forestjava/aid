@@ -1,0 +1,11 @@
+scheme routesScheme {
+  import ALIS/model/Route;
+  
+  import ALIS/db/route;
+
+  import ../dto/RouteDto;
+
+  import ../table/routes;
+
+  import ../stores/routeStore;
+}

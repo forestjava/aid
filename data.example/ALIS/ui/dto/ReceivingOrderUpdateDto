@@ -1,0 +1,79 @@
+dto DTO.ReceivingOrderUpdateDto {
+  type Table;
+  label "DTO обновления заказа на приемку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute planReceivingDateTime {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute storagePeriod {
+    type numeric;
+    is nullable;
+  }
+
+  attribute orderStatus {
+    type varchar(50);
+    is required;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+  }
+
+  attribute waybill {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is required;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute deliveryType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute needTransport {
+    type boolean;
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+
+  method contract {
+    type id;
+  }
+
+  method currency {
+    type id;
+  }
+
+  method contact {
+    type contact;
+  }
+
+  method route {
+    type route;
+  }
+
+  method carrier {
+    type id;
+  }
+}

@@ -1,0 +1,271 @@
+table alis.shipping_order {
+
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is required;
+  }
+
+  attribute order_status {
+    type varchar(100);
+    is required;
+    default "NEW";
+  }
+
+  attribute contract_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.contract.id;
+    }
+  }
+
+  attribute terminal_area {
+    type varchar(100);
+    is required;
+  }
+
+  attribute transport_type {
+    type varchar(100);
+    is required;
+  }
+
+  attribute currency_id {
+    type uuid;
+    key foreign {
+      attribute alis.currency.id;
+    }
+  }
+
+  attribute contact_name {
+    type varchar(100);
+  }
+
+  attribute contact_phone {
+    type varchar(50);
+  }
+
+  attribute contact_email {
+    type varchar(255);
+  }
+
+  attribute client_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.client.id;
+    }
+  }
+
+  attribute planned_shipping_date_time {
+    type timestamp;
+  }
+
+  attribute comment {
+    type varchar(512);
+  }
+
+  attribute created_at {
+    type timestamp;
+    is required;
+  }
+
+  attribute created_by {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updated_at {
+    type timestamp;
+  }
+
+  attribute updated_by {
+    type varchar(50);
+  }
+
+  attribute total_sku_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_weight {
+    type numeric(15,3);
+  }
+
+  attribute total_cargo_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_pallet_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_not_pallet_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_goods_price {
+    type numeric(15,2);
+    is required;
+  }
+
+  attribute total_requested_service_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute total_requested_service_price {
+    type numeric(15,2);
+    is required;
+  }
+
+  attribute total_container_quantity {
+    type numeric(16,3);
+    is required;
+  }
+
+  attribute actual_shipping_date_time {
+    type timestamp;
+  }
+
+  attribute delivery_type {
+    type varchar(64);
+  }
+
+  attribute route_id {
+    type uuid;
+    key foreign {
+      attribute alis.route.id;
+    }
+  }
+
+  attribute need_transport {
+    type boolean;
+    is required;
+  }
+
+  attribute shipper_id {
+    type uuid;
+  }
+
+  attribute consignee_address {
+    type varchar(200);
+  }
+
+  attribute ktk_number_unknown {
+    description "Номер КТК неизвестен";
+    type boolean;
+  }
+
+  attribute filling_type {
+    description "Тип заполнения";
+    type varchar(15);
+    is required;
+  }
+}
+
+//-------------------------------------------------
+
+table alis.shipping_order_railway_carriage_qty {
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order.id;
+    }
+  }
+
+  attribute quantity {
+    type integer;
+    is required;
+  }
+
+  attribute type_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.railway_carriage_type.id;
+    }
+  }
+}
+
+//--------------------------------------------------
+
+table alis.shipping_order_container_qty {
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order.id;
+    }
+  }
+
+  attribute quantity {
+    type integer;
+    is required;
+  }
+
+  attribute type {
+    type varchar(20);
+    is required;
+  }
+
+  attribute empty {
+    type boolean;
+    is required;
+  }
+}
+
+//-------------------------------------------
+
+table alis.shipping_order_etsng_code {
+  attribute id {
+    type uuid;
+    is required;
+    key primary;
+  }
+
+  attribute shipping_order_container_qty_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.shipping_order_container_qty.id;
+    }
+  }
+
+  attribute etsng_code_id {
+    type uuid;
+    is required;
+    key foreign {
+      attribute alis.etsng_code.id;
+    }
+  }
+
+  attribute weight {
+    type numeric(16,3);
+    is required;
+  }
+}
+
+import ALIS/db/etsng_code;
+import ALIS/db/railway_carriage_type;

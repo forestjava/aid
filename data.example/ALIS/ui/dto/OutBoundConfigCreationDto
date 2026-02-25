@@ -1,0 +1,4 @@
+dto DTO.OutBoundConfigCreationDto {
+  type Interface;
+  label "Конфигурация исходящих данных создание";
+}

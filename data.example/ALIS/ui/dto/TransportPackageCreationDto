@@ -1,0 +1,13 @@
+dto DTO.TransportPackageCreationDto {
+  type Interface;
+  label "Транспортная упаковка создание";
+
+  attribute barcode {
+    type varchar(500);
+    is required;
+  }
+
+  method unitOfMeasure {
+    type id;
+  }
+}

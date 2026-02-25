@@ -1,0 +1,9 @@
+// Вид партионного учета
+enum ALIS.BatchAccountingType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/batchaccountingtype/BatchAccountingType.java";
+
+  value EXPIRATION_DATE { label "По сроку годности"; }
+  value MANUFACTURE_DATE { label "По дате производства"; }
+  value NOT_USED { label "Не используется"; }
+
+}

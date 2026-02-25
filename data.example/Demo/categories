@@ -18,12 +18,6 @@ entity Category {
     is nullable;
   }
 
-  // Навигационные свойства
-  attribute posts {
-    type Post[];
-  }
-
-  // Технические атрибуты, например, ключ
   attribute id {
     type INTEGER; 
     key primary; 

@@ -1,0 +1,19 @@
+dto DTO.EtsngCodeCreationDto {
+  type Table;
+  label "ЕТСНГ код создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+}

@@ -1,0 +1,19 @@
+dto DTO.ContactDto {
+  type Table;
+  label "Контакт";
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute phone {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+  }
+}

@@ -20,19 +20,6 @@ entity Post {
     type TIMESTAMP;
   }
 
-  // Навигационные свойства
-  attribute categories {
-    type Category[];
-  }
-  attribute author {
-    type User;
-  }
-  attribute comments {
-    type Comment[];
-    is navigation;
-  }
-
-  // Технические атрибуты, например, ключ
   attribute id {
     type INTEGER; 
     key primary; 
@@ -46,5 +33,9 @@ entity Post {
       attribute User.id;
     }    
   }
-  
+
+  // или навигационное свойство
+  attribute categories {
+    type Category[];
+  }
 }

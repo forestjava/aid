@@ -1,0 +1,57 @@
+// Вагон
+dto JSON.RailwayCarriage {
+  label "Справочник. Вагоны";
+
+  attribute id {
+    type UUID;
+    map ALIS.RailwayCarriage.id;
+    key primary;
+  }
+
+  // Номер вагона
+  attribute code {
+    type String;
+    map ALIS.RailwayCarriage.code;
+    key primary;
+  }
+
+  // Активность
+  attribute active {
+    type Boolean;
+    map ALIS.RailwayCarriage.active;
+  }
+
+  // Род вагона
+  attribute typeId {
+    type UUID;
+    map ALIS.RailwayCarriage.type;
+  }
+
+  // Клиент
+  attribute clientId {
+    type UUID;
+    is nullable;
+    map ALIS.RailwayCarriage.client;
+  }
+
+  // Грузоподъемность (тн.)
+  attribute liftingCapacity {
+    type BigDecimal;
+    is nullable;
+    map ALIS.RailwayCarriage.liftingCapacity;
+  }
+
+  // Модель вагона
+  attribute modelId {
+    type UUID;
+    is nullable;
+    map ALIS.RailwayCarriage.model;
+  }
+
+  // Дата следующего ДР
+  attribute dateDepotRepair {
+    type Instant;
+    is nullable;
+    map ALIS.RailwayCarriage.dateDepotRepair;
+  }
+}

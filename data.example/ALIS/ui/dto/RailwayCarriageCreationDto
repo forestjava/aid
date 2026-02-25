@@ -1,0 +1,36 @@
+dto DTO.RailwayCarriageCreationDto {
+  type Table;
+  label "Железнодорожный вагон создание";
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute liftingCapacity {
+    type numeric;
+    is required;
+  }
+
+  attribute dateDepotRepair {
+    type timestamp;
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+
+  method type {
+    type id;
+  }
+
+  method model {
+    type id;
+  }
+}

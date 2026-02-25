@@ -1,8 +1,21 @@
 api ETRAN.API.client {
   description "API для работы с накладными на клиенте";
 
+  // Импорт измененных DTO
+  import ALIS/dto/Container;
+  import ALIS/dto/EtsngCode;
+  import ALIS/dto/RailwayStation;
+  import ALIS/dto/RailwayCarriage;
+  import ALIS/dto/Zpu;
+
   // Импорт Response DTO
-  import ./dto;
+  import ALIS/dto/Waybill;
+  import ALIS/dto/WaybillProduct;
+  import ALIS/dto/WaybillRailwayCarriage;
+  import ALIS/dto/WaybillContainer;
+  import ALIS/dto/WaybillSpecialMark;
+  import ALIS/dto/WaybillTariffMark;
+  import ALIS/dto/Zpu;
 
   /*
   // DTO.IdCode - Универсальный DTO для справочников

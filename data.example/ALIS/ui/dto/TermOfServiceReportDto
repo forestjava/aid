@@ -1,0 +1,44 @@
+dto DTO.TermOfServiceReportDto {
+  type Table;
+  label "Условие услуги отчет";
+
+  attribute code {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute client {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute contract {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute validFrom {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute validTo {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute indefinitely {
+    type boolean;
+    is nullable;
+  }
+}

@@ -1,0 +1,14 @@
+// Вид поставки номенклатуры для заявки на вывоз
+enum ALIS.ShippingOrderDeliveryType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/shippingorder/ShippingOrderDeliveryType.java";
+
+  // По номенклатуре
+  value BY_GOOD;
+
+  // По контейнерам
+  value BY_CARGO;
+
+  // По номенклатуре с контейнерами (с детализацией)
+  value BY_GOOD_WITH_CARGO_WITH_DETAILS;
+
+}

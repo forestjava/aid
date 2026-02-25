@@ -1,0 +1,24 @@
+dto DTO.RailwayStationCreationDto {
+  type Table;
+  label "Железнодорожная станция создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute esrCode {
+    type varchar(6);
+    is nullable;
+  }
+}

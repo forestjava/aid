@@ -1,0 +1,15 @@
+dto DTO.IdLineNumberDto {
+  type Table;
+  label "DTO с идентификатором и номером строки";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute lineNumber {
+    type integer;
+    is nullable;
+  }
+}

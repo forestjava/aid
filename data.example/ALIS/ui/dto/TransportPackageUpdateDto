@@ -1,0 +1,19 @@
+dto DTO.TransportPackageUpdateDto {
+  type Table;
+  label "Транспортная упаковка обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute barcode {
+    type varchar(500);
+    is required;
+  }
+
+  method unitOfMeasure {
+    type id;
+  }
+}

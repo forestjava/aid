@@ -1,0 +1,10 @@
+entity Datareon.waybill {
+
+  attribute name {
+    type string;
+    sync ETRAN1C.waybill.name;
+    sync ALIS.waybill.name;
+    
+  }
+
+}

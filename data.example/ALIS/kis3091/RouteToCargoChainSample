@@ -1,0 +1,24 @@
+/*
+Упрощённый образец цепочки: Рейс -> Заявка -> Вагон -> Контейнер -> Товар (ЕТСНГ)
+*/
+scheme RouteToCargoChainSample {
+
+  // 1. Рейс
+  import ALIS/model/Route;
+
+  // 2. Заявка (содержит ссылку на рейс: attribute route { type ALIS.Route })
+  import ALIS/model/ShippingOrder;
+
+  // 3. Вагон (привязан к заявке через ShippingOrderRailwayCarriage)
+  import ALIS/model/RailwayCarriage;
+  import ALIS/model/ShippingOrderRailwayCarriage;
+
+  // 4. Контейнер (привязан к вагону через ShippingOrderContainer)
+  import ALIS/model/Container;
+  import ALIS/model/ShippingOrderContainer;
+
+  // 5. Товар — код ЕТСНГ (классификатор грузов)
+  import ALIS/model/EtsngCode;
+  import ALIS/model/ShippingOrderContainerItem;
+  
+}

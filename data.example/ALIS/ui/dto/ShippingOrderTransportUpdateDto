@@ -1,0 +1,35 @@
+dto DTO.ShippingOrderTransportUpdateDto {
+  type Table;
+  label "Транспорт заказа на отгрузку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute consigneeAddress {
+    type varchar(500);
+    is required;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method consignee {
+    type id;
+  }
+
+  method carrier {
+    type id;
+  }
+
+  method clientVehicle {
+    type id;
+  }
+
+  method clientDriver {
+    type id;
+  }
+}

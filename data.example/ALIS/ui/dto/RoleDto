@@ -1,0 +1,25 @@
+dto DTO.RoleDto {
+  type Table;
+  label "DTO роли";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute restricted {
+    type boolean;
+    is nullable;
+  }
+}

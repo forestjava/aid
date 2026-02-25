@@ -1,0 +1,30 @@
+dto DTO.RailwayStationUpdateDto {
+  type Table;
+  label "Железнодорожная станция обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute esrCode {
+    type varchar(6);
+    is nullable;
+  }
+}

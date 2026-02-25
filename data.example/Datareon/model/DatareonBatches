@@ -1,0 +1,183 @@
+
+// Интеграция  Batches 1C <-> ШИНА <-> ALIS
+// Создано из Монолита 1С. версия интеграции 0
+entity DatareonBatches{
+type JSON;
+label "Batches";
+
+ attribute UID {
+ type UUID;
+ is required; 
+ sync ALIS_batches.id;
+}
+
+ attribute Name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute ManufactureDate {
+ type timestamp;
+ is required; 
+}
+
+ attribute PartyDate {
+ type timestamp;
+ is required; 
+}
+}
+
+entity Справочник.усПартииНоменклатуры{
+type Таблица;
+label "WMS Справочник.усПартииНоменклатуры";
+
+ attribute Ссылка {
+ type Партия;
+ sync DatareonBatches.UID;
+}
+
+ attribute Наименование {
+ type Строка;
+ sync DatareonBatches.Name;
+}
+
+ attribute ДатаПроизводства {
+ type Дата;
+ sync DatareonBatches.ManufactureDate;
+}
+
+ attribute ДатаПартии {
+ type Дата;
+ sync DatareonBatches.PartyDate;
+}
+
+ attribute ИмяПредопределенныхДанных {
+ type Строка;
+}
+
+ attribute Предопределенный {
+ type Булево;
+}
+
+ attribute ПометкаУдаления {
+ type Булево;
+}
+
+ attribute Владелец {
+ type Номенклатура;
+}
+
+ attribute Код {
+ type Строка;
+}
+
+ attribute СрокГодности {
+ type Дата;
+}
+
+ attribute СтатусПартии {
+ type Статусыпартий;
+}
+
+ attribute НомерДокументаПоступления {
+ type Строка;
+}
+
+ attribute Поклажедатель {
+ type Контрагент;
+}
+
+ attribute НомерГТД {
+ type Строка;
+}
+
+ attribute НомерСертификата {
+ type Строка;
+}
+
+ attribute ПринятаСНарушениемСрокаГодности {
+ type Булево;
+}
+
+ attribute ПринятаСНарушениемПартионности {
+ type Булево;
+}
+
+ attribute АкцизнаяМаркаСтарогоОбразца {
+ type Булево;
+}
+
+ attribute Бонус {
+ type Булево;
+}
+
+ attribute ВестиУчетПоКодамЦМТ {
+ type Булево;
+}
+
+ attribute ДополнительныеРеквизиты.Свойство {
+ type Дополнительныйреквиз;
+}
+
+ attribute ДополнительныеРеквизиты.Значение {
+ type Дополнительноезначен;
+}
+
+ attribute ДополнительныеРеквизиты.ТекстоваяСтрока {
+ type Строка;
+}
+
+ attribute ДополнительныеРеквизиты {
+ type ТабличнаяЧасть;
+}
+}
+
+entity ALIS_Batches{
+type JSON;
+label "Batches";
+
+ attribute id {
+ type Партия;
+}
+
+ attribute code {
+ type Строка;
+}
+
+ attribute manufacture_date {
+ type Дата;
+ sync DatareonBatches.ManufactureDate;
+}
+
+ attribute party_date {
+ type Дата;
+ sync DatareonBatches.PartyDate;
+}
+
+ attribute batch_accounting_type {
+}
+
+ attribute batch_barcode {
+}
+
+ attribute active {
+}
+
+ attribute client {
+}
+
+ attribute client_good {
+}
+
+ attribute created_at {
+}
+
+ attribute updated_at {
+}
+
+ attribute created_by {
+}
+
+ attribute update_by {
+}
+}

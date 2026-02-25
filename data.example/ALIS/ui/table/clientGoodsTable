@@ -1,0 +1,36 @@
+ui clientGoodsTable {
+label "UI Таблица с номенклатурами";
+
+  attribute item {
+    type String(200);
+    is private;
+    //map alis.client_goods.item;
+    map Store.ClientGoodData.item;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is public;
+    is title;
+  }
+
+  attribute code {
+    type String(200);
+    is public;
+    //map alis.client_goods.code;
+    map Store.ClientGoodData.code;
+  }
+
+  attribute unitOfMeasureCode {
+    type String(200);
+    is public;
+    //map alis.client_goods.unit_of_measure_code;
+    map Store.ClientGoodData.unitOfMeasure;
+  }
+
+  attribute goodGroupCode {
+    type String(200);
+    is public;
+    //map alis.client_goods.good_group_code;
+  }
+}

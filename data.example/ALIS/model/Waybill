@@ -1,0 +1,287 @@
+// Накладная
+entity ALIS.Waybill {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/waybill/Waybill.java";
+  //rank 3;
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.waybill.id;
+  }
+
+  // Статус
+  attribute status {
+    type String;
+    is private;
+    map alis.waybill.status;
+  }
+
+  // Тип накладной
+  attribute type {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.type;
+  }
+
+  // Номер накладной
+  attribute number {
+    type String;
+    is private;
+    map alis.waybill.number;
+  }
+
+  // ИД накладной в АС ЭТРАН
+  attribute waybillIdentifier {
+    type Integer;
+    is private;
+    map alis.waybill.waybill_identifier;
+  }
+
+  // Вид отправки
+  attribute shipmentType {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.shipment_type;
+  }
+
+  // Скорость отправки
+  attribute shipmentSpeed {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.shipment_speed;
+  }
+
+  // Тип бланка
+  attribute formType {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.form_type;
+  }
+
+  // Дата истечения срока доставки
+  attribute deliveryDeadline {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.delivery_deadline;
+  }
+
+  // Дата создания накладной в АС ЭТРАН
+  attribute waybillCreatedAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.waybill_created_at;
+  }
+
+  // Дата предъявления
+  attribute submittedAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.submitted_at;
+  }
+
+  // Дата согласования
+  attribute approvedAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.approved_at;
+  }
+
+  // Дата принятия приемосдатчиком
+  attribute acceptedAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.accepted_at;
+  }
+
+  // Дата принятия груза
+  attribute cargoAcceptedAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.cargo_accepted_at;
+  }
+
+  // Дата отправления
+  attribute departureAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.waybill.departure_at;
+  }
+
+  // Страна отправления
+  attribute departureCountry {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.departure_country;
+  }
+
+  // Станция отправления
+  attribute departureStation {
+    type ALIS.RailwayStation;
+    is private;
+    map alis.waybill.departure_station_id;  // -> ALIS.RailwayStation.id
+  }
+
+  // Подъездной путь отправления
+  attribute departureRoute {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.departure_route;
+  }
+
+  // Станция назначения
+  attribute destinationStation {
+    type ALIS.RailwayStation;
+    is private;
+    map alis.waybill.destination_station_id;  // -> ALIS.RailwayStation.id
+  }
+
+  // Подъездной путь назначения
+  attribute destinationRoute {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.destination_route;
+  }
+
+  // Страна назначения
+  attribute destinationCountry {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.destination_country;
+  }
+
+  // Наименование грузоотправителя
+  attribute shipperName {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.shipper_name;
+  }
+
+  // Адрес грузоотправителя
+  attribute shipperAddress {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.shipper_address;
+  }
+
+  // ТГНЛ грузоотправителя
+  attribute shipperTgnl {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.shipper_tgnl;
+  }
+
+  // ОКПО грузоотправителя
+  attribute shipperOkpo {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.shipper_okpo;
+  }
+
+  // Наименование грузополучателя
+  attribute consigneeName {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.consignee_name;
+  }
+
+  // Адрес грузополучателя
+  attribute consigneeAddress {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.consignee_address;
+  }
+
+  // ТГНЛ грузополучателя
+  attribute consigneeTgnl {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.consignee_tgnl;
+  }
+
+  // ОКПО грузополучателя
+  attribute consigneeOkpo {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.consignee_okpo;
+  }
+
+  // Плательщик
+  attribute payer {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.payer;
+  }
+
+  // Код плательщика
+  attribute payerCode {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.payer_code;
+  }
+
+  // Форма оплаты
+  attribute paymentForm {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.payment_form;
+  }
+
+  // Место оплаты
+  attribute paymentPlace {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.payment_place;
+  }
+
+  // Планируемый тип собственности вагонов
+  attribute railwayCarriageOwnershipType {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.railway_carriage_ownership_type;
+  }
+
+  // Планируемое число вагонов
+  attribute plannedRailwayCarriages {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.waybill.planned_railway_carriages;
+  }
+
+  // Ответственное лицо
+  attribute responsiblePerson {
+    type String;
+    is private;
+    is nullable;
+    map alis.waybill.responsible_person;
+  }
+}

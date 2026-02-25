@@ -1,0 +1,51 @@
+// Отдельная таблица групп номенклатуры
+class good_group {
+  rank 2;
+  
+   // Идентификатор группы
+   attribute id {
+     type UUID;
+     is required;
+     key primary;
+     sync Excel.a;
+   }
+
+   // Наименование группы
+   attribute code {
+     type VARCHAR(100);
+     is required;
+     sync Excel.b;
+   }
+
+   // ... какие-то ещё реквизиты группы
+
+   // Ключ для синхронизации с другими системами
+   attribute sync_id {
+     type UUID;
+     is required;
+     sync WMS.Справочник.Номенклатура(Группа).sync_id;
+     sync Excel.c;
+   }
+
+   // Навигационная ссылка на дочерние элементы из номенклатуры
+   method goods {
+     type client_good[];
+   }
+
+  attribute parent_id {
+    key foreign {
+      attribute id;
+      sync Excel.d;
+    };
+  };
+  
+  // Ссылка на родительский элемент
+  attribute parent {
+    тип good_group;
+  }
+  
+  // Возможность получать дочерние группы 
+  method children {
+    тип good_group[];
+  }
+}

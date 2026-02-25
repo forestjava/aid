@@ -1,0 +1,31 @@
+ui clientDriverTable {
+label "UI таблица водителей";
+
+  attribute fullName {
+    label "ФИО";
+    type String(200);
+    is public;
+    map ClientDriver.code;
+  }
+
+  attribute client.code {
+    label "Клиент";
+    type String(200);
+    is public;
+    map client.code;
+  }
+
+  attribute phoneNumber {
+    label "Номер телефона";
+    type String(200);
+    is public;
+    map ClientDriver.phoneNumber;
+  }
+
+  attribute status {
+    label "Статус";
+    type boolean;
+    is public;
+    map ClientDriver.active;
+  }
+}

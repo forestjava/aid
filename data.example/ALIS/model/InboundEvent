@@ -35,7 +35,7 @@ entity ALIS.InboundEvent {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     is nullable;
     map alis.inbound_event.terminal_area;
@@ -67,7 +67,7 @@ entity ALIS.InboundEvent {
 
   // Статус обработки
   attribute status {
-    type InboundEventProcessingStatus;
+    type ALIS.InboundEventProcessingStatus;
     is private;
     is nullable;
     map alis.inbound_event.status;

@@ -1,0 +1,31 @@
+dto DTO.ShippingOrderGoodCreationDto {
+  type Interface;
+  label "Товар заказа на отгрузку создание";
+
+  attribute plannedQuantity {
+    type numeric;
+    is required;
+  }
+
+  attribute price {
+    type numeric;
+    is required;
+  }
+
+  attribute totalPrice {
+    type numeric;
+    is required;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method clientGood {
+    type id;
+  }
+
+  method batch {
+    type id;
+  }
+}

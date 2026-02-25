@@ -1,0 +1,9 @@
+ui goodGroupTable {
+label "UI таблица с группами номенклатур";
+
+  attribute code {
+    type String(200);
+    is private;
+    map alis.good_group.code;
+  }
+}

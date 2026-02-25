@@ -3,7 +3,7 @@ scheme ETRAN.internal {
   //only internal;
   
   // Импорт входящего пакета Datareon
-  import ./datareon;
+  import ALIS/datareon.new;
 
   // ========================================
   // Интеграционный endpoint

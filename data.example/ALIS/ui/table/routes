@@ -1,0 +1,64 @@
+ui routesTable {
+offset 300;
+label "UI таблица с рейсами";
+
+  attribute routeNumber {
+    type Integer;
+    is public;
+    map Route.number;
+  }
+
+  attribute routeType {
+    type Enum;
+    is private;
+    map Route.routeType;
+  }
+
+  attribute dateTime {
+    type DateTime;
+    is private;
+    map Route.dataTime;
+  }
+
+  attribute terminalArea {
+    type Enum;
+    is private;
+    map Route.terminalArea;
+  }
+
+  attribute transportType {
+    type Enum;
+    is private;
+    map Route.transportType;
+  }
+
+  attribute clientRelatedEntityCode {
+    type String(200);
+    is public;
+    map Route.clientRelatedEntity;
+  }
+
+  attribute clientDriverCode {
+    type String(200);
+    is public;
+    map Route.clientDriver;
+  }
+
+  attribute clientVehicleNumber {
+    type String(200);
+    is public;
+    map Route.clientVehicle;
+  }
+
+  attribute comment {
+    type String(200);
+    is public;
+    map Route.comment;
+  }
+
+  attribute status {
+    type Enum;
+    is public;
+    map Route.status;
+  }
+}

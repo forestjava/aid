@@ -1,0 +1,107 @@
+dto DTO.GoodPackageDto {
+  type Table;
+  label "Упаковка товара";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute conversionQty {
+    type numeric;
+    is nullable;
+  }
+
+  attribute level {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute tareWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute processingType {
+    type varchar(50);
+    is nullable;
+  }
+
+  method clientGood {
+    type clientGood;
+  }
+
+  method unitOfMeasure {
+    type unitOfMeasure;
+  }
+
+  method parentPackage {
+    type parentPackage;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,20 @@
+group ETRAN.dto {
+  description "DTO для работы с накладными на клиенте";
+
+  // Импорт измененных DTO
+  import ./Container;
+  import ./EtsngCode;
+  import ./RailwayStation;
+  import ./RailwayCarriage;
+  import ./Zpu;
+
+  // Импорт Response DTO
+  import ./Waybill;
+  import ./WaybillProduct;
+  import ./WaybillRailwayCarriage;
+  import ./WaybillContainer;
+  import ./WaybillSpecialMark;
+  import ./WaybillTariffMark;
+  import ./Zpu;
+
+}

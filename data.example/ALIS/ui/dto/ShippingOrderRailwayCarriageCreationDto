@@ -1,0 +1,34 @@
+dto DTO.ShippingOrderRailwayCarriageCreationDto {
+  type Interface;
+  label "Железнодорожный вагон заказа на отгрузку создание";
+
+  attribute dataTimeKrugloyePole {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute dateDepotRepair {
+    type timestamp;
+    is nullable;
+  }
+
+  method etranInvoice {
+    type id;
+  }
+
+  method railwayCarriage {
+    type id;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method customerService {
+    type customerService;
+  }
+
+  method ownerRailwayCarriage {
+    type ownerRailwayCarriage;
+  }
+}

@@ -1,0 +1,10 @@
+dto DTO.BaseDto {
+  type Table;
+  label "Базовый DTO";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+}

@@ -1,0 +1,22 @@
+scheme RailwayCarriageReferences {
+
+  // Таблица вагона и связанные таблицы (FK -> alis.railway_carriage.id)
+  import ALIS/db/railway_carriage;
+  import ALIS/db/railway_carriage_remain;
+  import ALIS/db/shipping_order_railway_carriage;
+  import ALIS/db/receiving_order_railway_carriage;
+  import ETRAN/db/waybill_railway_carriage;
+
+  /*
+  // Доменная модель вагона и модели, ссылающиеся на ALIS.RailwayCarriage
+  import ALIS/model/RailwayCarriage;
+  import ALIS/model/RailwayCarriageRemain;
+  import ALIS/model/ShippingOrderRailwayCarriage;
+  import ALIS/model/ReceivingOrderRailwayCarriage;
+  import ETRAN/model/WaybillRailwayCarriage;
+
+  // DTO и JSON, маппящиеся на ALIS.RailwayCarriage
+  import ETRAN/dto/RailwayCarriage;
+  import ETRAN/datareon/WaybillRailwayCarriageItem;
+  */
+}

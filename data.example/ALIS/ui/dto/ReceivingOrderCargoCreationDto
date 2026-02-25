@@ -1,0 +1,60 @@
+dto DTO.ReceivingOrderCargoCreationDto {
+  type Interface;
+  label "Груз заказа на приемку создание";
+
+  attribute cargo {
+    type varchar(500);
+    is required;
+  }
+
+  attribute packageQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute totalQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method receivingOrderGood {
+    type id;
+  }
+
+  method barcode {
+    type id;
+  }
+
+  method goodPackage {
+    type id;
+  }
+}

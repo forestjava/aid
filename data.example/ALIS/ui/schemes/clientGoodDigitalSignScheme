@@ -1,0 +1,12 @@
+scheme ClientGoodDigitalSignScheme {
+
+  import ALIS/model/ClientGoodDigitalSign;
+  
+  import ALIS/db/client_good_digital_sign;
+
+  import ../dto/ClientGoodDigitalSignDto;
+
+  import ../table/clientGoodDigitalSignTable;
+
+  import ../stores/clientGoodDigitalSignStore;
+}

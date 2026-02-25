@@ -1,0 +1,612 @@
+
+// Интеграция ETRAN Dislocation 1C <-> ШИНА <-> ALIS
+// Создано из Монолита 1С. версия интеграции 1
+entity DatareonDislocationKTK{
+type JSON;
+label "Dislocation";
+rank 2;
+
+ attribute Ссылка {
+ type UUID;
+ is required; 
+}
+
+ attribute Дата {
+ type timestamp;
+ is required; 
+}
+
+ attribute Номер {
+ type varchar(150);
+ is required; 
+}
+
+ attribute НомерВагона {
+ type varchar(150);
+ is required; 
+}
+}
+
+entity Документ.акс_Дислокация{
+type Таблица;
+label "ETRAN Документ.акс_Дислокация";
+rank 1;
+
+ attribute Ссылка {
+ type ДислокацияВагонов;
+ sync DatareonDislocationKTK.Ссылка;
+}
+
+ attribute Дата {
+ type Дата;
+ sync DatareonDislocationKTK.Дата;
+}
+
+ attribute Номер {
+ type Строка;
+ sync DatareonDislocationKTK.Номер;
+}
+
+ attribute НомерВагона {
+ type Строка;
+ sync DatareonDislocationKTK.НомерВагона;
+}
+
+ attribute Проведен {
+ type Булево;
+}
+
+ attribute ПометкаУдаления {
+ type Булево;
+}
+
+ attribute КодРодаВагона {
+ type Строка;
+}
+
+ attribute КодГосударстваСобственникаВагона {
+ type Строка;
+}
+
+ attribute ДатаНачалаРейса {
+ type Дата;
+}
+
+ attribute КодСтанцииНачалаРейса {
+ type Строка;
+}
+
+ attribute КодДорогиНачалаРейса {
+ type Строка;
+}
+
+ attribute СтранаНачалаРейса {
+ type Строка;
+}
+
+ attribute ДатаОкончанияРейса {
+ type Дата;
+}
+
+ attribute КодСтанцииНазначния {
+ type Строка;
+}
+
+ attribute КодДорогиНазначнеия {
+ type Строка;
+}
+
+ attribute КодСтраныНазначения {
+ type Строка;
+}
+
+ attribute Грузополучатель {
+ type Строка;
+}
+
+ attribute КодПолучателяПоОКПО {
+ type Строка;
+}
+
+ attribute Грузоотправитель {
+ type Строка;
+}
+
+ attribute КодГрузоотправителяПоОКПО {
+ type Строка;
+}
+
+ attribute КодГрузаПоГНГ {
+ type Строка;
+}
+
+ attribute ПробегВГруженомСостоянии {
+ type Число;
+}
+
+ attribute ПробегВПорожнемСостоянии {
+ type Число;
+}
+
+ attribute ОсобаяОтметка1 {
+ type Строка;
+}
+
+ attribute ОсобаяОтметка2 {
+ type Строка;
+}
+
+ attribute ОсобаяОтметка3 {
+ type Строка;
+}
+
+ attribute ВесГруза {
+ type Строка;
+}
+
+ attribute ДатаИВремяСовершенияОперации {
+ type Дата;
+}
+
+ attribute КодДорогиОперации {
+ type Строка;
+}
+
+ attribute КодСтанцииСовершенияОперации {
+ type Строка;
+}
+
+ attribute КодОперацииСВагоном {
+ type Строка;
+}
+
+ attribute КодОперацииСПоездом {
+ type Строка;
+}
+
+ attribute МестныйДляДороги {
+ type Строка;
+}
+
+ attribute ТранзитныйДляДороги {
+ type Строка;
+}
+
+ attribute Порожний {
+ type Строка;
+}
+
+ attribute Груженый {
+ type Строка;
+}
+
+ attribute ВагонНРП {
+ type Число;
+}
+
+ attribute ВагонРП {
+ type Число;
+}
+
+ attribute Неисправные {
+ type Число;
+}
+
+ attribute ДляСпецТехНужд {
+ type Число;
+}
+
+ attribute КодДорогиСдачи {
+ type Строка;
+}
+
+ attribute КодДорогиПриема {
+ type Строка;
+}
+
+ attribute ИндексПоезда {
+ type Строка;
+}
+
+ attribute НомерПоезда {
+ type Строка;
+}
+
+ attribute НомерВагонаВСоставеПоезда {
+ type Строка;
+}
+
+ attribute НомерПарка {
+ type Строка;
+}
+
+ attribute НомерПути {
+ type Строка;
+}
+
+ attribute КоличествоПломб {
+ type Строка;
+}
+
+ attribute КоличествоГруженыхКонтейнеров {
+ type Строка;
+}
+
+ attribute КоличествоПорожнихКонтейнеров {
+ type Строка;
+}
+
+ attribute НомерКонтейнера1 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера2 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера3 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера4 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера5 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера6 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера7 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера8 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера9 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера10 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера11 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера12 {
+ type Строка;
+}
+
+ attribute НомерКонтейнера13 {
+ type Строка;
+}
+
+ attribute НомерОтправки {
+ type Строка;
+}
+
+ attribute НомерНакладной {
+ type Строка;
+}
+
+ attribute УниверсальныйНомерОтправки {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру1 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру2 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру3 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру4 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру5 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру6 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру7 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру8 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру9 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру10 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру11 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру12 {
+ type Строка;
+}
+
+ attribute НомерОтправкиПоКонтейнеру13 {
+ type Строка;
+}
+
+ attribute НомерНакладнойПоДосылке {
+ type Строка;
+}
+
+ attribute УникальныйНомерОтправкиПоДосылке {
+ type Строка;
+}
+
+ attribute НормативныйСрокДоставки {
+ type Дата;
+}
+
+ attribute РасстояниеОбщее {
+ type Число;
+}
+
+ attribute РасстояниеПройденное {
+ type Число;
+}
+
+ attribute РасстояниеОставшееся {
+ type Число;
+}
+
+ attribute ВремяПростояПоследнейОперациейСутки {
+ type Число;
+}
+
+ attribute ВремяПростояПоследнейОперациейЧасы {
+ type Число;
+}
+
+ attribute ВремяПростояПоследнейОперациейМинуты {
+ type Число;
+}
+
+ attribute НормативВеличиныПробега {
+ type Число;
+}
+
+ attribute ОстатокПробега {
+ type Число;
+}
+
+ attribute КодВыгруженногоГруза {
+ type Строка;
+}
+
+ attribute ПризнакНаличияОстаткаГруза {
+ type Число;
+}
+
+ attribute ДатаИВремяОтправленияСоСтанцииПриемаГрузаКПеревозке {
+ type Дата;
+}
+
+ attribute ДатаИВремяПрибытияНаСтанциюНазначения {
+ type Дата;
+}
+
+ attribute КодПлательщикаОтправителя {
+ type Строка;
+}
+
+ attribute Тариф {
+ type Число;
+}
+
+ attribute РезультатОсмотраПоВУ14МВЦ {
+ type Строка;
+}
+
+ attribute ПризнакПробега {
+ type Строка;
+}
+
+ attribute ПризнакКорректировкиЗаписи {
+ type Строка;
+}
+
+ attribute ПризакСтраны {
+ type Строка;
+}
+
+ attribute ДатаЗаписиВБДАСОУП {
+ type Дата;
+}
+
+ attribute КодГрузаУчетный {
+ type Строка;
+}
+
+ attribute КодСообщенияСкорректировавшегоЗапись {
+ type Строка;
+}
+
+ attribute ДатаВводаСообщенияKDS_T {
+ type Дата;
+}
+
+ attribute ИдентификаторГрузополучателя {
+ type Строка;
+}
+
+ attribute ИдентификаторГрузоотправителя {
+ type Строка;
+}
+
+ attribute акс_Вагон {
+ type Вагоны;
+}
+
+ attribute акс_ГрузУчетный {
+ type Классификаторгрузов;
+}
+
+ attribute акс_ПлательщикОтправитель {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_ВыгруженныйГруз {
+ type Классификаторгрузов;
+}
+
+ attribute акс_ДорогаПриема {
+ type Дороги;
+}
+
+ attribute акс_СтранаНачалаРейса {
+ type Страны;
+}
+
+ attribute акс_РодВагона {
+ type Классификаторродовва;
+}
+
+ attribute акс_ГосударствоСобственникаВагона {
+ type Страны;
+}
+
+ attribute акс_ДорогаНачалаРейса {
+ type Дороги;
+}
+
+ attribute акс_СтанцияНачалаРейса {
+ type Станции;
+}
+
+ attribute акс_СтанцияНазначения {
+ type Станции;
+}
+
+ attribute акс_ДорогаНазначения {
+ type Дороги;
+}
+
+ attribute акс_СтранаНазначения {
+ type Страны;
+}
+
+ attribute акс_ПолучательПоОКПО {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_ДорогаСдачи {
+ type Дороги;
+}
+
+ attribute акс_ГрузоотправительПоОКПО {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_ГрузПоГНГ {
+ type Гармонизированнаяном;
+}
+
+ attribute акс_ДорогаОперации {
+ type Дороги;
+}
+
+ attribute акс_СтанцияСовершенияОперации {
+ type Станции;
+}
+
+ attribute акс_ОперацияСВагоном {
+ type Операциисвагонами;
+}
+
+ attribute акс_ОперацияСПоездом {
+ type Операцииспоездами;
+}
+
+ attribute акс_ДокументНакладная {
+ type Накладная;
+}
+
+ attribute акс_ИндексПоезда {
+ type Строка;
+}
+
+ attribute акс_ЭтоПлатныйДокумент {
+ type Булево;
+}
+
+ attribute акс_ДокументРейс {
+ type Рейсвагона;
+}
+}
+
+entity ALIS_DislocationKTK{
+type JSON;
+label "Dislocation";
+rank 3;
+
+ attribute id {
+ type ДислокацияВагонов;
+ sync DatareonDislocationKTK.Ссылка;
+}
+
+ attribute created_at {
+ type Дата;
+ sync DatareonDislocationKTK.Дата;
+}
+
+ attribute code {
+ type Строка;
+ sync DatareonDislocationKTK.Номер;
+}
+
+ attribute container_type {
+ type Строка;
+ sync DatareonDislocationKTK.НомерВагона;
+}
+
+ attribute active {
+}
+
+ attribute weight {
+}
+
+ attribute refrigerator {
+}
+
+ attribute lifting_capacity {
+}
+
+ attribute standard_size {
+}
+
+ attribute updated_at {
+}
+
+ attribute created_by {
+}
+
+ attribute updated_by {
+}
+}

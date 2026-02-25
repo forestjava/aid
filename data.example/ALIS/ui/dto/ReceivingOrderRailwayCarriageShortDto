@@ -1,0 +1,19 @@
+dto DTO.ReceivingOrderRailwayCarriageShortDto {
+  type Table;
+  label "Железнодорожный вагон заказа на приемку краткий";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  method receivingOrder {
+    type receivingOrder;
+  }
+}

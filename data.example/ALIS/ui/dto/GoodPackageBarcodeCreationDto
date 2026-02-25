@@ -1,0 +1,32 @@
+dto DTO.GoodPackageBarcodeCreationDto {
+  type Table;
+  label "Штрихкод упаковки товара создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is required;
+  }
+
+  method goodPackage {
+    type id;
+  }
+
+  method clientGood {
+    type id;
+  }
+}

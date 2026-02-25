@@ -1,0 +1,127 @@
+store clientStore {
+   type Store;
+   label "Стор клиентов";
+   
+   attribute state {
+     type store_state;
+     is required;
+   }
+
+   attribute data {
+     type Client[];
+     is required;
+   }
+
+   attribute pagination {
+     type pagination;
+     is required;
+   }
+
+   attribute sorting {
+     type sorting;
+     is required;
+   }
+
+   attribute current {
+     type client_full;
+     is nullable;
+   }
+
+   attribute previous_filters {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute suffix_url {
+     type varchar(200);
+     is nullable;
+   }
+
+   method getById {
+     type model;
+   }
+
+   method fetch {
+     type void;
+   }
+
+   method fetchWithUrlQuery {
+     type void;
+   }
+
+   method update {
+     type model;
+   }
+
+   method create {
+     type model;
+   }
+
+   method remove {
+     type void;
+   }
+
+   method setCurrent {
+     type void;
+   }
+
+   method paginationChanged {
+     type void;
+   }
+
+   method sortingChanged {
+     type void;
+   }
+
+   method getLegalEntitiesData {
+     type blob;
+   }
+
+   method getClientLegalEntityData {
+     type blob;
+   }
+
+   method getAdditionalBlobData {
+     type jsonb;
+   }
+}
+
+/*
+export const Client = types.model("Client", {
+    id: types.identifier,
+    code: types.string,
+    name: types.string,
+    inn: types.maybeNull(types.string),
+    kpp: types.maybeNull(types.string),
+    active: types.boolean,
+});
+*/
+
+json Client {
+  source "src\features\Client\store\ClientStore\ClientStore.ts";
+
+  attribute id {
+  type UUID;
+  map DTO.ClientDto.id;
+  }
+
+  attribute code{
+  type String;
+  map DTO.ClientDto.name;
+  }
+
+  attribute inn {
+  type String;
+  map DTO.ClientDto.inn;
+  }
+  
+  attribute kpp {
+  type String;
+  map DTO.ClientDto.kpp;
+  }
+
+  attribute active {
+  type boolean;
+  map DTO.ClientDto.active;
+  }
+}

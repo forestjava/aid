@@ -1,0 +1,15 @@
+dto DTO.IdSequentialDto {
+  type Table;
+  label "DTO с идентификатором и порядковым номером";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute sequenceNumber {
+    type integer;
+    is nullable;
+  }
+}

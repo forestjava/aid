@@ -1,0 +1,17 @@
+scheme ПримерМиграции {
+
+  // схема из 1С
+  import ./ОдинЭс/акс_Накладная;  
+
+  // схема из Datareon
+  import ALIS/datareon.new/IntegrationPackage;
+
+  // схема из ALIS
+  import ALIS/model/Waybill;
+  import ALIS/model/RailwayStation;
+
+  // схема из ALIS
+  import ALIS/db/waybill;
+  import ALIS/db/railway_station;
+
+}

@@ -1,0 +1,14 @@
+dto DTO.StandardSizeCreationDto {
+  type Table;
+  label "Стандартный размер создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+}

@@ -1,0 +1,7 @@
+enum ALIS.TransportType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/transporttype/TransportType.java";
+
+  value VEHICLE { label "АВТО"; }
+  value RAILWAY { label "ЖД"; }
+
+}

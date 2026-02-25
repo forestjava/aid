@@ -11,7 +11,7 @@ entity ALIS.OutboundData {
 
   // Тип сообщения
   attribute messageType {
-    type MessageType;
+    type ALIS.MessageType;
     is private;
     is nullable;
     map alis.outbound_data.message_type;
@@ -19,7 +19,7 @@ entity ALIS.OutboundData {
 
   // Тип сущности
   attribute entityType {
-    type EntityType;
+    type ALIS.EntityType;
     is private;
     is nullable;
     map alis.outbound_data.entity_type;

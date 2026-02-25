@@ -1,0 +1,18 @@
+dto DTO.ReceivingOrderEtranInvoiceUpdateDto {
+  type Table;
+  label "ЭТРАН накладная заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  method etranInvoice {
+    type id;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+}

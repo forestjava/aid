@@ -93,7 +93,7 @@ entity ALIS.ClientVehicle {
 
   // Тип владения транспортом
   attribute typeOwnershipTransport {
-    type OwnershipType;
+    type ALIS.OwnershipType;
     is private;
     is nullable;
     map alis.client_vehicle.type_ownership_transport;

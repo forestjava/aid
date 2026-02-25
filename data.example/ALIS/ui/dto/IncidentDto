@@ -1,0 +1,39 @@
+dto DTO.IncidentDto {
+  type Table;
+  label "DTO инцидента";
+
+  attribute title {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute severity {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute sourceSystem {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute payload {
+    type text;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(500);
+    is nullable;
+  }
+}

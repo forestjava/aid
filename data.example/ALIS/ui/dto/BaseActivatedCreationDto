@@ -1,0 +1,9 @@
+dto DTO.BaseActivatedCreationDto {
+  type Table;
+  label "Базовый DTO создания с активностью";
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+}

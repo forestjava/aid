@@ -1,0 +1,13 @@
+dto DTO.ReceivingOrderCargoMultipleCreationDto {
+  type Interface;
+  label "Груз заказа на приемку множественное создание";
+
+  attribute cargo {
+    type varchar(500);
+    is required;
+  }
+
+  method receivingOrderGoodList {
+    type receivingOrderGoodMultipleCreation[];
+  }
+}

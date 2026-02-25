@@ -1,0 +1,11 @@
+enum ALIS.OrderStatus {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/orderstatus/OrderStatus.java";
+
+  value DRAFT { label "Черновик"; priority 1; }
+  value ON_REVIEW { label "На проверке"; priority 2; }
+  value ACCEPTED { label "Подтверждена"; priority 3; }
+  value IN_PROGRESS { label "В работе"; priority 4; }
+  value DONE { label "Выполнена"; priority 5; }
+  value REJECTED { label "Отмена"; priority 0; }
+
+}

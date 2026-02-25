@@ -1,0 +1,13 @@
+// Единица измерения услуги
+enum ALIS.ServiceOfMeasure {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/serviceofmeasure/ServiceOfMeasure.java";
+
+  value CONTAINER { label "контейнер"; }
+  value PLATFORM_WAGON { label "платформа/вагон"; }
+  value RUB_CONTAINER_DAY { label "руб./конт/сутки"; }
+  value DAY { label "сутки"; }
+  value PALLET { label "палета"; }
+  value CAR { label "авто"; }
+  value TON { label "тонна"; }
+
+}

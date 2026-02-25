@@ -27,7 +27,7 @@ entity ALIS.InboundEventConfig {
 
   // Код действия
   attribute actionCode {
-    type InboundEventActionHandlingCode;
+    type ALIS.InboundEventActionHandlingCode;
     is private;
     is nullable;
     map alis.inbound_event_config.action_code;

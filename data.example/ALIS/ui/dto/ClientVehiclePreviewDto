@@ -1,0 +1,24 @@
+dto DTO.ClientVehiclePreviewDto {
+  type Table;
+  label "Транспорт клиента предпросмотр";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute trailerNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  method vehicleBrand {
+    type vehicleBrand;
+  }
+}

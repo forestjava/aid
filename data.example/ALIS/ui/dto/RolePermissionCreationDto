@@ -1,0 +1,19 @@
+dto DTO.RolePermissionCreationDto {
+  type Interface;
+  label "DTO создания разрешения роли";
+
+  attribute roleId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute permissionId {
+    type UUID;
+    is required;
+  }
+
+  attribute level {
+    type varchar(50);
+    is required;
+  }
+}

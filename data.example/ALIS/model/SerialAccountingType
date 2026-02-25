@@ -1,0 +1,8 @@
+enum ALIS.SerialAccountingType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/serialaccountingtype/SerialAccountingType.java";
+
+  value REQUEST { label "Серийные номера указываются в заявке"; }
+  value WAREHOUSE { label "Серийные номера определяются на складе"; }
+  value NOT_USED { label "Не используется"; }
+
+}

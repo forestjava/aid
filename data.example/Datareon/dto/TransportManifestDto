@@ -1,0 +1,114 @@
+entity Datareon.transport_manifest {
+    label "Транспортная накладная";
+
+    // Идентификатор накладной
+    attribute id {
+        type UUID;
+        is required;
+        key primary;
+    }
+
+    // Площадка / терминал
+    attribute site {
+        type varchar(255);
+        is nullable;
+    }
+
+    // Тип транспорта
+    attribute transport_type {
+        type varchar(255);
+        is nullable;
+    }
+
+    // Дата планирования
+    attribute planning_date {
+        type varchar(50);
+        is nullable;
+    }
+
+    // Время планирования
+    attribute planning_time {
+        type varchar(50);
+        is nullable;
+    }
+
+    // Операция
+    attribute operation {
+        type varchar(255);
+        is nullable;
+    }
+
+    // Перевозчик (шиппер)
+    attribute shipper {
+        type UUID;
+        is nullable;
+    }
+
+    // Перевозчик (carrier)
+    attribute carrier {
+        type UUID;
+        is nullable;
+    }
+
+    // Транспортное средство
+    attribute vehicle {
+        type vehicle;
+        is nullable;
+    }
+
+    // Водитель
+    attribute driver {
+        type driver;
+        is nullable;
+    }
+
+    // Заказ клиента
+    attribute order {
+        type UUID;
+        sync Datareon.client_order(receiving).waybill {
+          using operation "receiving";
+          clone receiving;
+        }
+        sync Datareon.client_order(shipping).waybill {
+          using operation "shipping";
+          clone shipping;
+        }  
+    }
+
+    // Станция отправления
+    attribute station_from {
+        type code_name;
+        is nullable;
+    }
+
+    // Станция прибытия
+    attribute station_to {
+        type code_name;
+        is nullable;
+    }
+
+    // Грузы (список)
+    method cargo {
+        type id_name[];
+    }
+
+    /*===============================================
+
+              НАВИГАЦИОННЫЕ АТРИБУТЫ
+
+    ===============================================*/
+
+    // Маршрут
+    attribute route {
+        type route_export;
+        is nullable;
+    }
+
+    /*===============================================
+
+             ТЕХНИЧЕСКИЕ АТРИБУТЫ
+
+    ===============================================*/
+
+    // ...
+}

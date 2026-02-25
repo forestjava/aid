@@ -1,0 +1,25 @@
+dto DTO.DriverInfoDto {
+  type Table;
+  label "Информация о водителе";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute poaNumber {
+    type varchar(500);
+    is nullable;
+  }
+}

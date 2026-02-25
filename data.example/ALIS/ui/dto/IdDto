@@ -1,0 +1,10 @@
+dto DTO.IdDto {
+  type Table;
+  label "DTO с идентификатором";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+}

@@ -84,7 +84,7 @@ entity ALIS.ReceivingOrderContainer {
   }
 
   attribute status {
-    type TaskStatus;
+    type ALIS.TaskStatus;
     is private;
     is nullable;
     map alis.receiving_order_container.status;

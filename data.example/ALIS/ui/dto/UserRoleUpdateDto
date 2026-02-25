@@ -1,0 +1,14 @@
+dto DTO.UserRoleUpdateDto {
+  type Table;
+  label "Роль пользователя обновление";
+
+  attribute userId {
+    type UUID;
+    is required;
+  }
+
+  attribute roles {
+    type UUID[];
+    is required;
+  }
+}

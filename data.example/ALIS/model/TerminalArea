@@ -1,0 +1,8 @@
+enum ALIS.TerminalArea {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/terminalarea/TerminalArea.java";
+
+  value CONTAINER { label "Контейнерная площадка"; }
+  value WAREHOUSE { label "Складской комплекс"; }
+  value WAREHOUSE_428 { label "Складской комплекс 4.2.8"; }
+
+}

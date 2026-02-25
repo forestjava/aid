@@ -1,0 +1,155 @@
+api ETRAN.API.client {
+  description "API для работы с накладными на клиенте";
+
+  // Импорт измененных DTO
+  import ALIS/dto/Container;
+  import ALIS/dto/EtsngCode;
+  import ALIS/dto/RailwayStation;
+  import ALIS/dto/RailwayCarriage;
+  import ALIS/dto/Zpu;
+
+  // Импорт Response DTO
+  import ALIS/dto/Waybill;
+  import ALIS/dto/WaybillProduct;
+  import ALIS/dto/WaybillRailwayCarriage;
+  import ALIS/dto/WaybillContainer;
+  import ALIS/dto/WaybillSpecialMark;
+  import ALIS/dto/WaybillTariffMark;
+  import ALIS/dto/Zpu;
+
+  // ========================================
+  // UI: Таблица сгруппированных накладных
+  // ========================================
+  ui WaybillGroupedTable {
+    label "Таблица сгруппированных накладных";
+
+    attribute departureStation {
+      label "Станция отправления";
+      map DTO.WaybillGrouped.departureStation;
+    }
+
+    attribute destinationStation {
+      label "Станция назначения";
+      map DTO.WaybillGrouped.destinationStation;
+    }
+
+    attribute payer {
+      label "Плательщик";
+      map DTO.WaybillGrouped.payer;
+    }
+
+    attribute products {
+      label "Груз";
+      map DTO.WaybillGrouped.products;
+    }
+
+    attribute railwayCarriageCount {
+      label "Количество вагонов";
+      map DTO.WaybillGrouped.railwayCarriageCount;
+    }
+
+    attribute containerCount {
+      label "Количество ктк";
+      map DTO.WaybillGrouped.containerCount;
+    }
+
+    attribute waybillCount {
+      label "Количество накладных";
+      map DTO.WaybillGrouped.waybillCount;
+    }
+
+    offset -200;
+  }
+
+  // ========================================
+  // UI: Таблица грузов накладной
+  // ========================================
+  ui WaybillProductTable {
+    label "Таблица грузов накладной";
+
+    attribute etsngCode {
+      label "Груз";
+      map DTO.WaybillProduct.etsngCode;
+    }
+
+    attribute weight {
+      label "Масса, кг";
+      map DTO.WaybillProduct.weight;
+    }
+
+    attribute volume {
+      label "Объем";
+      map DTO.WaybillProduct.volume;
+    }
+
+    attribute length {
+      label "Габариты Д";
+      map DTO.WaybillProduct.length;
+    }
+
+    attribute width {
+      label "Габариты Ш";
+      map DTO.WaybillProduct.width;
+    }
+
+    attribute height {
+      label "Габариты В";
+      map DTO.WaybillProduct.height;
+    }
+
+    attribute additional {
+      label "Дополнительно";
+      map DTO.WaybillProduct.additional;
+    }
+
+    offset -200;
+  }
+
+  // ========================================
+  // UI: Таблица вагонов накладной
+  // ========================================
+  ui WaybillRailwayCarriageTable {
+    label "Таблица вагонов накладной";
+
+    attribute railwayCarriage {
+      label "Номер вагона";
+      map DTO.WaybillRailwayCarriage.railwayCarriage;
+    }
+
+    attribute ownership {
+      label "Собственность";
+      map DTO.WaybillRailwayCarriage.ownership;
+    }
+
+    attribute previouslyTransported {
+      label "Ранее перевозимый груз";
+      map DTO.WaybillRailwayCarriage.previouslyTransported;
+    }
+
+    offset -200;
+  }
+
+  // ========================================
+  // UI: Таблица КТК накладной
+  // ========================================
+  ui WaybillContainerTable {
+    label "Таблица КТК накладной";
+
+    attribute container {
+      label "Номер ктк";
+      map DTO.WaybillContainer.container;
+    }
+
+    attribute owner {
+      label "Собственник";
+      map DTO.WaybillContainer.owner;
+    }
+
+    attribute zpu {
+      label "ЗПУ";
+      map DTO.WaybillContainer.zpu;
+    }
+
+    offset -200;
+  }
+}

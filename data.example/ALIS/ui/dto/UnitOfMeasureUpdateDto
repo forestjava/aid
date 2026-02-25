@@ -1,0 +1,25 @@
+dto DTO.UnitOfMeasureUpdateDto {
+  type Table;
+  label "DTO обновления единицы измерения";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+}

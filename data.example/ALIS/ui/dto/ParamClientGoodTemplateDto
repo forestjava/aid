@@ -1,0 +1,44 @@
+dto DTO.ParamClientGoodTemplateDto {
+  type Table;
+  label "Параметры шаблона товара клиента";
+
+  attribute dangerClasses {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute batchAccountingType {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute processingType {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute serialAccountingType {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute tempRegimeCode {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute unitOfMeasureCode {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute goodGroupCode {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  attribute goodGroupId {
+    type varchar(500)[];
+    is nullable;
+  }
+}

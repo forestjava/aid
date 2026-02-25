@@ -56,7 +56,7 @@ entity ALIS.EtranInvoice {
 
   // Вид отправки
   attribute transportationType {
-    type TransportationType;
+    type ALIS.TransportationType;
     is private;
     is nullable;
     map alis.etran_invoice.transportation_type;

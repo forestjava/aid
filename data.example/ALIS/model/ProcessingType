@@ -1,0 +1,8 @@
+enum ALIS.ProcessingType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/processingtype/ProcessingType.java";
+
+  value EACH { label "Штука"; }
+  value CASE { label "Короб"; }
+  value PALLET { label "Паллета"; }
+
+}

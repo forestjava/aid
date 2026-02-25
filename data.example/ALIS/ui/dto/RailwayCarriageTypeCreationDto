@@ -1,0 +1,14 @@
+dto DTO.RailwayCarriageTypeCreationDto {
+  type Table;
+  label "Тип железнодорожного вагона создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+}

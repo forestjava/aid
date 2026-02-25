@@ -1,0 +1,120 @@
+store clientGoodDigitalSignStore {
+   type Store;
+   label "Стор цифровых марок товара клиента";
+   
+   attribute state {
+     type store_state;
+     is required;
+   }
+
+   attribute data {
+     type clientGoodDigitalSign[];
+     is required;
+   }
+
+   attribute pagination {
+     type pagination;
+     is required;
+   }
+
+   attribute sorting {
+     type sorting;
+     is required;
+   }
+
+   attribute previousFilters {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute suffixUrl {
+     type varchar(200);
+     is nullable;
+   }
+
+   method getById {
+     type model;
+   }
+
+   method fetch {
+     type void;
+   }
+
+   method fetchWithUrlQuery {
+     type void;
+   }
+
+   method update {
+     type model;
+   }
+
+   method create {
+     type model;
+   }
+
+   method remove {
+     type void;
+   }
+
+   method setCurrent {
+     type void;
+   }
+
+   method paginationChanged {
+     type void;
+   }
+
+   method sortingChanged {
+     type void;
+   }
+}
+
+json clientGoodDigitalSign{
+  source "src/features/ClientDriverTable/store/ClientDriverStore.tsx";
+
+  attribute id {
+  type UUID;
+  map DTO.ClientGoodDigitalSignDto.id;
+  }
+
+  attribute clientGood {
+  type clientGood;
+  map DTO.ClientGoodDigitalSignDto.clientGood;
+  }
+
+  attribute barcode {
+  type String;
+  map DTO.ClientGoodDigitalSignDto.barcode;
+  }
+
+  attribute transportPackage {
+  type transportPackage;
+  map DTO.ClientGoodDigitalSignDto.transportPackage;
+  }
+
+
+  attribute active {
+  type boolean;
+  map DTO.ClientGoodDigitalSignDto.active;
+  }
+
+  attribute productType {
+  type productType;
+  map DTO.ClientGoodDigitalSignDto.productType;
+  }
+}
+
+json clientGood {
+attribute id;
+attribute code;
+}
+
+json transportPackage {
+attribute id;
+attribute code;
+}
+
+json productType {
+attribute id;
+attribute code;
+}

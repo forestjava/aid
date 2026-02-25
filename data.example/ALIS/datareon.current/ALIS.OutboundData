@@ -1,0 +1,268 @@
+// Исходящие данные
+entity ALIS.OutboundData {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/outbounddata/OutboundData.java";
+
+  attribute id {
+    key primary;
+    type UUID;
+    is private;
+    map alis.outbound_data.id;
+  }
+
+  // Тип сообщения
+  attribute messageType {
+    is private;
+    is nullable;
+    map alis.outbound_data.message_type;
+
+    type Datareon.Item {
+      using messageType ALIS.MessageType.ITEM;
+      clone ITEM;
+    }
+    type Datareon.Contractor {
+      using messageType ALIS.MessageType.CONTRACTOR;
+      clone CONTRACTOR;
+    }
+    type Datareon.Vehicle {
+      using messageType ALIS.MessageType.VEHICLE;
+      clone VEHICLE;
+    }
+    type Datareon.Driver {
+      using messageType ALIS.MessageType.DRIVER;
+      clone DRIVER;
+    }
+    type Datareon.Service {
+      using messageType ALIS.MessageType.SERVICE;
+      clone SERVICE;
+    }
+    type Datareon.GroupHierarchy {
+      using messageType ALIS.MessageType.GROUP_HIERARCHY;
+      clone GROUP_HIERARCHY;
+    }
+    type Datareon.ReceivingTransportManifest {
+      using messageType ALIS.MessageType.RECEIVING_TRANSPORT_MANIFEST;
+      clone RECEIVING_TRANSPORT_MANIFEST;
+    }
+    type Datareon.ShipmentTransportManifest {
+      using messageType ALIS.MessageType.SHIPMENT_TRANSPORT_MANIFEST;
+      clone SHIPMENT_TRANSPORT_MANIFEST;
+    }
+    type Datareon.ItemReceivingTask {
+      using messageType ALIS.MessageType.ITEM_RECEIVING_TASK;
+      clone ITEM_RECEIVING_TASK;
+    }
+    type Datareon.ItemShipmentTask {
+      using messageType ALIS.MessageType.ITEM_SHIPMENT_TASK;
+      clone ITEM_SHIPMENT_TASK;
+    }
+    type Datareon.CargoReceivingTask {
+      using messageType ALIS.MessageType.CARGO_RECEIVING_TASK;
+      clone CARGO_RECEIVING_TASK;
+    }
+    type Datareon.CargoShipmentTask {
+      using messageType ALIS.MessageType.CARGO_SHIPMENT_TASK;
+      clone CARGO_SHIPMENT_TASK;
+    }
+    type Datareon.RouteTask {
+      using messageType ALIS.MessageType.ROUTE_TASK;
+      clone ROUTE_TASK;
+    }
+    type Datareon.ConfirmDocs {
+      using messageType ALIS.MessageType.CONFIRM_DOCS;
+      clone CONFIRM_DOCS;
+    }
+  }
+
+  // Тип сущности
+  attribute entityType {
+    is private;
+    is nullable;
+    map alis.outbound_data.entity_type;
+
+    type ALIS.Client {
+      using entityType ALIS.EntityType.CLIENT;
+      clone CLIENT;
+    }
+    type ALIS.ClientDriver {
+      using entityType ALIS.EntityType.CLIENT_DRIVER;
+      clone CLIENT_DRIVER;
+    }
+    type ALIS.ClientGood {
+      using entityType ALIS.EntityType.CLIENT_GOOD;
+      clone CLIENT_GOOD;
+    }
+    type ALIS.ClientRelatedEntity {
+      using entityType ALIS.EntityType.CLIENT_RELATED_ENTITY;
+      clone CLIENT_RELATED_ENTITY;
+    }
+    type ALIS.ClientVehicle {
+      using entityType ALIS.EntityType.CLIENT_VEHICLE;
+      clone CLIENT_VEHICLE;
+    }
+    type ALIS.GoodGroup {
+      using entityType ALIS.EntityType.GOOD_GROUP;
+      clone GOOD_GROUP;
+    }
+    type ALIS.Service {
+      using entityType ALIS.EntityType.SERVICE;
+      clone SERVICE;
+    }
+    type ALIS.ShippingOrder {
+      using entityType ALIS.EntityType.SHIPPING_ORDER;
+      clone SHIPPING_ORDER;
+    }
+    type ALIS.ShippingOrderTransport {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_TRANSPORT;
+      clone SHIPPING_ORDER_TRANSPORT;
+    }
+    type ALIS.ShippingOrderRailwayCarriage {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_RAILWAY_CARRIAGE;
+      clone SHIPPING_ORDER_RAILWAY_CARRIAGE;
+    }
+    type ALIS.ShippingOrderContainer {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_CONTAINER;
+      clone SHIPPING_ORDER_CONTAINER;
+    }
+    type ALIS.ReceivingOrder {
+      using entityType ALIS.EntityType.RECEIVING_ORDER;
+      clone RECEIVING_ORDER;
+    }
+    type ALIS.ReceivingOrderTransport {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_TRANSPORT;
+      clone RECEIVING_ORDER_TRANSPORT;
+    }
+    type ALIS.ReceivingOrderRailwayCarriage {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_RAILWAY_CARRIAGE;
+      clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+    }
+    type ALIS.ReceivingOrderContainer {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_CONTAINER;
+      clone RECEIVING_ORDER_CONTAINER;
+    }
+    type ALIS.Route {
+      using entityType ALIS.EntityType.ROUTE;
+      clone ROUTE;
+    }
+  }
+
+  // Идентификатор корневого объекта
+  attribute rootObjectId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.outbound_data.root_object_id;
+
+    sync ALIS.Client.id {
+      using entityType ALIS.EntityType.CLIENT;
+      clone CLIENT;
+    }
+    sync ALIS.ClientDriver.id {
+      using entityType ALIS.EntityType.CLIENT_DRIVER;
+      clone CLIENT_DRIVER;
+    }
+    sync ALIS.ClientGood.id {
+      using entityType ALIS.EntityType.CLIENT_GOOD;
+      clone CLIENT_GOOD;
+    }
+    sync ALIS.ClientRelatedEntity.id {
+      using entityType ALIS.EntityType.CLIENT_RELATED_ENTITY;
+      clone CLIENT_RELATED_ENTITY;
+    }
+    sync ALIS.ClientVehicle.id {
+      using entityType ALIS.EntityType.CLIENT_VEHICLE;
+      clone CLIENT_VEHICLE;
+    }
+    sync ALIS.GoodGroup.id {
+      using entityType ALIS.EntityType.GOOD_GROUP;
+      clone GOOD_GROUP;
+    }
+    sync ALIS.Service.id {
+      using entityType ALIS.EntityType.SERVICE;
+      clone SERVICE;
+    }
+    sync ALIS.ShippingOrder.id {
+      using entityType ALIS.EntityType.SHIPPING_ORDER;
+      clone SHIPPING_ORDER;
+    }
+    sync ALIS.ShippingOrderTransport.id {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_TRANSPORT;
+      clone SHIPPING_ORDER_TRANSPORT;
+    }
+    sync ALIS.ShippingOrderRailwayCarriage.id {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_RAILWAY_CARRIAGE;
+      clone SHIPPING_ORDER_RAILWAY_CARRIAGE;
+    }
+    sync ALIS.ShippingOrderContainer.id {
+      using entityType ALIS.EntityType.SHIPPING_ORDER_CONTAINER;
+      clone SHIPPING_ORDER_CONTAINER;
+    }
+    sync ALIS.ReceivingOrder.id {
+      using entityType ALIS.EntityType.RECEIVING_ORDER;
+      clone RECEIVING_ORDER;
+    }
+    sync ALIS.ReceivingOrderTransport.id {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_TRANSPORT;
+      clone RECEIVING_ORDER_TRANSPORT;
+    }
+    sync ALIS.ReceivingOrderRailwayCarriage.id {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_RAILWAY_CARRIAGE;
+      clone RECEIVING_ORDER_RAILWAY_CARRIAGE;
+    }
+    sync ALIS.ReceivingOrderContainer.id {
+      using entityType ALIS.EntityType.RECEIVING_ORDER_CONTAINER;
+      clone RECEIVING_ORDER_CONTAINER;
+    }
+    sync ALIS.Route.id {
+      using entityType ALIS.EntityType.ROUTE;
+      clone ROUTE;
+    }
+  }
+
+  // Успешность
+  attribute success {
+    type Boolean;
+    is private;
+    is nullable;
+    map alis.outbound_data.success;
+  }
+
+  // Идентификатор сообщения
+  attribute messageId {
+    type UUID;
+    is private;
+    is nullable;
+    map alis.outbound_data.message_id;
+  }
+
+  // Код ответа
+  attribute responseCode {
+    type Integer;
+    is private;
+    is nullable;
+    map alis.outbound_data.response_code;
+  }
+
+  // Сообщение об ошибке
+  attribute errorMessage {
+    type String;
+    is private;
+    is nullable;
+    map alis.outbound_data.error_message;
+  }
+
+  // Количество попыток
+  attribute attempts {
+    type Integer;
+    is private;
+    default 0;
+    map alis.outbound_data.attempts;
+  }
+
+  // Время последней попытки
+  attribute lastAttemptAt {
+    type Instant;
+    is private;
+    is nullable;
+    map alis.outbound_data.last_attempt_at;
+  }
+}

@@ -41,7 +41,7 @@ entity ALIS.TermOfRequestedService {
 
   // Метод расчёта
   attribute calculationMethod {
-    type CalculationMethod;
+    type ALIS.CalculationMethod;
     is private;
     is nullable;
     map alis.term_of_requested_service.calculation_method;
@@ -49,7 +49,7 @@ entity ALIS.TermOfRequestedService {
 
   // Тип заявки клиента
   attribute clientOrderType {
-    type ClientOrderType;
+    type ALIS.ClientOrderType;
     is private;
     is nullable;
     map alis.term_of_requested_service.client_order_type;

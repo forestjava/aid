@@ -1,0 +1,6 @@
+entity Excel {
+  attribute a;
+  attribute b;
+  attribute c;
+  attribute d;
+}

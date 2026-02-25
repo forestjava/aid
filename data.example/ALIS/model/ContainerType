@@ -1,0 +1,11 @@
+enum ALIS.ContainerType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/container/ContainerType.java";
+
+  value REFRIGERATOR_20 { label "Рефрижератор 20"; }
+  value REFRIGERATOR_40 { label "Рефрижератор 40"; }
+  value STANDARD_20 { label "Стандартный 20"; }
+  value STANDARD_40 { label "Стандартный 40"; }
+  value TANK_20 { label "Танк 20"; }
+  value TANK_40 { label "Танк 40"; }
+
+}

@@ -1,0 +1,63 @@
+dto DTO.ClientDriverCreationDto {
+  type Table;
+  label "Водитель клиента создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is required;
+  }
+
+  attribute passportNumber {
+    type varchar(500);
+    is required;
+  }
+
+  attribute passportIssuedBy {
+    type varchar(500);
+    is required;
+  }
+
+  attribute passportIssuedDate {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute drivingLicenseNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute drivingLicenseIssuedDate {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute poaNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute poaValidTo {
+    type timestamp;
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+}

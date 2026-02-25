@@ -1,0 +1,32 @@
+dto DTO.RouteUpdateDto {
+  type Table;
+  label "DTO обновления маршрута";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute dataTime {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+  }
+
+  method clientRelatedEntity {
+    type clientRelatedEntity;
+  }
+
+  method clientDriver {
+    type clientDriver;
+  }
+
+  method clientVehicle {
+    type clientVehicle;
+  }
+}

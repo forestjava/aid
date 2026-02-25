@@ -1,0 +1,77 @@
+dto DTO.RailwayCarriageDto {
+  type Table;
+  label "Железнодорожный вагон";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute liftingCapacity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute axlesCount {
+    type integer;
+    is nullable;
+  }
+
+  attribute sort {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute dateDepotRepair {
+    type timestamp;
+    is nullable;
+  }
+
+  method client {
+    type client;
+  }
+
+  method type {
+    type type;
+  }
+
+  method model {
+    type model;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -41,7 +41,7 @@ entity ALIS.ContainerMovement {
 
   // Тип транспорта
   attribute transportType {
-    type TransportType;
+    type ALIS.TransportType;
     is private;
     is nullable;
     map alis.container_movement.transport_type;

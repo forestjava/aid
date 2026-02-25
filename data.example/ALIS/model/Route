@@ -18,7 +18,7 @@ entity ALIS.Route {
 
   // Тип рейса
   attribute routeType {
-    type RouteType;
+    type ALIS.RouteType;
     is private;
     map alis.route.route_type;
   }
@@ -32,14 +32,14 @@ entity ALIS.Route {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     map alis.route.terminal_area;
   }
 
   // Тип транспорта
   attribute transportType {
-    type TransportType;
+    type ALIS.TransportType;
     is private;
     map alis.route.transport_type;
   }
@@ -78,7 +78,7 @@ entity ALIS.Route {
 
   // Статус рейса
   attribute status {
-    type RouteStatus;
+    type ALIS.RouteStatus;
     is private;
     map alis.route.status;
   }

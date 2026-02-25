@@ -1,0 +1,12 @@
+dto DTO.UserRoleDto {
+  type Table;
+  label "Роль пользователя";
+
+  method user {
+    type groupUser;
+  }
+
+  method roles {
+    type idCode[];
+  }
+}

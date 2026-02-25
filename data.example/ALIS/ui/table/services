@@ -1,0 +1,39 @@
+ui servicesTable {
+label "UI таблица с услугами";
+
+  attribute code {
+    type String(200);
+    is private;
+    map serviceData.code;
+  }
+
+  attribute serviceOfMeasure {
+    type Enum;
+    is private;
+    map serviceData.serviceOfMeasure;
+  }
+
+  attribute terminalArea {
+    type Enum;
+    is private;
+    map serviceData.terminalArea;
+  }
+
+  attribute active {
+    type boolean;
+    is public;
+    map serviceData.active;
+  }
+
+  attribute accrualMethod {
+    type Enum;
+    is private;
+    map serviceData.accrualMethod;
+  }
+
+  attribute accrualBase {
+    type Enum;
+    is private;
+    map serviceData.accrualBase;
+  }
+}

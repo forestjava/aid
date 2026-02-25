@@ -1,0 +1,334 @@
+
+annotation {
+Интеграция ETRAN etran_railway 1C <-> ШИНА <-> ALIS
+Создано из Монолита 1С. версия интеграции 1
+Интеграция позволяет обмениваться данными между системами  ETRAN И ALIS_Scheme
+через шину данных  .
+В информационной системе - отправителе Формируется пакет обмена формата JSON и отправляется в шину и, в последующем, в информационную систему - получатель.
+Статус каждого пакета отслеживается с помощью встроенных средств в шине данных, а также информационных системах.
+}
+
+entity Datareonetran_railway{
+type JSON;
+rank 2;
+label "etran_railway";
+
+ attribute code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute length {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute lifting_capacity {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute model {
+ type varchar(150);
+ is required; 
+}
+
+ attribute date_depot_repair {
+ type timestamp;
+ is required; 
+}
+
+ attribute sort {
+ type varchar(150);
+ is required; 
+}
+
+ attribute volume {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute axles_count {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute weight {
+ type numeric(10,2);
+ is required; 
+}
+}
+
+entity Справочник.акс_Вагоны{
+type Таблица;
+rank 1;
+label "ETRAN Справочник.акс_Вагоны";
+
+ attribute Наименование {
+ type Строка;
+ sync Datareonetran_railway.code;
+}
+
+ attribute ДлинаВагона {
+ type Число;
+ sync Datareonetran_railway.length;
+}
+
+ attribute Грузоподъемность {
+ type Число;
+ sync Datareonetran_railway.lifting_capacity;
+}
+
+ attribute МодельВагона {
+ type Строка;
+ sync Datareonetran_railway.model;
+}
+
+ attribute ДатаСледующегоРемонта {
+ type Дата;
+ sync Datareonetran_railway.date_depot_repair;
+}
+
+ attribute РодВагона {
+ type Строка;
+ sync Datareonetran_railway.sort;
+}
+
+ attribute ОбъемКузова {
+ type Число;
+ sync Datareonetran_railway.volume;
+}
+
+ attribute КоличествоОсей {
+ type Число;
+ sync Datareonetran_railway.axles_count;
+}
+
+ attribute МассаТары {
+ type Число;
+ sync Datareonetran_railway.weight;
+}
+
+ attribute ИмяПредопределенныхДанных {
+ type Строка;
+}
+
+ attribute Предопределенный {
+ type Булево;
+}
+
+ attribute Ссылка {
+ type Вагоны;
+}
+
+ attribute ПометкаУдаления {
+ type Булево;
+}
+
+ attribute Код {
+ type Строка;
+}
+
+ attribute ДатаОбновленияНСИ {
+ type Дата;
+}
+
+ attribute ДатаИсключения {
+ type Дата;
+}
+
+ attribute РодВагонаИдентификатор {
+ type Строка;
+}
+
+ attribute РодВагонаКод {
+ type Строка;
+}
+
+ attribute КодСтраныСобственника {
+ type Строка;
+}
+
+ attribute СтранаСобственник {
+ type Строка;
+}
+
+ attribute ТипСобственностиВагона {
+ type Строка;
+}
+
+ attribute ТипIDСобственника {
+ type Строка;
+}
+
+ attribute IDСобственника {
+ type Строка;
+}
+
+ attribute ОКПОСобственника {
+ type Строка;
+}
+
+ attribute ПредприятиеСобственник {
+ type Строка;
+}
+
+ attribute ГрузоподъемностьНСИ {
+ type Число;
+}
+
+ attribute МассаТарыНСИ {
+ type Число;
+}
+
+ attribute ТипЦистерны {
+ type Строка;
+}
+
+ attribute ПризнакНерабочегоПарка {
+ type Число;
+}
+
+ attribute ПодъезднойПуть {
+ type Строка;
+}
+
+ attribute ГодИзготовления {
+ type Строка;
+}
+
+ attribute ТипРемонта {
+ type Строка;
+}
+
+ attribute ДатаПоследнегоРемонта {
+ type Дата;
+}
+
+ attribute Запрещен {
+ type Число;
+}
+
+ attribute СостояниеПробега {
+ type Число;
+}
+
+ attribute Пробег {
+ type Строка;
+}
+
+ attribute НормаПробега {
+ type Строка;
+}
+
+ attribute ИдентификаторМоделиВагона {
+ type Строка;
+}
+
+ attribute ПринадлежностьККонсолидированномуПарку {
+ type Число;
+}
+
+ attribute ЛокальныйКодСобственника {
+ type Строка;
+}
+
+ attribute СтранаСобственникаИдентификатор {
+ type Строка;
+}
+
+ attribute ТипВагона {
+ type Строка;
+}
+
+ attribute ПризнакКачестваИдентификатор {
+ type Строка;
+}
+
+ attribute ПризнакКачестваНаименование {
+ type Строка;
+}
+
+ attribute Отслеживаемый {
+ type Булево;
+}
+
+ attribute Комментарий {
+ type Строка;
+}
+
+ attribute акс_РодВагона {
+ type Классификаторродовва;
+}
+
+ attribute акс_СтранаСобственник {
+ type Страны;
+}
+
+ attribute акс_ТипСобственности {
+ type Типысобственности;
+}
+
+ attribute акс_Собственник {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_ДатаПоследнегоОбновления {
+ type Дата;
+}
+
+ attribute акс_ТипРемонта {
+ type Типыремонтов;
+}
+
+ attribute акс_УчетныеЗаписи.УчетнаяЗапись {
+ type НастройкиобменаЭТРАН;
+}
+
+ attribute акс_УчетныеЗаписи {
+ type ТабличнаяЧасть;
+}
+}
+
+entity ALIS_etran_railway{
+type Table;
+rank 3;
+label "etran_railway";
+
+ attribute code {
+ type Строка;
+ sync Datareonetran_railway.code;
+}
+
+ attribute liftingCapacity {
+ type Число;
+ sync Datareonetran_railway.lifting_capacity;
+}
+
+ attribute model {
+ type Строка;
+ sync Datareonetran_railway.model;
+}
+
+ attribute dateDepotRepair {
+ type Дата;
+ sync Datareonetran_railway.date_depot_repair;
+}
+
+ attribute type {
+ type Строка;
+ sync Datareonetran_railway.sort;
+}
+
+ attribute id {
+}
+
+ attribute active {
+}
+
+ attribute client {
+}
+
+ attribute owner {
+}
+}

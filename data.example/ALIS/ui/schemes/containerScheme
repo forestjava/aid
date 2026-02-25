@@ -1,0 +1,12 @@
+scheme ContainerScheme {
+
+  import ALIS/model/Container;
+  
+  import ALIS/db/container;
+
+  import ../dto/ContainerDto;
+
+  import ../table/containerTable;
+
+  import ../stores/containerStore;
+}

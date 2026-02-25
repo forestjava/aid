@@ -1,0 +1,7 @@
+enum ALIS.CalculationMethod {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/calculationmethod/CalculationMethod.java";
+
+  value REQUEST;
+  value CARGO_PLACE;
+
+}

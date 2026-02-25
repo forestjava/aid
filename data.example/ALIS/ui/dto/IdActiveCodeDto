@@ -1,0 +1,20 @@
+dto DTO.IdActiveCodeDto {
+  type Table;
+  label "DTO с идентификатором, кодом и активностью";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+}

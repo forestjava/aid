@@ -1,0 +1,9 @@
+dto DTO.BaseUpdateDto {
+  type Interface;
+  label "Базовый интерфейс обновления";
+
+  attribute id {
+    type UUID;
+    is required;
+  }
+}

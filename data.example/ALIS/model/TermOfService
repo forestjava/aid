@@ -38,7 +38,7 @@ entity ALIS.TermOfService {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     is nullable;
     map alis.term_of_service.terminal_area;

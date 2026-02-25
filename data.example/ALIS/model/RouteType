@@ -1,0 +1,7 @@
+enum ALIS.RouteType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/route/RouteType.java";
+
+  value RECEIVING { label "Поставка"; }
+  value SHIPPING { label "Вывоз"; }
+
+}

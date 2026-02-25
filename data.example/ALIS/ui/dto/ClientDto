@@ -1,0 +1,125 @@
+dto DTO.ClientDto {
+  type Table;
+  label "Клиент";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.Client.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.Client.code;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.Client.active;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.name;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+    map ALIS.Client.syncId;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.email;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.phoneNumber;
+  }
+
+  attribute addressFact {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.addressFact;
+  }
+
+  attribute edoId {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.edoId;
+  }
+
+  attribute inn {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.inn;
+  }
+
+  attribute kpp {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.kpp;
+  }
+
+  attribute okpo {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.okpo;
+  }
+
+  attribute ogrn {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.ogrn;
+  }
+
+  attribute addressLegal {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.addressLegal;
+  }
+
+  attribute signatoryName {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.signatoryName;
+  }
+
+  attribute signatoryPosition {
+    type varchar(500);
+    is nullable;
+    map ALIS.Client.signatoryPosition;
+  }
+
+  method client {
+    type client;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

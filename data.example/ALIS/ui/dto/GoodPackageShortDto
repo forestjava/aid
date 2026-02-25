@@ -1,0 +1,50 @@
+dto DTO.GoodPackageShortDto {
+  type Table;
+  label "Упаковка товара краткая";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute conversionQty {
+    type numeric;
+    is nullable;
+  }
+}

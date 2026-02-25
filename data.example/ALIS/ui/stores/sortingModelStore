@@ -1,0 +1,14 @@
+store sortingModelStore {
+   type Store;
+   label "Модель сортировки";
+   
+   attribute sorting_column {
+     type varchar(200);
+     is required;
+   }
+
+   attribute sorting_direction {
+     type varchar(10);
+     is required;
+   }
+}

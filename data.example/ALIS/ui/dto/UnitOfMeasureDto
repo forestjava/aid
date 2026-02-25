@@ -1,0 +1,60 @@
+dto DTO.UnitOfMeasureDto {
+  type Table;
+  label "Единица измерения";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.UnitOfMeasure.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.UnitOfMeasure.code;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+    map ALIS.UnitOfMeasure.name;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.UnitOfMeasure.active;
+  }
+
+  attribute codeOkei {
+    type varchar(500);
+    is nullable;
+    map ALIS.UnitOfMeasure.codeOkei;
+  }
+
+  attribute unitOfMeasureType {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

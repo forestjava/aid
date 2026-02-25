@@ -1,0 +1,26 @@
+store sortingStore {
+   type Store;
+   label "Стор сортировки";
+   
+   attribute sorting {
+     type sorting_model;
+     is required;
+   }
+
+   attribute default_sorting {
+     type sorting_model;
+     is required;
+   }
+
+   method setSorting {
+     type void;
+   }
+
+   method toggleSorting {
+     type void;
+   }
+
+   method setNextSorting {
+     type void;
+   }
+}

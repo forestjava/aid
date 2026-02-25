@@ -1,0 +1,22 @@
+store globalFilters {
+   type Store;
+   label "Стор глобальных фильтров";
+   
+   attribute client {
+     type foreign_key;
+     is nullable;
+   }
+
+   attribute legal_entity {
+     type foreign_key;
+     is nullable;
+   }
+
+   method setClient {
+     type void;
+   }
+
+   method setLegalEntity {
+     type void;
+   }
+}

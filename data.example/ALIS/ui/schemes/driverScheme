@@ -1,0 +1,12 @@
+scheme ClientDriverScheme {
+
+  import ALIS/model/ClientDriver;
+  
+  import ALIS/db/client_driver;
+
+  import ../dto/ClientDriverDto;
+
+  import ../table/clientDriverTable;
+
+  import ../stores/clientDriverStore;
+}

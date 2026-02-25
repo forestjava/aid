@@ -1,0 +1,44 @@
+dto DTO.WaybillContainerDto {
+  type Table;
+  label "Контейнер накладной";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute owner {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute zpu {
+    type idCode[];
+    is nullable;
+  }
+
+  method container {
+    type container;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

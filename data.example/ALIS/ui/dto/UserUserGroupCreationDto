@@ -1,0 +1,14 @@
+dto DTO.UserUserGroupCreationDto {
+  type Interface;
+  label "Пользователь группы пользователей создание";
+
+  attribute group {
+    type UUID;
+    is required;
+  }
+
+  attribute users {
+    type UUID[];
+    is required;
+  }
+}

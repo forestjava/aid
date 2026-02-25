@@ -1,0 +1,29 @@
+dto DTO.ShippingOrderTransportCreationDto {
+  type Interface;
+  label "Транспорт заказа на отгрузку создание";
+
+  attribute consigneeAddress {
+    type varchar(500);
+    is required;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method consignee {
+    type id;
+  }
+
+  method carrier {
+    type id;
+  }
+
+  method clientVehicle {
+    type id;
+  }
+
+  method clientDriver {
+    type id;
+  }
+}

@@ -1,0 +1,31 @@
+сущность Человек {
+   тип Table;
+
+   реквизит name {
+     тип Строка;
+     is required;
+   }
+   
+   реквизит age {
+     тип Число;
+     is required;
+   }
+
+   реквизит company_id{
+     тип UUID;
+     key foreign {
+       реквизит Компания.id;
+     }
+   }
+}
+
+сущность Компания {
+   тип Таблица;
+
+   реквизит id{
+     тип UUID;
+     is required;
+     key primary;
+   }
+   
+}

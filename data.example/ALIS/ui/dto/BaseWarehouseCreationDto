@@ -1,0 +1,4 @@
+dto DTO.BaseWarehouseCreationDto {
+  type Interface;
+  label "Базовый DTO создания склада";
+}

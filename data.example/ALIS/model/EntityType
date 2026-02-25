@@ -1,0 +1,31 @@
+enum ALIS.EntityType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/entitytype/EntityType.java";
+
+  value CLIENT;  // -> ALIS.Client
+  value CLIENT_DRIVER;  // -> ALIS.ClientDriver
+  value CLIENT_GOOD;  // -> ALIS.ClientGood
+  value CLIENT_RELATED_ENTITY;  // -> ALIS.ClientRelatedEntity
+  value CLIENT_VEHICLE;  // -> ALIS.ClientVehicle
+  value GOOD_GROUP;  // -> ALIS.GoodGroup
+  value GOOD_PACKAGE;  // -> ALIS.GoodPackage
+  value GOOD_PACKAGE_BARCODE;  // -> ALIS.GoodPackageBarcode
+  value SERVICE;  // -> ALIS.Service
+  value SHIPPING_ORDER;  // -> ALIS.ShippingOrder
+  value SHIPPING_ORDER_TRANSPORT;  // -> ALIS.ReceivingOrderTransport
+  value SHIPPING_ORDER_ETRAN_INVOICE;  // -> ALIS.ShippingOrderEtranInvoice
+  value SHIPPING_ORDER_RAILWAY_CARRIAGE;  // -> ALIS.ShippingOrderRailwayCarriage
+  value SHIPPING_ORDER_CONTAINER;  // -> ALIS.ShippingOrderContainer
+  value SHIPPING_ORDER_CARGO;  // -> ALIS.ShippingOrderCargo
+  value SHIPPING_ORDER_GOOD;  // -> ALIS.ShippingOrderGood
+  value SHIPPING_ORDER_REQUESTED_SERVICE;  // -> ALIS.ShippingOrderRequestedService
+  value RECEIVING_ORDER;  // -> ALIS.ReceivingOrder
+  value RECEIVING_ORDER_CARGO;  // -> ALIS.ReceivingOrderCargo
+  value RECEIVING_ORDER_GOOD;  // -> ALIS.ReceivingOrderGood
+  value RECEIVING_ORDER_TRANSPORT;  // -> ALIS.ReceivingOrderTransport
+  value RECEIVING_ORDER_ETRAN_INVOICE;  // -> ALIS.ReceivingOrderEtranInvoice
+  value RECEIVING_ORDER_RAILWAY_CARRIAGE;  // -> ALIS.ReceivingOrderRailwayCarriage
+  value RECEIVING_ORDER_CONTAINER;  // -> ALIS.ReceivingOrderContainer
+  value RECEIVING_ORDER_REQUESTED_SERVICE;  // -> ALIS.ReceivingOrderRequestedService
+  value ROUTE;  // -> ALIS.Route
+
+}

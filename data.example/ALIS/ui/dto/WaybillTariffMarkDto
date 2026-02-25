@@ -1,0 +1,45 @@
+dto DTO.WaybillTariffMarkDto {
+  type Table;
+  label "Тарифная отметка накладной";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute code {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute note {
+    type text;
+    is nullable;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,93 @@
+dto DTO.ReceivingOrderDetailedDto {
+  type Table;
+  label "Заказ на приемку детальный";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute totalSkuQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute totalCargoQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalPalletQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalNotPalletQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalRailwayCarriageQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalContainerQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalGoodsPrice {
+    type numeric;
+    is nullable;
+  }
+
+  attribute totalRequestedServiceQuantity {
+    type integer;
+    is nullable;
+  }
+
+  attribute totalRequestedServicePrice {
+    type numeric;
+    is nullable;
+  }
+
+  attribute legalEntityInn {
+    type varchar(500);
+    is nullable;
+  }
+
+  method clientDriver {
+    type clientDriver;
+  }
+
+  method clientVehicle {
+    type clientVehiclePreview;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

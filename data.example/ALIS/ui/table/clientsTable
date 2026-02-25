@@ -1,0 +1,32 @@
+ui clientsTable {
+  label "UI таблица с клиентами";
+  offset -50;
+
+  attribute code {
+    label "Код";
+    type String(200);
+    is private;
+    map Client.code;
+  }
+
+  attribute inn {
+    label "ИНН";  
+    type String(200);
+    is private;
+    map Client.inn;
+  }
+
+  attribute kpp {
+    label "КПП";
+    type String(200);
+    is private;
+    map Client.kpp;
+  }
+
+  attribute active {
+    label "Статус";
+    type boolean;
+    is public;
+    map Client.active;
+  }
+}

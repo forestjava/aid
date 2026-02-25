@@ -36,7 +36,7 @@ entity ALIS.ShippingOrderRailwayCarriage {
   }
 
   attribute status {
-    type TaskStatus;
+    type ALIS.TaskStatus;
     is private;
     is nullable;
     map alis.shipping_order_railway_carriage.status;

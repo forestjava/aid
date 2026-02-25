@@ -1,0 +1,34 @@
+dto DTO.UserGroupUpdateDto {
+  type Table;
+  label "Группа пользователей обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute name {
+    type varchar(500);
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute clients {
+    type UUID[];
+    is nullable;
+  }
+
+  attribute users {
+    type UUID[];
+    is nullable;
+  }
+
+  method userRoles {
+    type userRoleUpdate[];
+  }
+}

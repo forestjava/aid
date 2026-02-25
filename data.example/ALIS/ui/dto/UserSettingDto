@@ -1,0 +1,14 @@
+dto DTO.UserSettingDto {
+  type Table;
+  label "Настройка пользователя";
+
+  attribute key {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute value {
+    type text;
+    is nullable;
+  }
+}

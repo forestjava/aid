@@ -1,0 +1,28 @@
+dto DTO.UnitOfMeasureConversionUpdateDto {
+  type Table;
+  label "DTO обновления конвертации единицы измерения";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute conversionRate {
+    type numeric;
+    is required;
+  }
+
+  method fromUnitOfMeasure {
+    type id;
+  }
+
+  method toUnitOfMeasure {
+    type id;
+  }
+}

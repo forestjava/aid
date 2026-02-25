@@ -70,11 +70,4 @@ table alis.batch {
     is required;
   }
 
-  attribute client_id {
-    type uuid;
-    is required;
-    key foreign {
-      attribute alis.client.id;
-    }
-  }
 }

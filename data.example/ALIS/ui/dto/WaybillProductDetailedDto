@@ -1,0 +1,134 @@
+dto DTO.WaybillProductDetailedDto {
+  type Table;
+  label "Продукт накладной детальный";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute additional {
+    type text;
+    is nullable;
+  }
+
+  attribute gngCode {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute cargoFullName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute marksStampsShipper {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute signDanger {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute isDangerous {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute emergencyCardNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute customsDeclarationNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute customsDeclarationProductNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute packagingType {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute packagesCount {
+    type integer;
+    is nullable;
+  }
+
+  attribute placesCount {
+    type integer;
+    is nullable;
+  }
+
+  attribute weightLoaded {
+    type numeric;
+    is nullable;
+  }
+
+  attribute grossWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute netWeight {
+    type numeric;
+    is nullable;
+  }
+
+  method etsngCode {
+    type etsngCode;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,62 @@
+dto DTO.ClientRelatedEntityCreationDto {
+  type Table;
+  label "Связанная сущность клиента создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute inn {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute kpp {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute isShipper {
+    type boolean;
+    is required;
+  }
+
+  attribute isConsignee {
+    type boolean;
+    is required;
+  }
+
+  attribute isCarrier {
+    type boolean;
+    is required;
+  }
+
+  attribute addressLegal {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute addressFact {
+    type varchar(500);
+    is nullable;
+  }
+
+  method client {
+    type id;
+  }
+
+  method legalEntity {
+    type id;
+  }
+}

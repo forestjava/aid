@@ -1,0 +1,19 @@
+dto DTO.UserPermissionDto {
+  type Table;
+  label "DTO разрешения пользователя";
+
+  attribute path {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute level {
+    type varchar(50);
+    is nullable;
+  }
+}

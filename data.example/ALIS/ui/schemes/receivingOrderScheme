@@ -1,0 +1,11 @@
+scheme receivingOrderScheme {
+  import ALIS/model/ReceivingOrder;
+  
+  import ALIS/db/receiving_order;
+
+  import ../dto/ReceivingOrderDto;
+
+  import ../table/receivingOrder;
+
+  import ../stores/receivingOrderStore;
+}

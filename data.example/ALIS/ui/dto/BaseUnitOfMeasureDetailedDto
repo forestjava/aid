@@ -1,0 +1,30 @@
+dto DTO.BaseUnitOfMeasureDetailedDto {
+  type Table;
+  label "Базовый DTO единицы измерения детальный";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute unitOfMeasureType {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,64 @@
+dto DTO.WaybillProductDto {
+  type Table;
+  label "Продукт накладной";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute additional {
+    type text;
+    is nullable;
+  }
+
+  method etsngCode {
+    type etsngCode;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

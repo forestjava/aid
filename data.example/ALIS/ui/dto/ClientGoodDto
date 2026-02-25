@@ -1,0 +1,144 @@
+dto DTO.ClientGoodDto {
+  type Table;
+  label "Товар клиента";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.ClientGood.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.ClientGood.code;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.ClientGood.active;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGood.name;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+    map ALIS.ClientGood.syncId;
+  }
+
+  attribute codeKis {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGood.codeKis;
+  }
+
+  attribute item {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGood.item;
+  }
+
+  attribute gtin {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGood.gtin;
+  }
+
+  attribute shelfLife {
+    type numeric;
+    is nullable;
+    map ALIS.ClientGood.shelfLife;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+    map ALIS.ClientGood.price;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+    map ALIS.ClientGood.description;
+  }
+
+  attribute usedInOrders {
+    type boolean;
+    is nullable;
+    map ALIS.ClientGood.usedInOrders;
+  }
+
+  attribute batchAccountingType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ClientGood.batchAccountingType;
+  }
+
+  attribute serialAccountingType {
+    type varchar(50);
+    is nullable;
+    map ALIS.ClientGood.serialAccountingType;
+  }
+
+  method client {
+    type client;
+    map ALIS.ClientGood.client;
+  }
+
+  method unitOfMeasure {
+    type unitOfMeasure;
+    map ALIS.ClientGood.unitOfMeasure;
+  }
+
+  method goodType {
+    type goodType;
+    map ALIS.ClientGood.goodType;
+  }
+
+  method clientGoodType {
+    type clientGoodType;
+    map ALIS.ClientGood.clientGoodType;
+  }
+
+  method dangerClass {
+    type dangerClass;
+    map ALIS.ClientGood.dangerClass;
+  }
+
+  method tempRegime {
+    type tempRegime;
+    map ALIS.ClientGood.tempRegime;
+  }
+
+  method goodGroup {
+    type goodGroup;
+    map ALIS.ClientGood.goodGroup;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

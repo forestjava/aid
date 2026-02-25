@@ -1,0 +1,67 @@
+dto DTO.ShippingOrderContainerItemDto {
+  type Table;
+  label "Элемент контейнера заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute wightGross {
+    type numeric;
+    is nullable;
+  }
+
+  attribute wightNet {
+    type numeric;
+    is nullable;
+  }
+
+  attribute quantityPlace {
+    type numeric;
+    is nullable;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method shippingOrderContainer {
+    type shippingOrderContainer;
+  }
+
+  method etsngCode {
+    type etsngCode;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

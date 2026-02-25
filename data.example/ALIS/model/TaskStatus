@@ -1,0 +1,8 @@
+enum ALIS.TaskStatus {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/integration/TaskStatus.java";
+
+  value UPLOADED;
+  value FINISHED;
+  value CANCELED;
+
+}

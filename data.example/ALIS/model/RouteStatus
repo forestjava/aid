@@ -1,0 +1,10 @@
+enum ALIS.RouteStatus {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/route/RouteStatus.java";
+
+  value DRAFT { label "Черновик"; }
+  value ON_REVIEW { label "На проверке"; }
+  value ACCEPTED { label "Подтверждено"; }
+  value IN_PROGRESS { label "В работе"; }
+  value DONE { label "Выполнено"; }
+
+}

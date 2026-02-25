@@ -1,0 +1,12 @@
+dto DTO.ReceivingOrderEtranInvoiceCreationDto {
+  type Interface;
+  label "ЭТРАН накладная заказа на приемку создание";
+
+  method etranInvoice {
+    type id;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+}

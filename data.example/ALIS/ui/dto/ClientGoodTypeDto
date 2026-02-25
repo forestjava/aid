@@ -1,0 +1,76 @@
+dto DTO.ClientGoodTypeDto {
+  type Table;
+  label "Тип товара клиента";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.ClientGoodType.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.ClientGoodType.code;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.ClientGoodType.active;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGoodType.name;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+    map ALIS.ClientGoodType.syncId;
+  }
+
+  attribute clientSyncId {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGoodType.clientSyncId;
+  }
+
+  attribute isVariable {
+    type boolean;
+    is nullable;
+    map ALIS.ClientGoodType.isVariable;
+  }
+
+  attribute hasClientGoods {
+    type boolean;
+    is nullable;
+  }
+
+  method client {
+    type client;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

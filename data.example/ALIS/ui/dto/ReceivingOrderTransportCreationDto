@@ -1,0 +1,29 @@
+dto DTO.ReceivingOrderTransportCreationDto {
+  type Interface;
+  label "Транспорт заказа на приемку создание";
+
+  attribute waybill {
+    type varchar(500);
+    is nullable;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method shipper {
+    type id;
+  }
+
+  method carrier {
+    type id;
+  }
+
+  method clientVehicle {
+    type id;
+  }
+
+  method clientDriver {
+    type id;
+  }
+}

@@ -1,0 +1,15 @@
+dto DTO.IdNumberDto {
+  type Table;
+  label "DTO с идентификатором и номером";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is nullable;
+  }
+}

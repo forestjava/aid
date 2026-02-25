@@ -1,0 +1,51 @@
+dto DTO.ReceivingOrderTransportDto {
+  type Table;
+  label "Транспорт заказа на приемку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute waybill {
+    type varchar(500);
+    is nullable;
+  }
+
+  method shipper {
+    type clientRelatedEntityShort;
+  }
+
+  method carrier {
+    type carrier;
+  }
+
+  method vehicleInfo {
+    type vehicleInfo;
+  }
+
+  method driverInfo {
+    type driverInfo;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

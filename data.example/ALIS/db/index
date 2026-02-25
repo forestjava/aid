@@ -1,4 +1,4 @@
-scheme db.alis {
+scheme alis {
   separate 800;
   
   import ./additional_agreement;
@@ -88,4 +88,13 @@ scheme db.alis {
   import ./vehicle_brand;
   import ./vehicle_type;
   import ./zone_status_catalog;
+
+  // ЭТРАН
+  import ./waybill;
+  import ./waybill_container;
+  import ./waybill_product;
+  import ./waybill_railway_carriage;
+  import ./waybill_special_mark;
+  import ./waybill_tariff_mark;
+  import ./waybill_zpu;
 }

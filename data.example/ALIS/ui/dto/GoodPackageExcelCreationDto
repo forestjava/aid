@@ -1,0 +1,23 @@
+dto DTO.GoodPackageExcelCreationDto {
+  type Table;
+  label "Упаковка товара Excel создание";
+
+  attribute id {
+    type UUID;
+    is nullable;
+  }
+
+  attribute item {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute error {
+    type varchar(500);
+    is nullable;
+  }
+
+  method goodPackageDto {
+    type goodPackageCreation;
+  }
+}

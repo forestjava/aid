@@ -1,0 +1,30 @@
+dto DTO.ReceivingOrderGoodMultipleCreationDto {
+  type Table;
+  label "Товар заказа на приемку множественное создание";
+
+  attribute packageQuantity {
+    type numeric;
+    is required;
+  }
+
+  attribute plannedQuantity {
+    type numeric;
+    is required;
+  }
+
+  method receivingOrderGood {
+    type id;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method batch {
+    type id;
+  }
+
+  method goodPackage {
+    type id;
+  }
+}

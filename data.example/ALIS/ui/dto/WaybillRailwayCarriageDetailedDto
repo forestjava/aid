@@ -1,0 +1,64 @@
+dto DTO.WaybillRailwayCarriageDetailedDto {
+  type Table;
+  label "Железнодорожный вагон накладной детальный";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute ownership {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute previouslyTransported {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute renter {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute grossWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute netWeight {
+    type numeric;
+    is nullable;
+  }
+
+  attribute placeCount {
+    type integer;
+    is nullable;
+  }
+
+  method railwayCarriage {
+    type railwayCarriage;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

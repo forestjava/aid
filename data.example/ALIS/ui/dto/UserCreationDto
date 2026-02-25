@@ -1,0 +1,29 @@
+dto DTO.UserCreationDto {
+  type Table;
+  label "DTO создания пользователя";
+
+  attribute password {
+    type varchar(500);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute username {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute fullName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+}

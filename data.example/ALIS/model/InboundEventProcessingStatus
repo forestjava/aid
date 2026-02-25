@@ -1,0 +1,11 @@
+// Inbound event processing status
+enum ALIS.InboundEventProcessingStatus {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/datareoninbound/InboundEventProcessingStatus.java";
+
+  value NEW;
+  value SKIPPED;
+  value INVALID;
+  value FAILED;
+  value DONE;
+
+}

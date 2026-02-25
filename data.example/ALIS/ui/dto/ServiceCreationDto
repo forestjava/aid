@@ -1,0 +1,64 @@
+dto DTO.ServiceCreationDto {
+  type Table;
+  label "DTO создания услуги";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute instruction {
+    type text;
+    is nullable;
+  }
+
+  attribute operation {
+    type boolean;
+    is required;
+  }
+
+  attribute dependent {
+    type boolean;
+    is required;
+  }
+
+  attribute keeping {
+    type boolean;
+    is required;
+  }
+
+  attribute isComprehensive {
+    type boolean;
+    is required;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is required;
+  }
+
+  attribute serviceOfMeasure {
+    type varchar(50);
+    is required;
+  }
+
+  attribute accrualMethod {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute accrualBase {
+    type varchar(50);
+    is nullable;
+  }
+}

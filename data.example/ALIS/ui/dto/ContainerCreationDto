@@ -1,0 +1,38 @@
+dto DTO.ContainerCreationDto {
+  type Table;
+  label "Контейнер создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute containerType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute weight {
+    type numeric;
+    is required;
+  }
+
+  attribute liftingCapacity {
+    type numeric;
+    is required;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is required;
+  }
+
+  method standardSize {
+    type standardSize;
+  }
+}

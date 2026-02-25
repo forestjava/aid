@@ -1,0 +1,51 @@
+ui shippingOrderTable {
+label "UI таблица с заявками на вывоз";
+
+  attribute number {
+    type Integer;
+    is private;
+    map ShippingOrderData.number;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is private;
+    map client.code;
+  }
+
+  attribute terminalArea {
+    type Enum;
+    is private;
+    map ShippingOrderData.terminalArea;
+  }
+
+  attribute transportType {
+    type Enum;
+    is private;
+    map ShippingOrderData.transportType;
+  }
+
+  attribute createdAt {
+    type DateTime;
+    is private;
+    map ShippingOrderData.createdAt;
+  }
+
+  attribute routeCode {
+    type String(200);
+    is private;
+    map route.code;
+  }
+
+  attribute orderStatus {
+    type Enum;
+    is private;
+    map ShippingOrderData.orderStatus;
+  }
+
+  attribute plannedShippingDateTime {
+    type DateTime;
+    is private;
+    map ShippingOrderData.plannedShippingDateTime;
+  }
+}

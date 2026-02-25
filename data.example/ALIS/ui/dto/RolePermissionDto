@@ -1,0 +1,24 @@
+dto DTO.RolePermissionDto {
+  type Table;
+  label "DTO разрешения роли";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute roleId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute level {
+    type varchar(50);
+    is nullable;
+  }
+
+  method permission {
+    type permissionPath;
+  }
+}

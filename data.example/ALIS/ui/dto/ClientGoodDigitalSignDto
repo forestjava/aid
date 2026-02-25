@@ -1,0 +1,58 @@
+dto DTO.ClientGoodDigitalSignDto {
+  type Table;
+  label "Цифровая марка";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.ClientGoodDigitalSign.id;
+  }
+
+  attribute barcode {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientGoodDigitalSign.barcode;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.ClientGoodDigitalSign.active;
+  }
+
+  method clientGood {
+    type clientGood;
+    map ALIS.ClientGoodDigitalSign.clientGood;
+  }
+
+  method transportPackage {
+    type transportPackage;
+    map ALIS.ClientGoodDigitalSign.transportPackage;
+  }
+
+  method productType {
+    type productType;
+    map ALIS.ClientGoodDigitalSign.productType;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

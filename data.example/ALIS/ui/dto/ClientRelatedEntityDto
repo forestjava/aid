@@ -1,0 +1,93 @@
+dto DTO.ClientRelatedEntityDto {
+  type Table;
+  label "Связанная сущность клиента";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute inn {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute kpp {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute isShipper {
+    type boolean;
+    is nullable;
+  }
+
+  attribute isConsignee {
+    type boolean;
+    is nullable;
+  }
+
+  attribute isCarrier {
+    type boolean;
+    is nullable;
+  }
+
+  attribute addressLegal {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute addressFact {
+    type varchar(500);
+    is nullable;
+  }
+
+  method client {
+    type client;
+  }
+
+  method legalEntity {
+    type legalEntity;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

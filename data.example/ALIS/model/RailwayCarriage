@@ -30,7 +30,7 @@ entity ALIS.RailwayCarriage {
   }
 
   // Клиент
-  attribute client {
+  method client {
     type ALIS.Client;
     is private;
     is nullable;
@@ -60,4 +60,8 @@ entity ALIS.RailwayCarriage {
     is nullable;
     map alis.railway_carriage.date_depot_repair;
   }
+
+  attribute owner {
+    type Owner;
+  };
 }

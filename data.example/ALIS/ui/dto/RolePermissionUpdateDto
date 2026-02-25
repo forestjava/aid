@@ -1,0 +1,19 @@
+dto DTO.RolePermissionUpdateDto {
+  type Table;
+  label "DTO обновления разрешения роли";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  method permissionPath {
+    type id;
+  }
+
+  attribute level {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,11 @@
+scheme ClientScheme {
+  import ALIS/model/Client;
+  
+  import ALIS/db/client;
+
+  import ../dto/ClientDto;
+
+  import ../table/clientsTable;
+
+  import ../stores/clientStore;
+}

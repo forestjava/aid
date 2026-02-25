@@ -1,0 +1,52 @@
+dto DTO.TermOfRequestedServiceCreationDto {
+  type Table;
+  label "Условие запрашиваемой услуги создание";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is required;
+  }
+
+  attribute required {
+    type boolean;
+    is required;
+  }
+
+  attribute rate {
+    type numeric;
+    is required;
+  }
+
+  attribute clientOrderType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute calculationMethod {
+    type varchar(50);
+    is required;
+  }
+
+  method termOfService {
+    type id;
+  }
+
+  method service {
+    type id;
+  }
+}

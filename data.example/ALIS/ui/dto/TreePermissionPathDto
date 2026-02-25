@@ -1,0 +1,19 @@
+dto DTO.TreePermissionPathDto {
+  type Table;
+  label "DTO дерева пути разрешения";
+
+  attribute id {
+    type UUID;
+    is nullable;
+  }
+
+  attribute path {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+}

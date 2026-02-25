@@ -1,0 +1,19 @@
+scheme table.alis {
+ import ./clientDriver;
+ import ./clientGoodDigitalSign;
+ import ./clientGoods;
+ import ./clientGoodType;
+ import ./clients;
+ import ./clientVehicle;
+ import ./container;
+ import ./counterAgents;
+ import ./goodGroup;
+ import ./receivingOrder;
+ import ./role;
+ import ./routes;
+ import ./services;
+ import ./shippingOrder;
+ import ./transportPackage;
+ import ./user;
+ import ./userGroup;
+}

@@ -1,0 +1,93 @@
+store dictionaryStore {
+   type Store;
+   label "Стор для словарей";
+   
+   attribute batch_accounting_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute serial_accounting_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute identity_document_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute terminal_area {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute client_order_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute order_status {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute transport_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute calculation_method {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute processing_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute container_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute user_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute ownership_type {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute accrual_method {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute accrual_base {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute service_of_measure {
+     type varchar(100)[];
+     is required;
+   }
+
+   attribute is_ready {
+     type boolean;
+     is required;
+   }
+
+   attribute is_error {
+     type boolean;
+     is required;
+   }
+
+   method fetch {
+     type void;
+   }
+}

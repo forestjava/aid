@@ -1,0 +1,10 @@
+enum ALIS.OwnershipType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/clientvehicle/OwnershipType.java";
+
+  value OWNED { label "Собственность"; code 1; }
+  value JOINT_OWNERSHIP { label "Совместная собственность супругов"; code 2; }
+  value RENTAL { label "Аренда"; code 3; }
+  value LEASING { label "Лизинг"; code 4; }
+  value FREE_USE { label "Безвозмездное пользование"; code 5; }
+
+}

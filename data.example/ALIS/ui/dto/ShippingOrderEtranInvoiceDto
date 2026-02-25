@@ -1,0 +1,38 @@
+dto DTO.ShippingOrderEtranInvoiceDto {
+  type Table;
+  label "ЭТРАН накладная заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  method etranInvoice {
+    type etranInvoice;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

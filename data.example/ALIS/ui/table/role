@@ -1,0 +1,15 @@
+ui rolesTable {
+label "UI таблица с ролями";
+
+  attribute name {
+    type String(200);
+    is public;
+    map alis.roles.name;
+  }
+
+  attribute description {
+    type String(200);
+    is public;
+    map alis.roles.description;
+  }
+}

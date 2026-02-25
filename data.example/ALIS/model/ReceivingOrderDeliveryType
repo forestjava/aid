@@ -1,0 +1,17 @@
+// Вид поставки номенклатуры для заявки на поставку
+enum ALIS.ReceivingOrderDeliveryType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/receivingorder/ReceivingOrderDeliveryType.java";
+
+  // По номенклатуре
+  value BY_GOOD;
+
+  // По контейнерам
+  value BY_CARGO;
+
+  // По номенклатуре с контейнерами (без детализации)
+  value BY_GOOD_WITH_CARGO_WITHOUT_DETAILS;
+
+  // По номенклатуре с контейнерами (с детализацией)
+  value BY_GOOD_WITH_CARGO_WITH_DETAILS;
+
+}

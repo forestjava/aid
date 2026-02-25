@@ -1,0 +1,14 @@
+// Inbound event action handling code
+enum ALIS.InboundEventActionHandlingCode {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/datareoninbound/InboundEventActionHandlingCode.java";
+
+  value STATUS_COMPLETED { priority 1; }
+  value STATUS_IN_WORK { priority 1; }
+  value WMS_RECEIVING_RESULT;
+  value WMS_SHIPMENT_RESULT;
+  value TOS_RECEIVING_RESULT;
+  value TOS_SHIPMENT_RESULT;
+  value CARRIAGE_ARRIVED;
+  value VH_DEPARTURE;
+
+}

@@ -1,0 +1,66 @@
+dto DTO.ContractCreationDto {
+  type Interface;
+  label "DTO создания договора";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute edoId {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute contractNumber {
+    type varchar(500);
+    is required;
+  }
+
+  attribute contractDate {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute validFrom {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute validTo {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute contractType {
+    type varchar(50);
+    is required;
+  }
+
+  method client {
+    type id;
+  }
+
+  method company {
+    type id;
+  }
+
+  method currency {
+    type id;
+  }
+}

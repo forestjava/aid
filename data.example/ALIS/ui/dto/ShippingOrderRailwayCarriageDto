@@ -1,0 +1,35 @@
+dto DTO.ShippingOrderRailwayCarriageDto {
+  type Table;
+  label "DTO вагона заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute dataTimeKrugloyePole {
+    type timestamp;
+    is nullable;
+  }
+
+  method railwayCarriage {
+    type railwayCarriage;
+  }
+
+  method shippingOrderEtranInvoice {
+    type shippingOrderEtranInvoiceShort;
+  }
+
+  method shippingOrder {
+    type shippingOrder;
+  }
+
+  method customerService {
+    type customerService;
+  }
+
+  method ownerRailwayCarriage {
+    type ownerRailwayCarriage;
+  }
+}

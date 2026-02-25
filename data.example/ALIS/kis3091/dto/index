@@ -1,0 +1,23 @@
+/*
+DTO-слой для цепочки: Рейс -> Заявка -> Вагон -> Контейнер -> Товар (ЕТСНГ)
+*/
+service KIS3091 {
+
+  // 1. Рейс
+  import ./Route;
+
+  // 2. Заявка на вывоз
+  import ./ShippingOrder;
+
+  // 3. Вагон
+  import ./RailwayCarriage;
+  import ./ShippingOrderRailwayCarriage;
+
+  // 4. Контейнер (КТК)
+  import ./Container;
+  import ./ShippingOrderContainer;
+
+  // 5. Товар — код ЕТСНГ
+  import ./EtsngCode;
+  import ./ShippingOrderContainerItem;
+}

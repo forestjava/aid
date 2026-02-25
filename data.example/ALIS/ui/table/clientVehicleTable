@@ -1,0 +1,33 @@
+ui clientVehicleTable {
+label "UI таблица с транспортными средствами";
+
+  attribute code {
+    type String(150);
+    is public;
+    map clientVehicleData.code;
+  }
+
+  attribute clientCode {
+    type String(200);
+    is public;
+    map clientVehicleData.client.code;
+  }
+
+  attribute vehicleTypeCode {
+    type String(200);
+    is public;
+    map clientVehicleData.vehicleType.code;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is private;
+    map clientVehicleData.refrigerator;
+  }
+
+  attribute loadingTypeCode {
+    type String(200);
+    is public;
+    map clientVehicleData.loadingType.code;
+  }
+}

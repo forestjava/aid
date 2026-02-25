@@ -1,0 +1,19 @@
+enum ALIS.MessageType {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/messagetype/MessageType.java";
+
+  value ITEM;
+  value CONTRACTOR;
+  value SHIPMENT_TRANSPORT_MANIFEST;
+  value ITEM_SHIPMENT_TASK;
+  value CARGO_SHIPMENT_TASK;
+  value VEHICLE;
+  value DRIVER;
+  value RECEIVING_TRANSPORT_MANIFEST;
+  value ITEM_RECEIVING_TASK;
+  value CARGO_RECEIVING_TASK;
+  value SERVICE;
+  value ROUTE_TASK;
+  value CONFIRM_DOCS;
+  value GROUP_HIERARCHY;
+
+}

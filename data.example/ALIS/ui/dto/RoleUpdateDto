@@ -1,0 +1,30 @@
+dto DTO.RoleUpdateDto {
+  type Table;
+  label "DTO обновления роли";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute name {
+    type varchar(500);
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute composite {
+    type boolean;
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+}

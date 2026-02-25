@@ -1,0 +1,49 @@
+dto DTO.BaseUserCreationDto {
+  type Table;
+  label "Базовый DTO создания пользователя";
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute username {
+    type varchar(500);
+    is required;
+  }
+
+  attribute fullName {
+    type varchar(500);
+    is required;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute additionalEmail {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute country {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute city {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute address {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+  }
+}

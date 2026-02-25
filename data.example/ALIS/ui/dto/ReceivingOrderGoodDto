@@ -1,0 +1,58 @@
+dto DTO.ReceivingOrderGoodDto {
+  type Table;
+  label "Товар заказа на приемку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute plannedQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute totalPrice {
+    type numeric;
+    is nullable;
+  }
+
+  attribute actualQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  method clientGood {
+    type clientGoodShort;
+  }
+
+  method batch {
+    type batch;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

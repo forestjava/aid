@@ -1,0 +1,14 @@
+store breadCrumbsItem {
+   type Store;
+   label "Элемент хлебных крошек";
+   
+   attribute path {
+     type varchar(500);
+     is required;
+   }
+
+   attribute label {
+     type varchar(500);
+     is nullable;
+   }
+}

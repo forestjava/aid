@@ -1,5 +1,7 @@
-system ALIS {
+scheme ALIS {
+  only external;
+  separate 100;
+  
   import ./db;
   import ./model;
-  
 }  

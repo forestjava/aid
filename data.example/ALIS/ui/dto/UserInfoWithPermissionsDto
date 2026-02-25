@@ -1,0 +1,18 @@
+dto DTO.UserInfoWithPermissionsDto {
+  type Table;
+  label "Информация о пользователе с правами";
+
+  attribute userName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute roles {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  method userPermissions {
+    type permissionModel[];
+  }
+}

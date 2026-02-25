@@ -1,0 +1,37 @@
+import ./dto;
+
+json RouteToCargoChainPackage {
+
+  attribute route {
+    type JSON.Route;
+  }
+
+  attribute orders {
+    type JSON.ShippingOrder[];
+  }
+
+  attribute orderRailwayCarriages {
+    type JSON.ShippingOrderRailwayCarriage[];
+  }
+
+  attribute railwayCarriages {
+    type JSON.RailwayCarriage[];
+  }
+
+  attribute containers{
+    type JSON.Container[];
+  }
+
+  attribute orderContainers {
+    type JSON.ShippingOrderContainer[];
+  }
+
+  attribute items {
+    type JSON.EtsngCode[];
+  }
+
+  attribute orderItems {
+    type JSON.ShippingOrderContainerItem[];
+  }
+
+}

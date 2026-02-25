@@ -1,0 +1,19 @@
+dto DTO.GoodGroupCreationDto {
+  type Interface;
+  label "DTO создания группы товаров";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute parentId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+}

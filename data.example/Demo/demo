@@ -1,0 +1,4 @@
+service Demo {
+  import "Demo/demo eng";
+  import "Demo/демо рус";
+}

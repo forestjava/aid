@@ -1,0 +1,82 @@
+entity Datareon.Batches {
+   type JSON;
+   label "Партии товаров";
+
+   // Наименование партии
+   attribute code {
+     type varchar(100);
+     is required;
+     sync batch.code;
+   }
+
+   // Вид партионного учета
+   attribute batch_accounting_type {
+     type varchar(16);
+     is required;
+   }
+
+   // Дата производства партии
+   attribute manufacture_date {
+     type timestamp;
+     is required;
+   }
+
+   // Штрихкод партии
+   attribute batch_barcode {
+     type varchar(50);
+     is nullable;
+   }
+
+   // Активно
+   attribute active {
+     type boolean;
+     is required;
+   }
+
+   attribute client_good {
+    type Datareon.ClientGoods;
+  }   
+
+
+}
+
+
+entity Datareon.Batches.v2 {
+
+   // Наименование партии
+   attribute code {
+     type varchar(100);
+     is required;
+     sync batch.code;
+   }
+
+   // Вид партионного учета
+   attribute batch_accounting_type {
+     type varchar(16);
+     is required;
+   }
+
+   // Дата производства партии
+   attribute manufacture_date {
+     type timestamp;
+     is required;
+   }
+
+   // Штрихкод партии
+   attribute batch_barcode {
+     type varchar(50);
+     is nullable;
+   }
+
+   // Активно
+   attribute active {
+     type boolean;
+     is required;
+   }
+
+   attribute client_good {
+    type Datareon.ClientGoods;
+  }   
+
+
+}

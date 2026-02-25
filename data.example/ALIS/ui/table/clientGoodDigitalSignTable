@@ -1,0 +1,33 @@
+ui clientGoodDigitalSignTable {
+label "UI таблица с цифровыми марками";
+
+  attribute clientGood.code {
+    type String(200);
+    is public;
+    map clientGoodDigitalSign.clientGood;
+  }
+
+  attribute productType.code {
+    type String(200);
+    is public;
+    map clientGoodDigitalSign.productType;
+  }
+
+  attribute barcode {
+    type String(200);
+    is public;
+    map clientGoodDigitalSign.barcode;
+  }
+
+  attribute transportPackage.code {
+    type String(200);
+    is private;
+    map clientGoodDigitalSign.transportPackage;
+  }
+
+  attribute active {
+    type boolean;
+    is public;
+    map clientGoodDigitalSign.active;
+  }
+}

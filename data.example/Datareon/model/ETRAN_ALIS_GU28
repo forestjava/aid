@@ -1,0 +1,3627 @@
+
+annotation {
+Интеграция ETRAN GU28 1C <-> ШИНА <-> ALIS
+Создано из Монолита 1С. версия интеграции 1
+Интеграция позволяет обмениваться данными между системами  ETRAN И ALIS_Scheme
+через шину данных  .
+В информационной системе - отправителе Формируется пакет обмена формата JSON и отправляется в шину и, в последующем, в информационную систему - получатель.
+Статус каждого пакета отслеживается с помощью встроенных средств в шине данных, а также информационных системах.
+}
+
+entity DatareonGU27{
+type JSON;
+rank 2;
+label "GU28";
+
+ attribute waybill_type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_identifier {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipment_type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipment_speed {
+ type varchar(150);
+ is required; 
+}
+
+ attribute form_type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute delivery_deadline {
+ type timestamp;
+ is required; 
+}
+
+ attribute waybill_created_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute submitted_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute approved_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute accepted_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute cargo_accepted_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute depature_at {
+ type timestamp;
+ is required; 
+}
+
+ attribute depature_country {
+ type varchar(150);
+ is required; 
+}
+
+ attribute depature_station {
+ type varchar(150);
+ is required; 
+}
+
+ attribute depature_station_code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute destination_country {
+ type varchar(150);
+ is required; 
+}
+
+ attribute destination_station {
+ type varchar(150);
+ is required; 
+}
+
+ attribute destination_station_code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipper_name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipper_address {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipper_tgnl {
+ type varchar(150);
+ is required; 
+}
+
+ attribute shipper_okpo {
+ type varchar(150);
+ is required; 
+}
+
+ attribute consignee_name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute consignee_address {
+ type varchar(150);
+ is required; 
+}
+
+ attribute consignee_tgnl {
+ type varchar(150);
+ is required; 
+}
+
+ attribute consignee_okpo {
+ type varchar(150);
+ is required; 
+}
+
+ attribute payer {
+ type varchar(150);
+ is required; 
+}
+
+ attribute payer_code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute payment_form {
+ type varchar(150);
+ is required; 
+}
+
+ attribute payment_place {
+ type varchar(150);
+ is required; 
+}
+
+ attribute wagon_ownership_type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute planned_wagons {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute responsible_person {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_product {
+ type UUID;
+ is required; 
+}
+
+ attribute etsng_name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute etsng_code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute gng_code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute cargo_full_name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute additional {
+ type varchar(150);
+ is required; 
+}
+
+ attribute packaging_type {
+ type varchar(150);
+ is required; 
+}
+
+ attribute cargo_volume {
+ type varchar(150);
+ is required; 
+}
+
+ attribute cargo_weight {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute weight_loaded {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute cargo_wieght_net {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute cargo_weight_gross {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute length {
+ type varchar(150);
+ is required; 
+}
+
+ attribute width {
+ type varchar(150);
+ is required; 
+}
+
+ attribute height {
+ type varchar(150);
+ is required; 
+}
+
+ attribute marks_stamps_shipper {
+ type varchar(150);
+ is required; 
+}
+
+ attribute sign_danger {
+ type varchar(150);
+ is required; 
+}
+
+ attribute packages_count {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute places_count {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute is_dangerous {
+ type varchar(150);
+ is required; 
+}
+
+ attribute emergency_card_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute customs_declaration_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute customs_declaration_product_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_raileay_carriage {
+ type UUID;
+ is required; 
+}
+
+ attribute number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute sort {
+ type varchar(150);
+ is required; 
+}
+
+ attribute ownership {
+ type varchar(150);
+ is required; 
+}
+
+ attribute railway_lifting_capacity {
+ type varchar(150);
+ is required; 
+}
+
+ attribute previously_transported {
+ type varchar(150);
+ is required; 
+}
+
+ attribute railway_weight_gross {
+ type varchar(150);
+ is required; 
+}
+
+ attribute railway_wieght_net {
+ type varchar(150);
+ is required; 
+}
+
+ attribute place_count {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute railway_volume {
+ type varchar(150);
+ is required; 
+}
+
+ attribute axles_count {
+ type varchar(150);
+ is required; 
+}
+
+ attribute wagon_container {
+ type UUID;
+ is required; 
+}
+
+ attribute container_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute sending_request_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute supply_request_number {
+ type varchar(150);
+ is required; 
+}
+
+ attribute lifting_capacity {
+ type varchar(150);
+ is required; 
+}
+
+ attribute owner {
+ type varchar(150);
+ is required; 
+}
+
+ attribute weight {
+ type numeric(10,2);
+ is required; 
+}
+
+ attribute container_length {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_special_marks {
+ type UUID;
+ is required; 
+}
+
+ attribute mark {
+ type varchar(150);
+ is required; 
+}
+
+ attribute info {
+ type varchar(150);
+ is required; 
+}
+
+ attribute waybill_tariff_marks {
+ type UUID;
+ is required; 
+}
+
+ attribute name {
+ type varchar(150);
+ is required; 
+}
+
+ attribute code {
+ type varchar(150);
+ is required; 
+}
+
+ attribute note {
+ type varchar(150);
+ is required; 
+}
+
+ attribute carriage_zpu {
+ type UUID;
+ is required; 
+}
+
+ attribute carriage_number_zpu {
+ type varchar(150);
+ is required; 
+}
+
+ attribute zpu {
+ type varchar(150);
+ is required; 
+}
+}
+
+entity Документ.акс_Накладная{
+type Таблица;
+rank 1;
+label "ETRAN Документ.акс_Накладная";
+
+ attribute ТипНакладнойНаименование {
+ type Строка;
+ sync DatareonGU27.waybill_type;
+}
+
+ attribute Номер {
+ type Строка;
+ sync DatareonGU27.waybill_number;
+}
+
+ attribute ИдентификаторНакладной {
+ type Строка;
+ sync DatareonGU27.waybill_identifier;
+}
+
+ attribute ВидОтправкиНаименование {
+ type Строка;
+ sync DatareonGU27.shipment_type;
+}
+
+ attribute СкоростьОтправкиНаименование {
+ type Строка;
+ sync DatareonGU27.shipment_speed;
+}
+
+ attribute ТипБланкаНаименование {
+ type Строка;
+ sync DatareonGU27.form_type;
+}
+
+ attribute ДатаИстеченияСрокаДоставки {
+ type Дата;
+ sync DatareonGU27.delivery_deadline;
+}
+
+ attribute ДатаСозданияДокумента {
+ type Дата;
+ sync DatareonGU27.waybill_created_at;
+}
+
+ attribute ДатаПредъявленияНакладной {
+ type Дата;
+ sync DatareonGU27.submitted_at;
+}
+
+ attribute ДатаСогласования {
+ type Дата;
+ sync DatareonGU27.approved_at;
+}
+
+ attribute ДатаПринятияПриемосдатчиком {
+ type Дата;
+ sync DatareonGU27.accepted_at;
+}
+
+ attribute ДатаИВремяПринятияГрузаКПеревозке {
+ type Дата;
+ sync DatareonGU27.cargo_accepted_at;
+}
+
+ attribute ДатаИВремяОтправленияГруза {
+ type Дата;
+ sync DatareonGU27.depature_at;
+}
+
+ attribute СтранаОтправленияНаименование {
+ type Строка;
+ sync DatareonGU27.depature_country;
+}
+
+ attribute СтанцияОтправленияНаименование {
+ type Строка;
+ sync DatareonGU27.depature_station;
+}
+
+ attribute СтанцияОтправленияКод {
+ type Строка;
+ sync DatareonGU27.depature_station_code;
+}
+
+ attribute СтранаНазначенияНаименование {
+ type Строка;
+ sync DatareonGU27.destination_country;
+}
+
+ attribute СтанцияНазначенияНаименование {
+ type Строка;
+ sync DatareonGU27.destination_station;
+}
+
+ attribute СтанцияНазначенияКод {
+ type Строка;
+ sync DatareonGU27.destination_station_code;
+}
+
+ attribute ГрузоотправительНаименование {
+ type Строка;
+ sync DatareonGU27.shipper_name;
+}
+
+ attribute ГрузоотправительАдрес {
+ type Строка;
+ sync DatareonGU27.shipper_address;
+}
+
+ attribute ГрузоотправительТГНЛ {
+ type Строка;
+ sync DatareonGU27.shipper_tgnl;
+}
+
+ attribute ГрузоотправительКодОКПО {
+ type Строка;
+ sync DatareonGU27.shipper_okpo;
+}
+
+ attribute ГрузополучательНаименование {
+ type Строка;
+ sync DatareonGU27.consignee_name;
+}
+
+ attribute ГрузополучательАдрес {
+ type Строка;
+ sync DatareonGU27.consignee_address;
+}
+
+ attribute ГрузополучательТГНЛ {
+ type Строка;
+ sync DatareonGU27.consignee_tgnl;
+}
+
+ attribute ГрузополучательКодОКПО {
+ type Строка;
+ sync DatareonGU27.consignee_okpo;
+}
+
+ attribute ПлательщикНаименование {
+ type Строка;
+ sync DatareonGU27.payer;
+}
+
+ attribute ПлательщикКод {
+ type Строка;
+ sync DatareonGU27.payer_code;
+}
+
+ attribute ФормаОплатыНаименование {
+ type Строка;
+ sync DatareonGU27.payment_form;
+}
+
+ attribute МестоОплатыНаименование {
+ type Строка;
+ sync DatareonGU27.payment_place;
+}
+
+ attribute ПлановыйТипСобственностиВагонаНаименование {
+ type Строка;
+ sync DatareonGU27.wagon_ownership_type;
+}
+
+ attribute ПланируемоеКоличествоВагонов {
+ type Число;
+ sync DatareonGU27.planned_wagons;
+}
+
+ attribute ОтветственныйЗаЗаполнение {
+ type Строка;
+ sync DatareonGU27.responsible_person;
+}
+
+ attribute Грузы {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.waybill_product;
+}
+
+ attribute Грузы.НаименованиеГруза {
+ type Строка;
+ sync DatareonGU27.etsng_name;
+}
+
+ attribute Грузы.КодГруза {
+ type Строка;
+ sync DatareonGU27.etsng_code;
+}
+
+ attribute Грузы.КодГрузаПоГНГ {
+ type Строка;
+ sync DatareonGU27.gng_code;
+}
+
+ attribute Грузы.ТочноеНаименованиеГруза {
+ type Строка;
+ sync DatareonGU27.cargo_full_name;
+}
+
+ attribute Грузы.ДополнительныеСведенияОГрузе {
+ type Строка;
+ sync DatareonGU27.additional;
+}
+
+ attribute Грузы.ВидУпаковкиНаимаенование {
+ type Строка;
+ sync DatareonGU27.packaging_type;
+}
+
+ attribute Грузы.ОбъемГруза {
+ type Строка;
+ sync DatareonGU27.cargo_volume;
+}
+
+ attribute Грузы.МассаГруза {
+ type Число;
+ sync DatareonGU27.cargo_weight;
+}
+
+ attribute Грузы.РеальныйВесГруза {
+ type Число;
+ sync DatareonGU27.weight_loaded;
+}
+
+ attribute Грузы.МассаМестаНетто {
+ type Число;
+ sync DatareonGU27.cargo_wieght_net;
+}
+
+ attribute Грузы.МассаМестаБрутто {
+ type Число;
+ sync DatareonGU27.cargo_weight_gross;
+}
+
+ attribute Грузы.МаксимальнаяДлинаГруза {
+ type Строка;
+ sync DatareonGU27.length;
+}
+
+ attribute Грузы.МаксимальнаяШиринаГруза {
+ type Строка;
+ sync DatareonGU27.width;
+}
+
+ attribute Грузы.МаксимальнаяВысотаГруза {
+ type Строка;
+ sync DatareonGU27.height;
+}
+
+ attribute Грузы.ЗнакиИМаркиГрузоотправителя {
+ type Строка;
+ sync DatareonGU27.marks_stamps_shipper;
+}
+
+ attribute Грузы.АварийностьГрузаНаименование {
+ type Строка;
+ sync DatareonGU27.sign_danger;
+}
+
+ attribute Грузы.КоличествоПакетов {
+ type Число;
+ sync DatareonGU27.packages_count;
+}
+
+ attribute Грузы.КоличествоМест {
+ type Число;
+ sync DatareonGU27.places_count;
+}
+
+ attribute Грузы.АварийныйГрузНаименование {
+ type Строка;
+ sync DatareonGU27.is_dangerous;
+}
+
+ attribute Грузы.НомерАварийнойКарты {
+ type Строка;
+ sync DatareonGU27.emergency_card_number;
+}
+
+ attribute Грузы.НомерДекларацииНаГруз {
+ type Строка;
+ sync DatareonGU27.customs_declaration_number;
+}
+
+ attribute Грузы.НомерПозицииГрузаВДекларации {
+ type Строка;
+ sync DatareonGU27.customs_declaration_product_number;
+}
+
+ attribute Вагоны {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.waybill_raileay_carriage;
+}
+
+ attribute Вагоны.НомерВагона {
+ type Строка;
+ sync DatareonGU27.number;
+}
+
+ attribute Вагоны.НаименованиеРодаВагона {
+ type Строка;
+ sync DatareonGU27.sort;
+}
+
+ attribute Вагоны.НаименованиеСобственника {
+ type Строка;
+ sync DatareonGU27.ownership;
+}
+
+ attribute Вагоны.Грузоподъемность {
+ type Строка;
+ sync DatareonGU27.railway_lifting_capacity;
+}
+
+ attribute Вагоны.НаименованиеРанееПеревозимогоГруза {
+ type Строка;
+ sync DatareonGU27.previously_transported;
+}
+
+ attribute Вагоны.МассаВКгБрутто {
+ type Строка;
+ sync DatareonGU27.railway_weight_gross;
+}
+
+ attribute Вагоны.МассаВКгНетто {
+ type Строка;
+ sync DatareonGU27.railway_wieght_net;
+}
+
+ attribute Вагоны.КоличествоМест {
+ type Число;
+ sync DatareonGU27.place_count;
+}
+
+ attribute Вагоны.ОбъемКузова {
+ type Строка;
+ sync DatareonGU27.railway_volume;
+}
+
+ attribute Вагоны.КоличествоОсей {
+ type Строка;
+ sync DatareonGU27.axles_count;
+}
+
+ attribute Контейнеры {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.wagon_container;
+}
+
+ attribute Контейнеры.НомерВагона {
+ type Строка;
+ sync DatareonGU27.container_number;
+}
+
+ attribute Контейнеры.НомерКонтейнера {
+ type Строка;
+ sync DatareonGU27.number;
+}
+
+ attribute Контейнеры.НомерОтправкиВЗаявке {
+ type Строка;
+ sync DatareonGU27.sending_request_number;
+}
+
+ attribute Контейнеры.НомерПодачиВЗаявке {
+ type Строка;
+ sync DatareonGU27.supply_request_number;
+}
+
+ attribute Контейнеры.ТипКрупнотоннажногоКонтейнера {
+ type Строка;
+ sync DatareonGU27.lifting_capacity;
+}
+
+ attribute Контейнеры.НаименованиеСобственника {
+ type Строка;
+ sync DatareonGU27.owner;
+}
+
+ attribute Контейнеры.МассаТарыВКг {
+ type Число;
+ sync DatareonGU27.weight;
+}
+
+ attribute Контейнеры.ФутовостьКрупнотоннажногоКонтейнера {
+ type Строка;
+ sync DatareonGU27.container_length;
+}
+
+ attribute СпециальныеОтметки {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.waybill_special_marks;
+}
+
+ attribute СпециальныеОтметки.Отметка {
+ type Строка;
+ sync DatareonGU27.mark;
+}
+
+ attribute СпециальныеОтметки.Замечание {
+ type Строка;
+ sync DatareonGU27.info;
+}
+
+ attribute ТарифныеОтметкиЗаОтправку {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.waybill_tariff_marks;
+}
+
+ attribute ТарифныеОтметкиЗаОтправку.НаименованиеТарифнойОтметки {
+ type Строка;
+ sync DatareonGU27.name;
+}
+
+ attribute ТарифныеОтметкиЗаОтправку.КодТарифнойОтметки {
+ type Строка;
+ sync DatareonGU27.code;
+}
+
+ attribute ТарифныеОтметкиЗаОтправку.Замечание {
+ type Строка;
+ sync DatareonGU27.note;
+}
+
+ attribute КонтейнерЗПУ {
+ type ТабличнаяЧасть;
+ sync DatareonGU27.carriage_zpu;
+}
+
+ attribute КонтейнерЗПУ.НомерКонтейнера {
+ type Строка;
+ sync DatareonGU27.carriage_number_zpu;
+}
+
+ attribute КонтейнерЗПУ.Знаки {
+ type Строка;
+ sync DatareonGU27.zpu;
+}
+
+ attribute Проведен {
+ type Булево;
+}
+
+ attribute Ссылка {
+ type НакладнаяГУ27;
+}
+
+ attribute ПометкаУдаления {
+ type Булево;
+}
+
+ attribute Дата {
+ type Дата;
+}
+
+ attribute НомерНакладной {
+ type Строка;
+}
+
+ attribute УникальныйНомерПеревозки {
+ type Строка;
+}
+
+ attribute IDТекущегоСостояниеНакладной {
+ type Строка;
+}
+
+ attribute ТекущееСостояниеНакладной {
+ type Строка;
+}
+
+ attribute ДатаПоследнейОперацииНадДокументом {
+ type Дата;
+}
+
+ attribute ОжиданиеЭЦП {
+ type Строка;
+}
+
+ attribute ПризнакПодписанияДокументаЭЦП {
+ type Строка;
+}
+
+ attribute ТипНакладнойID {
+ type Строка;
+}
+
+ attribute IDТипаБланка {
+ type Строка;
+}
+
+ attribute ТипБланкаКод {
+ type Строка;
+}
+
+ attribute ГрузоотправительID {
+ type Строка;
+}
+
+ attribute ГрузоотправительIDАдреса {
+ type Строка;
+}
+
+ attribute ЗаявкаИГрафикПодачID {
+ type Строка;
+}
+
+ attribute ЗаявкаИГрафикПодачНомер {
+ type Строка;
+}
+
+ attribute НомерОтправления {
+ type Строка;
+}
+
+ attribute НомерПодачи {
+ type Строка;
+}
+
+ attribute СтранаОтправленияКод {
+ type Строка;
+}
+
+ attribute ПунктОтправленияКод {
+ type Строка;
+}
+
+ attribute ПунктОтправленияНаименование {
+ type Строка;
+}
+
+ attribute ПортОтправленияКод {
+ type Строка;
+}
+
+ attribute ПортОтправленияНаименование {
+ type Строка;
+}
+
+ attribute ПодъезднойПутьОтправления {
+ type Строка;
+}
+
+ attribute ГрузополучательID {
+ type Строка;
+}
+
+ attribute ГрузополучательIDАдреса {
+ type Строка;
+}
+
+ attribute СтранаНазначенияКод {
+ type Строка;
+}
+
+ attribute ПунктНазначенияКод {
+ type Строка;
+}
+
+ attribute ПунктНазначенияНаименование {
+ type Строка;
+}
+
+ attribute ПортНазначенияКод {
+ type Строка;
+}
+
+ attribute ПортНазначенияНаименование {
+ type Строка;
+}
+
+ attribute ПодъезднойПутьНазначения {
+ type Строка;
+}
+
+ attribute СкоростьОтправкиID {
+ type Строка;
+}
+
+ attribute ВидОтправкиID {
+ type Строка;
+}
+
+ attribute МестоОплатыID {
+ type Строка;
+}
+
+ attribute ФормаОплатыID {
+ type Строка;
+}
+
+ attribute КодИсключительногоТарифа {
+ type Строка;
+}
+
+ attribute КодИсключительногоТарифаЖДЯ {
+ type Строка;
+}
+
+ attribute ПланируемыйРодВагоновID {
+ type Строка;
+}
+
+ attribute ПланируемыйРодВагоновКод {
+ type Строка;
+}
+
+ attribute ПланируемыйРодВагоновНаименование {
+ type Строка;
+}
+
+ attribute ПлановыйТипСобственностиВагонаID {
+ type Строка;
+}
+
+ attribute ПланируемаяГрузоподъемностьКонтейнера {
+ type Строка;
+}
+
+ attribute ПланируемыйРазмерКрупнотоннажногоКонтейнера {
+ type Строка;
+}
+
+ attribute ПланируемоеКоличествоКонтейнеров {
+ type Строка;
+}
+
+ attribute ПлановыйТипСобственностиКонтейнераID {
+ type Строка;
+}
+
+ attribute ПлановыйТипСобственностиКонтейнераНаименование {
+ type Строка;
+}
+
+ attribute ВидГрузовыхРаботID {
+ type Строка;
+}
+
+ attribute ВидГрузовыхРаботНаименование {
+ type Строка;
+}
+
+ attribute ОбъявленнаяЦенностьГруза {
+ type Строка;
+}
+
+ attribute ИдентификаторВалюты {
+ type Строка;
+}
+
+ attribute ПогрузкаСредствамиID {
+ type Строка;
+}
+
+ attribute ПогрузкаСредствамиНаименование {
+ type Строка;
+}
+
+ attribute ПланируемаяНегабаритность {
+ type Строка;
+}
+
+ attribute ВидСообщенияID {
+ type Строка;
+}
+
+ attribute КодДорогиПлательщика {
+ type Строка;
+}
+
+ attribute НаименованиеДорогиПлательщика {
+ type Строка;
+}
+
+ attribute ПлательщикID {
+ type Строка;
+}
+
+ attribute БанковскийСчетПлательщика {
+ type Строка;
+}
+
+ attribute НаименованиеБанкаПлательщика {
+ type Строка;
+}
+
+ attribute ПодкодЭкспедитора {
+ type Строка;
+}
+
+ attribute ПодкодКонтрагента {
+ type Строка;
+}
+
+ attribute ИдентификаторНаПорожнююПеревозкуПодЗаявку {
+ type Строка;
+}
+
+ attribute НомерЗаявки {
+ type Строка;
+}
+
+ attribute НомерВизы {
+ type Строка;
+}
+
+ attribute ПолныйНомерВизы {
+ type Строка;
+}
+
+ attribute СогласовавшаяОрганизация {
+ type Строка;
+}
+
+ attribute СогласовавшаяОрганизацияНаименование {
+ type Строка;
+}
+
+ attribute ФИОИсполнителя {
+ type Строка;
+}
+
+ attribute ДолжностьИсполнителя {
+ type Строка;
+}
+
+ attribute КомментарийКВизеИлиОтказу {
+ type Строка;
+}
+
+ attribute СпособВзвешиванияID {
+ type Строка;
+}
+
+ attribute НаименованиеСпособаВзвешивания {
+ type Строка;
+}
+
+ attribute IDПроводившегоВзвешивание {
+ type Строка;
+}
+
+ attribute НаименованиеПроводившегоВзвешивание {
+ type Строка;
+}
+
+ attribute ПогрешностьВесов {
+ type Строка;
+}
+
+ attribute ПризнакПроверкиТарыID {
+ type Строка;
+}
+
+ attribute НаименованиеПризнакаПроверкиТары {
+ type Строка;
+}
+
+ attribute ОтветственныйЗаРазмещениеГруза {
+ type Строка;
+}
+
+ attribute IDСвидетельстваОбАттестации {
+ type Строка;
+}
+
+ attribute ИдентификаторЗаписиПоFASTENING {
+ type Строка;
+}
+
+ attribute IDНормативногоДокументаПоРазмещению {
+ type Строка;
+}
+
+ attribute НаименованиеНормативногоДокументаПоРазмещению {
+ type Строка;
+}
+
+ attribute ДопРеквизитРазмещенияГлава {
+ type Строка;
+}
+
+ attribute ДопРеквизитРазмещенияПараграф {
+ type Строка;
+}
+
+ attribute ДоРеквизитРазмещенияРаздел {
+ type Строка;
+}
+
+ attribute IDНТУ_МТУ_АСКМ {
+ type Строка;
+}
+
+ attribute НомерНТУ_МТУ {
+ type Строка;
+}
+
+ attribute ДатаУтвержденияНТУ_МТУ {
+ type Дата;
+}
+
+ attribute НаименованиеГабаритаПогрузки {
+ type Строка;
+}
+
+ attribute НомерСхемыМТУ {
+ type Строка;
+}
+
+ attribute НомерСхемыНТУ_МТУ {
+ type Строка;
+}
+
+ attribute ТехническиеУсловияРазмещения {
+ type Строка;
+}
+
+ attribute ПланируемаяДатаПогрузки {
+ type Дата;
+}
+
+ attribute ФактическаяДатаПогрузки {
+ type Дата;
+}
+
+ attribute ФактическаяДатаПогрузкиМестная {
+ type Дата;
+}
+
+ attribute ДатаПриемаСИндороги {
+ type Дата;
+}
+
+ attribute ДатаПриемаСИндорогиМестная {
+ type Дата;
+}
+
+ attribute ФИОПриемосдатчика {
+ type Строка;
+}
+
+ attribute КодСтраныНазначенияПорожняка {
+ type Строка;
+}
+
+ attribute НаименованиеСтраныНазначенияПорожняка {
+ type Строка;
+}
+
+ attribute КодСтанцииНазначенияПорожняка {
+ type Строка;
+}
+
+ attribute НаименованиеСтанцииНазначенияПорожняка {
+ type Строка;
+}
+
+ attribute ID_СПФ {
+ type Строка;
+}
+
+ attribute НомерУНО {
+ type Строка;
+}
+
+ attribute ПризнакКольцевогоМаршрута {
+ type Строка;
+}
+
+ attribute НомерКольцевогоМаршрута {
+ type Строка;
+}
+
+ attribute НомерМаршрута {
+ type Строка;
+}
+
+ attribute ТипМаршрута {
+ type Строка;
+}
+
+ attribute ТоварныйКассирСоздавшийКомплектДокументов {
+ type Строка;
+}
+
+ attribute ДолжностьТоварногоКассира {
+ type Строка;
+}
+
+ attribute ДатаИВремяПринятияГрузаКПеревозкеМестная {
+ type Дата;
+}
+
+ attribute IDРазрешающейТелеграммы {
+ type Строка;
+}
+
+ attribute ДатаОтметкиТаможни {
+ type Дата;
+}
+
+ attribute ДатаИВремяПрибытияГруза {
+ type Дата;
+}
+
+ attribute ДатаИВремяПрибытияГрузаМестная {
+ type Дата;
+}
+
+ attribute ДатаИВремяРаскредитованияГруза {
+ type Дата;
+}
+
+ attribute ДатаИВремяРаскредитованияГрузаМестная {
+ type Дата;
+}
+
+ attribute ДатаИВремяРаскредитованияГрузаЭлектронная {
+ type Дата;
+}
+
+ attribute ДатаИВремяСдачиНаИндорогу {
+ type Дата;
+}
+
+ attribute ДатаИВремяСдачиНаИндорогуМестная {
+ type Дата;
+}
+
+ attribute ДатаИВремяУведомленияГрузополучателяОПрибытии {
+ type Дата;
+}
+
+ attribute ФИОУведомленного {
+ type Строка;
+}
+
+ attribute ПорядковыйНомерСообщения410 {
+ type Строка;
+}
+
+ attribute КодПунктаПередачи410 {
+ type Строка;
+}
+
+ attribute IDОсновнойНакладной {
+ type Строка;
+}
+
+ attribute НомерОсновнойНакладной {
+ type Строка;
+}
+
+ attribute ПризнакПеревозкаПоАльтернативномуМаршруту {
+ type Строка;
+}
+
+ attribute ТипОтправительскогоМаршрута {
+ type Строка;
+}
+
+ attribute IDДокументаМаршрута {
+ type Строка;
+}
+
+ attribute ПризнакФормированияНаПутяхОбщегоПользования {
+ type Строка;
+}
+
+ attribute IDПунктаНазначенияКаботажа {
+ type Строка;
+}
+
+ attribute СписокНекритическихОшибок {
+ type Строка;
+}
+
+ attribute акс_ЗаявкаНаПеревозку {
+ type ЗаявканаперевозкуГУ1;
+}
+
+ attribute акс_ВидСообщения {
+ type Видысообщений;
+}
+
+ attribute акс_РазрешающаяТелеграма {
+ type Строка;
+}
+
+ attribute акс_ОсновнаяНакладная {
+ type Строка;
+}
+
+ attribute акс_СПФ {
+ type Строка;
+}
+
+ attribute акс_ДокументМаршрута {
+ type Строка;
+}
+
+ attribute акс_ПунктНазанчениеКаботажа {
+ type Строка;
+}
+
+ attribute акс_СтранаОтправления {
+ type Страны;
+}
+
+ attribute акс_ПунктПередачи410 {
+ type Строка;
+}
+
+ attribute акс_СтранаНазначения {
+ type Страны;
+}
+
+ attribute акс_СтанцияОтправления {
+ type Станции;
+}
+
+ attribute акс_СтанцияНазначения {
+ type Станции;
+}
+
+ attribute акс_СтранаНазначенияПорожняка {
+ type Страны;
+}
+
+ attribute акс_ПланируемыйРодВагона {
+ type Классификаторродовва;
+}
+
+ attribute акс_ПланируемыйТипСобственностиВагона {
+ type Типысобственностиваг;
+}
+
+ attribute акс_ТипБланка {
+ type Типыбланков;
+}
+
+ attribute акс_Грузоотправитель {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_Грузополучатель {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_ВидОтправки {
+ type Видыотправок;
+}
+
+ attribute акс_ТипНакладной {
+ type Типынакладной;
+}
+
+ attribute акс_СкоростьОтправки {
+ type Классификаторскорост;
+}
+
+ attribute акс_МестоОплаты {
+ type Местапроведениярасче;
+}
+
+ attribute акс_ФормаОплаты {
+ type Формыпроведениярасче;
+}
+
+ attribute акс_Источник {
+ type Источник;
+}
+
+ attribute акс_ВидГрузовыхРабот {
+ type Видыгрузовыхработ;
+}
+
+ attribute акс_НаВизирование {
+ type Булево;
+}
+
+ attribute акс_СтанцияНазначенияПорожняка {
+ type Станции;
+}
+
+ attribute акс_СвидетельствоОбАттестации {
+ type Строка;
+}
+
+ attribute акс_ПризнакПроверкиТары {
+ type Признакипроверкитары;
+}
+
+ attribute акс_Плательщик {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute акс_ДатаОбновленияДанных {
+ type Дата;
+}
+
+ attribute акс_ЭтоПлатныйДокумент {
+ type Булево;
+}
+
+ attribute акс_СостояниеНакладной {
+ type Состояниенакладной;
+}
+
+ attribute акс_ПланируемаяГрузоподъемностьКонтейнера {
+ type Классификатортоннажн;
+}
+
+ attribute акс_ПланируемыйРазмерКонтейнера {
+ type Классификаторразмеро;
+}
+
+ attribute акс_ОригиналНакладнойПолучен {
+ type Булево;
+}
+
+ attribute акс_ДорожнаяВедомостьПолучена {
+ type Булево;
+}
+
+ attribute акс_КорешокДорожнойВедомостиПолучен {
+ type Булево;
+}
+
+ attribute акс_КвитанцияОПриемеГрузаПолучена {
+ type Булево;
+}
+
+ attribute акс_ЗаявкаНаПорожнююПеревозку {
+ type ЗаявканаперевозкуГУ1;
+}
+
+ attribute акс_ДатаЗавершенияРаботыСДокументом {
+ type Дата;
+}
+
+ attribute акс_ФайлОригиналНакладной {
+ type ПрисоединенныйфайлНа;
+}
+
+ attribute акс_ФайлДорожнаяВедомость {
+ type ПрисоединенныйфайлНа;
+}
+
+ attribute акс_ФайлКорешокДорожнойВедомости {
+ type ПрисоединенныйфайлНа;
+}
+
+ attribute акс_ФайлКвитанцияОПриемеГруза {
+ type ПрисоединенныйфайлНа;
+}
+
+ attribute акс_РежимСозданияНакладной {
+ type Режимысозданиянаклад;
+}
+
+ attribute акс_ЦельПеревозки {
+ type Целиперевозки;
+}
+
+ attribute ИдентификаторЦелиПеревозки {
+ type Строка;
+}
+
+ attribute акс_НакладнаяОснование {
+ type НакладнаяГУ27;
+}
+
+ attribute акс_ПунктОтправления {
+ type Станции;
+}
+
+ attribute акс_ПунктНазначения {
+ type Станции;
+}
+
+ attribute акс_ПланируемыйТипСобственностиКонтейнераКонтрейлера {
+ type Типысобственности;
+}
+
+ attribute Грузы.IDГрузаПоГНГ {
+ type Строка;
+}
+
+ attribute Грузы.НаименованиеГрузаПоГНГ {
+ type Строка;
+}
+
+ attribute Грузы.ВидУпаковкиID {
+ type Строка;
+}
+
+ attribute Грузы.АварийностьГрузаID {
+ type Строка;
+}
+
+ attribute Грузы.АварийныйГрузID {
+ type Строка;
+}
+
+ attribute Грузы.АварийнаяКартаID {
+ type Строка;
+}
+
+ attribute Грузы.СредствоПакетирования {
+ type Строка;
+}
+
+ attribute Грузы.ТипВидаПробегаЛокомотива {
+ type Строка;
+}
+
+ attribute Грузы.НаименованиеВидаПробегаЛокомотива {
+ type Строка;
+}
+
+ attribute Грузы.ПризнакСцепа {
+ type Строка;
+}
+
+ attribute Грузы.IDГрузаПервичныйКлюч {
+ type Строка;
+}
+
+ attribute Грузы.акс_ПервыичныйКлючГруза {
+ type Строка;
+}
+
+ attribute Грузы.акс_Упаковка {
+ type Видыупаковок;
+}
+
+ attribute Грузы.акс_ПризнакОпасности {
+ type Аварийностьгрузов;
+}
+
+ attribute Грузы.акс_ГрузПоЕТСНГ {
+ type Классификаторгрузов;
+}
+
+ attribute Грузы.акс_ГрузГНГ {
+ type Гармонизированнаяном;
+}
+
+ attribute Грузы.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute Грузы.акс_ТочноеНаименованиеГруза {
+ type Строка;
+}
+
+ attribute Грузы.акс_ОпасныйГруз {
+ type Классификаторопасных;
+}
+
+ attribute ГрузОтметкиНаГруз.ОтметкаID {
+ type Строка;
+}
+
+ attribute ГрузОтметкиНаГруз.ОтметкаНаименование {
+ type Строка;
+}
+
+ attribute ГрузОтметкиНаГруз.Замечание {
+ type Строка;
+}
+
+ attribute ГрузОтметкиНаГруз.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute ГрузОтметкиНаГруз.акс_Отметка {
+ type Условияперевозки;
+}
+
+ attribute ГрузОтметкиНаГруз {
+ type ТабличнаяЧасть;
+}
+
+ attribute ГрузДополнительныеСвойства.ИдентификаторСвойства {
+ type Строка;
+}
+
+ attribute ГрузДополнительныеСвойства.НаименованиеСвойстваГруза {
+ type Строка;
+}
+
+ attribute ГрузДополнительныеСвойства {
+ type ТабличнаяЧасть;
+}
+
+ attribute МаршрутСледования.КодСтраны {
+ type Строка;
+}
+
+ attribute МаршрутСледования.НаименованиеСтраны {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ИдентификаторСтраныСтанции {
+ type Строка;
+}
+
+ attribute МаршрутСледования.КодСтанции {
+ type Строка;
+}
+
+ attribute МаршрутСледования.НаименованиеСтанции {
+ type Строка;
+}
+
+ attribute МаршрутСледования.КодПорта {
+ type Строка;
+}
+
+ attribute МаршрутСледования.НаименованиеПорта {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПодъезднойПуть {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ВидКолеиID {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ВидКолеиНаименование {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ВидТранспортаID {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ВидТраспортаНаименование {
+ type Строка;
+}
+
+ attribute МаршрутСледования.КратчайшееРасстояниеДоСледующейУзловойСтанции {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеID {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеОКПО {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеНаименование {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеIDАдреса {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеАдрес {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ГрузополучательНаПредыдущемОтрезкеТГНЛ {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПлательщикНаПредыдущемОтрезкеID {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПлательщикНаПредыдущемОтрезкеКод {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПлательщикНаПредыдущемОтрезкеНаименование {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ДорогаРегистрацииПлательщика {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПодкодЭкспедитора {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПлательщикПоСНГID {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПлательщикПоСНГНаименование {
+ type Строка;
+}
+
+ attribute МаршрутСледования.Признаки {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ИдентификаторФактическогоПеревозчика {
+ type Строка;
+}
+
+ attribute МаршрутСледования.ПризнакЭлектрификацииУчастка {
+ type Строка;
+}
+
+ attribute МаршрутСледования.акс_ФактическийПеревозчик {
+ type Строка;
+}
+
+ attribute МаршрутСледования.акс_СтранаИнфраструктуры {
+ type Страны;
+}
+
+ attribute МаршрутСледования.акс_ТарифнаяСтанция {
+ type Станции;
+}
+
+ attribute МаршрутСледования.акс_Порт {
+ type Порты;
+}
+
+ attribute МаршрутСледования.акс_Плательщик {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute МаршрутСледования.акс_ВидТранспорта {
+ type Видытранспорта;
+}
+
+ attribute МаршрутСледования.акс_ТипСтанции {
+ type Строка;
+}
+
+ attribute МаршрутСледования.акс_ФактическаяСтанция {
+ type Станции;
+}
+
+ attribute МаршрутСледования.акс_Перевозчик {
+ type Строка;
+}
+
+ attribute МаршрутСледования.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute МаршрутСледования.акс_Экспедитор {
+ type Строка;
+}
+
+ attribute МаршрутСледования.акс_ПризнакЭкспедитора {
+ type Булево;
+}
+
+ attribute МаршрутСледования.акс_ВидКолеи {
+ type Видыколеи;
+}
+
+ attribute МаршрутСледования {
+ type ТабличнаяЧасть;
+}
+
+ attribute СпециальныеОтметки.ОтметкаID {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.НомерЗаявкиНаОтстой {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.НомерОтправкиЗаявкиНаОтстой {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.НомерДоговораНаРемонтПромывкуОтпаркуОбработку {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ДатаВыдачиДоговораОПрисоединенииКОКУ {
+ type Дата;
+}
+
+ attribute СпециальныеОтметки.ИдентификаторЗаявкиНаПривлечениеВагонов {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ИдентификаторГрафикаПодачиЗаявкиНаПривлечениеВагонов {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.НомерГрафикаПодачиЗаявкиНаПривлечениеВагонов {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.МерыПротивСмерзаемостиID {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.МерыПротивСмерзаемостиНаименование {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.МерыПротивСмерзаемостиПроценты {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ИдентификаторСогласияНаПриемСмерзающегосяГруза {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.НомерСогласияНаПриемСмерзающегосяГруза {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ДатаСогласияНаПриемСмерзающегосяГруза {
+ type Дата;
+}
+
+ attribute СпециальныеОтметки.ПризнакДоговораНаПромывку {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ИдентификаторДоговораНаРемонтПромывкуОтпаркуОбработку {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ИдентификаторОрганизации {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.ОКПООтветственнойОрганизации {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.КраткоеНаименованиеОрганизации {
+ type Строка;
+}
+
+ attribute СпециальныеОтметки.акс_Отметка {
+ type Условияперевозки;
+}
+
+ attribute СпециальныеОтметки.акс_Организация {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute СпециальныеОтметки.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute ПрилагаемыеДокументы.IDДокумента {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.НомерДокумента {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.ДатаВыдачиИлиСрокДействияДоговора {
+ type Дата;
+}
+
+ attribute ПрилагаемыеДокументы.СтрокТранспортабельности {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.МодельВагонаДляДоговоровНаПеревозкиНаОсобыхУсловиях {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.IDДляЭлектронныхВетеринарныхСопроводительныхДокументов {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.IDСогласияНаОтстойIDСоглашенияОПриемеГрузаКПеревозке {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.акс_СогласиеНаОтстойСоглашениеОПриемеГрузаКПеревозке {
+ type Строка;
+}
+
+ attribute ПрилагаемыеДокументы.акс_ТипДокумента {
+ type Виддокумента;
+}
+
+ attribute ПрилагаемыеДокументы.акс_ДокументДоговор {
+ type Договорыклиента;
+}
+
+ attribute ПрилагаемыеДокументы.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute ПрилагаемыеДокументы.акс_Документ {
+ type Виддокумента;
+}
+
+ attribute ПрилагаемыеДокументы {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВыпискиИзАСКМ.НомерНТУМТУ {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМ.ДатаУтвержденияНТУМТУ {
+ type Дата;
+}
+
+ attribute ВыпискиИзАСКМ.НаименованиеГабаритаПогрузки {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМ.НомерСхемыМТУ {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМ {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепления.IDСредстваКрепления {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепления.НаименованиеСредстваКрепления {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепления.МинимальноеКоличество {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепления.МаксимальноеКоличество {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепления {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепленияДопПараметры.IDДопПараметра {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепленияДопПараметры.НаименованиеДопПараметра {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепленияДопПараметры.ЗначениеДопПараметра {
+ type Строка;
+}
+
+ attribute ВыпискиИзАСКМПереченьСредствКрепленияДопПараметры {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПеревозочныеСредства.IDТипаПеревозочногоПриспособления {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.НаименованиеТипаПеревозочногоПриспособления {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.Номер {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.КодСтраныСобственника {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.НаименованиеСтраныСобственника {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.IDТипаСобственности {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.НаименованиеТипаСобственности {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.ОКПОСобственника {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.НаименованиеСобственника {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.Количество {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.Возврат {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.Масса {
+ type Строка;
+}
+
+ attribute ПеревозочныеСредства.акс_ТипПеревозочногоПриспособления {
+ type Типыперевозочныхприс;
+}
+
+ attribute ПеревозочныеСредства.акс_ТипСобственности {
+ type Типысобственности;
+}
+
+ attribute ПеревозочныеСредства.акс_Собственник {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute ПеревозочныеСредства.акс_СтранаСобственника {
+ type Страны;
+}
+
+ attribute ПеревозочныеСредства {
+ type ТабличнаяЧасть;
+}
+
+ attribute Контейнеры.IDГрузоподъемностиКонтейнера {
+ type Строка;
+}
+
+ attribute Контейнеры.ГрузоподъемностьКонтейнера {
+ type Строка;
+}
+
+ attribute Контейнеры.НомерВагонаДляКонтейнерногоПоезда {
+ type Строка;
+}
+
+ attribute Контейнеры.НаименованиеТипаКрупнотоннажногоКонтейнера {
+ type Строка;
+}
+
+ attribute Контейнеры.РазмерКрупнотоннажногоКонтейнера {
+ type Строка;
+}
+
+ attribute Контейнеры.КоличествоПакетов {
+ type Число;
+}
+
+ attribute Контейнеры.КоличествоМест {
+ type Число;
+}
+
+ attribute Контейнеры.МассаБруттоВКг {
+ type Число;
+}
+
+ attribute Контейнеры.МассаНеттоВКг {
+ type Число;
+}
+
+ attribute Контейнеры.Объем {
+ type Строка;
+}
+
+ attribute Контейнеры.КодСтраныСобственника {
+ type Строка;
+}
+
+ attribute Контейнеры.НаименованиеСтраныСобственника {
+ type Строка;
+}
+
+ attribute Контейнеры.IDТипаСобственности {
+ type Строка;
+}
+
+ attribute Контейнеры.НаименованиеТипаСобственности {
+ type Строка;
+}
+
+ attribute Контейнеры.IDСобственника {
+ type Строка;
+}
+
+ attribute Контейнеры.ОКПОСобственника {
+ type Строка;
+}
+
+ attribute Контейнеры.ПризнакиКонтейнера {
+ type Строка;
+}
+
+ attribute Контейнеры.акс_Вагон {
+ type Вагоны;
+}
+
+ attribute Контейнеры.акс_Грузоподъемность {
+ type Классификатортоннажн;
+}
+
+ attribute Контейнеры.акс_ТипКонтейнера {
+ type Классификатортиповко;
+}
+
+ attribute Контейнеры.акс_РазмерКонтейнера {
+ type Классификаторразмеро;
+}
+
+ attribute Контейнеры.акс_Собственник {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute Контейнеры.акс_Администрация {
+ type Страны;
+}
+
+ attribute Контейнеры.акс_ТипСобственности {
+ type Типысобственности;
+}
+
+ attribute Контейнеры.акс_Контейнер {
+ type Контейнеры;
+}
+
+ attribute КонтейнерЗПУ.IDТипаЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.НаименованиеТипаЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.Количество {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.ГодИзготовления {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.IDТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.НаименованиеТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.IDЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.КодЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.НаименованиеЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтейнерЗПУ.акс_ЗПУ {
+ type ЗПУ;
+}
+
+ attribute КонтейнерЗПУ.акс_Контейнер {
+ type Контейнеры;
+}
+
+ attribute КонтейнерЗПУ.акс_ТипСобственности {
+ type ТипысобственностиЗПУ;
+}
+
+ attribute КонтейнерЗПУ.акс_Дорога {
+ type Дороги;
+}
+
+ attribute КонтейнерЗПУ.акс_НомерКонтейнера {
+ type Строка;
+}
+
+ attribute Вагоны.IDЗаявкиГУ_12 {
+ type Строка;
+}
+
+ attribute Вагоны.НомерОтправкиВЗаявке {
+ type Строка;
+}
+
+ attribute Вагоны.НомерПодачиВЗаявке {
+ type Строка;
+}
+
+ attribute Вагоны.IDРодаВагона {
+ type Строка;
+}
+
+ attribute Вагоны.КодРодаВагона {
+ type Строка;
+}
+
+ attribute Вагоны.акс_Вагон {
+ type Вагоны;
+}
+
+ attribute Вагоны.ПорядковыйНомерВагонаВОтправке {
+ type Строка;
+}
+
+ attribute Вагоны.КодСтраныСобственника {
+ type Строка;
+}
+
+ attribute Вагоны.НаименованиеСтраныСобственника {
+ type Строка;
+}
+
+ attribute Вагоны.IDТипаСобственности {
+ type Строка;
+}
+
+ attribute Вагоны.НаименованиеТипаСобственности {
+ type Строка;
+}
+
+ attribute Вагоны.IDСобственника {
+ type Строка;
+}
+
+ attribute Вагоны.ОКПОСобственника {
+ type Строка;
+}
+
+ attribute Вагоны.IDАрендатора {
+ type Строка;
+}
+
+ attribute Вагоны.ОКПОАрендатора {
+ type Строка;
+}
+
+ attribute Вагоны.НаименованиеАрендатора {
+ type Строка;
+}
+
+ attribute Вагоны.КоличествоПакетов {
+ type Строка;
+}
+
+ attribute Вагоны.МассаТарыЦСБруса {
+ type Строка;
+}
+
+ attribute Вагоны.МассаТарыЦПроверенная {
+ type Строка;
+}
+
+ attribute Вагоны.МассаДопОборудования {
+ type Строка;
+}
+
+ attribute Вагоны.ПризнакВыдачиДопОборудованияСГрузом {
+ type Строка;
+}
+
+ attribute Вагоны.КодРанееПеревозившегосяГруза {
+ type Строка;
+}
+
+ attribute Вагоны.НаименованиеРанееПеревозившегосяГруза {
+ type Строка;
+}
+
+ attribute Вагоны.КоличествоПроводников {
+ type Строка;
+}
+
+ attribute Вагоны.КодНегабаритности {
+ type Строка;
+}
+
+ attribute Вагоны.МассаКонтрольнойРамыКг {
+ type Строка;
+}
+
+ attribute Вагоны.НомерВагонаСКонтрольнойРамой {
+ type Строка;
+}
+
+ attribute Вагоны.ВысотаНадУровнемБорта {
+ type Строка;
+}
+
+ attribute Вагоны.КоличествоОсновныхШтабелей {
+ type Строка;
+}
+
+ attribute Вагоны.ВысотаОсновныхШтабелей {
+ type Строка;
+}
+
+ attribute Вагоны.КоличествоШтабелейВШапке {
+ type Строка;
+}
+
+ attribute Вагоны.ОбъемЛесногоГруза {
+ type Строка;
+}
+
+ attribute Вагоны.ТемператураЖидкости {
+ type Строка;
+}
+
+ attribute Вагоны.ВысотаНалива {
+ type Строка;
+}
+
+ attribute Вагоны.ПлотностьЖидкости {
+ type Строка;
+}
+
+ attribute Вагоны.ОбъемЖидкости {
+ type Строка;
+}
+
+ attribute Вагоны.ТипЦистерны {
+ type Строка;
+}
+
+ attribute Вагоны.НомерРефсекции {
+ type Строка;
+}
+
+ attribute Вагоны.КоличествоВагоновВРефсекции {
+ type Строка;
+}
+
+ attribute Вагоны.Ролики {
+ type Строка;
+}
+
+ attribute Вагоны.КодВагонаВСцепе {
+ type Строка;
+}
+
+ attribute Вагоны.акс_ВагонВСцепе {
+ type Строка;
+}
+
+ attribute Вагоны.ПризнакВагонаПрикрытия {
+ type Строка;
+}
+
+ attribute Вагоны.ПризнакиВагона {
+ type Строка;
+}
+
+ attribute Вагоны.ДлинаПоОсямСцепленияАвтосцепок {
+ type Строка;
+}
+
+ attribute Вагоны.IDНормативногоДокументаПоРазмещению {
+ type Строка;
+}
+
+ attribute Вагоны.НаименованиеНормативногоДокументаПоРазмещению {
+ type Строка;
+}
+
+ attribute Вагоны.ДопРеквизитГлава {
+ type Строка;
+}
+
+ attribute Вагоны.ДопРеквизитПараграф {
+ type Строка;
+}
+
+ attribute Вагоны.ДопРеквизитРаздел {
+ type Строка;
+}
+
+ attribute Вагоны.ДопРеквизитТУ {
+ type Строка;
+}
+
+ attribute Вагоны.IDНТУ_МТУ_АСКМ {
+ type Строка;
+}
+
+ attribute Вагоны.НомерНТУ_МТУ {
+ type Строка;
+}
+
+ attribute Вагоны.ДатаУтвержденияНТУ_МТУ {
+ type Дата;
+}
+
+ attribute Вагоны.НаименованиеГабаритаПогрузки {
+ type Строка;
+}
+
+ attribute Вагоны.НомерСхемыМТУ {
+ type Строка;
+}
+
+ attribute Вагоны.IDЗаписиРазмещенияИКрепления {
+ type Строка;
+}
+
+ attribute Вагоны.НомерСхемыНТУ_МТУ {
+ type Строка;
+}
+
+ attribute Вагоны.IDРанееПеревозимогоГруза {
+ type Строка;
+}
+
+ attribute Вагоны.ОтветственныйЗаРазмещениеКонтейнеровНаВагоне {
+ type Строка;
+}
+
+ attribute Вагоны.акс_ЗаявкаГУ_12 {
+ type Строка;
+}
+
+ attribute Вагоны.акс_Негабаритность {
+ type Строка;
+}
+
+ attribute Вагоны.акс_ЗаписьРазмещенияИКрепления {
+ type Строка;
+}
+
+ attribute Вагоны.акс_СтранаСобственника {
+ type Страны;
+}
+
+ attribute Вагоны.акс_Собственник {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute Вагоны.акс_РодВагона {
+ type Классификаторродовва;
+}
+
+ attribute Вагоны.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute Вагоны.акс_Арендатор {
+ type ОрганизацииЭТРАН;
+}
+
+ attribute Вагоны.акс_РанееПеревозимыйГрузГНГ {
+ type Гармонизированнаяном;
+}
+
+ attribute Вагоны.акс_РанееПеревозимыйГрузЕТСНГ {
+ type Классификаторгрузов;
+}
+
+ attribute ВагоныПроводники.ФИОПроводника {
+ type Строка;
+}
+
+ attribute ВагоныПроводники.СерияПаспортаПроводника {
+ type Строка;
+}
+
+ attribute ВагоныПроводники.НомерПаспортаПроводника {
+ type Строка;
+}
+
+ attribute ВагоныПроводники.НомерКомандировочногоУдостоверенияПроводника {
+ type Строка;
+}
+
+ attribute ВагоныПроводники.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute ВагоныПроводники {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе.ТипРеквизита {
+ type Строка;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе.НомерРисункаЭскиза {
+ type Строка;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе.Дата {
+ type Дата;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе.ИдентификаторЭскиза {
+ type Строка;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе.акс_Эскиз {
+ type Строка;
+}
+
+ attribute ВагонСведенияОРисункеЭскизе {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонПараграфыПункты.Пункт {
+ type Строка;
+}
+
+ attribute ВагонПараграфыПункты {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонПереченьСредствКрепления.IDСредстваКрепления {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепления.НаименованиеСредстваКрепления {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепления.Количество {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепления {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонПереченьСредствКрепленияДопПараметры.IDДопПараметра {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепленияДопПараметры.НаименованиеДопПараметра {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепленияДопПараметры.ЗначениеПараметра {
+ type Строка;
+}
+
+ attribute ВагонПереченьСредствКрепленияДопПараметры {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.IDОтметки {
+ type Строка;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.НаименованиеОтметки {
+ type Строка;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.Замечание {
+ type Строка;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.ТипОтметки {
+ type Строка;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.акс_Отметка {
+ type Условияперевозки;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.акс_ТипОтметки {
+ type Типыусловийперевозки;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон.акс_УИД {
+ type Уникальныйидентифика;
+}
+
+ attribute ВагонВагонныеИТарифныеОтметкиНаВагон {
+ type ТабличнаяЧасть;
+}
+
+ attribute ВагонЗПУ.IDТипаЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.НаименованиеТипаЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.Знаки {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.Количество {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.ГодИзготовления {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.IDТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.НаименованиеТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.IDЖдЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.КодЖдЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.НаименованиеЖдЗПУ {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.НомерВагона {
+ type Строка;
+}
+
+ attribute ВагонЗПУ.акс_Вагон {
+ type Вагоны;
+}
+
+ attribute ВагонЗПУ {
+ type ТабличнаяЧасть;
+}
+
+ attribute Контрейлеры.VINНомерИТЕ_АТС {
+ type Строка;
+}
+
+ attribute Контрейлеры.ДлинаИТЕ_АТСВМетрах {
+ type Строка;
+}
+
+ attribute Контрейлеры.МассаТарыИТЕ_АТСВКг {
+ type Строка;
+}
+
+ attribute Контрейлеры.МассаГрузаИТЕ_АТСВКг {
+ type Строка;
+}
+
+ attribute Контрейлеры.КоличествоМестВГрузахИТЕ_АТС {
+ type Строка;
+}
+
+ attribute Контрейлеры.IDИТЕ_АТСПоСправочнику {
+ type Строка;
+}
+
+ attribute Контрейлеры.НомерВагонаДляКонтрейлерногоПоезда {
+ type Строка;
+}
+
+ attribute Контрейлеры.акс_ИТЕ_АТСПоСправочнику {
+ type Строка;
+}
+
+ attribute Контрейлеры {
+ type ТабличнаяЧасть;
+}
+
+ attribute КонтрейлерЗПУ.IDТипаЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.НаименованиеТипаЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.Знаки {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.Количество {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.ГодИзготовления {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.IDТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.НаименованиеТипаСобственностиЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.IDЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.КодЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ.НаименованиеЖдЗПУ {
+ type Строка;
+}
+
+ attribute КонтрейлерЗПУ {
+ type ТабличнаяЧасть;
+}
+
+ attribute КонтрейлерПроводники.ФИОПроводника {
+ type Строка;
+}
+
+ attribute КонтрейлерПроводники.СерияПаспортаПроводника {
+ type Строка;
+}
+
+ attribute КонтрейлерПроводники.НомерПаспортаПроводника {
+ type Строка;
+}
+
+ attribute КонтрейлерПроводники.НомерКомандировочногоУдостоверенияПроводника {
+ type Строка;
+}
+
+ attribute КонтрейлерПроводники {
+ type ТабличнаяЧасть;
+}
+
+ attribute ТарифныеОтметкиЗаОтправку.IDТарифнойОтметки {
+ type Строка;
+}
+
+ attribute ПроводникиНаНакладную.ФИОПроводника {
+ type Строка;
+}
+
+ attribute ПроводникиНаНакладную.СерияПаспортаПроводника {
+ type Строка;
+}
+
+ attribute ПроводникиНаНакладную.НомерПаспортаПроводника {
+ type Строка;
+}
+
+ attribute ПроводникиНаНакладную.НомерКомандировочногоУдостоверенияПроводника {
+ type Строка;
+}
+
+ attribute ПроводникиНаНакладную {
+ type ТабличнаяЧасть;
+}
+
+ attribute ОтметкиВПутиСледования.IDТипаОтметки {
+ type Строка;
+}
+
+ attribute ОтметкиВПутиСледования.НаименованиеОтметки {
+ type Строка;
+}
+
+ attribute ОтметкиВПутиСледования.ТекстОтметки {
+ type Строка;
+}
+
+ attribute ОтметкиВПутиСледования.НомерВагона {
+ type Строка;
+}
+
+ attribute ОтметкиВПутиСледования.ПризнакРемонтПоВинеПеревозчика {
+ type Строка;
+}
+
+ attribute ОтметкиВПутиСледования {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.IDТипаСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ТипСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.НомерВагона {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.НомерКонтейнера {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтанцияВзиманияСборов {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ДистанцияВзиманияСборов {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.КодСтанцииНачалаУчастаВзиманияСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтанцияНачалаУчасткаВзиманияСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.Расстояние {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.РасчетнаяМассаКг {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаВРублях {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаВТенге {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.IDВалюты {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.НаименованиеВалюты {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СхемаИнфраструктура {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтавкаИнфраструктураРуб {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаИнфраструктураРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СхемаВагон {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтавкаВагонРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаВагонРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.КоэффициентКТарифу {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаНалога {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ОблагаетсяНалогом {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтавкаНалога {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СуммаНалогаВТенге {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ОблагаетсяНалогомВРеспубликеКазахстан {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СтавкаНалогаВТенге {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ТарифныйКлассГруза {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СкидкаПоИсключительномуТарифу {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ПроцентноеИзменеиеТарифа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.КодПрименяемогоТарифа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.Курс {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ПризнакПлатежа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.СкидкаПоИсключительномуТарифуЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.ПроцентноеИзменениеТарифаЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.КодПрименяемогоТарифаЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению.акс_ПримнеяемыйТарифЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоОтправлению {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПереченьСредствКрепления.IDСредстваКрепления {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепления.НаименованиеСредстваКрепления {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепления.Количество {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепления {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПереченьСредствКрепленияДопПараметры.IDПараметра {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепленияДопПараметры.НаименованиеДопПарамтера {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепленияДопПараметры.ЗначениеПараметра {
+ type Строка;
+}
+
+ attribute ПереченьСредствКрепленияДопПараметры {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПараграфыПункты.Пункт {
+ type Строка;
+}
+
+ attribute ПараграфыПункты {
+ type ТабличнаяЧасть;
+}
+
+ attribute СведенияОРисункеЭскизе.ТипРеквизита {
+ type Строка;
+}
+
+ attribute СведенияОРисункеЭскизе.НомерРисункаЭскиза {
+ type Строка;
+}
+
+ attribute СведенияОРисункеЭскизе.Дата {
+ type Дата;
+}
+
+ attribute СведенияОРисункеЭскизе.IDЭскиза {
+ type Строка;
+}
+
+ attribute СведенияОРисункеЭскизе.акс_Эскиз {
+ type Строка;
+}
+
+ attribute СведенияОРисункеЭскизе {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.IDТипаСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ТипСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.НомерВагона {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.НомерКонтейнера {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтанцияНаКоторойВзимаютсяСборы {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ДистанцияВзиманияСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.КодСтанцииНачалаУчасткаВзиманияСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтанцияНачалаУчасткаВзиманияСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.Расстояние {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.РассчетнаяМассаКг {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаВРублях {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаВТенге {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.IDВалюты {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.Валюта {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СхемаИнфраструктуры {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтавкаИнфраструктурыРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаИнфраструктурыРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СхемаВагон {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтавкаВагонРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаВагонРуб {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.КоэфициентКТарифу {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаНалога {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ОблагаетсяНалогом {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтавкаНалога {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СуммаНалогаВТенге {
+ type Число;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ОблагаетсяНалогомВРеспубликеКазахстан {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СтавкаНалогаВТенге {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ТарифныйКлассГруза {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СкидкаПоИсключительномуТарифу {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ПроцентноеИзменеиеТарифа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.КодПрименяемогоТарифа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.Курс {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ПризнакПлатежа {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.СкидкаПоИсключительномуТарифуЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.ПроцентноеИзменениеТарифаЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию.КодПрименяемогоТарифаЖДЯ {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоПрибытию {
+ type ТабличнаяЧасть;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.СуммаВРублях {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.СуммаВВалюте {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.IDВалюты {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.Валюта {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.IDТипаСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.ТипСбора {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.НомерВагона {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.КурсВалюты {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.СуммаНалога {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу.СтавкаНДС {
+ type Строка;
+}
+
+ attribute ПровозныеПлатежиИСборыПоВходу {
+ type ТабличнаяЧасть;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков.ДатаИВремяПрохожденияПогранпереходаСтыка {
+ type Дата;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков.КодСтанцииПрохожденияПогранпереходаСтыка {
+ type Строка;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков.СтанцияПрохожденияПогранпереходаСтыка {
+ type Строка;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков.IDФактическогоПеревозчика {
+ type Строка;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков.акс_ФактическийПеревозчик {
+ type Строка;
+}
+
+ attribute ДанныеОПрохожденииПогранпереходовИСтыков {
+ type ТабличнаяЧасть;
+}
+
+ attribute СведенияОТранзитнойДекларации.КоличествоТДОформленныхПоОдномуТипуСтанций {
+ type Строка;
+}
+
+ attribute СведенияОТранзитнойДекларации.ТипСтанции {
+ type Строка;
+}
+
+ attribute СведенияОТранзитнойДекларации {
+ type ТабличнаяЧасть;
+}
+
+ attribute ОпрерацииНакладной.ДатаОперации {
+ type Дата;
+}
+
+ attribute ОпрерацииНакладной.НаименованиеРезультатаОперации {
+ type Строка;
+}
+
+ attribute ОпрерацииНакладной.Примечание {
+ type Строка;
+}
+
+ attribute ОпрерацииНакладной {
+ type ТабличнаяЧасть;
+}
+
+ attribute СвязанныеДокументы.IDТипаСвязи {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы.IDДокументаРодителя {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы.IDДокументаПотомка {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы.акс_ТипСязи {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы.акс_ДокументРодитель {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы.акс_ДокументПотомок {
+ type Строка;
+}
+
+ attribute СвязанныеДокументы {
+ type ТабличнаяЧасть;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.IDМаршрута {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.КоличествоСвязанныхОтправокСМаршрутом {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.КоличествоСвязанныхВагоновСМаршрутом {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.МассаТары {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.МассаНетто {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.МассаБрутто {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.МаксимальнаяДлинаВагона {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.ДлинаПоезда {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте.акс_Маршрут {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршруте {
+ type ТабличнаяЧасть;
+}
+
+ attribute СведенияОбОтправительскомМаршрутеПоказателиЯдра.КоличествоУсловныхВагоновМаршурта {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршрутеПоказателиЯдра.КоличествоУсловныхВагоновЯдра {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршрутеПоказателиЯдра.МассаНеттоЯдра {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршрутеПоказателиЯдра.МассаБруттоЯдра {
+ type Строка;
+}
+
+ attribute СведенияОбОтправительскомМаршрутеПоказателиЯдра {
+ type ТабличнаяЧасть;
+}
+
+ attribute акс_ЭЦП {
+ type ТабличнаяЧасть;
+}
+
+ attribute акс_АдресаГрузополучателя.ИдентификаторАдреса {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузополучателя.АдресСтрокой {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузополучателя.ТГНЛОрганизации {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузополучателя {
+ type ТабличнаяЧасть;
+}
+
+ attribute акс_АдресаГрузоотправителя.ИдентификаторАдреса {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузоотправителя.АдресСтрокой {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузоотправителя.ТГНЛОрганизации {
+ type Строка;
+}
+
+ attribute акс_АдресаГрузоотправителя {
+ type ТабличнаяЧасть;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.ДатаОперации {
+ type Дата;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.ОтчетнаяДата {
+ type Дата;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.IDОрганизации {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.Организация {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.ДолжностьПользователя {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.ФИОПользователя {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.IDСостоянияДоОперации {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.СостояниеДоОперации {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.ОперацияID {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.Операция {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.РезультатID {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.Результат {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.Примечание {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом.РабочееМесто {
+ type Строка;
+}
+
+ attribute акс_ИсторияОперацийНадДокументом {
+ type ТабличнаяЧасть;
+}
+
+ attribute акс_УчетныеЗаписи.УчетнаяЗапись {
+ type НастройкиобменаЭТРАН;
+}
+
+ attribute акс_УчетныеЗаписи {
+ type ТабличнаяЧасть;
+}
+}
+
+entity ALIS_GU27{
+type Table;
+rank 3;
+label "GU28";
+
+ attribute id {
+ type Строка;
+ sync DatareonGU27.etsng_name;
+}
+
+ attribute code {
+ type Строка;
+ sync DatareonGU27.etsng_code;
+}
+
+ attribute created_at {
+}
+
+ attribute updated_at {
+}
+
+ attribute created_by {
+}
+
+ attribute updated_by {
+}
+}

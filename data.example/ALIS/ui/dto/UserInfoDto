@@ -1,0 +1,43 @@
+dto DTO.UserInfoDto {
+  type Table;
+  label "Информация о пользователе";
+
+  attribute userName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute longName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute additionalEmail {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute userType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute roles {
+    type varchar(500)[];
+    is nullable;
+  }
+
+  method clients {
+    type clientShort[];
+  }
+}

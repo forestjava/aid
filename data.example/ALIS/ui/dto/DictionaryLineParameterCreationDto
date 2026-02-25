@@ -1,0 +1,28 @@
+dto DTO.DictionaryLineParameterCreationDto {
+  type Table;
+  label "DTO создания параметра строки справочника";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute parameterValue {
+    type varchar(500);
+    is nullable;
+  }
+
+  method dictionaryParameter {
+    type dictionaryParameter;
+  }
+}

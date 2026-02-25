@@ -1,0 +1,25 @@
+dto DTO.UnitOfMeasureSimpleDto {
+  type Table;
+  label "DTO единицы измерения простой";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+}

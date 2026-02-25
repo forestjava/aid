@@ -1,0 +1,85 @@
+store userGroupStore {
+   type Store;
+   label "Стор групп пользователей";
+   
+   attribute state {
+     type store_state;
+     is required;
+   }
+
+   attribute data {
+     type userGroupData[];
+     is required;
+   }
+
+   attribute pagination {
+     type pagination;
+     is required;
+   }
+
+   attribute sorting {
+     type sorting;
+     is required;
+   }
+
+   attribute current {
+     type full_user_group;
+     is nullable;
+   }
+
+   attribute previous_filters {
+     type jsonb;
+     is nullable;
+   }
+
+   attribute suffix_url {
+     type varchar(200);
+     is nullable;
+   }
+
+   method getById {
+     type model;
+   }
+
+   method fetch {
+     type void;
+   }
+
+   method fetchWithUrlQuery {
+     type void;
+   }
+
+   method update {
+     type model;
+   }
+
+   method create {
+     type model;
+   }
+
+   method remove {
+     type void;
+   }
+
+   method setCurrent {
+     type void;
+   }
+
+   method paginationChanged {
+     type void;
+   }
+
+   method sortingChanged {
+     type void;
+   }
+}
+
+json userGroupData {
+  attribute name{
+  type String;
+  }
+
+  attribute description {
+  type String;
+  }
+}

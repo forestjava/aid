@@ -1,0 +1,9 @@
+dto DTO.CountDto {
+  type Table;
+  label "DTO количества";
+
+  attribute count {
+    type integer;
+    is nullable;
+  }
+}

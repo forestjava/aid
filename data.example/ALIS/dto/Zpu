@@ -1,0 +1,12 @@
+// DTO.Zpu - ЗПУ
+dto DTO.Zpu {
+  description "ЗПУ";
+
+  attribute id {
+    type uuid;
+  }
+
+  attribute code {
+    type string;
+  }
+}

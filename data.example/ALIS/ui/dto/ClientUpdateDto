@@ -1,0 +1,85 @@
+dto DTO.ClientUpdateDto {
+  type Table;
+  label "Клиент обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute email {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute phoneNumber {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute addressFact {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute edoId {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute inn {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute kpp {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute okpo {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute ogrn {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute addressLegal {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute signatoryName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute signatoryPosition {
+    type varchar(500);
+    is nullable;
+  }
+}

@@ -1,0 +1,66 @@
+scheme Цепочка {
+    // БД
+    import ALIS/db/railway_station;
+    
+    // модель
+    import ALIS/model/RailwayStation;
+    
+    // DTO
+    import ALIS/dto/RailwayStation;
+
+    // Store станций на frontend
+    store Store.RailwayStationList {
+      label "Store станций на frontend";
+      type Two;
+      
+      attribute id {
+        type string;
+        map DTO.RailwayStation.id;
+      }
+
+      attribute code {
+        type string;
+        map DTO.RailwayStation.code;
+      }
+
+      attribute name {
+        type string;
+        map DTO.RailwayStation.name;
+      }
+
+      attribute esrCode {
+        type string;
+        map DTO.RailwayStation.esrCode;
+      }
+    
+    };
+
+    // Таблица станций на UI
+    ui UI.RailwayStationTable {
+      label "Таблица станций на UI";
+      offset 300;
+      
+      attribute id {
+        label "ID";
+        map Store.RailwayStationList.id;
+      }
+
+      attribute code {
+        label "Код";
+        map Store.RailwayStationList.code;
+      }
+
+      attribute name {
+        label "Наименование";
+        map Store.RailwayStationList.name;
+      }
+
+      attribute esrCode {
+        label "Код ЕСР";
+        map Store.RailwayStationList.esrCode;
+        //filter: 2;
+      }
+    
+    };
+
+}

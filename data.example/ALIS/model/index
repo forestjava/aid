@@ -1,8 +1,12 @@
 scheme db.alis {
   separate 800;
   
+  import ./AccrualBase;
+  import ./AccrualMethod;
   import ./AdditionalAgreement;
   import ./Batch;
+  import ./BatchAccountingType;
+  import ./CalculationMethod;
   import ./Cargo;
   import ./CellOccupancy;
   import ./Client;
@@ -10,6 +14,7 @@ scheme db.alis {
   import ./ClientGood;
   import ./ClientGoodDigitalSign;
   import ./ClientGoodType;
+  import ./ClientOrderType;
   import ./ClientRelatedEntity;
   import ./ClientUserGroup;
   import ./ClientVehicle;
@@ -20,10 +25,13 @@ scheme db.alis {
   import ./ContainerRemainLog;
   import ./ContainerRemainLogDetails;
   import ./ContainerRemainStatus;
+  import ./ContainerType;
   import ./Contract;
+  import ./ContractType;
   import ./Currency;
   import ./DangerClass;
   import ./EntitySequence;
+  import ./EntityType;
   import ./EtranInvoice;
   import ./EtsngCode;
   import ./FrequencyOfServices;
@@ -37,11 +45,17 @@ scheme db.alis {
   import ./GoodRemainLogDetails;
   import ./GoodType;
   import ./InboundEvent;
+  import ./InboundEventActionHandlingCode;
   import ./InboundEventConfig;
+  import ./InboundEventProcessingStatus;
   import ./LoadingType;
+  import ./MessageType;
+  import ./OrderStatus;
   import ./OutboundConfig;
   import ./OutboundData;
+  import ./OwnershipType;
   import ./PermissionPath;
+  import ./ProcessingType;
   import ./ProductType;
   import ./RailwayCarriage;
   import ./RailwayCarriageModel;
@@ -55,6 +69,7 @@ scheme db.alis {
   import ./ReceivingOrderCargo;
   import ./ReceivingOrderContainer;
   import ./ReceivingOrderContainerItem;
+  import ./ReceivingOrderDeliveryType;
   import ./ReceivingOrderEtranInvoice;
   import ./ReceivingOrderGood;
   import ./ReceivingOrderRailwayCarriage;
@@ -63,29 +78,47 @@ scheme db.alis {
   import ./RelatedService;
   import ./RolePermission;
   import ./Route;
+  import ./RouteStatus;
+  import ./RouteType;
   import ./SealType;
+  import ./SerialAccountingType;
   import ./Service;
+  import ./ServiceOfMeasure;
   import ./ShippingOrder;
   import ./ShippingOrderBlackbox;
   import ./ShippingOrderCargo;
   import ./ShippingOrderContainer;
   import ./ShippingOrderContainerItem;
+  import ./ShippingOrderDeliveryType;
   import ./ShippingOrderEtranInvoice;
   import ./ShippingOrderGood;
   import ./ShippingOrderRailwayCarriage;
   import ./ShippingOrderRequestedService;
   import ./ShippingOrderTransport;
   import ./StandardSize;
+  import ./TaskStatus;
   import ./TempRegime;
+  import ./TerminalArea;
   import ./TerminalAreaCatalog;
   import ./TermOfPeriodicService;
   import ./TermOfRequestedService;
   import ./TermOfService;
+  import ./TransportationType;
   import ./TransportPackage;
+  import ./TransportType;
   import ./UnitOfMeasure;
   import ./UnitOfMeasureConversion;
   import ./UserSetting;
   import ./VehicleBrand;
   import ./VehicleType;
   import ./ZoneStatusCatalog;
+
+  // ЭТРАН
+  import ./Waybill;
+  import ./WaybillContainer;
+  import ./WaybillProduct;
+  import ./WaybillRailwayCarriage;
+  import ./WaybillSpecialMark;
+  import ./WaybillTariffMark;
+  import ./WaybillZpu;
 }

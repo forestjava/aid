@@ -1,0 +1,34 @@
+dto DTO.ReceivingOrderBlackboxDto {
+  type Table;
+  label "Черный ящик заказа на приемку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  method cargo {
+    type cargo;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,38 @@
+dto DTO.UserUpdateDto {
+  type Table;
+  label "DTO обновления пользователя";
+
+  attribute password {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute partialUpdate {
+    type boolean;
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute username {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute fullName {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute type {
+    type varchar(50);
+    is nullable;
+  }
+
+  method defaultWarehouse {
+    type idCode;
+  }
+}

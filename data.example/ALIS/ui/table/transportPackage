@@ -1,0 +1,15 @@
+ui transportPackageTable {
+label "UI таблица с транспортными упаковками";
+
+  attribute barcode {
+    type String(200);
+    is private;
+    map alis.transport_package.barcode;
+  }
+
+  attribute unitOfMeasureCode {
+    type String(200);
+    is private;
+    map alis.transport_package.unit_of_measure_code;
+  }
+}

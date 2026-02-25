@@ -1,0 +1,28 @@
+dto DTO.UserGroupCreationDto {
+  type Table;
+  label "Группа пользователей создание";
+
+  attribute name {
+    type varchar(500);
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute clients {
+    type UUID[];
+    is nullable;
+  }
+
+  attribute users {
+    type UUID[];
+    is nullable;
+  }
+
+  method userRoles {
+    type userRoleUpdate[];
+  }
+}

@@ -18,7 +18,7 @@ entity ALIS.ReceivingOrder {
 
   // Статус заявки
   attribute orderStatus {
-    type OrderStatus;
+    type ALIS.OrderStatus;
     is private;
     map alis.receiving_order.order_status;
   }
@@ -39,14 +39,14 @@ entity ALIS.ReceivingOrder {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     map alis.receiving_order.terminal_area;
   }
 
   // Тип транспорта
   attribute transportType {
-    type TransportType;
+    type ALIS.TransportType;
     is private;
     map alis.receiving_order.transport_type;
   }
@@ -194,7 +194,7 @@ entity ALIS.ReceivingOrder {
 
   // Вид поставки
   attribute deliveryType {
-    type ReceivingOrderDeliveryType;
+    type ALIS.ReceivingOrderDeliveryType;
     is private;
     is nullable;
     map alis.receiving_order.delivery_type;

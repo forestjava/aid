@@ -1,0 +1,99 @@
+dto DTO.ClientVehicleDto {
+  type Table;
+  label "Транспорт клиента";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+    map ALIS.ClientVehicle.id;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+    map ALIS.ClientVehicle.code;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+    map ALIS.ClientVehicle.active;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+    map ALIS.ClientVehicle.syncId;
+  }
+
+  attribute refrigerator {
+    type boolean;
+    is nullable;
+    map ALIS.ClientVehicle.refrigerator;
+  }
+
+  attribute withTrailer {
+    type boolean;
+    is nullable;
+    map ALIS.ClientVehicle.withTrailer;
+  }
+
+  attribute trailerNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientVehicle.trailerNumber;
+  }
+
+  attribute insuranceNumber {
+    type varchar(500);
+    is nullable;
+    map ALIS.ClientVehicle.insuranceNumber;
+  }
+
+  attribute typeOwnershipTransport {
+    type varchar(50);
+    is nullable;
+    map ALIS.ClientVehicle.typeOwnershipTransport;
+  }
+
+  method client {
+    type client;
+    map ALIS.ClientVehicle.client;
+  }
+
+  method vehicleBrand {
+    type vehicleBrand;
+    map ALIS.ClientVehicle.vehicleBrand;
+  }
+
+  method vehicleType {
+    type vehicleType;
+    map ALIS.ClientVehicle.vehicleType;
+  }
+
+  method loadingType {
+    type loadingType;
+    map ALIS.ClientVehicle.loadingType;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

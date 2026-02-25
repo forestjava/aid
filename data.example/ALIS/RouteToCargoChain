@@ -1,0 +1,42 @@
+/*
+Цепочка сущностей: Рейс -> Заявки -> Вагоны -> Контейнеры -> Грузы/Товары
+Описывает полный путь груза от рейса до конечного товара
+*/
+scheme Nested {
+
+  // ── Рейс (Route) ──────────────────────────────────────────────
+  import ALIS/model/Route;
+  import ALIS/model/RouteType;
+  import ALIS/model/RouteStatus;
+
+  // ── Заявки (Orders) ── привязаны к рейсу через Route ─────────
+  import ALIS/model/ShippingOrder;
+  import ALIS/model/ReceivingOrder;
+  import ALIS/model/OrderStatus;
+
+  // ── Вагоны (RailwayCarriages) ── привязаны к заявкам ─────────
+  import ALIS/model/ShippingOrderRailwayCarriage;
+  import ALIS/model/ReceivingOrderRailwayCarriage;
+  import ALIS/model/RailwayCarriage;
+  import ALIS/model/RailwayCarriageType;
+  import ALIS/model/RailwayCarriageModel;
+  import ETRAN/model/WaybillRailwayCarriage;
+
+  // ── Контейнеры (Containers) ── привязаны к вагонам ────────────
+  import ALIS/model/ShippingOrderContainer;
+  import ALIS/model/ReceivingOrderContainer;
+  import ALIS/model/Container;
+  import ALIS/model/ContainerType;
+  import ETRAN/model/WaybillContainer;
+
+  // ── Грузы / Товары (Cargo / Product) ── привязаны к контейнерам
+  import ALIS/model/ShippingOrderContainerItem;
+  import ALIS/model/ReceivingOrderContainerItem;
+  import ALIS/model/ShippingOrderCargo;
+  import ALIS/model/ReceivingOrderCargo;
+  import ALIS/model/Cargo;
+  import ALIS/model/ShippingOrderGood;
+  import ALIS/model/ReceivingOrderGood;
+  import ALIS/model/ProductType;
+  import ETRAN/model/WaybillProduct;
+}

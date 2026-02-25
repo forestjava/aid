@@ -1,0 +1,33 @@
+store decorativeThemesStore {
+   type Store;
+   label "Стор декоративных тем";
+   
+   attribute themes {
+     type map;
+     is required;
+   }
+
+   method getThemesFromCookies {
+     type jsonb;
+   }
+
+   method saveThemesToCookies {
+     type void;
+   }
+
+   method initializeAllThemes {
+     type void;
+   }
+
+   method initializeTheme {
+     type void;
+   }
+
+   method setThemeEnabled {
+     type void;
+   }
+
+   method isThemeEnabled {
+     type boolean;
+   }
+}

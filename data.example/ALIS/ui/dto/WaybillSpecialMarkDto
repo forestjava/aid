@@ -1,0 +1,40 @@
+dto DTO.WaybillSpecialMarkDto {
+  type Table;
+  label "Специальная отметка накладной";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute mark {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute info {
+    type text;
+    is nullable;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

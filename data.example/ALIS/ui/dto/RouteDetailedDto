@@ -1,0 +1,77 @@
+dto DTO.RouteDetailedDto {
+  type Table;
+  label "Маршрут детальный";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute number {
+    type integer;
+    is nullable;
+  }
+
+  attribute routeType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute dataTime {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute terminalArea {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute transportType {
+    type varchar(50);
+    is nullable;
+  }
+
+  attribute comment {
+    type text;
+    is nullable;
+  }
+
+  attribute status {
+    type varchar(50);
+    is nullable;
+  }
+
+  method clientRelatedEntity {
+    type clientRelatedEntity;
+  }
+
+  method clientDriver {
+    type clientDriverShort;
+  }
+
+  method clientVehicle {
+    type clientVehicleShort;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

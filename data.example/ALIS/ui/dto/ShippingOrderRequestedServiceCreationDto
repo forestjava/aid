@@ -1,0 +1,18 @@
+dto DTO.ShippingOrderRequestedServiceCreationDto {
+  type Table;
+  label "Запрашиваемая услуга заказа на отгрузку создание";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method termOfRequestedService {
+    type id;
+  }
+}

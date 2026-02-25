@@ -73,7 +73,7 @@ entity ALIS.GoodMovement {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     is nullable;
     map alis.good_movement.terminal_area;

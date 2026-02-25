@@ -1,0 +1,57 @@
+dto DTO.TermOfPeriodicServiceDto {
+  type Table;
+  label "Условие периодической услуги";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute syncId {
+    type UUID;
+    is nullable;
+  }
+
+  attribute rate {
+    type numeric;
+    is nullable;
+  }
+
+  attribute serviceOfMeasure {
+    type varchar(50);
+    is nullable;
+  }
+
+  method service {
+    type service;
+  }
+
+  method termOfService {
+    type termOfService;
+  }
+
+  method frequencyOfServices {
+    type frequencyOfServices;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

@@ -1,0 +1,78 @@
+dto DTO.ShippingOrderRequestedServiceDto {
+  type Table;
+  label "Запрашиваемая услуга заказа на отгрузку";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute plannedQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute rate {
+    type numeric;
+    is nullable;
+  }
+
+  attribute priceWithoutVat {
+    type numeric;
+    is nullable;
+  }
+
+  attribute priceWithVat {
+    type numeric;
+    is nullable;
+  }
+
+  attribute actualQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute systemManaged {
+    type boolean;
+    is nullable;
+  }
+
+  attribute deleted {
+    type boolean;
+    is nullable;
+  }
+
+  attribute serviceOfMeasure {
+    type varchar(50);
+    is nullable;
+  }
+
+  method shippingOrder {
+    type id;
+  }
+
+  method termOfRequestedService {
+    type termOfRequestedService;
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

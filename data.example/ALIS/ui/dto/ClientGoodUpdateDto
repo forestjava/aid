@@ -1,0 +1,88 @@
+dto DTO.ClientGoodUpdateDto {
+  type Table;
+  label "DTO обновления товара клиента";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute item {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute gtin {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute shelfLife {
+    type numeric;
+    is nullable;
+  }
+
+  attribute price {
+    type numeric;
+    is nullable;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+
+  attribute batchAccountingType {
+    type varchar(50);
+    is required;
+  }
+
+  attribute serialAccountingType {
+    type varchar(50);
+    is required;
+  }
+
+  method client {
+    type id;
+  }
+
+  method clientGoodType {
+    type id;
+  }
+
+  method goodType {
+    type id;
+  }
+
+  method unitOfMeasure {
+    type id;
+  }
+
+  method dangerClass {
+    type id;
+  }
+
+  method tempRegime {
+    type id;
+  }
+
+  method goodGroup {
+    type id;
+  }
+}

@@ -1,0 +1,58 @@
+dto DTO.DictionaryLineDetailedDto {
+  type Table;
+  label "DTO строки справочника детальный";
+
+  attribute id {
+    type UUID;
+    is nullable;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is nullable;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute restricted {
+    type boolean;
+    is nullable;
+  }
+
+  method dictionary {
+    type idActiveCode;
+  }
+
+  method dictionaryLineParameters {
+    type dictionaryLineParameter[];
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

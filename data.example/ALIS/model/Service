@@ -46,7 +46,7 @@ entity ALIS.Service {
 
   // Площадка
   attribute terminalArea {
-    type TerminalArea;
+    type ALIS.TerminalArea;
     is private;
     is nullable;
     map alis.service.terminal_area;
@@ -54,7 +54,7 @@ entity ALIS.Service {
 
   // Единица измерения услуги
   attribute serviceOfMeasure {
-    type ServiceOfMeasure;
+    type ALIS.ServiceOfMeasure;
     is private;
     is nullable;
     map alis.service.service_of_measure;
@@ -62,7 +62,7 @@ entity ALIS.Service {
 
   // Способ начисления
   attribute accrualMethod {
-    type AccrualMethod;
+    type ALIS.AccrualMethod;
     is private;
     is nullable;
     map alis.service.accrual_method;
@@ -70,7 +70,7 @@ entity ALIS.Service {
 
   // База начисления
   attribute accrualBase {
-    type AccrualBase;
+    type ALIS.AccrualBase;
     is private;
     is nullable;
     map alis.service.accrual_base;

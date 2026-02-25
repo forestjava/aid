@@ -1,0 +1,42 @@
+dto DTO.BatchCreationDto {
+  type Table;
+  label "DTO создания партии";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute manufactureDate {
+    type timestamp;
+    is required;
+  }
+
+  attribute expirationDate {
+    type timestamp;
+    is required;
+  }
+
+  attribute batchBarcode {
+    type varchar(500);
+    is nullable;
+  }
+
+  attribute batchAccountingType {
+    type varchar(50);
+    is required;
+  }
+
+  method client {
+    type id;
+  }
+
+  method clientGood {
+    type id;
+  }
+}

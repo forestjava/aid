@@ -1,0 +1,25 @@
+dto DTO.SealTypeUpdateDto {
+  type Table;
+  label "Тип пломбы обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is required;
+  }
+
+  attribute description {
+    type text;
+    is nullable;
+  }
+}

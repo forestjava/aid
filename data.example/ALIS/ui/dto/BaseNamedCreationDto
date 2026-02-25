@@ -1,0 +1,19 @@
+dto DTO.BaseNamedCreationDto {
+  type Table;
+  label "Базовый именованный DTO создания";
+
+  attribute code {
+    type varchar(200);
+    is required;
+  }
+
+  attribute active {
+    type boolean;
+    is nullable;
+  }
+
+  attribute name {
+    type varchar(500);
+    is nullable;
+  }
+}

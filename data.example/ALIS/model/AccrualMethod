@@ -1,0 +1,7 @@
+enum ALIS.AccrualMethod {
+  source "db-layer/src/main/java/ru/korusconsulting/alis/model/accrualmethod/AccrualMethod.java";
+
+  value FOR_STORING { label "За хранение"; }
+  value FOR_OPERATION { label "За операции"; }
+
+}

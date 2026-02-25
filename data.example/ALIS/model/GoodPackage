@@ -109,7 +109,7 @@ entity ALIS.GoodPackage {
 
   // Тип обработки
   attribute processingType {
-    type ProcessingType;
+    type ALIS.ProcessingType;
     is private;
     is nullable;
     map alis.good_package.processing_type;

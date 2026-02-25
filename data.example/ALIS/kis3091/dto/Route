@@ -1,0 +1,73 @@
+// Рейс
+dto JSON.Route {
+  label "Документ. Рейс";
+
+  attribute id {
+    type UUID;
+    map ALIS.Route.id;
+  }
+
+  // Номер рейса
+  attribute number {
+    type Long;
+    map ALIS.Route.number;
+  }
+
+  // Тип рейса
+  attribute routeType {
+    type String;
+    map ALIS.Route.routeType;
+  }
+
+  // Дата и время
+  attribute dataTime {
+    type Instant;
+    map ALIS.Route.dataTime;
+  }
+
+  // Площадка
+  attribute terminalArea {
+    type String;
+    map ALIS.Route.terminalArea;
+  }
+
+  // Тип транспорта
+  attribute transportType {
+    type String;
+    map ALIS.Route.transportType;
+  }
+
+  // Перевозчик / экспедитор
+  attribute clientRelatedEntityId {
+    type UUID;
+    is nullable;
+    map ALIS.Route.clientRelatedEntity;
+  }
+
+  // Водитель
+  attribute clientDriverId {
+    type UUID;
+    is nullable;
+    map ALIS.Route.clientDriver;
+  }
+
+  // Транспортное средство
+  attribute clientVehicleId {
+    type UUID;
+    is nullable;
+    map ALIS.Route.clientVehicle;
+  }
+
+  // Комментарий
+  attribute comment {
+    type String;
+    is nullable;
+    map ALIS.Route.comment;
+  }
+
+  // Статус рейса
+  attribute status {
+    type String;
+    map ALIS.Route.status;
+  }
+}

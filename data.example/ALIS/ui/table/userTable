@@ -1,0 +1,27 @@
+ui userTable {
+label "UI таблица с пользователями";
+
+  attribute username {
+    type String(200);
+    is private;
+    map alis.user.username;
+  }
+
+  attribute fullName {
+    type String(200);
+    is private;
+    map alis.user.full_name;
+  }
+
+  attribute userType {
+    type String(200);
+    is private;
+    map alis.user.user_type;
+  }
+
+  attribute status {
+    type boolean;
+    is private;
+    map alis.user.status;
+  }
+}

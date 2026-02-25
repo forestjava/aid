@@ -1,0 +1,98 @@
+dto DTO.ReceivingOrderCargoDetailedDto {
+  type Table;
+  label "Груз заказа на приемку детальный";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  attribute packageQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute conversionQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute totalQuantity {
+    type numeric;
+    is nullable;
+  }
+
+  attribute length {
+    type numeric;
+    is nullable;
+  }
+
+  attribute width {
+    type numeric;
+    is nullable;
+  }
+
+  attribute height {
+    type numeric;
+    is nullable;
+  }
+
+  attribute volume {
+    type numeric;
+    is nullable;
+  }
+
+  attribute weight {
+    type numeric;
+    is nullable;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method receivingOrderGood {
+    type receivingOrderGoodInCargo;
+  }
+
+  method clientGood {
+    type clientGood;
+  }
+
+  method cargo {
+    type cargo;
+  }
+
+  method barcode {
+    type idCodeNamed;
+  }
+
+  method goodPackage {
+    type idCodeNamed;
+  }
+
+  method receivingOrderGoodList {
+    type receivingOrderGood[];
+  }
+
+  attribute createdAt {
+    type timestamp;
+    is required;
+  }
+
+  attribute updatedAt {
+    type timestamp;
+    is nullable;
+  }
+
+  attribute createdBy {
+    type varchar(50);
+    is required;
+  }
+
+  attribute updatedBy {
+    type varchar(50);
+    is nullable;
+  }
+}

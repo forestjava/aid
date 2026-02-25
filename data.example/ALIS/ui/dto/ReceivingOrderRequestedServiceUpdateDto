@@ -1,0 +1,18 @@
+dto DTO.ReceivingOrderRequestedServiceUpdateDto {
+  type Table;
+  label "Запрашиваемая услуга заказа на приемку обновление";
+
+  attribute id {
+    type UUID;
+    is required;
+    key primary;
+  }
+
+  method receivingOrder {
+    type id;
+  }
+
+  method termOfRequestedService {
+    type id;
+  }
+}
