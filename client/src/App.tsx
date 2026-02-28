@@ -121,7 +121,7 @@ export const App = () => {
         <Editor currentFile={currentFile} />
         <Preview selectedPath={selectedPath} />
       </Main>
-      <Footer>© 2025 ОЭЗ Алабуга</Footer>
+      <Footer>{import.meta.env.VITE_COPYRIGHT}</Footer>
     </Layout>
   )
 }

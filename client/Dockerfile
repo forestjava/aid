@@ -12,6 +12,9 @@ COPY client/ ./client/
 # Install dependencies and build
 WORKDIR /app/client
 RUN npm install
+
+ARG VITE_COPYRIGHT
+ENV VITE_COPYRIGHT=$VITE_COPYRIGHT
 RUN npm run build
 
 # Stage 2: Production

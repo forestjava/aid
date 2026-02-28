@@ -9,7 +9,7 @@ services:
     volumes:
       - /data/aid:/data
     environment:
-      - FS_ROOT_PATH=/data
+      - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
     networks:
       - proxy
     restart: unless-stopped
@@ -19,6 +19,8 @@ services:
     build:
       context: .
       dockerfile: client/Dockerfile
+      args:
+        - VITE_COPYRIGHT=${VITE_COPYRIGHT} # авторство устанавливается переменной окружения
     container_name: aid-frontend
     networks:
       - proxy
