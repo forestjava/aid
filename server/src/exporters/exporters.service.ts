@@ -26,7 +26,7 @@ export class ExportersService implements OnModuleInit {
 
   async startJob(
     config: ExporterConfig,
-    payload: { jobId: string; path: string; callbackUrl: string },
+    payload: { jobId: string; path: string },
   ): Promise<void> {
     const url = `${config.baseUrl}${config.startPath}`;
     this.logger.log(`Starting job=${payload.jobId} on exporter=${config.exporterId} at ${url}`);

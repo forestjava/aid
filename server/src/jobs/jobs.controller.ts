@@ -36,10 +36,9 @@ export class JobsController {
     }
 
     const job = this.jobsService.create(dto.exporterId);
-    const callbackUrl = `${process.env.RUNNER_BASE_URL || 'http://localhost:3000'}/api/jobs/${job.jobId}/progress`;
 
     this.exportersService
-      .startJob(config, { jobId: job.jobId, path: dto.path, callbackUrl })
+      .startJob(config, { jobId: job.jobId, path: dto.path })
       .catch((err) => {
         this.logger.error(`Failed to start exporter for job=${job.jobId}: ${err.message}`);
         const failedEvent = {

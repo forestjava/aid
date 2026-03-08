@@ -4,21 +4,21 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT ?? 3001;
-const RUNNER_BASE_URL = process.env.RUNNER_BASE_URL ?? 'http://localhost:3000';
+const CALLBACK_BASE_URL = process.env.CALLBACK_BASE_URL ?? 'http://localhost:3000';
 
 interface StartRequest {
   jobId: string;
   path: string;
-  callbackUrl: string;
 }
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function sendProgress(callbackUrl: string, jobId: string, status: string, message: string): Promise<void> {
+async function sendProgress(jobId: string, status: string, message: string): Promise<void> {
   try {
-    const response = await fetch(callbackUrl, {
+    const url = `${CALLBACK_BASE_URL}/api/jobs/${jobId}/progress`;
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jobId, status, message }),
@@ -29,16 +29,16 @@ async function sendProgress(callbackUrl: string, jobId: string, status: string, 
   }
 }
 
-async function processJob(jobId: string, path: string, callbackUrl: string): Promise<void> {
+async function processJob(jobId: string, path: string): Promise<void> {
   console.log(`[${jobId}] Path: ${path}`);
 
   try {
-    await sendProgress(callbackUrl, jobId, 'started', 'Инициализация');
+    await sendProgress(jobId, 'started', 'Инициализация');
     await delay(1000);
 
-    await sendProgress(callbackUrl, jobId, 'processing', 'Получение данных');
+    await sendProgress(jobId, 'processing', 'Получение данных');
 
-    const url = `${RUNNER_BASE_URL}/api/parse/text?path=${encodeURIComponent(path)}`;
+    const url = `${CALLBACK_BASE_URL}/api/parse/text?path=${encodeURIComponent(path)}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${await response.text()}`);
@@ -46,28 +46,28 @@ async function processJob(jobId: string, path: string, callbackUrl: string): Pro
     const data = await response.json() as { path: string; content: string };
     const lineCount = data.content.split('\n').length;
     console.log(`[${jobId}] Fetched ${lineCount} lines from ${path}`);
-    await sendProgress(callbackUrl, jobId, 'processing', `Fetched ${lineCount} lines from ${path}`);
+    await sendProgress(jobId, 'processing', `Fetched ${lineCount} lines from ${path}`);
 
-    await sendProgress(callbackUrl, jobId, 'processing', 'Обработка данных');
+    await sendProgress(jobId, 'processing', 'Обработка данных');
     await delay(10_000);
 
-    await sendProgress(callbackUrl, jobId, 'processing', 'Финализация');
+    await sendProgress(jobId, 'processing', 'Финализация');
     await delay(1000);
 
-    await sendProgress(callbackUrl, jobId, 'completed', `Готово: ${lineCount} строк`);
+    await sendProgress(jobId, 'completed', `Готово: ${lineCount} строк`);
     console.log(`[${jobId}] Job completed`);
   } catch (err) {
     const message = (err as Error).message;
     console.error(`[${jobId}] Failed: ${message}`);
-    await sendProgress(callbackUrl, jobId, 'failed', message);
+    await sendProgress(jobId, 'failed', message);
   }
 }
 
 app.post('/start', (req, res) => {
-  const { jobId, path, callbackUrl } = req.body as StartRequest;
+  const { jobId, path } = req.body as StartRequest;
   console.log(`\nReceived job: ${jobId}, path: ${path}`);
 
-  processJob(jobId, path, callbackUrl).catch((err) => {
+  processJob(jobId, path).catch((err) => {
     console.error(`[${jobId}] Unhandled error:`, err);
   });
 
