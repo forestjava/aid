@@ -16,8 +16,8 @@
 [x] вынести grammar и ohm.grammar из client на общий уровень (server + client) — Dockerfile, сборка dev и prod
 [x] переделать data: описание БД отдельно, описание моделей отдельно, модели используют БД (как sync внутри system)
 [x] сделать общий префикс /api переделать соотв.сборку и деплой
-[] AID EXPORTERS RUNNER
-
+[x] AID EXPORTERS RUNNER
+[] Сделать конфигурацию через переменные окружения server\src\exporters\exporters.service.ts
 
 ## Для Михеева
 [x] ручка readFile с resolved imports — возвращать текст со включёнными импортами

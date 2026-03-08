@@ -1,6 +1,0 @@
-{
-    "exporterId": "demo",
-    "name": "Demo Exporter",
-    "baseUrl": "http://localhost:3001",
-    "startPath": "/start"
-}

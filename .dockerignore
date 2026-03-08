@@ -1,8 +1,6 @@
 # Папка describer не нужна в образах
 describer/
-runner/node/
-runner/java/
-runner/cotlin/
+runner/
 data/
 data.example/
 backup/
