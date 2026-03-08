@@ -4,6 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FileSystemModule } from './filesystem/filesystem.module';
 import { ParseModule } from './parse/parse.module';
+import { SseModule } from './sse/sse.module';
+import { ExportersModule } from './exporters/exporters.module';
+import { JobsModule } from './jobs/jobs.module';
+import { ProgressModule } from './progress/progress.module';
 
 @Module({
   imports: [
@@ -13,6 +17,10 @@ import { ParseModule } from './parse/parse.module';
     }),
     FileSystemModule,
     ParseModule,
+    SseModule,
+    ExportersModule,
+    JobsModule,
+    ProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

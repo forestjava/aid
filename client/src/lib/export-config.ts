@@ -9,45 +9,41 @@ import {
   Coffee,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import type { DatabaseSchema } from '@/components/workspace/Preview/types'
 import { exportToPng, exportToSvg } from './export-image'
 
-/**
- * Тип элемента меню экспорта
- * Поддерживает иерархическую структуру через children
- */
 export interface ExportMenuItem {
   id: string
   label: string
   icon?: LucideIcon
-  action?: (schema: DatabaseSchema) => void | Promise<void>
+  action?: (path: string) => void | Promise<string | null>
   children?: ExportMenuItem[]
   disabled?: boolean
 }
 
-/**
- * Контекст экспорта - передается в action-функции
- */
-export interface ExportContext {
-  schema: DatabaseSchema
-  filename?: string
-}
-
-// ============================================
-// Заглушки action-функций для экспорта
-// Реальная реализация будет добавлена позже
-// ============================================
-
-const notImplemented = (format: string) => (schema: DatabaseSchema) => {
-  console.log(`Export to ${format}:`, schema)
+const notImplemented = (format: string) => (_path: string) => {
   toast.info(`Экспорт в ${format}`, {
-    description: 'Ваш запрос принят и поставлен в очередь выполнения',
+    description: 'Функция в разработке',
   })
 }
 
-// ============================================
-// Конфигурация меню экспорта
-// ============================================
+async function startExporterJob(exporterId: string, path: string): Promise<string | null> {
+  try {
+    const res = await fetch('/api/jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ exporterId, path }),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    toast.success('Экспорт запущен', { description: `Job: ${data.jobId}` })
+    return data.jobId as string
+  } catch (err) {
+    toast.error('Ошибка запуска экспорта', {
+      description: err instanceof Error ? err.message : String(err),
+    })
+    return null
+  }
+}
 
 export const exportMenuConfig: ExportMenuItem[] = [
   {
@@ -73,6 +69,11 @@ export const exportMenuConfig: ExportMenuItem[] = [
     icon: FileText,
     children: [
       {
+        id: 'openapi',
+        label: 'Open API 3.0',
+        action: (path) => startExporterJob('demo', path),
+      },
+      {
         id: 'markdown',
         label: 'Markdown',
         action: notImplemented('Markdown'),
@@ -97,6 +98,7 @@ export const exportMenuConfig: ExportMenuItem[] = [
         label: 'Формат Excel для загрузки',
         action: notImplemented('Excel format'),
       },
+
     ],
   },
   {

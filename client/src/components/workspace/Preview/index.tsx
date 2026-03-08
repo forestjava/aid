@@ -192,7 +192,7 @@ export const Preview: React.FC<PreviewProps> = ({ selectedPath }) => {
                 </Command>
               </PopoverContent>
             </Popover>
-            <ExportMenu schema={schema} />
+            <ExportMenu path={selectedPath} />
           </div>
         )}
       </div>
