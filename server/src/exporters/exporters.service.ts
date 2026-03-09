@@ -23,7 +23,7 @@ export class ExportersService implements OnModuleInit {
       exporterId: 'contract',
       name: 'Contract Craft Exporter',
       baseUrl: 'http://contract-craft-dev-service:8080',
-      startPath: '/trigger',
+      startPath: '/api/trigger',
     });
   }
 
