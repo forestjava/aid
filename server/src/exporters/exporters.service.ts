@@ -10,7 +10,7 @@ export class ExportersService implements OnModuleInit {
     this.register({
       exporterId: 'demo',
       name: 'Demo Exporter',
-      baseUrl: 'http://localhost:3001',
+      baseUrl: 'http://aid-runner-demo:3000', // имя внутри proxy сети
       startPath: '/start',
     });
   }
