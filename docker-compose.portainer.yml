@@ -38,6 +38,15 @@ services:
       - proxy
     restart: unless-stopped
 
+  runner-crud-api-exporter:
+    build:
+      context: runner/crud-api-exporter
+      dockerfile: Dockerfile
+    container_name: aid-runner-crud-api-exporter
+    networks:
+      - proxy
+    restart: unless-stopped
+
 networks:
   proxy:
     external: true
