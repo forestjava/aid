@@ -26,6 +26,18 @@ services:
       - proxy
     restart: unless-stopped
 
+  runner-demo:
+    build:
+      context: runner/node
+      dockerfile: Dockerfile
+    container_name: aid-runner-demo
+    environment:
+      - PORT=3003
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+    networks:
+      - proxy
+    restart: unless-stopped
+
 networks:
   proxy:
     external: true

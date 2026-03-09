@@ -3,7 +3,7 @@ import express from 'express';
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT ?? 3001;
+const PORT = process.env.PORT ?? 3000;
 const CALLBACK_BASE_URL = process.env.CALLBACK_BASE_URL ?? 'http://localhost:3000';
 
 interface StartRequest {
