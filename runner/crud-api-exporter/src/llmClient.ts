@@ -207,6 +207,8 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
     temperature: config.AI_TEMPERATURE,
   };
 
+  console.log('config.AI_API_KEY', config.AI_API_KEY);
+
   const response = await fetch(config.AI_API_URL, {
     method: 'POST',
     headers: {
