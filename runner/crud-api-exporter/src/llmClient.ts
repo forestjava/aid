@@ -177,7 +177,7 @@ interface ChatMessage {
 }
 
 interface ChatRequest {
-  model?: string;
+  model: string;
   messages: ChatMessage[];
   max_tokens?: number;
   temperature?: number;
@@ -206,8 +206,6 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
     max_tokens: config.AI_MAX_TOKENS,
     temperature: config.AI_TEMPERATURE,
   };
-
-  console.log('config.AI_API_KEY', config.AI_API_KEY);
 
   const response = await fetch(config.AI_API_URL, {
     method: 'POST',
