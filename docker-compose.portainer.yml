@@ -44,6 +44,13 @@ services:
       context: runner/crud-api-exporter
       dockerfile: Dockerfile
     container_name: aid-runner-crud-api-exporter
+    environment:
+      - CALLBACK_BASE_URL=${CALLBACK_BASE_URL}
+      - AI_API_URL=${AI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL}
+      - AI_MAX_TOKENS=${AI_MAX_TOKENS}
+      - AI_TEMPERATURE=${AI_TEMPERATURE}
     networks:
       - proxy
     restart: unless-stopped
