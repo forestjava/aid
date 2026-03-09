@@ -9,6 +9,7 @@ services:
     volumes:
       - /data/aid:/data
     environment:
+      - PORT=3000
       - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
     networks:
       - proxy

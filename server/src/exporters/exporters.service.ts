@@ -13,6 +13,18 @@ export class ExportersService implements OnModuleInit {
       baseUrl: 'http://aid-runner-demo:3003', // имя внутри proxy сети, порт указанный в переменных docker окружения 
       startPath: '/start',
     });
+    this.register({
+      exporterId: 'crud-api',
+      name: 'CRUD API Exporter',
+      baseUrl: 'http://aid-runner-crud-api-exporter:3003',
+      startPath: '/start',
+    });
+    this.register({
+      exporterId: 'contract',
+      name: 'Contract Craft Exporter',
+      baseUrl: 'http://contract-craft-dev-service:8080',
+      startPath: '/trigger',
+    });
   }
 
   register(config: ExporterConfig): void {

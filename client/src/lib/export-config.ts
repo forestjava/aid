@@ -69,10 +69,15 @@ export const exportMenuConfig: ExportMenuItem[] = [
     icon: FileText,
     children: [
       {
-        id: 'openapi',
-        label: 'Open API 3.0',
+        id: 'demo',
+        label: 'Demo Exporter',
         action: (path) => startExporterJob('demo', path),
       },
+      {
+        id: 'contract',
+        label: 'Контракт OpenAPI',
+        action: (path) => startExporterJob('contract', path),
+      },      
       {
         id: 'markdown',
         label: 'Markdown',
@@ -82,11 +87,6 @@ export const exportMenuConfig: ExportMenuItem[] = [
         id: 'confluence',
         label: 'Confluence',
         action: notImplemented('Confluence'),
-      },
-      {
-        id: 'contracts',
-        label: 'Контракты',
-        action: notImplemented('Contracts'),
       },
       {
         id: 'tables',
@@ -140,6 +140,11 @@ export const exportMenuConfig: ExportMenuItem[] = [
     label: 'CRUD приложение',
     icon: Layout,
     children: [
+      {
+        id: 'crud-api',
+        label: 'AID описание CRUD API',
+        action: (path) => startExporterJob('crud-api', path),
+      },
       {
         id: 'backend-api',
         label: 'Backend API Server',

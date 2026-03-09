@@ -66,7 +66,7 @@ app.post('/start', (req, res) => {
   res.status(202).json({ received: true });
 });
 
-const port = config.PORT ?? 3000;
+const port = config.PORT ?? 3003;
 app.listen(port, () => {
   console.log(`CRUD API Exporter listening on port ${port}`);
 });
