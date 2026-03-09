@@ -10,7 +10,7 @@ export class ExportersService implements OnModuleInit {
     this.register({
       exporterId: 'demo',
       name: 'Demo Exporter',
-      baseUrl: 'http://aid-runner-demo:3000', // имя внутри proxy сети
+      baseUrl: 'http://aid-runner-demo:3003', // имя внутри proxy сети, порт указанный в переменных docker окружения 
       startPath: '/start',
     });
   }
