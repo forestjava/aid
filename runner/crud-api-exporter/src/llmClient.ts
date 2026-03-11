@@ -1,4 +1,6 @@
 import { config } from './config.js';
+import { toolDefinitions, executeTool } from './tools/index.js';
+import type { ToolContext } from './tools/index.js';
 
 const SYSTEM_PROMPT = `Ты — эксперт по проектированию REST API. Твоя задача — принимать описание доменных сущностей на DSL-языке и генерировать полное описание CRUD API на том же DSL-языке.
 
@@ -120,7 +122,9 @@ enum Status {
 
 ## Что нужно сгенерировать
 
-Единый файл на DSL, содержащий два раздела:
+С помощью доступного тебе инструмента "writeFile" сформируй два файла на DSL:
+- Первый вызов: writeFile с filename="dto" — DTO-контейнеры
+- Второй вызов: writeFile с filename="api" — API-контейнеры
 
 ### 1. DTO-контейнеры (dto)
 
@@ -145,7 +149,7 @@ enum Status {
 Определяй тип response для операций чтения (read) как DTO.
 Не определяй response для операций модификации (create/update/delete) в целях лаконичности выходного текста.
 
-api API.Products {
+api API.Product {
   description "API управления Справочником товаров";
 
   ...
@@ -178,13 +182,13 @@ api API.Products {
 
 ## Правила оформления
 
-- Выводи ТОЛЬКО валидный DSL-текст. Никаких markdown-обёрток, пояснений или текста вне DSL.
+- В content каждого вызова writeFile передавай ТОЛЬКО валидный DSL-текст. Никаких markdown-обёрток, пояснений или текста вне DSL.
 - Сохраняй description из исходных атрибутов в DTO.
 - Используй 2-пробельную индентацию.
 - Добавляй description к каждому dto и endpoint.
 `;
 
-const USER_PROMPT_TEMPLATE = `Вот описание доменных сущностей на DSL-языке. Сгенерируй полное описание CRUD API (DTO + api-эндпоинты) по правилам из системного промпта.
+const USER_PROMPT_TEMPLATE = `Вот описание доменных сущностей на DSL-языке. Сгенерируй полное описание CRUD API (DTO + api-эндпоинты) по правилам из системного промпта, используя инструмент writeFile.
 
 Входные данные:
 
@@ -195,15 +199,32 @@ interface ChatMessage {
   content: string;
 }
 
+interface ToolCall {
+  id: string;
+  type: 'function';
+  function: {
+    name: string;
+    arguments: string;
+  };
+}
+
 interface ChatRequest {
   model: string;
   messages: ChatMessage[];
+  tools?: { type: 'function'; function: Record<string, unknown> }[];
+  tool_choice?: string | Record<string, unknown>;
   max_tokens?: number;
   temperature?: number;
 }
 
 interface ChatResponse {
-  choices: { message: { content: string } }[];
+  choices: {
+    message: {
+      content?: string | null;
+      tool_calls?: ToolCall[];
+    };
+    finish_reason: string;
+  }[];
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -211,17 +232,21 @@ interface ChatResponse {
   };
 }
 
-/**
- * Sends entity DSL content to an OpenAI-compatible chat completions API
- * and returns the generated CRUD API DSL as-is.
- */
-export async function generateWithLLM(sourceContent: string): Promise<string> {
+export async function generateWithLLM(
+  sourceContent: string,
+  context: ToolContext,
+): Promise<void> {
   const body: ChatRequest = {
     model: config.AI_MODEL,
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: USER_PROMPT_TEMPLATE + sourceContent },
     ],
+    tools: toolDefinitions.map((td) => ({
+      type: td.type,
+      function: td.function as Record<string, unknown>,
+    })),
+    tool_choice: 'required',
     max_tokens: config.AI_MAX_TOKENS,
     temperature: config.AI_TEMPERATURE,
   };
@@ -243,15 +268,33 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
   const data = (await response.json()) as ChatResponse;
 
   if (data.usage) {
-    console.log(
-      `  LLM tokens — prompt: ${data.usage.prompt_tokens}, completion: ${data.usage.completion_tokens}, total: ${data.usage.total_tokens}`,
+    const { prompt_tokens, completion_tokens, total_tokens } = data.usage;
+    const usageMsg = `LLM tokens — prompt: ${prompt_tokens}, completion: ${completion_tokens}, total: ${total_tokens}`;
+    console.log(`  ${usageMsg}`);
+    await context.sendProgress('processing', usageMsg);
+  }
+
+  const toolCalls = data.choices?.[0]?.message?.tool_calls;
+  if (!toolCalls || toolCalls.length === 0) {
+    throw new Error('LLM did not return any tool calls');
+  }
+
+  for (const tc of toolCalls) {
+    const args = JSON.parse(tc.function.arguments) as Record<string, unknown>;
+    const argsPreview = args.filename
+      ? `filename="${args.filename}", content: ${String(args.content ?? '').length} символов`
+      : tc.function.arguments.slice(0, 200);
+
+    await context.sendProgress(
+      'processing',
+      `Вызов ${tc.function.name}(${argsPreview})`,
+    );
+
+    const result = await executeTool(tc.function.name, args, context);
+
+    await context.sendProgress(
+      'processing',
+      `Результат ${tc.function.name}: ${result}`,
     );
   }
-
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) {
-    throw new Error('Empty response from LLM API');
-  }
-
-  return content;
 }

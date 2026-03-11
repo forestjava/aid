@@ -18,6 +18,8 @@ services:
       context: .
       dockerfile: client/Dockerfile
     container_name: aid-frontend
+    env_file:
+      - client/.env    
     networks:
       - proxy
     restart: unless-stopped
@@ -32,6 +34,17 @@ services:
     depends_on:
       - backend
       - frontend
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  runner-crud-api-exporter:
+    build:
+      context: runner/crud-api-exporter
+      dockerfile: Dockerfile
+    container_name: aid-runner-crud-api-exporter
+    env_file:
+      - runner/crud-api-exporter/.env
     networks:
       - proxy
     restart: unless-stopped
