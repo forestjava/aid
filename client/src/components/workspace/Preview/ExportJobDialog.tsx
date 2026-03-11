@@ -37,7 +37,7 @@ function LogViewer({ entries }: { entries: LogEntry[] }) {
   return (
     <div
       ref={containerRef}
-      className="h-48 overflow-y-auto rounded bg-neutral-950 p-3 text-xs font-mono leading-5"
+      className="h-72 overflow-y-auto rounded bg-neutral-950 p-3 text-xs font-mono leading-5"
     >
       {entries.length === 0 && (
         <span className="text-neutral-500">Ожидание событий…</span>
@@ -57,7 +57,7 @@ export function ExportJobDialog({ jobId, onClose }: ExportJobDialogProps) {
 
   return (
     <Dialog open={!!jobId} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Exporter Service</DialogTitle>
         </DialogHeader>

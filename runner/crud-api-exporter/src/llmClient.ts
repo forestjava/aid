@@ -22,16 +22,85 @@ const SYSTEM_PROMPT = `Ты — эксперт по проектированию
 - label "текст"; — метка (в endpoint используется для HTTP-метода и пути: label "GET /items/{id}")
 - is required; / is nullable; / is unique; / is private; — флаги
 - key primary; / key foreign { relates Entity.field; } — ключи
-- map Entity.field; — маппинг DTO-поля на поле исходной сущности
+
+
 - import ./path; — импорт другого файла
 
-Поддерживаются комментарии: // однострочные и /* многострочные */.
+Атрибуты и директивы внутри контейнера
+  label "текст";            — метка
+  attribute <имя> { ... }   — типизированное поле
+    type <тип>;               — тип данных
+    description "текст";      — описание
+    is required;              — обязательное поле
+    is nullable;              — может быть null
+    is private;               — скрытое поле
+    key primary;              — первичный 
+    map Entity.field; — маппинг поля на поле исходной сущности
+    sync Entity.field; — синхронизация значения поля с полем исходной сущности
 
-## Пример
+### Типы данных
 
-Вход:
+Примитивы (string, integer, uuid, decimal, date, text, boolean). 
+Массив: тип с суффиксом [].  
+**Ссылочные типы** — для связи с другой сущностью используй её имя напрямую в качестве типа:
+attribute productType {
+  type ProductType;
+}
 
-entity Example {
+### Связи между сущностями
+
+**1:1** — атрибут со ссылочным типом:
+attribute status {
+  type StockStatus;
+}
+
+**1:many** — массив дочерней сущности объявляется в родительской:
+entity Order {
+  attribute lines {
+    type OrderLine[];
+  }
+}
+
+**Самоссылка (иерархия):**
+attribute parent {
+  type Product;
+  is nullable;
+}
+
+### Флаги is required / is nullable
+- Поля с key primary считаются обязательными по определению.
+- Примитивные типы (string, integer, decimal, boolean, date, text, uuid) считаются заполняемыми по умолчанию.
+- is required указывается только для **ссылочных типов**, когда связь обязательна.
+- is nullable указывается для ссылочных типов, когда связь необязательна.
+
+### Перечисления
+enum MovementKind {
+  value RECEIPT;
+  value EXPENSE;
+  value WRITEOFF;
+  value RETURN;
+  value TRANSFER;
+}
+
+### Прочие правила
+
+- Уникальность выражается структурой модели.
+- Поддерживаются комментарии: // однострочные и /* */ многострочные.
+- import ./path; — импорт другого файла.
+
+### Минимальный пример
+entity Category {
+  attribute id {
+    type uuid;
+    key primary;
+  }
+  attribute name {
+    type string;
+    description "Название категории";
+  }
+}
+
+entity Product {
   attribute id {
     type uuid;
     key primary;
@@ -39,6 +108,19 @@ entity Example {
   attribute name {
     type string;
   }
+  attribute category {
+    type Category;
+    is required;
+  }
+  attribute parent {
+    type Product;
+    is nullable;
+  }
+}
+
+enum Status {
+  value ACTIVE;
+  value ARCHIVED;
 }
 
 Выход:
@@ -113,57 +195,60 @@ api Example.API {
 
 - **DTO.<Entity>** — полный response-объект. Все атрибуты сущности, каждый с map на исходное поле. Необязательные поля помечать is nullable.
 - **DTO.<Entity>ListItem** — сокращённый объект для списка. Включить: первичный ключ, наиболее важные поля (имя/название, статус, основные идентификаторы). Каждое поле с map на исходное.
-- **DTO.<Entity>Filter** — фильтры для списка. Для строковых полей — частичное совпадение (description "Частичное совпадение по ..."), для enum/ссылок — точное совпадение. Для дат — пара полей From/To. Все поля is nullable.
 - **DTO.<Entity>Create** — тело запроса на создание. Все поля кроме автогенерируемых (primary key uuid, автодаты). Обязательные поля — is required, остальные — is nullable.
 - **DTO.<Entity>Update** — тело запроса на обновление. Те же поля что в Create, но все is nullable (частичное обновление).
 
 Общий DTO для пагинации:
-- **DTO.PageRequest** — с полями page (integer) и size (integer).
+- **DTO.<Entity>ListRequest** — объединяет фильтры и пагинацию в одном теле POST-запроса для запроса отфильтрованного списка с определенной страницы пагинации
+- **DTO.<Entity>ListResponse** — оборачивает результирующий массив сущностей content вместе с метаданными фильтрации и пагинации.
+При необходимости используй ссылки на DTO.Filter, DTO.PageRequest, DTO.PageInfo и т.п., не расшифровывая их самих для лаконичности выходного текста.
 
-### 2. API-контейнер (api)
+### 2. API-контейнеры (api)
 
-Один контейнер api с description. Для каждой сущности сгенерируй 5 эндпоинтов:
+Для каждой сущности сгенерируй по 5 эндпоинтов: получение списка, получение элемента по ключу, добавление, изменение и удаление.
 
-- **list<Entities>** — постраничный список с фильтрацией
-  - label "POST /<entities>/page"
-  - attribute request { type DTO.PageRequest; }
-  - attribute filter { type DTO.<Entity>Filter; }
-  - attribute response { type DTO.<Entity>ListItem[]; }
-  - attribute totalElements { type integer; }
-  - attribute totalPages { type integer; }
+api API.Products {
+  description "API управления Справочником товаров";
 
-- **get<Entity>ById** — получение по идентификатору
-  - label "GET /<entities>/{id}"
-  - attribute id { type uuid; is required; }
-  - attribute response { type DTO.<Entity>; }
-  (если PK не uuid, а другой тип — использовать его; имя path-параметра = имя PK)
+  ...
 
-- **create<Entity>** — создание
-  - label "POST /<entities>"
-  - attribute request { type DTO.<Entity>Create; }
-  - attribute response { type DTO.<Entity>; }
+  endpoint listProducts {
+    label "POST /products/page";
+    description "Постраничный список товаров с фильтрацией";
+    attribute request {
+      type DTO.ProductListRequest;
+    }
+    attribute response {
+      type DTO.ProductListResponse;
+    }
+  }
 
-- **update<Entity>** — обновление
-  - label "PUT /<entities>/{id}"
-  - attribute id { type uuid; is required; } (или тип PK)
-  - attribute request { type DTO.<Entity>Update; }
-  - attribute response { type DTO.<Entity>; }
-
-- **delete<Entity>** — удаление
-  - label "DELETE /<entities>/{id}"
-  - attribute id { type uuid; is required; } (или тип PK)
-
-URL-пути формируй в kebab-case (CamelCase → kebab-case: RepairOrder → repair-orders, EquipmentType → equipment-types).
-
-Эндпоинты группируй визуально по сущностям с помощью комментариев-разделителей.
+  endpoint updateProduct {
+    label "PUT /products/{id}";
+    description "Обновить товар";
+    attribute id {
+      type uuid;
+    }
+    attribute request {
+      type DTO.ProductUpdate;
+    }
+    attribute response {
+      type DTO.Product;
+    }
+  }
+  
+  ...
+  
+}
 
 ## Правила оформления
 
 - Выводи ТОЛЬКО валидный DSL-текст. Никаких markdown-обёрток, пояснений или текста вне DSL.
-- Контейнеры enum из входных данных НЕ нужно дублировать — просто ссылайся на их типы как есть.
+- Контейнеры enum из входных данных не нужно дублировать — просто ссылайся на их типы как есть.
 - Сохраняй description из исходных атрибутов в DTO.
 - Используй 2-пробельную индентацию.
-- Добавляй description к каждому dto и endpoint.`;
+- Добавляй description к каждому dto и endpoint.
+`;
 
 const USER_PROMPT_TEMPLATE = `Вот описание доменных сущностей на DSL-языке. Сгенерируй полное описание CRUD API (DTO + api-эндпоинты) по правилам из системного промпта.
 
