@@ -33,6 +33,12 @@ export interface EntityAttribute {
   paletteIndex?: number // Индекс в палитре цветов для связи
   typeClones?: Array<{ type: string; isCollection: boolean; clone: string }>
   sync?: SyncTarget[] // Массив sync-связей атрибута (для external связей)
+  embeddedEntity?: {
+    name: string
+    label: string
+    type: EntityType
+    attributes: EntityAttribute[]
+  }
 }
 
 export interface EntityRelation {
@@ -51,6 +57,7 @@ export interface Entity {
   rank?: number // Позиция в layout для dagre (опционально, указывается явно в DSL)
   offset?: number // Вертикальное смещение узла в пикселях (опционально, указывается явно в DSL)
   limit?: number // Максимальное число отображаемых атрибутов (опционально, указывается явно в DSL)
+  isDependent?: boolean // Зависимая сущность — встраивается inline в родительский атрибут
   hasHeaderConnection?: 'source' | 'target' | 'both' // Роль заголовка в связи (для сущностей без primary key)
 
   attributes: EntityAttribute[]

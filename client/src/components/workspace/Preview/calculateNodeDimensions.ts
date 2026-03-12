@@ -10,6 +10,11 @@ const METRICS = {
   ATTRIBUTE_ROW_HEIGHT: 30, // высота строки атрибута
   BORDER_WIDTH: 4, // border-2 = 2px с каждой стороны
 
+  // Embedded (зависимые сущности)
+  EMBEDDED_HEADER_HEIGHT: 24, // заголовок embedded-блока
+  EMBEDDED_PADDING: 8, // вертикальный padding embedded-блока (top + bottom)
+  EMBEDDED_INDENT: 8, // горизонтальный отступ embedded-блока (ml-2)
+
   // Ширина
   MIN_WIDTH: 200,
   MAX_WIDTH: 500,
@@ -54,6 +59,30 @@ const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
 }
 
 /**
+ * Вычисляет высоту embedded-секции для одного атрибута
+ */
+const calculateEmbeddedHeight = (attr: EntityAttribute): number => {
+  if (!attr.embeddedEntity) return 0
+  const embAttrs = attr.embeddedEntity.attributes
+  return METRICS.EMBEDDED_HEADER_HEIGHT +
+    embAttrs.length * METRICS.ATTRIBUTE_ROW_HEIGHT +
+    METRICS.EMBEDDED_PADDING
+}
+
+/**
+ * Вычисляет максимальную ширину embedded-секции для одного атрибута
+ */
+const calculateEmbeddedWidth = (attr: EntityAttribute): number => {
+  if (!attr.embeddedEntity) return 0
+  const emb = attr.embeddedEntity
+  const embHeaderWidth = estimateTextWidth(emb.name, false) + METRICS.PADDING_HORIZONTAL
+  const embMaxAttrWidth = emb.attributes.reduce((max, embAttr) => {
+    return Math.max(max, calculateAttributeRowWidth(embAttr))
+  }, 0)
+  return METRICS.EMBEDDED_INDENT + Math.max(embHeaderWidth, embMaxAttrWidth)
+}
+
+/**
  * Вычисляет размеры одного узла (entity)
  */
 export const calculateNodeDimensions = (entity: Entity): { width: number; height: number } => {
@@ -62,25 +91,31 @@ export const calculateNodeDimensions = (entity: Entity): { width: number; height
     : entity.attributes.length
   const hasEllipsis = entity.limit != null && entity.attributes.length > entity.limit
 
-  // Высота = заголовок + (label если есть) + (количество видимых атрибутов * высота строки) + (ellipsis строка) + границы
+  const visibleAttrs = entity.attributes.slice(0, displayedCount)
+
+  // Высота embedded-секций видимых атрибутов
+  const embeddedHeight = visibleAttrs.reduce((sum, attr) => sum + calculateEmbeddedHeight(attr), 0)
+
+  // Высота = заголовок + (label если есть) + (количество видимых атрибутов * высота строки) + embedded-секции + (ellipsis строка) + границы
   const height =
     METRICS.HEADER_HEIGHT +
     (entity.label ? METRICS.HEADER_LABEL_HEIGHT : 0) +
     (displayedCount * METRICS.ATTRIBUTE_ROW_HEIGHT) +
+    embeddedHeight +
     (hasEllipsis ? METRICS.ATTRIBUTE_ROW_HEIGHT : 0) +
     METRICS.BORDER_WIDTH
 
   // Ширина = максимальная ширина среди:
   // 1. Ширина заголовка (имя entity и label, если есть)
-  // 2. Ширина самой длинной строки видимого атрибута
+  // 2. Ширина самой длинной строки видимого атрибута (включая embedded-секции)
   const nameWidth = estimateTextWidth(entity.name, false)
   const labelWidth = entity.label ? estimateTextWidth(entity.label, false) : 0
   const headerWidth = Math.max(nameWidth, labelWidth) + METRICS.PADDING_HORIZONTAL
 
-  const visibleAttrs = entity.attributes.slice(0, displayedCount)
   const maxAttributeWidth = visibleAttrs.reduce((max, attr) => {
     const attrWidth = calculateAttributeRowWidth(attr)
-    return Math.max(max, attrWidth)
+    const embWidth = calculateEmbeddedWidth(attr)
+    return Math.max(max, attrWidth, embWidth)
   }, 0)
 
   const calculatedWidth = Math.max(headerWidth, maxAttributeWidth)

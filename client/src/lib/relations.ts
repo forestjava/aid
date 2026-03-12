@@ -3,6 +3,7 @@ import { HEADER_HANDLE_ID, type DatabaseSchema, type Entity, type EntityAttribut
 /**
  * Создает relations между сущностями на основе типа атрибута (односторонние internal связи).
  * Атрибут со сложным типом соединяется с primary key целевой сущности.
+ * Также обрабатывает embedded-атрибуты (из зависимых сущностей).
  */
 export function buildNavigationRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
   // Если filter === 'external', internal связи не нужны
@@ -13,68 +14,67 @@ export function buildNavigationRelations(entities: Entity[], schema?: Partial<Da
   const entityMap = new Map(entities.map(e => [e.name, e]));
   const relationsMap = new Map<string, EntityRelation>();
 
+  /**
+   * Создаёт navigation relation для одного атрибута.
+   * navigationPath — путь для Handle ID (attr.name или parentAttr.embAttr для embedded).
+   */
+  function processNavAttr(entity: Entity, attr: EntityAttribute, navigationPath: string): void {
+    if (!attr.type) return;
+
+    const targetEntity = entityMap.get(attr.type);
+    if (!targetEntity) return;
+
+    const primaryKeyAttr = targetEntity.attributes.find(a => a.isPrimaryKey);
+    const targetAttrName = primaryKeyAttr?.name ?? HEADER_HANDLE_ID;
+
+    const relationKey = `${entity.name}.${navigationPath}->${targetEntity.name}.${targetAttrName}`;
+    if (relationsMap.has(relationKey)) return;
+
+    const entityRank = entity.rank ?? 0;
+    const targetRank = targetEntity.rank ?? 0;
+    const isForward = entityRank < targetRank;
+
+    const [sourceEntity, sourceNavigation, destEntity, destNavigation] = isForward
+      ? [entity, navigationPath, targetEntity, targetAttrName]
+      : [targetEntity, targetAttrName, entity, navigationPath];
+
+    const paletteIndex = primaryKeyAttr?.paletteIndex ?? relationsMap.size;
+
+    attr.hasConnection = isForward ? 'source' : 'target';
+    attr.isNavigation = true;
+    attr.paletteIndex = paletteIndex;
+
+    if (primaryKeyAttr) {
+      primaryKeyAttr.hasConnection = mergeConnectionRole(
+        primaryKeyAttr.hasConnection,
+        isForward ? 'target' : 'source'
+      );
+      primaryKeyAttr.paletteIndex = paletteIndex;
+    } else {
+      targetEntity.hasHeaderConnection = mergeConnectionRole(
+        targetEntity.hasHeaderConnection,
+        isForward ? 'target' : 'source'
+      );
+    }
+
+    relationsMap.set(relationKey, {
+      source: sourceEntity.name,
+      sourceNavigation: sourceNavigation,
+      target: destEntity.name,
+      targetNavigation: destNavigation,
+      paletteIndex,
+      type: 'internal',
+    });
+  }
+
   for (const entity of entities) {
     for (const attr of entity.attributes) {
-      // Пропускаем атрибуты без типа
-      if (!attr.type) continue;
+      processNavAttr(entity, attr, attr.name);
 
-      // Имя целевой сущности (type уже без '[]', isCollection установлен парсером)
-      const targetEntity = entityMap.get(attr.type);
-      if (!targetEntity) {
-        continue;
-      }
-
-      // Ищем primary key целевой сущности (если нет — связь пойдёт к заголовку)
-      const primaryKeyAttr = targetEntity.attributes.find(a => a.isPrimaryKey);
-      const targetAttrName = primaryKeyAttr?.name ?? HEADER_HANDLE_ID;
-
-      // Создаём ключ связи (односторонняя связь, без сортировки)
-      const relationKey = `${entity.name}.${attr.name}->${targetEntity.name}.${targetAttrName}`;
-
-      // Сохраняем связь в Map по ключу
-      if (!relationsMap.has(relationKey)) {
-        // Определяем направление связи на основе rank сущностей
-        const entityRank = entity.rank ?? 0;
-        const targetRank = targetEntity.rank ?? 0;
-        const isForward = entityRank < targetRank;
-
-        // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
-        const [sourceEntity, sourceAttrName, destEntity, destAttrName] = isForward
-          ? [entity, attr.name, targetEntity, targetAttrName]
-          : [targetEntity, targetAttrName, entity, attr.name];
-
-        // Если у primary key уже есть paletteIndex — используем его,
-        // иначе назначаем новый (все связи на один PK будут одного цвета)
-        const paletteIndex = primaryKeyAttr?.paletteIndex ?? relationsMap.size;
-
-        // Помечаем оба атрибута для создания Handles (ReactFlow требует Handle на обоих концах edge)
-        attr.hasConnection = isForward ? 'source' : 'target';
-        attr.isNavigation = true;
-        attr.paletteIndex = paletteIndex;
-
-        if (primaryKeyAttr) {
-          // Помечаем primary key для создания target Handle
-          primaryKeyAttr.hasConnection = mergeConnectionRole(
-            primaryKeyAttr.hasConnection,
-            isForward ? 'target' : 'source'
-          );
-          primaryKeyAttr.paletteIndex = paletteIndex;
-        } else {
-          // Нет PK — связь идёт к заголовку сущности
-          targetEntity.hasHeaderConnection = mergeConnectionRole(
-            targetEntity.hasHeaderConnection,
-            isForward ? 'target' : 'source'
-          );
+      if (attr.embeddedEntity) {
+        for (const embAttr of attr.embeddedEntity.attributes) {
+          processNavAttr(entity, embAttr, `${attr.name}.${embAttr.name}`);
         }
-
-        relationsMap.set(relationKey, {
-          source: sourceEntity.name,
-          sourceNavigation: sourceAttrName,
-          target: destEntity.name,
-          targetNavigation: destAttrName,
-          paletteIndex,
-          type: 'internal',
-        });
       }
     }
   }
@@ -222,36 +222,47 @@ export function removeUnusedEntities(entities: Entity[]): void {
   }
 }
 
+interface AttributeMapEntry {
+  entity: Entity
+  attr: EntityAttribute
+  navigationPath: string // attr.name для обычных, "parentAttr.embAttr" для embedded
+}
+
 /**
- * Создает relations между сущностями на основе односторонних ссылок (sync/map атрибуты)
+ * Создает relations между сущностями на основе односторонних ссылок (sync/map атрибуты).
+ * Поддерживает embedded-атрибуты: путь вида Entity.parentAttr.embAttr резолвится точно.
  */
 export function buildLinkRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
-  // Создаем Map всех атрибутов с полными путями: "EntityName.attributeName" -> {entity, attr}
-  const attributesMap = new Map<string, { entity: Entity; attr: EntityAttribute }>();
+  const attributesMap = new Map<string, AttributeMapEntry>();
 
   for (const entity of entities) {
     for (const attr of entity.attributes) {
       const fullPath = `${entity.name}.${attr.name}`;
-      attributesMap.set(fullPath, { entity, attr });
+      attributesMap.set(fullPath, { entity, attr, navigationPath: attr.name });
+
+      if (attr.embeddedEntity) {
+        for (const embAttr of attr.embeddedEntity.attributes) {
+          const embPath = `${entity.name}.${attr.name}.${embAttr.name}`;
+          attributesMap.set(embPath, {
+            entity, attr: embAttr, navigationPath: `${attr.name}.${embAttr.name}`
+          });
+        }
+      }
     }
   }
 
   const relationsMap = new Map<string, EntityRelation>();
 
-  // Шаг 3: Перебираем все атрибуты и ищем sync
   for (const entity of entities) {
     for (const attr of entity.attributes) {
       if (!attr.sync || attr.sync.length === 0) continue;
 
-      // Теперь sync - это массив, но после expandMultipleSyncs в каждом атрибуте максимум 1 элемент
       for (const syncTarget of attr.sync) {
-        // Фильтруем по типу связи, если указан filter
         const filter = schema?.filter as RelationType | undefined;
         if (filter && syncTarget.type !== filter) continue;
 
-        // Ищем целевой атрибут по полному пути в Map
-        // Если точный путь не найден, пробуем укороченные префиксы —
-        // глубокая навигация (Entity.attr.subAttr.field) резолвится до ближайшего Entity.attr
+        // Ищем целевой атрибут по полному пути (теперь включая embedded-пути),
+        // затем пробуем укороченные префиксы
         let target = attributesMap.get(syncTarget.target);
         if (!target) {
           const parts = syncTarget.target.split('.');
@@ -267,16 +278,14 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
           continue;
         }
 
-        // Создаём канонический ключ связи (включаем атрибуты для поддержки нескольких связей между сущностями)
+        const sourceEntry: AttributeMapEntry = { entity, attr, navigationPath: attr.name };
+
         const canonicalKey = [
-          `${entity.name}.${attr.name}`,
-          `${target.entity.name}.${target.attr.name}`
+          `${sourceEntry.entity.name}.${sourceEntry.navigationPath}`,
+          `${target.entity.name}.${target.navigationPath}`
         ].sort().join('::');
 
-        // Сохраняем связь в Map по ключу (первая встреченная)
         if (!relationsMap.has(canonicalKey)) {
-          // Определяем направление связи на основе rank сущностей
-          // source должен иметь меньший или равный rank, чтобы связь шла слева направо
           const sourceRank = entity.rank ?? 0;
           const targetRank = target.entity.rank ?? 0;
 
@@ -284,29 +293,25 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
             ? sourceRank < targetRank
             : sourceRank <= targetRank;
 
-          // Выбираем source и target так, чтобы связь шла от меньшего rank к большему
-          const [sourceEntity, sourceAttr, targetEntity, targetAttr] = isForward
-            ? [entity, attr, target.entity, target.attr]
-            : [target.entity, target.attr, entity, attr];
+          const [srcEntry, tgtEntry] = isForward
+            ? [sourceEntry, target]
+            : [target, sourceEntry];
 
-          // Определяем paletteIndex: используем существующий у атрибутов или генерируем новый
-          const paletteIndex = sourceAttr.paletteIndex ?? targetAttr.paletteIndex ?? relationsMap.size;
+          const paletteIndex = srcEntry.attr.paletteIndex ?? tgtEntry.attr.paletteIndex ?? relationsMap.size;
 
-          // Помечаем атрибуты (учитываем, что атрибут может участвовать в нескольких связях)
-          sourceAttr.hasConnection = mergeConnectionRole(sourceAttr.hasConnection, 'source');
-          sourceAttr.hasConnectionType = syncTarget.type;
-          sourceAttr.paletteIndex = paletteIndex;
+          srcEntry.attr.hasConnection = mergeConnectionRole(srcEntry.attr.hasConnection, 'source');
+          srcEntry.attr.hasConnectionType = syncTarget.type;
+          srcEntry.attr.paletteIndex = paletteIndex;
 
-          targetAttr.hasConnection = mergeConnectionRole(targetAttr.hasConnection, 'target');
-          targetAttr.hasConnectionType = syncTarget.type;
-          targetAttr.paletteIndex = paletteIndex;
+          tgtEntry.attr.hasConnection = mergeConnectionRole(tgtEntry.attr.hasConnection, 'target');
+          tgtEntry.attr.hasConnectionType = syncTarget.type;
+          tgtEntry.attr.paletteIndex = paletteIndex;
 
-          // Создаем связь с типом из syncTarget
           relationsMap.set(canonicalKey, {
-            source: sourceEntity.name,
-            sourceNavigation: sourceAttr.name,
-            target: targetEntity.name,
-            targetNavigation: targetAttr.name,
+            source: srcEntry.entity.name,
+            sourceNavigation: srcEntry.navigationPath,
+            target: tgtEntry.entity.name,
+            targetNavigation: tgtEntry.navigationPath,
             paletteIndex,
             type: syncTarget.type,
           });

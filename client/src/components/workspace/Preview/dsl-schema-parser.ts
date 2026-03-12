@@ -97,6 +97,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
         rank: entityProps.rank,
         offset: entityProps.offset,
         limit: entityProps.limit,
+        isDependent: entityProps.isDependent,
       }];
     }
 
@@ -406,6 +407,14 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
     return {};
   },
 
+  // is dependent;
+  Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<Entity> {
+    if (_keyword.sourceString === 'is' && name.sourceString === 'dependent') {
+      return { isDependent: true };
+    }
+    return {};
+  },
+
   // Не рекурсируем в блоки вложенных элементов —
   // их label/rank не должны подменять свойства сущности
   Entity_options(_keyword: any, _name: any, _block: any, _semicolon: any): Partial<Entity> {
@@ -446,6 +455,41 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
   },
 
 });
+
+/**
+ * Встраивает зависимые (is dependent) сущности в атрибуты родителей.
+ * Зависимая сущность удаляется из массива, её атрибуты копируются в embeddedEntity
+ * тех атрибутов, чей type ссылается на неё.
+ */
+function resolveDependentEntities(entities: Entity[]): void {
+  const dependentMap = new Map<string, Entity>();
+  for (const e of entities) {
+    if (e.isDependent) dependentMap.set(e.name, e);
+  }
+  if (dependentMap.size === 0) return;
+
+  for (const entity of entities) {
+    if (entity.isDependent) continue;
+    for (const attr of entity.attributes) {
+      if (!attr.type) continue;
+      const dep = dependentMap.get(attr.type);
+      if (dep) {
+        attr.embeddedEntity = {
+          name: dep.name,
+          label: dep.label,
+          type: dep.type,
+          attributes: dep.attributes.map(a => ({ ...a })),
+        };
+      }
+    }
+  }
+
+  for (let i = entities.length - 1; i >= 0; i--) {
+    if (entities[i].isDependent) {
+      entities.splice(i, 1);
+    }
+  }
+}
 
 /**
  * Парсит DSL-контент (уже обработанный, без импортов) в схему базы данных
@@ -497,6 +541,9 @@ export async function parseSchema(content: string): Promise<DatabaseSchema | nul
     // Clone expansion: создаём клоны из sync с clone, удаляем ненужные оригиналы
     expandMultipleSyncs(entities);
     removeUnusedEntities(entities);
+
+    // Встраиваем зависимые сущности (is dependent) в атрибуты родителей
+    resolveDependentEntities(entities);
 
     // Строим relations по финальному списку entities "as is"
     const navigationRelations = buildNavigationRelations(entities, schema);

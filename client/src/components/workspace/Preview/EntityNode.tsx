@@ -1,11 +1,86 @@
 import { memo } from 'react'
 import { Handle, Position, type NodeProps } from 'reactflow'
-import { HEADER_HANDLE_ID, type Entity, type DatabaseSchema } from './types'
+import { HEADER_HANDLE_ID, type Entity, type EntityAttribute, type DatabaseSchema } from './types'
 import { getAttributeStyle } from './styles'
 import { getEntityHeaderColor } from './colors'
 
 interface EntityNodeProps extends NodeProps<Entity> {
   schema: DatabaseSchema
+}
+
+/**
+ * Строка атрибута с Handles и иконками.
+ * handlePrefix — для embedded-атрибутов содержит "parentAttr." для составного Handle ID.
+ */
+const AttributeRow: React.FC<{
+  entityName: string
+  attr: EntityAttribute
+  handlePrefix: string
+  schema: DatabaseSchema
+}> = ({ entityName, attr, handlePrefix, schema }) => {
+  const style = getAttributeStyle(attr, schema)
+  const handleId = `${entityName}-${handlePrefix}${attr.name}`
+
+  return (
+    <div
+      className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
+      style={style}
+    >
+      {(attr.hasConnection === 'target' || attr.hasConnection === 'both') && (
+        <Handle
+          type="target"
+          position={Position.Left}
+          id={handleId}
+          className="w-2 h-2 !-left-1"
+          style={{ top: '50%', transform: 'translateY(-50%)' }}
+        />
+      )}
+      {(attr.hasConnection === 'source' || attr.hasConnection === 'both') && (
+        <Handle
+          type="source"
+          position={Position.Right}
+          id={handleId}
+          className="w-2 h-2 !-right-1"
+          style={{ top: '50%', transform: 'translateY(-50%)' }}
+        />
+      )}
+      <div className="flex items-center gap-1.5 flex-1 min-w-0">
+        {attr.isPrimaryKey && (
+          <span className="text-yellow-500" title="Primary Key">
+            🔑
+          </span>
+        )}
+        {attr.isForeignKey && (
+          <span className="text-blue-500" title="Foreign Key">
+            🔗
+          </span>
+        )}
+        {attr.isNavigation && !attr.isCollection && (
+          <span className="text-purple-500" title="Navigation Property">
+            →
+          </span>
+        )}
+        {attr.isNavigation && attr.isCollection && (
+          <span className="text-purple-500" title="Navigation Collection">
+            ⇉
+          </span>
+        )}
+        <span className={`font-mono truncate ${attr.isPrimaryKey ? 'font-semibold' : ''} ${attr.isNavigation ? 'italic' : ''}`}>
+          {attr.name}
+          {attr.isRequired && (
+            <span className="text-red-500 ml-0.5" title="Required">
+              *
+            </span>
+          )}
+        </span>
+      </div>
+      {attr.type && (
+        <span className="text-muted-foreground text-[10px] whitespace-nowrap">
+          {attr.type}{attr.isCollection && '[]'}
+        </span>
+      )}
+    </div>
+  )
 }
 
 const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
@@ -43,70 +118,41 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
 
       {/* Атрибуты */}
       <div className="divide-y divide-border">
-        {(data.limit != null ? data.attributes.slice(0, data.limit) : data.attributes).map((attr, idx) => {
-          const style = getAttributeStyle(attr, schema)
-          return (
-            <div
-              key={idx}
-              className="px-3 py-1.5 text-xs flex items-center justify-between gap-2 relative"
-              style={style}
-            >
-            {/* Handle для связей: target (слева), source (справа), both (оба) */}
-            {(attr.hasConnection === 'target' || attr.hasConnection === 'both') && (
-              <Handle
-                type="target"
-                position={Position.Left}
-                id={`${data.name}-${attr.name}`}
-                className="w-2 h-2 !-left-1"
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              />
-            )}
-            {(attr.hasConnection === 'source' || attr.hasConnection === 'both') && (
-              <Handle
-                type="source"
-                position={Position.Right}
-                id={`${data.name}-${attr.name}`}
-                className="w-2 h-2 !-right-1"
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              />
-            )}
-            <div className="flex items-center gap-1.5 flex-1 min-w-0">
-              {attr.isPrimaryKey && (
-                <span className="text-yellow-500" title="Primary Key">
-                  🔑
-                </span>
-              )}
-              {attr.isForeignKey && (
-                <span className="text-blue-500" title="Foreign Key">
-                  🔗
-                </span>
-              )}
-              {attr.isNavigation && !attr.isCollection && (
-                <span className="text-purple-500" title="Navigation Property">
-                  →
-                </span>
-              )}
-              {attr.isNavigation && attr.isCollection && (
-                <span className="text-purple-500" title="Navigation Collection">
-                  ⇉
-                </span>
-              )}
-              <span className={`font-mono truncate ${attr.isPrimaryKey ? 'font-semibold' : ''} ${attr.isNavigation ? 'italic' : ''}`}>
-                {attr.name}
-                {attr.isRequired && (
-                  <span className="text-red-500 ml-0.5" title="Required">
-                    *
-                  </span>
-                )}
-              </span>
-            </div>
-            {attr.type && (
-              <span className="text-muted-foreground text-[10px] whitespace-nowrap">
-                {attr.type}{attr.isCollection && '[]'}
-              </span>
+        {(data.limit != null ? data.attributes.slice(0, data.limit) : data.attributes).map((attr, idx) => (
+          <div key={idx}>
+            <AttributeRow
+              entityName={data.name}
+              attr={attr}
+              handlePrefix=""
+              schema={schema}
+            />
+            {/* Embedded-сущность (is dependent) */}
+            {attr.embeddedEntity && (
+              <div className="ml-2 mr-2 mb-1 border border-border/50 rounded">
+                <div
+                  className="px-2 py-1 text-[10px] font-medium text-muted-foreground rounded-t"
+                  style={{ backgroundColor: getEntityHeaderColor(attr.embeddedEntity.type), opacity: 0.6, color: 'white' }}
+                >
+                  {attr.embeddedEntity.name}
+                  {attr.embeddedEntity.label && (
+                    <span className="ml-1 opacity-75">{attr.embeddedEntity.label}</span>
+                  )}
+                </div>
+                <div className="divide-y divide-border/50">
+                  {attr.embeddedEntity.attributes.map((embAttr, embIdx) => (
+                    <AttributeRow
+                      key={embIdx}
+                      entityName={data.name}
+                      attr={embAttr}
+                      handlePrefix={`${attr.name}.`}
+                      schema={schema}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
           </div>
-        )})}
+        ))}
         {data.limit != null && data.attributes.length > data.limit && (
           <div className="px-3 py-1.5 text-xs text-center text-muted-foreground">
             ... +{data.attributes.length - data.limit} more
