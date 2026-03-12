@@ -83,15 +83,59 @@ const AttributeRow: React.FC<{
   )
 }
 
+const EmbeddedEntityBlock: React.FC<{
+  entityName: string
+  attr: EntityAttribute
+  handlePrefix: string
+  schema: DatabaseSchema
+  depth: number
+}> = ({ entityName, attr, handlePrefix, schema, depth }) => {
+  const emb = attr.embeddedEntity!
+  const embPrefix = `${handlePrefix}${attr.name}.`
+
+  return (
+    <div className="ml-2 mr-2 mb-1 border border-border/50 rounded" style={{ opacity: Math.max(0.4, 1 - depth * 0.1) }}>
+      <div
+        className="px-2 py-1 text-[10px] font-medium rounded-t"
+        style={{ backgroundColor: getEntityHeaderColor(emb.type), opacity: 0.6, color: 'white' }}
+      >
+        {emb.name}
+        {emb.label && (
+          <span className="ml-1 opacity-75">{emb.label}</span>
+        )}
+      </div>
+      <div className="divide-y divide-border/50">
+        {emb.attributes.map((embAttr, idx) => (
+          <div key={idx}>
+            <AttributeRow
+              entityName={entityName}
+              attr={embAttr}
+              handlePrefix={embPrefix}
+              schema={schema}
+            />
+            {embAttr.embeddedEntity && (
+              <EmbeddedEntityBlock
+                entityName={entityName}
+                attr={embAttr}
+                handlePrefix={embPrefix}
+                schema={schema}
+                depth={depth + 1}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
   return (
     <div className="bg-background border-2 border-border rounded-lg shadow-lg min-w-[200px] w-fit">
-      {/* Заголовок таблицы */}
       <div 
         className="text-white px-3 py-2 rounded-t-md relative"
         style={{ backgroundColor: getEntityHeaderColor(data.type) }}
       >
-        {/* Header handles для связей без primary key */}
         {(data.hasHeaderConnection === 'target' || data.hasHeaderConnection === 'both') && (
           <Handle
             type="target"
@@ -116,7 +160,6 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
         )}
       </div>
 
-      {/* Атрибуты */}
       <div className="divide-y divide-border">
         {(data.limit != null ? data.attributes.slice(0, data.limit) : data.attributes).map((attr, idx) => (
           <div key={idx}>
@@ -126,30 +169,14 @@ const EntityNode: React.FC<EntityNodeProps> = ({ data, schema }) => {
               handlePrefix=""
               schema={schema}
             />
-            {/* Embedded-сущность (is dependent) */}
             {attr.embeddedEntity && (
-              <div className="ml-2 mr-2 mb-1 border border-border/50 rounded">
-                <div
-                  className="px-2 py-1 text-[10px] font-medium text-muted-foreground rounded-t"
-                  style={{ backgroundColor: getEntityHeaderColor(attr.embeddedEntity.type), opacity: 0.6, color: 'white' }}
-                >
-                  {attr.embeddedEntity.name}
-                  {attr.embeddedEntity.label && (
-                    <span className="ml-1 opacity-75">{attr.embeddedEntity.label}</span>
-                  )}
-                </div>
-                <div className="divide-y divide-border/50">
-                  {attr.embeddedEntity.attributes.map((embAttr, embIdx) => (
-                    <AttributeRow
-                      key={embIdx}
-                      entityName={data.name}
-                      attr={embAttr}
-                      handlePrefix={`${attr.name}.`}
-                      schema={schema}
-                    />
-                  ))}
-                </div>
-              </div>
+              <EmbeddedEntityBlock
+                entityName={data.name}
+                attr={attr}
+                handlePrefix=""
+                schema={schema}
+                depth={0}
+              />
             )}
           </div>
         ))}

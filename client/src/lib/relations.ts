@@ -67,16 +67,18 @@ export function buildNavigationRelations(entities: Entity[], schema?: Partial<Da
     });
   }
 
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      processNavAttr(entity, attr, attr.name);
-
+  function processAttrsRecursive(entity: Entity, attributes: EntityAttribute[], prefix: string): void {
+    for (const attr of attributes) {
+      const navPath = prefix ? `${prefix}.${attr.name}` : attr.name;
+      processNavAttr(entity, attr, navPath);
       if (attr.embeddedEntity) {
-        for (const embAttr of attr.embeddedEntity.attributes) {
-          processNavAttr(entity, embAttr, `${attr.name}.${embAttr.name}`);
-        }
+        processAttrsRecursive(entity, attr.embeddedEntity.attributes, navPath);
       }
     }
+  }
+
+  for (const entity of entities) {
+    processAttrsRecursive(entity, entity.attributes, '');
   }
 
   return Array.from(relationsMap.values());
@@ -235,20 +237,18 @@ interface AttributeMapEntry {
 export function buildLinkRelations(entities: Entity[], schema?: Partial<DatabaseSchema>): EntityRelation[] {
   const attributesMap = new Map<string, AttributeMapEntry>();
 
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      const fullPath = `${entity.name}.${attr.name}`;
-      attributesMap.set(fullPath, { entity, attr, navigationPath: attr.name });
-
+  function registerAttrs(entity: Entity, attributes: EntityAttribute[], prefix: string): void {
+    for (const attr of attributes) {
+      const navPath = prefix ? `${prefix}.${attr.name}` : attr.name;
+      attributesMap.set(`${entity.name}.${navPath}`, { entity, attr, navigationPath: navPath });
       if (attr.embeddedEntity) {
-        for (const embAttr of attr.embeddedEntity.attributes) {
-          const embPath = `${entity.name}.${attr.name}.${embAttr.name}`;
-          attributesMap.set(embPath, {
-            entity, attr: embAttr, navigationPath: `${attr.name}.${embAttr.name}`
-          });
-        }
+        registerAttrs(entity, attr.embeddedEntity.attributes, navPath);
       }
     }
+  }
+
+  for (const entity of entities) {
+    registerAttrs(entity, entity.attributes, '');
   }
 
   const relationsMap = new Map<string, EntityRelation>();

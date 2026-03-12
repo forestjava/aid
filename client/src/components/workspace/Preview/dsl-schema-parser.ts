@@ -457,9 +457,30 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
 });
 
 /**
+ * Рекурсивно встраивает зависимые сущности в атрибуты.
+ * visited защищает от циклических зависимостей (A -> B -> A).
+ */
+function embedDependents(
+  attributes: EntityAttribute[],
+  dependentMap: Map<string, Entity>,
+  visited: Set<string>
+): void {
+  for (const attr of attributes) {
+    if (!attr.type || visited.has(attr.type)) continue;
+    const dep = dependentMap.get(attr.type);
+    if (!dep) continue;
+    const embeddedAttrs = dep.attributes.map(a => ({ ...a }));
+    attr.embeddedEntity = { ...dep, attributes: embeddedAttrs };
+    visited.add(dep.name);
+    embedDependents(embeddedAttrs, dependentMap, visited);
+    visited.delete(dep.name);
+  }
+}
+
+/**
  * Встраивает зависимые (is dependent) сущности в атрибуты родителей.
- * Зависимая сущность удаляется из массива, её атрибуты копируются в embeddedEntity
- * тех атрибутов, чей type ссылается на неё.
+ * Поддерживает неограниченную глубину вложенности.
+ * Зависимые сущности удаляются из массива entities.
  */
 function resolveDependentEntities(entities: Entity[]): void {
   const dependentMap = new Map<string, Entity>();
@@ -470,18 +491,7 @@ function resolveDependentEntities(entities: Entity[]): void {
 
   for (const entity of entities) {
     if (entity.isDependent) continue;
-    for (const attr of entity.attributes) {
-      if (!attr.type) continue;
-      const dep = dependentMap.get(attr.type);
-      if (dep) {
-        attr.embeddedEntity = {
-          name: dep.name,
-          label: dep.label,
-          type: dep.type,
-          attributes: dep.attributes.map(a => ({ ...a })),
-        };
-      }
-    }
+    embedDependents(entity.attributes, dependentMap, new Set());
   }
 
   for (let i = entities.length - 1; i >= 0; i--) {

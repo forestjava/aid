@@ -64,20 +64,22 @@ const calculateAttributeRowWidth = (attr: EntityAttribute): number => {
 const calculateEmbeddedHeight = (attr: EntityAttribute): number => {
   if (!attr.embeddedEntity) return 0
   const embAttrs = attr.embeddedEntity.attributes
+  const nestedHeight = embAttrs.reduce((sum, a) => sum + calculateEmbeddedHeight(a), 0)
   return METRICS.EMBEDDED_HEADER_HEIGHT +
     embAttrs.length * METRICS.ATTRIBUTE_ROW_HEIGHT +
+    nestedHeight +
     METRICS.EMBEDDED_PADDING
 }
 
 /**
- * Вычисляет максимальную ширину embedded-секции для одного атрибута
+ * Вычисляет максимальную ширину embedded-секции для одного атрибута (рекурсивно)
  */
 const calculateEmbeddedWidth = (attr: EntityAttribute): number => {
   if (!attr.embeddedEntity) return 0
   const emb = attr.embeddedEntity
   const embHeaderWidth = estimateTextWidth(emb.name, false) + METRICS.PADDING_HORIZONTAL
   const embMaxAttrWidth = emb.attributes.reduce((max, embAttr) => {
-    return Math.max(max, calculateAttributeRowWidth(embAttr))
+    return Math.max(max, calculateAttributeRowWidth(embAttr), calculateEmbeddedWidth(embAttr))
   }, 0)
   return METRICS.EMBEDDED_INDENT + Math.max(embHeaderWidth, embMaxAttrWidth)
 }

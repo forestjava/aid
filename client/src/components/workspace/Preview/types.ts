@@ -33,12 +33,7 @@ export interface EntityAttribute {
   paletteIndex?: number // Индекс в палитре цветов для связи
   typeClones?: Array<{ type: string; isCollection: boolean; clone: string }>
   sync?: SyncTarget[] // Массив sync-связей атрибута (для external связей)
-  embeddedEntity?: {
-    name: string
-    label: string
-    type: EntityType
-    attributes: EntityAttribute[]
-  }
+  embeddedEntity?: Entity
 }
 
 export interface EntityRelation {
