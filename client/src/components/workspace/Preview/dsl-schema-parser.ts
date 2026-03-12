@@ -463,16 +463,18 @@ semantics.addOperation<Partial<DatabaseSchema>>('extractSchemaProps', {
 function embedDependents(
   attributes: EntityAttribute[],
   dependentMap: Map<string, Entity>,
-  visited: Set<string>
+  visited: Set<string>,
+  usedNames: Set<string>
 ): void {
   for (const attr of attributes) {
     if (!attr.type || visited.has(attr.type)) continue;
     const dep = dependentMap.get(attr.type);
     if (!dep) continue;
+    usedNames.add(dep.name);
     const embeddedAttrs = dep.attributes.map(a => ({ ...a }));
     attr.embeddedEntity = { ...dep, attributes: embeddedAttrs };
     visited.add(dep.name);
-    embedDependents(embeddedAttrs, dependentMap, visited);
+    embedDependents(embeddedAttrs, dependentMap, visited, usedNames);
     visited.delete(dep.name);
   }
 }
@@ -480,7 +482,8 @@ function embedDependents(
 /**
  * Встраивает зависимые (is dependent) сущности в атрибуты родителей.
  * Поддерживает неограниченную глубину вложенности.
- * Зависимые сущности удаляются из массива entities.
+ * Удаляет только те dependent-сущности, которые были фактически встроены.
+ * Неиспользованные dependent-сущности остаются на схеме как обычные узлы.
  */
 function resolveDependentEntities(entities: Entity[]): void {
   const dependentMap = new Map<string, Entity>();
@@ -489,13 +492,14 @@ function resolveDependentEntities(entities: Entity[]): void {
   }
   if (dependentMap.size === 0) return;
 
+  const usedNames = new Set<string>();
   for (const entity of entities) {
     if (entity.isDependent) continue;
-    embedDependents(entity.attributes, dependentMap, new Set());
+    embedDependents(entity.attributes, dependentMap, new Set(), usedNames);
   }
 
   for (let i = entities.length - 1; i >= 0; i--) {
-    if (entities[i].isDependent) {
+    if (entities[i].isDependent && usedNames.has(entities[i].name)) {
       entities.splice(i, 1);
     }
   }
