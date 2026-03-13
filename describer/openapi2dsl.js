@@ -195,6 +195,15 @@ function generateDto(schemaName, schema) {
 
   for (const [propName, propDef] of Object.entries(properties)) {
     lines.push(generateAttribute(propName, propDef, requiredFields, 1));
+    if (propDef.allOf) {
+      for (const part of propDef.allOf) {
+        if (part.properties) {
+          for (const [extraName, extraDef] of Object.entries(part.properties)) {
+            lines.push(generateAttribute(extraName, extraDef, part.required, 1));
+          }
+        }
+      }
+    }
   }
 
   lines.push('}');
