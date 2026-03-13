@@ -157,12 +157,32 @@ const calculateUiCellWidth = (attr: EntityAttribute): number => {
 
   nameWidth += estimateTextWidth(attr.name, true)
 
-  // Ширина label (text-[10px], обычный шрифт)
   const labelWidth = attr.label
     ? METRICS.PADDING_HORIZONTAL + attr.label.length * METRICS.TYPE_CHAR_WIDTH
     : 0
 
-  return Math.max(UI_METRICS.CELL_MIN_WIDTH, nameWidth, labelWidth)
+  let baseWidth = Math.max(UI_METRICS.CELL_MIN_WIDTH, nameWidth, labelWidth)
+
+  if (attr.embeddedEntity) {
+    const emb = attr.embeddedEntity
+    const embHeaderWidth = 20
+    const embCellsWidth = emb.attributes.reduce((sum, a) => sum + calculateUiCellWidth(a), 0)
+    baseWidth = Math.max(baseWidth, embHeaderWidth + embCellsWidth + UI_METRICS.BORDER_WIDTH)
+  }
+
+  return baseWidth
+}
+
+/**
+ * Рекурсивно вычисляет дополнительную высоту embedded-содержимого внутри ячейки
+ */
+const calculateUiEmbeddedHeight = (attr: EntityAttribute): number => {
+  if (!attr.embeddedEntity) return 0
+  const emb = attr.embeddedEntity
+  const hasLabel = emb.attributes.some(a => a.label)
+  const rowHeight = hasLabel ? UI_METRICS.CELL_HEIGHT_WITH_LABEL : UI_METRICS.CELL_HEIGHT_BASE
+  const nestedHeight = emb.attributes.reduce((max, a) => Math.max(max, calculateUiEmbeddedHeight(a)), 0)
+  return rowHeight + UI_METRICS.BORDER_WIDTH + nestedHeight
 }
 
 /**
@@ -175,28 +195,26 @@ export const calculateUiNodeDimensions = (entity: Entity): { width: number; heig
     : entity.attributes.length
   const hasEllipsis = entity.limit != null && entity.attributes.length > entity.limit
 
-  // Ширина заголовка — фиксированная (определяется line-height повёрнутого текста)
   const headerWidth = UI_METRICS.HEADER_ROTATED_WIDTH
 
-  // Высота заголовка — определяется длиной текста (повёрнутого)
   const nameTextHeight = estimateTextWidth(entity.name, false) + UI_METRICS.HEADER_PADDING_VERTICAL
   const labelTextHeight = entity.label
     ? estimateTextWidth(entity.label, false) + UI_METRICS.HEADER_PADDING_VERTICAL
     : 0
   const headerHeight = Math.max(nameTextHeight, labelTextHeight)
 
-  // Высота ячеек атрибутов — зависит от наличия label
   const visibleAttrs = entity.attributes.slice(0, displayedCount)
   const hasAnyLabel = visibleAttrs.some(attr => attr.label)
-  const cellsHeight = hasAnyLabel ? UI_METRICS.CELL_HEIGHT_WITH_LABEL : UI_METRICS.CELL_HEIGHT_BASE
+  const baseCellsHeight = hasAnyLabel ? UI_METRICS.CELL_HEIGHT_WITH_LABEL : UI_METRICS.CELL_HEIGHT_BASE
 
-  // Ширина видимых ячеек атрибутов + ячейка ellipsis
+  const maxEmbeddedHeight = visibleAttrs.reduce((max, attr) => Math.max(max, calculateUiEmbeddedHeight(attr)), 0)
+
   const cellsWidth = visibleAttrs.reduce((sum, attr) => {
     return sum + calculateUiCellWidth(attr)
   }, 0) + (hasEllipsis ? UI_METRICS.CELL_MIN_WIDTH : 0)
 
   const width = headerWidth + cellsWidth + UI_METRICS.BORDER_WIDTH
-  const height = Math.max(headerHeight, cellsHeight) + UI_METRICS.BORDER_WIDTH
+  const height = Math.max(headerHeight, baseCellsHeight + maxEmbeddedHeight) + UI_METRICS.BORDER_WIDTH
 
   return { width, height }
 }
