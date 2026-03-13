@@ -7,11 +7,13 @@
   "scripts": {
     "export": "node export.js",
     "transform": "node transform.js",
-    "all": "node export.js && node transform.js"
+    "all": "node export.js && node transform.js",
+    "openapi2dsl": "node openapi2dsl.js"
   },
   "dependencies": {
     "pg": "^8.11.3",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "js-yaml": "^4.1.0"
   },
   "author": "",
   "license": "ISC"

@@ -494,7 +494,6 @@ function resolveDependentEntities(entities: Entity[]): void {
 
   const usedNames = new Set<string>();
   for (const entity of entities) {
-    if (entity.isDependent) continue;
     embedDependents(entity.attributes, dependentMap, new Set(), usedNames);
   }
 
