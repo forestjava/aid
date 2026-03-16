@@ -23,36 +23,45 @@ interface ConversionResult {
 
 @Injectable()
 export class Openapi3ConverterService {
+  private schemas: Record<string, OpenApiSchema> = {};
+  private syntheticDtos: { group: string; content: string }[] = [];
+  private currentGroup: string | null = null;
+
   convert(yamlContent: string): ConversionResult {
     let doc: any;
     try {
       doc = yaml.load(yamlContent);
     } catch (e) {
-      throw new BadRequestException('Failed to parse YAML: ' + (e as Error).message);
+      throw new BadRequestException(
+        'Failed to parse YAML: ' + (e as Error).message,
+      );
     }
 
-    const schemas: Record<string, OpenApiSchema> = doc?.components?.schemas ?? {};
+    this.schemas = doc?.components?.schemas ?? {};
+    this.syntheticDtos = [];
+    this.currentGroup = null;
+
     const paths: Record<string, any> = doc?.paths ?? {};
     const tags: { name: string; description?: string }[] = doc?.tags ?? [];
 
     const directSchemas = this.collectDirectSchemas(paths);
-    const groups = this.groupSchemas(schemas);
-    const dtoFiles = this.buildDtoFiles(groups, schemas, directSchemas);
+    const groups = this.groupSchemas(this.schemas);
+    const dtoFiles = this.buildDtoFiles(groups, directSchemas);
     const { apiContent, apiGroupCount } = this.buildApiFile(
       paths,
       tags,
       dtoFiles.map((f) => f.name),
     );
 
-    return {
-      dtoFiles,
-      apiContent,
-      dtoCount: dtoFiles.reduce(
-        (sum, f) => sum + (groups[f.name]?.length ?? 0),
-        0,
-      ),
-      apiGroupCount,
-    };
+    const totalDtos = dtoFiles.reduce((sum, f) => {
+      const mainCount = groups[f.name]?.length ?? 0;
+      const synCount = this.syntheticDtos.filter(
+        (s) => s.group === f.name,
+      ).length;
+      return sum + mainCount + synCount;
+    }, 0);
+
+    return { dtoFiles, apiContent, dtoCount: totalDtos, apiGroupCount };
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────
@@ -71,9 +80,13 @@ export class Openapi3ConverterService {
     return '  '.repeat(level);
   }
 
-  // ── Type mapping ────────────────────────────────────────────────────────
+  private capitalize(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
 
-  private mapType(prop: any): string | null {
+  // ── Type resolution with synthetic DTO generation ───────────────────────
+
+  private resolveType(prop: any, contextName: string): string {
     if (!prop) return 'string';
 
     if (prop.$ref) {
@@ -81,6 +94,28 @@ export class Openapi3ConverterService {
     }
 
     if (prop.allOf) {
+      const hasInlineProps = prop.allOf.some((a: any) => a.properties);
+      if (hasInlineProps) {
+        const mergedProps: Record<string, any> = {};
+        const mergedRequired: string[] = [];
+        for (const part of prop.allOf) {
+          if (part.$ref) {
+            const refName = part.$ref.replace('#/components/schemas/', '');
+            const refSchema = this.schemas[refName];
+            if (refSchema?.properties) {
+              Object.assign(mergedProps, refSchema.properties);
+              if (refSchema.required)
+                mergedRequired.push(...refSchema.required);
+            }
+          }
+          if (part.properties) {
+            Object.assign(mergedProps, part.properties);
+            if (part.required) mergedRequired.push(...part.required);
+          }
+        }
+        this.emitSyntheticDto(contextName, mergedProps, mergedRequired);
+        return 'DTO.' + contextName;
+      }
       const refItem = prop.allOf.find((a: any) => a.$ref);
       if (refItem)
         return 'DTO.' + refItem.$ref.replace('#/components/schemas/', '');
@@ -89,15 +124,22 @@ export class Openapi3ConverterService {
 
     if (prop.type === 'array') {
       if (prop.items) {
-        const itemType = this.mapType(prop.items);
-        if (itemType === null) return 'string[]';
+        const itemType = this.resolveType(prop.items, contextName + '_Item');
         return itemType + '[]';
       }
       return 'string[]';
     }
 
-    if (prop.type === 'object' && !prop.properties) return 'string';
-    if (prop.type === 'object' && prop.properties) return null;
+    if (prop.type === 'object' && prop.properties) {
+      this.emitSyntheticDto(
+        contextName,
+        prop.properties,
+        prop.required ?? [],
+      );
+      return 'DTO.' + contextName;
+    }
+
+    if (prop.type === 'object') return 'string';
 
     const fmt = prop.format;
     switch (prop.type) {
@@ -117,6 +159,29 @@ export class Openapi3ConverterService {
     }
   }
 
+  private emitSyntheticDto(
+    synName: string,
+    properties: Record<string, any>,
+    requiredFields: string[],
+  ): void {
+    const lines: string[] = [];
+    lines.push(`dto DTO.${synName} {`);
+    lines.push(`${this.indent(1)}is dependent;`);
+
+    for (const [propName, propDef] of Object.entries(properties)) {
+      const propContext = this.capitalize(propName);
+      lines.push(
+        this.generateAttribute(propName, propDef, requiredFields, 1, propContext),
+      );
+    }
+
+    lines.push('}');
+    this.syntheticDtos.push({
+      group: this.currentGroup!,
+      content: lines.join('\n'),
+    });
+  }
+
   // ── Attribute generation ────────────────────────────────────────────────
 
   private generateAttribute(
@@ -124,11 +189,11 @@ export class Openapi3ConverterService {
     prop: any,
     requiredFields: string[] | undefined,
     level: number,
+    contextName: string,
   ): string {
     const lines: string[] = [];
     const isRequired = requiredFields?.includes(name);
-    let type = this.mapType(prop);
-    if (type === null) type = 'string';
+    const type = this.resolveType(prop, contextName);
 
     lines.push(`${this.indent(level)}attribute ${name} {`);
     lines.push(`${this.indent(level + 1)}type ${type};`);
@@ -195,7 +260,6 @@ export class Openapi3ConverterService {
   private generateDto(
     schemaName: string,
     schema: OpenApiSchema,
-    schemas: Record<string, OpenApiSchema>,
     directSchemas: Set<string>,
   ): string {
     const lines: string[] = [];
@@ -225,7 +289,7 @@ export class Openapi3ConverterService {
         }
         if (part.$ref) {
           const refName = part.$ref.replace('#/components/schemas/', '');
-          const refSchema = schemas[refName];
+          const refSchema = this.schemas[refName];
           if (refSchema?.properties) {
             Object.assign(properties, refSchema.properties);
             if (refSchema.required) requiredFields.push(...refSchema.required);
@@ -235,20 +299,10 @@ export class Openapi3ConverterService {
     }
 
     for (const [propName, propDef] of Object.entries(properties)) {
-      lines.push(this.generateAttribute(propName, propDef, requiredFields, 1));
-      if (propDef.allOf) {
-        for (const part of propDef.allOf) {
-          if (part.properties) {
-            for (const [extraName, extraDef] of Object.entries(
-              part.properties,
-            )) {
-              lines.push(
-                this.generateAttribute(extraName, extraDef, part.required, 1),
-              );
-            }
-          }
-        }
-      }
+      const propContext = schemaName + '_' + this.capitalize(propName);
+      lines.push(
+        this.generateAttribute(propName, propDef, requiredFields, 1, propContext),
+      );
     }
 
     lines.push('}');
@@ -336,12 +390,13 @@ export class Openapi3ConverterService {
 
   private buildDtoFiles(
     groups: Record<string, { name: string; schema: OpenApiSchema }[]>,
-    schemas: Record<string, OpenApiSchema>,
     directSchemas: Set<string>,
   ): { name: string; content: string }[] {
-    const files: { name: string; content: string }[] = [];
+    const groupParts: Record<string, string[]> = {};
 
     for (const [group, schemaList] of Object.entries(groups)) {
+      this.currentGroup = group;
+
       const parts = [
         `// ==========================================`,
         `// ${group}`,
@@ -350,13 +405,22 @@ export class Openapi3ConverterService {
       ];
 
       for (const { name, schema } of schemaList) {
-        parts.push(this.generateDto(name, schema, schemas, directSchemas), '');
+        parts.push(this.generateDto(name, schema, directSchemas), '');
       }
 
-      files.push({ name: group, content: parts.join('\n') });
+      groupParts[group] = parts;
     }
 
-    return files;
+    for (const { group, content } of this.syntheticDtos) {
+      if (groupParts[group]) {
+        groupParts[group].push(content, '');
+      }
+    }
+
+    return Object.entries(groupParts).map(([group, parts]) => ({
+      name: group,
+      content: parts.join('\n'),
+    }));
   }
 
   // ── Build API file ─────────────────────────────────────────────────────
@@ -385,7 +449,9 @@ export class Openapi3ConverterService {
         .replace(/\{[^}]+\}/g, '')
         .split('/')
         .filter(Boolean)
-        .map((s: string) => s.replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase()));
+        .map((s: string) =>
+          s.replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase()),
+        );
       endpointName =
         method.toLowerCase() +
         segments

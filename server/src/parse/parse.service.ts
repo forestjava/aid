@@ -130,11 +130,24 @@ export class ParseService {
       const fileContent = await fs.readFile(filePath, 'utf-8');
 
       // Рекурсивно обрабатываем импорты
-      const resolvedContent = await this.resolveImports(
+      let resolvedContent = await this.resolveImports(
         fileContent,
         filePath,
         new Set(visitedFiles)
       );
+
+      // Фильтрация по селектору (#EntityName)
+      if (imp.selector) {
+        const blocks = this.parser.extractNamedBlocks(resolvedContent);
+        const matching = blocks.filter(b =>
+          b.name === imp.selector || b.name.endsWith('.' + imp.selector)
+        );
+        if (matching.length > 0) {
+          resolvedContent = matching.map(b => b.text).join('\n\n');
+        } else {
+          resolvedContent = `// WARNING: entity "${imp.selector}" not found in ${imp.path}`;
+        }
+      }
 
       // Вычисляем отступ перед import (пробелы/табы от начала строки)
       const lineStart = resultContent.lastIndexOf('\n', imp.position.start - 1) + 1;
@@ -146,8 +159,10 @@ export class ParseService {
         .map(line => indent + line)
         .join('\n');
 
-      // Простой комментарий + контент с отступами
-      const replacement = `// imported from ${imp.path}\n${indentedContent}\n`;
+      const importComment = imp.selector
+        ? `// imported ${imp.selector} from ${imp.path}`
+        : `// imported from ${imp.path}`;
+      const replacement = `${importComment}\n${indentedContent}\n`;
 
       resultContent =
         resultContent.substring(0, imp.position.start) +

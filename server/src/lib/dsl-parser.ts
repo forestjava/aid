@@ -8,6 +8,7 @@ import * as fs from 'fs';
 export interface ImportInfo {
   keyword: string;
   path: string;
+  selector?: string;
   fullText: string;
   position: {
     start: number;
@@ -117,12 +118,18 @@ function offsetToLineColumn(content: string, offset: number): { line: number; co
 }
 
 /**
- * DSL Parser - парсер грамматики DSL
+ * Именованный блок сущности (имя + исходный текст)
  */
+export interface NamedBlock {
+  name: string;
+  text: string;
+}
+
 export class DslParser {
   private readonly grammar: ohm.Grammar;
   private readonly importSemantics: ohm.Semantics;
   private readonly parseSemantics: ohm.Semantics;
+  private readonly blockSemantics: ohm.Semantics;
 
   constructor() {
     // Загружаем грамматику из shared
@@ -133,6 +140,7 @@ export class DslParser {
     // Создаем семантики
     this.importSemantics = this.createImportSemantics();
     this.parseSemantics = this.createParseSemantics();
+    this.blockSemantics = this.createBlockSemantics();
   }
 
   /**
@@ -143,6 +151,28 @@ export class DslParser {
 
     semantics.addOperation<ImportInfo[]>('findImports', {
       ...arrayFallbacks<ImportInfo>('findImports'),
+
+      // import ./dto/Common#EntityName;
+      Entity_importRefSelect(this: ohm.Node, importKeyword: any, ref: any, _hash: any, name: any, _semicolon: any): ImportInfo[] {
+        return [{
+          keyword: importKeyword.sourceString,
+          path: ref.sourceString,
+          selector: name.sourceString,
+          fullText: this.sourceString,
+          position: { start: this.source.startIdx, end: this.source.endIdx },
+        }];
+      },
+
+      // import "path"#EntityName;
+      Entity_importStringSelect(this: ohm.Node, importKeyword: any, stringValue: any, _hash: any, name: any, _semicolon: any): ImportInfo[] {
+        return [{
+          keyword: importKeyword.sourceString,
+          path: stringValue.sourceString.slice(1, -1),
+          selector: name.sourceString,
+          fullText: this.sourceString,
+          position: { start: this.source.startIdx, end: this.source.endIdx },
+        }];
+      },
 
       // import "path";
       Entity_importString(this: ohm.Node, importKeyword: any, stringValue: any, _semicolon: any): ImportInfo[] {
@@ -226,6 +256,54 @@ export class DslParser {
     });
 
     return semantics;
+  }
+
+  /**
+   * Создает семантику для извлечения именованных блоков сущностей
+   */
+  private createBlockSemantics(): ohm.Semantics {
+    const semantics = this.grammar.createSemantics();
+
+    semantics.addOperation<NamedBlock[]>('findNamedBlocks', {
+      ...arrayFallbacks<NamedBlock>('findNamedBlocks'),
+
+      Entity_options(this: ohm.Node, keyword: any, name: any, _block: any, _semicolon: any): NamedBlock[] {
+        const nested = _block.findNamedBlocks();
+        if (ENTITY_KEYWORDS.has(keyword.sourceString)) {
+          return [
+            { name: name.sourceString, text: this.sourceString },
+            ...nested,
+          ];
+        }
+        return nested;
+      },
+
+      Entity_simple(this: ohm.Node, keyword: any, name: any, _semicolon: any): NamedBlock[] {
+        if (ENTITY_KEYWORDS.has(keyword.sourceString)) {
+          return [{ name: name.sourceString, text: this.sourceString }];
+        }
+        return [];
+      },
+    });
+
+    return semantics;
+  }
+
+  /**
+   * Извлекает именованные блоки top-level сущностей из контента
+   */
+  extractNamedBlocks(content: string): NamedBlock[] {
+    if (!content || content.trim() === '') {
+      return [];
+    }
+
+    const match = this.grammar.match(content);
+    if (match.failed()) {
+      return [];
+    }
+
+    const adapter = this.blockSemantics(match);
+    return adapter.findNamedBlocks();
   }
 
   /**

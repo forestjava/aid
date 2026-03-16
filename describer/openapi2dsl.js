@@ -62,9 +62,18 @@ function indent(level) {
   return '  '.repeat(level);
 }
 
-// ── Type mapping ─────────────────────────────────────────────────────────────
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
-function mapType(prop) {
+// ── Synthetic DTO collection ─────────────────────────────────────────────────
+
+const syntheticDtos = [];
+let currentGroup = null;
+
+// ── Type resolution with synthetic DTO generation ────────────────────────────
+
+function resolveType(prop, contextName) {
   if (!prop) return 'string';
 
   if (prop.$ref) {
@@ -72,6 +81,27 @@ function mapType(prop) {
   }
 
   if (prop.allOf) {
+    const hasInlineProps = prop.allOf.some(a => a.properties);
+    if (hasInlineProps) {
+      const mergedProps = {};
+      const mergedRequired = [];
+      for (const part of prop.allOf) {
+        if (part.$ref) {
+          const refName = part.$ref.replace('#/components/schemas/', '');
+          const refSchema = schemas[refName];
+          if (refSchema?.properties) {
+            Object.assign(mergedProps, refSchema.properties);
+            if (refSchema.required) mergedRequired.push(...refSchema.required);
+          }
+        }
+        if (part.properties) {
+          Object.assign(mergedProps, part.properties);
+          if (part.required) mergedRequired.push(...part.required);
+        }
+      }
+      emitSyntheticDto(contextName, mergedProps, mergedRequired);
+      return 'DTO.' + contextName;
+    }
     const refItem = prop.allOf.find(a => a.$ref);
     if (refItem) return 'DTO.' + refItem.$ref.replace('#/components/schemas/', '');
     return 'string';
@@ -79,15 +109,18 @@ function mapType(prop) {
 
   if (prop.type === 'array') {
     if (prop.items) {
-      const itemType = mapType(prop.items);
-      if (itemType === null) return 'string[]'; // inline object array
+      const itemType = resolveType(prop.items, contextName + '_Item');
       return itemType + '[]';
     }
     return 'string[]';
   }
 
-  if (prop.type === 'object' && !prop.properties) return 'string';
-  if (prop.type === 'object' && prop.properties)  return null; // inline object
+  if (prop.type === 'object' && prop.properties) {
+    emitSyntheticDto(contextName, prop.properties, prop.required ?? []);
+    return 'DTO.' + contextName;
+  }
+
+  if (prop.type === 'object') return 'string';
 
   const fmt = prop.format;
   switch (prop.type) {
@@ -103,17 +136,26 @@ function mapType(prop) {
   }
 }
 
+function emitSyntheticDto(synName, properties, requiredFields) {
+  const lines = [];
+  lines.push(`dto DTO.${synName} {`);
+  lines.push(`${indent(1)}is dependent;`);
+
+  for (const [propName, propDef] of Object.entries(properties)) {
+    const propContext = capitalize(propName);
+    lines.push(generateAttribute(propName, propDef, requiredFields, 1, propContext));
+  }
+
+  lines.push('}');
+  syntheticDtos.push({ group: currentGroup, content: lines.join('\n') });
+}
+
 // ── Attribute generation ─────────────────────────────────────────────────────
 
-function generateAttribute(name, prop, requiredFields, level) {
+function generateAttribute(name, prop, requiredFields, level, contextName) {
   const lines = [];
   const isRequired = requiredFields?.includes(name);
-  let type = mapType(prop);
-
-  if (type === null) {
-    // inline object → fallback to string
-    type = 'string';
-  }
+  const type = resolveType(prop, contextName);
 
   lines.push(`${indent(level)}attribute ${name} {`);
   lines.push(`${indent(level + 1)}type ${type};`);
@@ -175,7 +217,6 @@ function generateDto(schemaName, schema) {
   const properties    = { ...(schema.properties ?? {}) };
   const requiredFields = [...(schema.required ?? [])];
 
-  // Merge allOf parts
   if (schema.allOf) {
     for (const part of schema.allOf) {
       if (part.properties) {
@@ -194,16 +235,8 @@ function generateDto(schemaName, schema) {
   }
 
   for (const [propName, propDef] of Object.entries(properties)) {
-    lines.push(generateAttribute(propName, propDef, requiredFields, 1));
-    if (propDef.allOf) {
-      for (const part of propDef.allOf) {
-        if (part.properties) {
-          for (const [extraName, extraDef] of Object.entries(part.properties)) {
-            lines.push(generateAttribute(extraName, extraDef, part.required, 1));
-          }
-        }
-      }
-    }
+    const propContext = schemaName + '_' + capitalize(propName);
+    lines.push(generateAttribute(propName, propDef, requiredFields, 1, propContext));
   }
 
   lines.push('}');
@@ -252,12 +285,14 @@ for (const [schemaName, schema] of Object.entries(schemas)) {
   (groups[group] ??= []).push({ name: schemaName, schema });
 }
 
-// ── Write DTO files ──────────────────────────────────────────────────────────
+// ── Generate DTO files (collect in memory, then append synthetics) ───────────
 
 const dtoFiles = [];
+const groupParts = {};
+
 for (const [group, schemaList] of Object.entries(groups)) {
-  const fileName = group;
-  dtoFiles.push(fileName);
+  currentGroup = group;
+  dtoFiles.push(group);
 
   const parts = [
     `// ==========================================`,
@@ -270,8 +305,20 @@ for (const [group, schemaList] of Object.entries(groups)) {
     parts.push(generateDto(name, schema), '');
   }
 
-  writeFileSync(join(dtoDir, fileName), parts.join('\n'));
-  console.log(`  dto/${fileName}  (${schemaList.length} DTOs)`);
+  groupParts[group] = parts;
+}
+
+for (const { group, content } of syntheticDtos) {
+  if (groupParts[group]) {
+    groupParts[group].push(content, '');
+  }
+}
+
+for (const [group, parts] of Object.entries(groupParts)) {
+  writeFileSync(join(dtoDir, group), parts.join('\n'));
+  const synCount = syntheticDtos.filter(s => s.group === group).length;
+  const mainCount = groups[group].length;
+  console.log(`  dto/${group}  (${mainCount + synCount} DTOs${synCount ? `, ${synCount} synthetic` : ''})`);
 }
 
 // ── Build API file ───────────────────────────────────────────────────────────
@@ -397,4 +444,4 @@ for (const [tag, endpoints] of Object.entries(apiGroups)) {
 
 writeFileSync(apiFile, apiParts.join('\n'));
 console.log(`\n  api  (${Object.keys(apiGroups).length} API groups)`);
-console.log(`\nDone: ${dtoFiles.length} DTO files + 1 API file → ${outputDir}`);
+console.log(`\nDone: ${dtoFiles.length} DTO files (${syntheticDtos.length} synthetic DTOs) + 1 API file → ${outputDir}`);

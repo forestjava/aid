@@ -16,7 +16,9 @@ DSL {
          | translate typeRef stringValue? ";"            --translate
          | refKeyword ref Block ";"?                     --refOptions
          | refKeyword ref ";"                            --ref
+         | importKeyword ref "#" name ";"                --importRefSelect
          | importKeyword ref ";"                         --importRef
+         | importKeyword stringValue "#" name ";"        --importStringSelect
          | importKeyword stringValue ";"                 --importString
          | stringKeyword stringValue ";"                 --string
          | numberKeyword numberValue ";"                 --number

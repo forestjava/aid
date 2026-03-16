@@ -253,71 +253,81 @@ export function buildLinkRelations(entities: Entity[], schema?: Partial<Database
 
   const relationsMap = new Map<string, EntityRelation>();
 
-  for (const entity of entities) {
-    for (const attr of entity.attributes) {
-      if (!attr.sync || attr.sync.length === 0) continue;
+  function processSyncAttrs(entity: Entity, attributes: EntityAttribute[], prefix: string): void {
+    for (const attr of attributes) {
+      const navPath = prefix ? `${prefix}.${attr.name}` : attr.name;
 
-      for (const syncTarget of attr.sync) {
-        const filter = schema?.filter as RelationType | undefined;
-        if (filter && syncTarget.type !== filter) continue;
+      if (attr.sync && attr.sync.length > 0) {
+        for (const syncTarget of attr.sync) {
+          const filter = schema?.filter as RelationType | undefined;
+          if (filter && syncTarget.type !== filter) continue;
 
-        // Ищем целевой атрибут по полному пути (теперь включая embedded-пути),
-        // затем пробуем укороченные префиксы
-        let target = attributesMap.get(syncTarget.target);
-        if (!target) {
-          const parts = syncTarget.target.split('.');
-          for (let i = parts.length - 1; i >= 2; i--) {
-            const shorter = parts.slice(0, i).join('.');
-            target = attributesMap.get(shorter);
-            if (target) break;
+          // Ищем целевой атрибут по полному пути (теперь включая embedded-пути),
+          // затем пробуем укороченные префиксы
+          let target = attributesMap.get(syncTarget.target);
+          if (!target) {
+            const parts = syncTarget.target.split('.');
+            for (let i = parts.length - 1; i >= 2; i--) {
+              const shorter = parts.slice(0, i).join('.');
+              target = attributesMap.get(shorter);
+              if (target) break;
+            }
+          }
+
+          if (!target) {
+            console.warn(`Sync target not found: ${syncTarget.target}`);
+            continue;
+          }
+
+          const sourceEntry: AttributeMapEntry = { entity, attr, navigationPath: navPath };
+
+          const canonicalKey = [
+            `${sourceEntry.entity.name}.${sourceEntry.navigationPath}`,
+            `${target.entity.name}.${target.navigationPath}`
+          ].sort().join('::');
+
+          if (!relationsMap.has(canonicalKey)) {
+            const sourceRank = entity.rank ?? 0;
+            const targetRank = target.entity.rank ?? 0;
+
+            const isForward = attr.isForeignKey
+              ? sourceRank < targetRank
+              : sourceRank <= targetRank;
+
+            const [srcEntry, tgtEntry] = isForward
+              ? [sourceEntry, target]
+              : [target, sourceEntry];
+
+            const paletteIndex = srcEntry.attr.paletteIndex ?? tgtEntry.attr.paletteIndex ?? relationsMap.size;
+
+            srcEntry.attr.hasConnection = mergeConnectionRole(srcEntry.attr.hasConnection, 'source');
+            srcEntry.attr.hasConnectionType = syncTarget.type;
+            srcEntry.attr.paletteIndex = paletteIndex;
+
+            tgtEntry.attr.hasConnection = mergeConnectionRole(tgtEntry.attr.hasConnection, 'target');
+            tgtEntry.attr.hasConnectionType = syncTarget.type;
+            tgtEntry.attr.paletteIndex = paletteIndex;
+
+            relationsMap.set(canonicalKey, {
+              source: srcEntry.entity.name,
+              sourceNavigation: srcEntry.navigationPath,
+              target: tgtEntry.entity.name,
+              targetNavigation: tgtEntry.navigationPath,
+              paletteIndex,
+              type: syncTarget.type,
+            });
           }
         }
+      }
 
-        if (!target) {
-          console.warn(`Sync target not found: ${syncTarget.target}`);
-          continue;
-        }
-
-        const sourceEntry: AttributeMapEntry = { entity, attr, navigationPath: attr.name };
-
-        const canonicalKey = [
-          `${sourceEntry.entity.name}.${sourceEntry.navigationPath}`,
-          `${target.entity.name}.${target.navigationPath}`
-        ].sort().join('::');
-
-        if (!relationsMap.has(canonicalKey)) {
-          const sourceRank = entity.rank ?? 0;
-          const targetRank = target.entity.rank ?? 0;
-
-          const isForward = attr.isForeignKey
-            ? sourceRank < targetRank
-            : sourceRank <= targetRank;
-
-          const [srcEntry, tgtEntry] = isForward
-            ? [sourceEntry, target]
-            : [target, sourceEntry];
-
-          const paletteIndex = srcEntry.attr.paletteIndex ?? tgtEntry.attr.paletteIndex ?? relationsMap.size;
-
-          srcEntry.attr.hasConnection = mergeConnectionRole(srcEntry.attr.hasConnection, 'source');
-          srcEntry.attr.hasConnectionType = syncTarget.type;
-          srcEntry.attr.paletteIndex = paletteIndex;
-
-          tgtEntry.attr.hasConnection = mergeConnectionRole(tgtEntry.attr.hasConnection, 'target');
-          tgtEntry.attr.hasConnectionType = syncTarget.type;
-          tgtEntry.attr.paletteIndex = paletteIndex;
-
-          relationsMap.set(canonicalKey, {
-            source: srcEntry.entity.name,
-            sourceNavigation: srcEntry.navigationPath,
-            target: tgtEntry.entity.name,
-            targetNavigation: tgtEntry.navigationPath,
-            paletteIndex,
-            type: syncTarget.type,
-          });
-        }
+      if (attr.embeddedEntity) {
+        processSyncAttrs(entity, attr.embeddedEntity.attributes, navPath);
       }
     }
+  }
+
+  for (const entity of entities) {
+    processSyncAttrs(entity, entity.attributes, '');
   }
 
   return Array.from(relationsMap.values());
