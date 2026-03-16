@@ -8,6 +8,7 @@ import { SseModule } from './sse/sse.module';
 import { ExportersModule } from './exporters/exporters.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ProgressModule } from './progress/progress.module';
+import { LoadModule } from './load/load.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ProgressModule } from './progress/progress.module';
     ExportersModule,
     JobsModule,
     ProgressModule,
+    LoadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

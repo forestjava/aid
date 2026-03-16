@@ -345,7 +345,7 @@ function tagToApiName(tag) {
 const apiParts = [];
 
 for (const fileName of dtoFiles.sort()) {
-  apiParts.push(`import ./dto/${fileName};`);
+  apiParts.push(`//import ./dto/${fileName};`);
 }
 apiParts.push('');
 
