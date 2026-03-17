@@ -53,6 +53,7 @@ export interface Entity {
   offset?: number // Вертикальное смещение узла в пикселях (опционально, указывается явно в DSL)
   limit?: number // Максимальное число отображаемых атрибутов (опционально, указывается явно в DSL)
   isDependent?: boolean // Зависимая сущность — встраивается inline в родительский атрибут
+  mapBase?: string // Базовый путь map для разрешения относительных .ссылок атрибутов
   hasHeaderConnection?: 'source' | 'target' | 'both' // Роль заголовка в связи (для сущностей без primary key)
 
   attributes: EntityAttribute[]

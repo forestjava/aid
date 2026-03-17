@@ -27,6 +27,8 @@ const ENUM_VALUE_KEYWORDS = new Set(['value', 'значение']);
 const EXTERNAL_LINK_KEYWORDS = new Set(['sync', 'обмен', 'map', 'связь']);
 const INTERNAL_LINK_KEYWORDS = new Set(['relates', 'относится']);
 const ALL_LINK_KEYWORDS = new Set([...EXTERNAL_LINK_KEYWORDS, ...INTERNAL_LINK_KEYWORDS]);
+const IS_KEYWORDS = new Set(['is', 'это']);
+const DEPENDENT_MODIFIERS = new Set(['dependent', 'embedded', 'зависимый', 'вложенный']);
 const IS_MODIFIERS = new Set(['navigation', 'nullable', 'required']); // used for UI
 const KEY_MODIFIERS = new Set(['primary', 'foreign']);  // used for UI
 const LABEL_KEYWORDS = new Set(['label', 'заголовок']);
@@ -89,6 +91,19 @@ semantics.addOperation<Entity[]>('extractEntities', {
     if (ENTITY_KEYWORDS.has(keywordStr)) {
       const attributes = block.extractAttributes();
       const entityProps = block.extractEntityProps();
+
+      if (entityProps.mapBase) {
+        for (const attr of attributes) {
+          if (attr.sync) {
+            for (const s of attr.sync) {
+              if (s.target.startsWith('.')) {
+                s.target = entityProps.mapBase + s.target;
+              }
+            }
+          }
+        }
+      }
+
       return [{
         name: nameStr,
         label: entityProps.label || '',
@@ -98,6 +113,7 @@ semantics.addOperation<Entity[]>('extractEntities', {
         offset: entityProps.offset,
         limit: entityProps.limit,
         isDependent: entityProps.isDependent,
+        mapBase: entityProps.mapBase,
       }];
     }
 
@@ -156,7 +172,7 @@ semantics.addOperation<SyncTarget[]>('extractSyncs', {
   ...arrayFallbacks<SyncTarget>('extractSyncs'),
 
   // sync Entity.attr;
-  Entity_ref(refKeyword: any, ref: any, _semicolon: any): SyncTarget[] {
+  Entity_ref(refKeyword: any, ref: any, _arrayBrackets: any, _semicolon: any): SyncTarget[] {
     const keyword = refKeyword.sourceString;
     if (ALL_LINK_KEYWORDS.has(keyword)) {
       return [{ 
@@ -168,7 +184,7 @@ semantics.addOperation<SyncTarget[]>('extractSyncs', {
   },
 
   // sync Entity.attr { clone shipping; using operation "SHIPPING"; };
-  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): SyncTarget[] {
+  Entity_refOptions(refKeyword: any, ref: any, _arrayBrackets: any, block: any, _semicolon: any): SyncTarget[] {
     const keyword = refKeyword.sourceString;
     if (ALL_LINK_KEYWORDS.has(keyword)) {
       const condition = block.extractCondition();
@@ -329,12 +345,12 @@ semantics.addOperation<Partial<EntityAttribute>>('extractAttributeProps', {
   },
 
   // sync обрабатывается в extractSyncs, здесь пропускаем
-  Entity_ref(_refKeyword: any, _ref: any, _semicolon: any): Partial<EntityAttribute> {
+  Entity_ref(_refKeyword: any, _ref: any, _arrayBrackets: any, _semicolon: any): Partial<EntityAttribute> {
     return {};
   },
 
   // sync с блоком обрабатывается в extractSyncs, здесь рекурсивно обрабатываем блок для других свойств
-  Entity_refOptions(_refKeyword: any, _ref: any, block: any, _semicolon: any): Partial<EntityAttribute> {
+  Entity_refOptions(_refKeyword: any, _ref: any, _arrayBrackets: any, block: any, _semicolon: any): Partial<EntityAttribute> {
     return block.extractAttributeProps();
   },
 
@@ -409,8 +425,16 @@ semantics.addOperation<Partial<Entity>>('extractEntityProps', {
 
   // is dependent;
   Entity_simple(_keyword: any, name: any, _semicolon: any): Partial<Entity> {
-    if (_keyword.sourceString === 'is' && name.sourceString === 'dependent') {
+    if (IS_KEYWORDS.has(_keyword.sourceString) && DEPENDENT_MODIFIERS.has(name.sourceString)) {
       return { isDependent: true };
+    }
+    return {};
+  },
+
+  // map/sync DTO.Xyz; — базовый путь для относительных .ссылок атрибутов
+  Entity_ref(refKeyword: any, ref: any, _arrayBrackets: any, _semicolon: any): Partial<Entity> {
+    if (EXTERNAL_LINK_KEYWORDS.has(refKeyword.sourceString)) {
+      return { mapBase: ref.sourceString };
     }
     return {};
   },

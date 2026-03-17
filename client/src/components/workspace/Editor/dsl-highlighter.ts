@@ -136,18 +136,24 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
-  Entity_ref(refKeyword: any, ref: any, _semicolon: any): Token[] {
+  Entity_ref(refKeyword: any, ref: any, _arrayBrackets: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
     tokens.push({ from: refKeyword.source.startIdx, to: refKeyword.source.endIdx, type: 'keyword' });
     tokens.push(...ref.getTokens());
+    if (_arrayBrackets.sourceString) {
+      tokens.push({ from: _arrayBrackets.source.startIdx, to: _arrayBrackets.source.endIdx, type: 'punctuation' });
+    }
     tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
     return tokens;
   },
 
-  Entity_refOptions(refKeyword: any, ref: any, block: any, _semicolon: any): Token[] {
+  Entity_refOptions(refKeyword: any, ref: any, _arrayBrackets: any, block: any, _semicolon: any): Token[] {
     const tokens: Token[] = [];
     tokens.push({ from: refKeyword.source.startIdx, to: refKeyword.source.endIdx, type: 'keyword' });
     tokens.push(...ref.getTokens());
+    if (_arrayBrackets.sourceString) {
+      tokens.push({ from: _arrayBrackets.source.startIdx, to: _arrayBrackets.source.endIdx, type: 'punctuation' });
+    }
     tokens.push(...block.getTokens());
     if (_semicolon && _semicolon.source && _semicolon.source.endIdx > _semicolon.source.startIdx) {
       tokens.push({ from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' });
@@ -155,10 +161,26 @@ semantics.addOperation<Token[]>('getTokens', {
     return tokens;
   },
 
+  Entity_importRefSelect(importKeyword: any, ref: any, _hash: any, name: any, _semicolon: any): Token[] {
+    return [
+      { from: importKeyword.source.startIdx, to: importKeyword.source.endIdx, type: 'keyword' },
+      { from: ref.source.startIdx, to: name.source.endIdx, type: 'ref' },
+      { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
+    ];
+  },
+
   Entity_importRef(importKeyword: any, ref: any, _semicolon: any): Token[] {
     return [
       { from: importKeyword.source.startIdx, to: importKeyword.source.endIdx, type: 'keyword' },
       ...ref.getTokens(),
+      { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
+    ];
+  },
+
+  Entity_importStringSelect(importKeyword: any, stringValue: any, _hash: any, name: any, _semicolon: any): Token[] {
+    return [
+      { from: importKeyword.source.startIdx, to: importKeyword.source.endIdx, type: 'keyword' },
+      { from: stringValue.source.startIdx, to: name.source.endIdx, type: 'string' },
       { from: _semicolon.source.startIdx, to: _semicolon.source.endIdx, type: 'punctuation' },
     ];
   },

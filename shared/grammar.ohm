@@ -14,8 +14,8 @@ DSL {
          | typeKeyword typeRef Block ";"?                --typeOptions
          | typeKeyword typeRef ";"                       --type
          | translate typeRef stringValue? ";"            --translate
-         | refKeyword ref Block ";"?                     --refOptions
-         | refKeyword ref ";"                            --ref
+         | refKeyword ref "[]"? Block ";"?               --refOptions
+         | refKeyword ref "[]"? ";"                       --ref
          | importKeyword ref "#" name ";"                --importRefSelect
          | importKeyword ref ";"                         --importRef
          | importKeyword stringValue "#" name ";"        --importStringSelect
@@ -122,7 +122,7 @@ DSL {
   typeRef = ref ("(" digit+ ("," digit+)* ")")? "[]"?
 
   // Префикс относительного пути: / root, ./ или один или несколько ../
-  relativePrefix = "/" | "./" | ("../")+
+  relativePrefix = "/" | "./" | ("../")+  | "."
 
   // Тело пути: идентификаторы, разделённые /
   pathBody = identifier ("/" identifier)*
