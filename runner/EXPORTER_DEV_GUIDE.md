@@ -1,82 +1,51 @@
-# Разработка сервиса-экспортера
+## Разработка сервиса-экспортера
 
-Экспортер — это HTTP-сервис, который получает задачу от Runner, выполняет ее асинхронно и отчитывается о прогрессе через callback-запросы.
+### Шаг 1. Создать сервис-экспортер
 
-## Контракт
+Экспортер — это HTTP-сервис с единственным обязательным эндпоинтом.
 
-### Прием задачи: `POST /start`
+#### Контракт: `POST /start`
 
-Runner отправляет запрос на запуск задачи.
-
-**Request body:**
+Runner AID отправляет на экспортер запрос:
 
 ```json
-{
-  "jobId": "uuid",
-  "path": "путь/к/файлу/документации"
-}
+{ "jobId": "uuid", "path": "путь/к/файлу/документации" }
 ```
 
-| Поле    | Тип      | Описание                                   |
-| ------- | -------- | ------------------------------------------ |
-| `jobId` | `string` | Уникальный идентификатор задачи (UUID)     |
-| `path`  | `string` | Путь к файлу документации в рабочей области |
+Экспортер **немедленно** отвечает `202 Accepted` (`{ "received": true }`), а обработку запускает асинхронно (fire-and-forget).
 
-**Response:** `202 Accepted` — немедленно, до начала обработки.
+#### Отчёт о прогрессе
+
+По ходу выполнения экспортер сам отправляет POST-запросы на Runner:
+
+```
+POST {CALLBACK_BASE_URL}/api/jobs/{jobId}/progress
+```
 
 ```json
-{ "received": true }
+{ "jobId": "uuid", "status": "processing", "message": "Описание шага" }
 ```
 
-Обработка задачи выполняется асинхронно (fire-and-forget).
+Жизненный цикл статусов: `started` → `processing` (N раз) → `completed` | `failed`.
 
-### Отчет о прогрессе: `POST /api/jobs/{jobId}/progress`
+Статусы `completed` и `failed` — терминальные: после них задача закрывается.
 
-По ходу выполнения экспортер отправляет POST-запросы на Runner.
+#### Получение данных документации
 
-**URL:** `{CALLBACK_BASE_URL}/api/jobs/{jobId}/progress` (по умолчанию `http://localhost:3000`).
-
-**Request body:**
-
-```json
-{
-  "jobId": "uuid",
-  "status": "processing",
-  "message": "Текстовое описание текущего шага"
-}
-```
-
-| Поле      | Тип      | Описание                                                  |
-| --------- | -------- | --------------------------------------------------------- |
-| `jobId`   | `string` | Идентификатор задачи (тот же, что получен в `/start`)     |
-| `status`  | `string` | Одно из: `started`, `processing`, `completed`, `failed`   |
-| `message` | `string` | Человекочитаемое описание; отображается пользователю в UI |
-
-### Жизненный цикл статусов
+Содержимое файла, указанного в `path`, можно получить через API Runner:
 
 ```
-started → processing → ... → processing → completed
-                                         → failed
+GET {CALLBACK_BASE_URL}/api/parse/text?path={path}
 ```
 
-| Статус       | Когда отправлять                          | Завершает задачу |
-| ------------ | ----------------------------------------- | ---------------- |
-| `started`    | Первый сигнал, инициализация              | Нет              |
-| `processing` | Промежуточные шаги (можно несколько раз)  | Нет              |
-| `completed`  | Успешное завершение                       | **Да**           |
-| `failed`     | Ошибка на любом этапе                     | **Да**           |
+#### Требования
 
-После `completed` или `failed` задача считается завершенной — SSE-поток закрывается, дальнейшие отчеты игнорируются.
+- Немедленный ответ `202` — не блокировать `/start`.
+- Каждая задача обязана завершиться `completed` или `failed`.
+- `try/catch` вокруг основной логики — при ошибке отправить `failed`.
+- Stateless — параллельные задачи не должны мешать друг другу.
 
-## Требования к реализации
-
-1. **Немедленный ответ на `/start`.** Вернуть `202` до начала обработки, не блокировать.
-2. **Обязательно отправить терминальный статус.** Каждая задача должна завершиться `completed` или `failed`.
-3. **Обработка ошибок.** Оберните основную логику в `try/catch` — при любой ошибке отправьте `failed` с описанием.
-4. **Stateless.** Экспортер не должен хранить состояние между запросами — параллельные задачи не должны мешать друг другу.
-5. **Идемпотентность callback'ов.** Runner игнорирует дублирующие отчеты с тем же `status` + `message`.
-
-## Минимальный шаблон (Express + TypeScript)
+#### Минимальный шаблон (Express + TypeScript)
 
 ```typescript
 import express from 'express';
@@ -84,15 +53,10 @@ import express from 'express';
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT ?? 3001;
-const CALLBACK_BASE_URL = process.env.CALLBACK_BASE_URL ?? 'http://localhost:3000';
+const PORT = process.env.PORT;
+const CALLBACK_BASE_URL = process.env.CALLBACK_BASE_URL;
 
-interface StartRequest {
-  jobId: string;
-  path: string;
-}
-
-async function sendProgress(jobId: string, status: string, message: string): Promise<void> {
+async function sendProgress(jobId: string, status: string, message: string) {
   await fetch(`${CALLBACK_BASE_URL}/api/jobs/${jobId}/progress`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -100,12 +64,10 @@ async function sendProgress(jobId: string, status: string, message: string): Pro
   });
 }
 
-async function processJob(jobId: string, path: string): Promise<void> {
+async function processJob(jobId: string, path: string) {
   try {
     await sendProgress(jobId, 'started', 'Инициализация');
-
-    // ... ваша логика ...
-
+    // ... ваша логика генерации ...
     await sendProgress(jobId, 'completed', 'Готово');
   } catch (err) {
     await sendProgress(jobId, 'failed', (err as Error).message);
@@ -113,7 +75,7 @@ async function processJob(jobId: string, path: string): Promise<void> {
 }
 
 app.post('/start', (req, res) => {
-  const { jobId, path } = req.body as StartRequest;
+  const { jobId, path } = req.body;
   processJob(jobId, path);
   res.status(202).json({ received: true });
 });
@@ -121,43 +83,43 @@ app.post('/start', (req, res) => {
 app.listen(PORT, () => console.log(`Exporter on port ${PORT}`));
 ```
 
-## Переменные окружения
+#### Переменные окружения в данном примере
 
-| Переменная          | По умолчанию            | Описание                             |
-| ------------------- | ----------------------- | ------------------------------------ |
-| `PORT`              | `3001`                  | Порт, на котором слушает экспортер   |
-| `CALLBACK_BASE_URL` | `http://localhost:3000`  | Базовый URL Runner для callback'ов   |
+| Переменная | По умолчанию | Описание |
+|---|---|---|
+| `PORT` | `3030` | Порт экспортера |
+| `CALLBACK_BASE_URL` | `https://doc.greact.online` | Базовый URL Runner для callback'ов |
 
-## Данные документации
+### Шаг 2. Зарегистрировать экспортер на бэкенде
 
-Для получения содержимого файла документации используйте API Runner:
-
-```
-GET {CALLBACK_BASE_URL}/api/parse/text?path={path}
-```
-
-Ответ: `{ "path": "...", "content": "текст файла" }`.
-
-## Регистрация экспортера
-
-После создания сервиса его необходимо зарегистрировать в реестре Runner — файл `server/src/exporters/exporters.service.ts`, метод `onModuleInit()`:
+Файл `server/src/exporters/exporters.service.ts`, метод `onModuleInit()` — добавить вызов `this.register(...)`:
 
 ```typescript
-onModuleInit() {
-  this.register({
-    exporterId: 'my-exporter',    // уникальный идентификатор
-    name: 'My Exporter',          // отображаемое имя
-    baseUrl: 'http://localhost:3002', // адрес сервиса-экспортера
-    startPath: '/start',          // путь для запуска задачи
-  });
-}
+this.register({
+  exporterId: 'my-super-exporter',       // уникальный ID
+  name: 'My Super Exporter',             // имя для логов и UI
+  baseUrl: 'http://aid-runner-my-super-exporter:3030', // адрес внутри Docker-сети
+  startPath: '/start',                   // путь для POST-запроса
+});
 ```
 
-Поля конфигурации `ExporterConfig`:
+### Шаг 3. Добавить кнопку на фронтенде
 
-| Поле         | Тип      | Описание                                |
-| ------------ | -------- | --------------------------------------- |
-| `exporterId` | `string` | Уникальный идентификатор (используется в API: `POST /api/jobs` с `exporterId`) |
-| `name`       | `string` | Название для логов и UI                 |
-| `baseUrl`    | `string` | Базовый URL сервиса-экспортера          |
-| `startPath`  | `string` | Путь для POST-запроса на старт задачи   |
+Файл `client/src/lib/export-config.ts` — добавить элемент в нужный раздел `exportMenuConfig`:
+
+```typescript
+{
+  id: 'my-super-exporter',
+  label: 'Мой генератор',
+  action: (path) => startExporterJob('my-super-exporter', path),
+},
+```
+
+Значение первого аргумента `startExporterJob` должно совпадать с `exporterId` из шага 2.
+
+---
+
+**Примеры существующих экспортеров:**
+- `runner/node` — демонстрационный (пустой) экспортер
+- `runner/crud-api-exporter` — экспортер, генерирующий описание CRUD API через LLM
+
