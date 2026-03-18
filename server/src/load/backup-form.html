@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>ZIP → резервная копия</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
+    h1 { font-size: 1.2em; }
+    input, button { margin: 8px 0; }
+    button { padding: 8px 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Резервная копия каталога</h1>
+  <form action="/api/backup/zip" method="get">
+    <input type="text" name="path" placeholder="Путь (относительно FS_ROOT_PATH)" required>
+    <br>
+    <button type="submit">Скачать</button>
+  </form>
+</body>
+</html>

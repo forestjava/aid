@@ -9,14 +9,18 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Openapi3ConverterService } from './openapi3-converter.service';
 import { FileSystemService } from '../filesystem/filesystem.service';
+import { ZipExtractService } from './zip-extract.service';
 
 @Controller('load')
 export class LoadController {
   constructor(
     private readonly converter: Openapi3ConverterService,
     private readonly fs: FileSystemService,
+    private readonly zipExtract: ZipExtractService,
   ) {}
 
   @Post('openapi3')
@@ -52,54 +56,34 @@ export class LoadController {
     };
   }
 
+  @Post('zip')
+  @UseInterceptors(FileInterceptor('file'))
+  async loadZip(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('path') targetPath: string,
+  ) {
+    if (!file) {
+      throw new BadRequestException('File is required (field name: "file")');
+    }
+    if (!targetPath) {
+      throw new BadRequestException('Query parameter "path" is required');
+    }
+
+    const result = await this.zipExtract.extractTo(file.buffer, targetPath);
+    return result;
+  }
+
+  @Get('zip/form')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  zipUploadForm(): string {
+    const htmlPath = path.join(__dirname, 'zip-form.html');
+    return fs.readFileSync(htmlPath, 'utf-8');
+  }
+
   @Get('openapi3/dmitry')
   @Header('Content-Type', 'text/html; charset=utf-8')
   dmitryUploadPage(): string {
-    return `<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>OpenAPI3 → AID</title>
-  <style>
-    body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
-    h1 { font-size: 1.2em; }
-    input, button { margin: 8px 0; }
-    button { padding: 8px 20px; cursor: pointer; }
-    #result { margin-top: 16px; white-space: pre-wrap; }
-  </style>
-</head>
-<body>
-  <h1>Загрузка OpenAPI 3 → AID DSL</h1>
-  <input type="file" id="file" accept=".yaml,.yml">
-  <br>
-  <button id="btn" onclick="upload()">Загрузить</button>
-  <div id="result"></div>
-  <script>
-    async function upload() {
-      const file = document.getElementById('file').files[0];
-      if (!file) { alert('Выберите файл'); return; }
-      const fd = new FormData();
-      fd.append('file', file);
-      document.getElementById('btn').disabled = true;
-      document.getElementById('result').textContent = 'Загрузка...';
-      try {
-        const res = await fetch('/api/load/openapi3?path=Unknowns', { method: 'POST', body: fd });
-        const data = await res.json();
-        if (res.ok) {
-          document.getElementById('result').textContent =
-            'Готово!\\nDTO файлов: ' + data.dtoFiles +
-            '\\nDTO всего: ' + data.dtoCount +
-            '\\nAPI групп: ' + data.apiGroups;
-        } else {
-          document.getElementById('result').textContent = 'Ошибка: ' + (data.message || JSON.stringify(data));
-        }
-      } catch(e) {
-        document.getElementById('result').textContent = 'Ошибка: ' + e.message;
-      }
-      document.getElementById('btn').disabled = false;
-    }
-  </script>
-</body>
-</html>`;
+    const htmlPath = path.join(__dirname, 'openapi3-form.html');
+    return fs.readFileSync(htmlPath, 'utf-8');
   }
 }

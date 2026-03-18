@@ -9,6 +9,7 @@ import { ExportersModule } from './exporters/exporters.module';
 import { JobsModule } from './jobs/jobs.module';
 import { ProgressModule } from './progress/progress.module';
 import { LoadModule } from './load/load.module';
+import { BackupModule } from './load/backup.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { LoadModule } from './load/load.module';
     JobsModule,
     ProgressModule,
     LoadModule,
+    BackupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

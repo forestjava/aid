@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>ZIP → распаковка</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: 60px auto; }
+    h1 { font-size: 1.2em; }
+    input, button { margin: 8px 0; }
+    button { padding: 8px 20px; cursor: pointer; }
+    #result { margin-top: 16px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Распаковка ZIP</h1>
+  <input type="file" id="file" accept=".zip">
+  <br>
+  <input type="text" id="path" placeholder="Путь (относительно FS_ROOT_PATH)">
+  <br>
+  <button id="btn" onclick="upload()">Загрузить</button>
+  <div id="result"></div>
+  <script>
+    async function upload() {
+      const file = document.getElementById('file').files[0];
+      const path = document.getElementById('path').value.trim();
+      if (!file) { alert('Выберите файл'); return; }
+      if (!path) { alert('Укажите путь'); return; }
+      const fd = new FormData();
+      fd.append('file', file);
+      document.getElementById('btn').disabled = true;
+      document.getElementById('result').textContent = 'Загрузка...';
+      try {
+        const res = await fetch('/api/load/zip?path=' + encodeURIComponent(path), { method: 'POST', body: fd });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('result').textContent = 'Готово! Файлов распаковано: ' + data.filesCount;
+        } else {
+          document.getElementById('result').textContent = 'Ошибка: ' + (data.message || JSON.stringify(data));
+        }
+      } catch(e) {
+        document.getElementById('result').textContent = 'Ошибка: ' + e.message;
+      }
+      document.getElementById('btn').disabled = false;
+    }
+  </script>
+</body>
+</html>
