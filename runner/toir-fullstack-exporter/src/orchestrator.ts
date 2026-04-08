@@ -41,7 +41,7 @@ import { writeResultFile } from './writeback.js';
 export async function runJob(jobId: string, dslPath: string): Promise<void> {
   console.log(`\n[${jobId}] runJob start path=${dslPath}`);
   const slug = generateSlug(jobId);
-  const ctx: DeploymentContext = {};
+  const ctx: DeploymentContext = { jobId, slug, cleanupLog: [] };
 
   try {
     await sendProgress(jobId, 'started', `Job accepted (slug=${slug})`);
@@ -50,7 +50,7 @@ export async function runJob(jobId: string, dslPath: string): Promise<void> {
       ? await runMockGenerator(jobId, slug)
       : await runRealGenerator(jobId, slug, dslPath);
 
-    const result = await deployProject(jobId, slug, localDir, ctx);
+    const result = await deployProject(ctx, localDir);
 
     await sendProgress(jobId, 'processing', `[writeback] Saving deploy metadata`);
     const deployMdPath = replaceExt(dslPath, '.deploy.md');
@@ -59,11 +59,41 @@ export async function runJob(jobId: string, dslPath: string): Promise<void> {
     await sendProgress(jobId, 'completed', `Deployed: ${result.url}`);
     console.log(`[${jobId}] completed url=${result.url}`);
   } catch (err) {
-    const message = (err as Error).message;
-    console.error(`[${jobId}] FAILED: ${message}`);
+    // Preserve the ORIGINAL error — rollback runs best-effort and must not
+    // override what AID sees.
+    const originalMessage = (err as Error).message;
+    console.error(`[${jobId}] FAILED: ${originalMessage}`);
+
     await sendProgress(jobId, 'processing', `[rollback] Cleaning up partial state`);
-    await rollback(ctx);
-    await sendProgress(jobId, 'failed', message);
+    try {
+      await rollback(ctx);
+    } catch (rollbackErr) {
+      // rollback() is documented as never-throws, but belt-and-braces here
+      // ensures a bug there can never mask the original failure.
+      console.error(
+        `[${jobId}] rollback() unexpectedly threw: ${(rollbackErr as Error).message}`,
+      );
+    }
+
+    // Echo the cleanup log to job progress so it shows up in AID's stream.
+    for (const line of ctx.cleanupLog) {
+      await sendProgress(jobId, 'processing', `[rollback] ${line}`);
+    }
+
+    // Best-effort writeback of the failure report (with cleanup log) to disk.
+    try {
+      const deployMdPath = replaceExt(dslPath, '.deploy.md');
+      await writeResultFile(
+        deployMdPath,
+        renderFailedDeployMd(slug, originalMessage, ctx.cleanupLog),
+      );
+    } catch (writeErr) {
+      console.error(
+        `[${jobId}] failed to write failure report: ${(writeErr as Error).message}`,
+      );
+    }
+
+    await sendProgress(jobId, 'failed', originalMessage);
   }
 }
 
@@ -195,4 +225,35 @@ function renderDeployMd(slug: string, r: DeployResult): string {
     `- Created: ${new Date().toISOString()}`,
     '',
   ].join('\n');
+}
+
+function renderFailedDeployMd(
+  slug: string,
+  errorMessage: string,
+  cleanupLog: string[],
+): string {
+  const lines = [
+    '# Deployment FAILED',
+    '',
+    `- Slug: ${slug}`,
+    `- Failed at: ${new Date().toISOString()}`,
+    '',
+    '## Error',
+    '',
+    '```',
+    errorMessage,
+    '```',
+    '',
+    '## Rollback log',
+    '',
+  ];
+  if (cleanupLog.length === 0) {
+    lines.push('_(no cleanup actions were taken)_');
+  } else {
+    for (const entry of cleanupLog) {
+      lines.push(`- ${entry}`);
+    }
+  }
+  lines.push('');
+  return lines.join('\n');
 }

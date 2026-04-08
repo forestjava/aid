@@ -16,27 +16,31 @@ export interface DeployResult {
 
 /**
  * Runs the full Gitea → Portainer → NPM deployment for an already-materialized
- * working directory. Mutates `ctx` after each successful step so the caller can
- * roll back partial state on failure.
+ * working directory. Mutates `ctx` after each successful step so a caller's
+ * rollback() can clean up partial state on failure.
+ *
+ * This function does NOT catch its own errors — the orchestrator owns the
+ * try/catch and is responsible for invoking rollback() and re-throwing the
+ * original error so AID receives the real failure reason.
  */
 export async function deployProject(
-  jobId: string,
-  slug: string,
-  localDir: string,
   ctx: DeploymentContext,
+  localDir: string,
 ): Promise<DeployResult> {
+  const { jobId, slug } = ctx;
   const owner = config.GITEA_USERNAME!;
   const repoName = slug;
   const containerName = `${slug}-client`;
   const domain = `${slug}.${config.PUBLIC_DOMAIN_SUFFIX}`;
   const giteaRepoUrl = `${config.GITEA_BASE_URL}/${owner}/${repoName}.git`;
 
-  // 1. Gitea repo
+  // 1. Gitea repo — record in ctx ONLY after the API call succeeded.
   await sendProgress(jobId, 'processing', `[gitea] Creating repo ${owner}/${repoName}`);
   await createRepo(repoName);
   ctx.giteaRepo = { owner, name: repoName };
 
-  // 2. Push generated project
+  // 2. Push generated project (no new resource — push failure leaves the
+  //    empty repo behind, which rollback already knows how to delete).
   await sendProgress(jobId, 'processing', `[gitea] Pushing project to ${owner}/${repoName}`);
   await pushDirectory(localDir, owner, repoName);
 
@@ -50,7 +54,8 @@ export async function deployProject(
   });
   ctx.portainerStackId = stackId;
 
-  // 4. Wait for stack to be running
+  // 4. Wait for stack to be running. If this throws, the stack is recorded in
+  //    ctx and rollback() will tear it down along with the Gitea repo.
   await sendProgress(jobId, 'processing', `[portainer] Waiting for stack ${stackId} to start`);
   await waitUntilRunning(stackId);
 
