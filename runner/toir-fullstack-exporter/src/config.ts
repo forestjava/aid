@@ -38,6 +38,7 @@ export const config = {
   NPM_BASE_URL: process.env.NPM_BASE_URL,
   NPM_IDENTITY: process.env.NPM_IDENTITY,
   NPM_SECRET: process.env.NPM_SECRET,
+  NPM_WILDCARD_CERT_ID: parseNumber(process.env.NPM_WILDCARD_CERT_ID),
 
   // Deploy
   PUBLIC_DOMAIN_SUFFIX: process.env.PUBLIC_DOMAIN_SUFFIX ?? 'greact.ru',
