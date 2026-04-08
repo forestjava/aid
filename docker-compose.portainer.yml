@@ -61,29 +61,33 @@ services:
     dockerfile: Dockerfile
   container_name: aid-runner-toir-fullstack-exporter
   environment:
-    - PORT=3030
-    - CALLBACK_BASE_URL=http://aid-backend:3000
-    # OpenRouter / LLM
-    - AI_API_URL=${AI_API_URL}
-    - AI_API_KEY=${AI_API_KEY}
-    - AI_MODEL=${AI_MODEL}
-    - AI_MAX_TOKENS=${AI_MAX_TOKENS}
-    - AI_TEMPERATURE=${AI_TEMPERATURE}
-    # Gitea
-    - GITEA_BASE_URL=${GITEA_BASE_URL}
-    - GITEA_USERNAME=${GITEA_USERNAME}
-    - GITEA_TOKEN=${GITEA_TOKEN}
-    # Portainer
-    - PORTAINER_BASE_URL=${PORTAINER_BASE_URL}
-    - PORTAINER_API_KEY=${PORTAINER_API_KEY}
-    - PORTAINER_ENDPOINT_ID=${PORTAINER_ENDPOINT_ID}
-    # Nginx Proxy Manager
-    - NPM_BASE_URL=${NPM_BASE_URL}
-    - NPM_IDENTITY=${NPM_IDENTITY}
-    - NPM_SECRET=${NPM_SECRET}
-    # Deploy config
-    - PUBLIC_DOMAIN_SUFFIX=${PUBLIC_DOMAIN_SUFFIX}
-    - CLEANUP_TTL_DAYS=${CLEANUP_TTL_DAYS}
+      # Runtime config (hardcoded)
+      - PORT=3030
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+      # LLM config (production defaults, hardcoded)
+      - AI_API_URL=https://openrouter.ai/api/v1/chat/completions
+      - AI_MODEL=openrouter/auto
+      - AI_MAX_TOKENS=4000
+      - AI_TEMPERATURE=0.7
+      # LLM credentials (from .env, secrets only)
+      - AI_API_KEY=${AI_API_KEY}
+      # Gitea config (hardcoded infrastructure)
+      - GITEA_BASE_URL=https://git.greact.ru
+      - GITEA_USERNAME=toir-bot
+      - GITEA_TOKEN=${GITEA_TOKEN}
+      # Portainer config (hardcoded infrastructure)
+      - PORTAINER_BASE_URL=http://194.36.208.86:9000
+      - PORTAINER_API_KEY=${PORTAINER_API_KEY}
+      - PORTAINER_ENDPOINT_ID=3
+      - PORTAINER_EXTERNAL_NETWORK=proxy
+      # Nginx Proxy Manager config (hardcoded infrastructure)
+      - NPM_BASE_URL=http://194.36.208.86:81
+      - NPM_IDENTITY=${NPM_IDENTITY}
+      - NPM_SECRET=${NPM_SECRET}
+      # Deploy config (hardcoded production defaults)
+      - PUBLIC_DOMAIN_SUFFIX=greact.ru
+      - CLEANUP_TTL_DAYS=7
+      - EXPORTER_MOCK_GENERATOR=false
   networks:
     - proxy
   restart: unless-stopped

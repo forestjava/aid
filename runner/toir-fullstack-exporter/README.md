@@ -144,36 +144,47 @@
 
 ## Переменные окружения
 
-| Переменная | Обязательна | Назначение |
-|---|---|---|
-| `PORT` | нет (по умолчанию `3030`) | Порт HTTP-сервера экспортера |
-| `CALLBACK_BASE_URL` | **да** | Базовый URL для прогресс-коллбэков обратно в AID |
-| `AI_API_URL` | **да** | Endpoint chat completions OpenRouter (или совместимого) |
-| `AI_API_KEY` | **да** | API-ключ LLM-провайдера |
-| `AI_MODEL` | **да** | ID модели (например, `anthropic/claude-opus-4-6`) |
-| `AI_MAX_TOKENS` | нет | Лимит токенов на запрос; по умолчанию — провайдерский потолок |
-| `AI_TEMPERATURE` | нет | По умолчанию подбирается по стадии (0.2 для auth) |
-| `GITEA_BASE_URL` | да для боевого деплоя | Например, `https://gitea.greact.ru` |
-| `GITEA_USERNAME` | да для боевого деплоя | Owner, под которым создаются репозитории |
-| `GITEA_TOKEN` | да для боевого деплоя | Personal access token со scope `repo` |
-| `PORTAINER_BASE_URL` | да для боевого деплоя | База API Portainer |
-| `PORTAINER_API_KEY` | да для боевого деплоя | API-ключ с правами на стеки |
-| `PORTAINER_ENDPOINT_ID` | да для боевого деплоя | Числовой endpoint id |
-| `PORTAINER_EXTERNAL_NETWORK` | нет (по умолчанию `proxy`) | Имя внешней Docker-сети, в которой живёт NPM |
-| `NPM_BASE_URL` | да для боевого деплоя | База API Nginx Proxy Manager |
-| `NPM_IDENTITY` | да для боевого деплоя | Email админа NPM |
-| `NPM_SECRET` | да для боевого деплоя | Пароль админа NPM |
-| `NPM_WILDCARD_CERT_ID` | да для боевого деплоя | Числовой id wildcard-сертификата `*.greact.ru` в NPM |
-| `PUBLIC_DOMAIN_SUFFIX` | нет (по умолчанию `greact.ru`) | Суффикс публичного хоста для `gen-<slug>` |
-| `CLEANUP_TTL_DAYS` | нет (по умолчанию `7`) | Возрастной порог для cleanup-сканера |
-| `EXPORTER_MOCK_GENERATOR` | нет (по умолчанию `true`) | Если `true`, LLM-стадии пропускаются и публикуется bundled mock-проект. **На проде ставить `false`.** |
+**Архитектура переменных**: infrastructure URLs, LLM defaults и production config **hardcoded в `docker-compose.yml`**. 
+В `.env` только **secrets** (API keys, tokens, passwords) — см. `.env.example`.
+
+| Переменная | Где | Статус | Назначение |
+|---|---|---|---|
+| `PORT` | `docker-compose.yml` | hardcoded: `3030` | Порт HTTP-сервера экспортера |
+| `CALLBACK_BASE_URL` | `docker-compose.yml` | hardcoded: `http://aid-backend:3000` | Базовый URL прогресс-коллбэков в AID |
+| **`AI_API_KEY`** | **`.env`** | **обязательна** | API-ключ OpenRouter |
+| `AI_API_URL` | `docker-compose.yml` | hardcoded: `https://openrouter.ai/api/v1/chat/completions` | Endpoint chat completions |
+| `AI_MODEL` | `docker-compose.yml` | hardcoded: `openrouter/auto` | LLM модель |
+| `AI_MAX_TOKENS` | `docker-compose.yml` | hardcoded: `4000` | Лимит токенов на запрос |
+| `AI_TEMPERATURE` | `docker-compose.yml` | hardcoded: `0.7` | Temperature для consistency |
+| `GITEA_BASE_URL` | `docker-compose.yml` | hardcoded: `https://git.greact.ru` | Gitea API base |
+| `GITEA_USERNAME` | `docker-compose.yml` | hardcoded: `toir-bot` | Gitea bot user |
+| **`GITEA_TOKEN`** | **`.env`** | **обязательна** | Gitea PAT (scope `repo`) |
+| `PORTAINER_BASE_URL` | `docker-compose.yml` | hardcoded: `http://194.36.208.86:9000` | Portainer API base |
+| **`PORTAINER_API_KEY`** | **`.env`** | **обязательна** | Portainer X-API-Key |
+| `PORTAINER_ENDPOINT_ID` | `docker-compose.yml` | hardcoded: `3` | Portainer endpoint id |
+| `PORTAINER_EXTERNAL_NETWORK` | `docker-compose.yml` | hardcoded: `proxy` | Внешняя Docker-сеть NPM |
+| `NPM_BASE_URL` | `docker-compose.yml` | hardcoded: `http://194.36.208.86:81` | NPM API base |
+| **`NPM_IDENTITY`** | **`.env`** | **обязательна** | Email админа NPM |
+| **`NPM_SECRET`** | **`.env`** | **обязательна** | Пароль админа NPM |
+| `PUBLIC_DOMAIN_SUFFIX` | `docker-compose.yml` | hardcoded: `greact.ru` | Суффикс публичного хоста |
+| `CLEANUP_TTL_DAYS` | `docker-compose.yml` | hardcoded: `7` | Возрастной порог cleanup |
+| `EXPORTER_MOCK_GENERATOR` | `docker-compose.yml` | hardcoded: `false` | Production mode; `true` для тестирования deploy-цепочки |
 
 Все они читаются и валидируются в [`src/config.ts`](src/config.ts).
 
-> Дефолт `EXPORTER_MOCK_GENERATOR=true` существует специально, чтобы тестировать
-> deploy-плумбинг (Gitea/Portainer/NPM) без расхода токенов LLM. На бою его
-> **обязательно** надо переключить в `false`. Ветвление здесь:
-> [`src/orchestrator.ts:54-56`](src/orchestrator.ts).
+### Обновление инфраструктурной конфигурации
+
+Если поменялась IP-адреса, URL-ы или ID endpoint-ов инфры, отредактируй `docker-compose.yml` 
+(секция `runner-toir-fullstack-exporter > environment`) и закоммитьте как отдельный коммит:
+
+```bash
+git add aid/docker-compose.yml
+git commit -m "chore: update infrastructure config (Portainer endpoint ID 3→4, NPM URL)"
+```
+
+> **Production default**: `EXPORTER_MOCK_GENERATOR=false` (реальная LLM-генерация). 
+> Для тестирования deploy-цепочки (Gitea/Portainer/NPM) **без расхода токенов LLM**, 
+> отредактируй compose-переменную на `true`. Ветвление в [`src/orchestrator.ts:54-56`](src/orchestrator.ts).
 
 ---
 
