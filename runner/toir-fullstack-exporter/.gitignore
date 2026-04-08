@@ -3,6 +3,11 @@
 /node_modules
 /build
 
+# Build artifact: synced from toir-automatization by scripts/sync-context.mjs
+/context/prompts
+/context/docs
+/context/tools
+
 # Logs
 logs
 *.log

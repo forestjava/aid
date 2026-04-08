@@ -1,5 +1,6 @@
 data
 scripts
+!runner/toir-fullstack-exporter/scripts/
 .cursor
 backup
 .env*

@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "sync-context": "node scripts/sync-context.mjs",
+    "prebuild": "node scripts/sync-context.mjs",
     "start": "tsx src/index.ts"
   },
   "dependencies": {
