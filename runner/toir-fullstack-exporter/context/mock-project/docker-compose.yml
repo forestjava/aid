@@ -1,0 +1,17 @@
+services:
+  client:
+    build: .
+    container_name: __SLUG__-client
+    restart: unless-stopped
+    networks:
+      internal: {}
+      proxy:
+        aliases:
+          - __SLUG__-client
+
+networks:
+  internal:
+    driver: bridge
+  proxy:
+    external: true
+    name: __EXTERNAL_NET__
