@@ -61,17 +61,40 @@ export async function callLLM(opts: CallLLMOptions): Promise<LLMResult> {
     temperature,
   };
 
-  const response = await fetch(config.AI_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.AI_API_KEY}`,
-    },
-    body: JSON.stringify(body),
-  });
+  // Retry policy: up to 3 retries on HTTP 429 (rate limit) with exponential
+  // backoff at 1s, 2s, 4s. All other failures (network, 5xx, 4xx≠429) bubble
+  // up immediately — they almost always indicate a real problem with the
+  // request, not a transient throttle.
+  const backoffMs = [1000, 2000, 4000];
+  let response: Response | undefined;
+  let lastErrorBody = '';
+  for (let attempt = 0; attempt <= backoffMs.length; attempt++) {
+    response = await fetch(config.AI_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.AI_API_KEY}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.status !== 429) break;
+
+    lastErrorBody = await response.text().catch(() => '');
+    if (attempt === backoffMs.length) break;
+    const delay = backoffMs[attempt];
+    console.log(
+      `[${label}] LLM API rate-limited (429). Retrying in ${delay}ms (attempt ${attempt + 1}/${backoffMs.length}).`,
+    );
+    await new Promise((r) => setTimeout(r, delay));
+  }
+
+  if (!response) {
+    throw new Error(`[${label}] LLM API call produced no response`);
+  }
 
   if (!response.ok) {
-    const errorBody = await response.text().catch(() => '');
+    const errorBody = lastErrorBody || (await response.text().catch(() => ''));
     throw new Error(
       `[${label}] LLM API error ${response.status} ${response.statusText}: ${errorBody}`,
     );

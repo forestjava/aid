@@ -109,8 +109,16 @@ async function runRealGenerator(
 
   // Stages 3-7 — LLM stubs
   await runLlmStage(jobId, 'prisma', workingDir, contract, runPrismaStage);
-  await runLlmStage(jobId, 'nest-entities', workingDir, contract, runNestEntityStage);
-  await runLlmStage(jobId, 'react-entities', workingDir, contract, runReactEntityStage);
+  await runLlmStage(jobId, 'nest-entities', workingDir, contract, (c) =>
+    runNestEntityStage(c, {
+      onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
+    }),
+  );
+  await runLlmStage(jobId, 'react-entities', workingDir, contract, (c) =>
+    runReactEntityStage(c, {
+      onProgress: (msg) => sendProgress(jobId, 'processing', `[react-entities] ${msg}`),
+    }),
+  );
   await runLlmStage(jobId, 'integration', workingDir, contract, runIntegrationStage);
   await runLlmStage(jobId, 'auth', workingDir, contract, runAuthStage);
 
