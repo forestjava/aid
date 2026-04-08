@@ -13,7 +13,12 @@ import { runNestEntityStage } from './generator/stages/nestEntityStage.js';
 import { runReactEntityStage } from './generator/stages/reactEntityStage.js';
 import { runIntegrationStage } from './generator/stages/integrationStage.js';
 import { runAuthStage } from './generator/stages/authStage.js';
-import type { StageResult, FileEntry } from './generator/stages/types.js';
+import {
+  runStageWithRepair,
+  type StageFn,
+  type StageInput,
+  type StageName,
+} from './generator/repair.js';
 import { deployProject, type DeployResult } from './deploy/index.js';
 import { rollback, type DeploymentContext } from './deploy/rollback.js';
 import { sendProgress } from './progress.js';
@@ -137,15 +142,22 @@ async function runRealGenerator(
     await sendProgress(jobId, 'processing', `[scaffold] Copied ${scaffold.copied.length} files`);
   }
 
-  // Stages 3-7 — LLM stubs
+  // Stages 3-7 — LLM stages with bounded one-pass repair (Phase 11).
+  // Each stage runs through `runStageWithRepair`, which writes the stage's
+  // files, runs the structural validator, and — if the validator reports a
+  // failure that touches THIS stage's write zones — re-runs the stage exactly
+  // once with the validator output appended to the prompt as feedback. After
+  // a single repair pass we either pass validation or throw and fail the job.
   await runLlmStage(jobId, 'prisma', workingDir, contract, runPrismaStage);
-  await runLlmStage(jobId, 'nest-entities', workingDir, contract, (c) =>
-    runNestEntityStage(c, {
+  await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
+    runNestEntityStage({
+      ...input,
       onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
     }),
   );
-  await runLlmStage(jobId, 'react-entities', workingDir, contract, (c) =>
-    runReactEntityStage(c, {
+  await runLlmStage(jobId, 'react-entities', workingDir, contract, (input) =>
+    runReactEntityStage({
+      ...input,
       onProgress: (msg) => sendProgress(jobId, 'processing', `[react-entities] ${msg}`),
     }),
   );
@@ -177,25 +189,30 @@ async function runRealGenerator(
   return workingDir;
 }
 
+/**
+ * Runs an LLM stage through the bounded one-pass repair helper. The helper
+ * writes files, runs the structural validator, and — on a stage-owned failure
+ * — re-runs the stage exactly ONCE with `previousError` populated. A second
+ * failure on the same stage rejects the whole job.
+ */
 async function runLlmStage(
   jobId: string,
-  name: string,
+  name: StageName,
   workingDir: string,
   contract: FrozenContract,
-  stage: (c: FrozenContract) => Promise<StageResult>,
+  stage: StageFn,
 ): Promise<void> {
   await sendProgress(jobId, 'processing', `[${name}] Running stage`);
-  const result = await runStage(jobId, name, () => stage(contract));
-  await writeStageFiles(workingDir, result.files);
-  await sendProgress(jobId, 'processing', `[${name}] Wrote ${result.files.length} files`);
-}
+  const log = (msg: string) => sendProgress(jobId, 'processing', msg);
 
-async function writeStageFiles(workingDir: string, files: FileEntry[]): Promise<void> {
-  for (const file of files) {
-    const target = path.join(workingDir, file.path);
-    await fs.mkdir(path.dirname(target), { recursive: true });
-    await fs.writeFile(target, file.content, 'utf8');
-  }
+  const result = await runStage(jobId, name, () =>
+    runStageWithRepair(name, stage, { contract } satisfies StageInput, {
+      workingDir,
+      log,
+    }),
+  );
+
+  await sendProgress(jobId, 'processing', `[${name}] Wrote ${result.files.length} files`);
 }
 
 async function runStage<T>(jobId: string, name: string, fn: () => Promise<T>): Promise<T> {

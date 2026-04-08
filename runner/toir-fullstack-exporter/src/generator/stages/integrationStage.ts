@@ -1,9 +1,9 @@
 import { promises as fs } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import type { FrozenContract } from '../contractFreeze.js';
 import { entityKebab } from '../entitySlice.js';
 import { callLLM } from '../llmClient.js';
+import { appendRepairFeedback, type StageInput } from '../repair.js';
 import { parseLlmFiles } from './fileParser.js';
 import type { FileEntry, StageResult } from './types.js';
 
@@ -47,7 +47,8 @@ interface EntityWiring {
  * The LLM is told which entities exist and what import paths to use so it does
  * not have to invent them. Anything outside `ALLOWED_PATHS` is dropped.
  */
-export async function runIntegrationStage(contract: FrozenContract): Promise<StageResult> {
+export async function runIntegrationStage(input: StageInput): Promise<StageResult> {
+  const { contract, previousError } = input;
   const backendRules = await fs.readFile(BACKEND_RULES_PATH, 'utf8');
   const frontendRules = await fs.readFile(FRONTEND_RULES_PATH, 'utf8');
 
@@ -70,7 +71,7 @@ export async function runIntegrationStage(contract: FrozenContract): Promise<Sta
     frontendRules,
   ].join('\n');
 
-  const userPrompt = buildIntegrationUserPrompt(wirings);
+  const userPrompt = appendRepairFeedback(buildIntegrationUserPrompt(wirings), previousError);
 
   const { content } = await callLLM({
     systemPrompt,

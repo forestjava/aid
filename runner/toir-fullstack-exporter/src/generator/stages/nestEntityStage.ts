@@ -1,21 +1,16 @@
 import { promises as fs } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import type { FrozenContract } from '../contractFreeze.js';
 import { pLimit } from '../concurrency.js';
 import { sliceContractForEntity, entityKebab, type EntitySlice } from '../entitySlice.js';
 import { callLLM } from '../llmClient.js';
+import { appendRepairFeedback, type StageInput } from '../repair.js';
 import { parseLlmFiles, filterByPrefix } from './fileParser.js';
 import type { FileEntry, StageResult } from './types.js';
 
 const BACKEND_RULES_PATH = fileURLToPath(
   new URL('../../../context/prompts/backend-rules.md', import.meta.url),
 );
-
-export interface NestEntityStageOptions {
-  /** Optional progress callback used by the orchestrator for per-entity events. */
-  onProgress?: (message: string) => void | Promise<void>;
-}
 
 /**
  * Phase 9 — Stage 4. For each entity in the contract, calls the LLM with
@@ -27,10 +22,8 @@ export interface NestEntityStageOptions {
  * and logged. Per-entity failures are tolerated, but if more than half of all
  * entities fail the entire stage throws.
  */
-export async function runNestEntityStage(
-  contract: FrozenContract,
-  options: NestEntityStageOptions = {},
-): Promise<StageResult> {
+export async function runNestEntityStage(input: StageInput): Promise<StageResult> {
+  const { contract, previousError, onProgress } = input;
   const systemPrompt = await fs.readFile(BACKEND_RULES_PATH, 'utf8');
   const concurrency = parseInt(process.env.LLM_CONCURRENCY || '3', 10);
   const limit = pLimit(concurrency);
@@ -48,12 +41,15 @@ export async function runNestEntityStage(
         const kebab = entityKebab(entity.name);
         const allowedPrefix = `server/src/modules/${kebab}/`;
 
-        if (options.onProgress) {
-          await options.onProgress(`Generating Nest module: ${entity.name}`);
+        if (onProgress) {
+          await onProgress(`Generating Nest module: ${entity.name}`);
         }
 
         try {
-          const userPrompt = buildNestUserPrompt(slice, kebab, allowedPrefix);
+          const userPrompt = appendRepairFeedback(
+            buildNestUserPrompt(slice, kebab, allowedPrefix),
+            previousError,
+          );
           const { content } = await callLLM({
             systemPrompt,
             userPrompt,
@@ -82,8 +78,8 @@ export async function runNestEntityStage(
           failed.push(entity.name);
         } finally {
           done++;
-          if (options.onProgress) {
-            await options.onProgress(`Nest entities: ${done} / ${total} done`);
+          if (onProgress) {
+            await onProgress(`Nest entities: ${done} / ${total} done`);
           }
         }
       }),

@@ -1,8 +1,8 @@
 import { promises as fs } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import type { FrozenContract } from '../contractFreeze.js';
 import { callLLM } from '../llmClient.js';
+import { appendRepairFeedback, type StageInput } from '../repair.js';
 import { parseLlmFiles } from './fileParser.js';
 import type { FileEntry, StageResult } from './types.js';
 
@@ -27,10 +27,10 @@ const ALLOWED_PREFIXES = ['server/src/auth/', 'client/src/auth/'];
  * across all generated apps and only varies by env var values, so a fixed
  * template would be both faster and more reliable than an LLM transcription.
  */
-export async function runAuthStage(_contract: FrozenContract): Promise<StageResult> {
+export async function runAuthStage(input: StageInput): Promise<StageResult> {
   const systemPrompt = await fs.readFile(AUTH_RULES_PATH, 'utf8');
 
-  const userPrompt = buildAuthUserPrompt();
+  const userPrompt = appendRepairFeedback(buildAuthUserPrompt(), input.previousError);
 
   const { content } = await callLLM({
     systemPrompt,

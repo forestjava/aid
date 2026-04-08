@@ -1,21 +1,16 @@
 import { promises as fs } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import type { FrozenContract } from '../contractFreeze.js';
 import { pLimit } from '../concurrency.js';
 import { sliceContractForEntity, entityKebab, type EntitySlice } from '../entitySlice.js';
 import { callLLM } from '../llmClient.js';
+import { appendRepairFeedback, type StageInput } from '../repair.js';
 import { parseLlmFiles, filterByPrefix } from './fileParser.js';
 import type { FileEntry, StageResult } from './types.js';
 
 const FRONTEND_RULES_PATH = fileURLToPath(
   new URL('../../../context/prompts/frontend-rules.md', import.meta.url),
 );
-
-export interface ReactEntityStageOptions {
-  /** Optional progress callback used by the orchestrator for per-entity events. */
-  onProgress?: (message: string) => void | Promise<void>;
-}
 
 /**
  * Phase 9 — Stage 5. Mirror image of `runNestEntityStage` for React Admin
@@ -24,10 +19,8 @@ export interface ReactEntityStageOptions {
  * `client/src/resources/<entityKebab>/`. App.tsx, dataProvider, and auth
  * files are out of zone and dropped (they belong to Phase 10).
  */
-export async function runReactEntityStage(
-  contract: FrozenContract,
-  options: ReactEntityStageOptions = {},
-): Promise<StageResult> {
+export async function runReactEntityStage(input: StageInput): Promise<StageResult> {
+  const { contract, previousError, onProgress } = input;
   const systemPrompt = await fs.readFile(FRONTEND_RULES_PATH, 'utf8');
   const concurrency = parseInt(process.env.LLM_CONCURRENCY || '3', 10);
   const limit = pLimit(concurrency);
@@ -45,12 +38,15 @@ export async function runReactEntityStage(
         const kebab = entityKebab(entity.name);
         const allowedPrefix = `client/src/resources/${kebab}/`;
 
-        if (options.onProgress) {
-          await options.onProgress(`Generating React Admin resource: ${entity.name}`);
+        if (onProgress) {
+          await onProgress(`Generating React Admin resource: ${entity.name}`);
         }
 
         try {
-          const userPrompt = buildReactUserPrompt(slice, kebab, allowedPrefix);
+          const userPrompt = appendRepairFeedback(
+            buildReactUserPrompt(slice, kebab, allowedPrefix),
+            previousError,
+          );
           const { content } = await callLLM({
             systemPrompt,
             userPrompt,
@@ -79,8 +75,8 @@ export async function runReactEntityStage(
           failed.push(entity.name);
         } finally {
           done++;
-          if (options.onProgress) {
-            await options.onProgress(`React entities: ${done} / ${total} done`);
+          if (onProgress) {
+            await onProgress(`React entities: ${done} / ${total} done`);
           }
         }
       }),
