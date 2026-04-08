@@ -146,6 +146,11 @@ export const exportMenuConfig: ExportMenuItem[] = [
         action: (path) => startExporterJob('crud-api', path),
       },
       {
+        id: 'toir-fullstack',
+        label: 'TOiR Fullstack (Nest + React Admin)',
+        action: (path) => startExporterJob('toir-fullstack', path),
+      },
+      {
         id: 'backend-api',
         label: 'Backend API Server',
         action: notImplemented('Backend API'),

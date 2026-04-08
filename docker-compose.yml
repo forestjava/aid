@@ -36,6 +36,36 @@ services:
       - proxy
     restart: unless-stopped
 
+  runner-toir-fullstack-exporter:
+    build:
+      context: runner/toir-fullstack-exporter
+      dockerfile: Dockerfile
+    container_name: aid-runner-toir-fullstack-exporter
+    environment:
+      - PORT=3030
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - AI_API_URL=${AI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL}
+      - AI_MAX_TOKENS=${AI_MAX_TOKENS}
+      - AI_TEMPERATURE=${AI_TEMPERATURE}
+      - GITEA_BASE_URL=${GITEA_BASE_URL}
+      - GITEA_USERNAME=${GITEA_USERNAME}
+      - GITEA_TOKEN=${GITEA_TOKEN}
+      - PORTAINER_BASE_URL=${PORTAINER_BASE_URL}
+      - PORTAINER_API_KEY=${PORTAINER_API_KEY}
+      - PORTAINER_ENDPOINT_ID=${PORTAINER_ENDPOINT_ID}
+      - PORTAINER_EXTERNAL_NETWORK=${PORTAINER_EXTERNAL_NETWORK:-proxy}
+      - NPM_BASE_URL=${NPM_BASE_URL}
+      - NPM_IDENTITY=${NPM_IDENTITY}
+      - NPM_SECRET=${NPM_SECRET}
+      - PUBLIC_DOMAIN_SUFFIX=${PUBLIC_DOMAIN_SUFFIX}
+      - CLEANUP_TTL_DAYS=${CLEANUP_TTL_DAYS}
+      - EXPORTER_MOCK_GENERATOR=${EXPORTER_MOCK_GENERATOR:-true}
+    networks:
+      - proxy
+    restart: unless-stopped
+
 networks:
   proxy:
     driver: bridge
