@@ -1,4 +1,17 @@
+import { promises as fs } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
 import type { FrozenContract, FrozenEndpoint } from '../contractFreeze.js';
+import { callLLM } from '../llmClient.js';
+import { appendRepairFeedback, type StageInput } from '../repair.js';
+import { parseLlmFiles } from './fileParser.js';
+import type { FileEntry, StageResult } from './types.js';
+
+const SYSTEM_PROMPT_PATH = fileURLToPath(
+  new URL('../../../context/prompts/shared-types-rules.md', import.meta.url),
+);
+
+const ALLOWED_PREFIXES = ['server/src/enums/', 'server/src/shared/'] as const;
 
 /**
  * Convert PascalCase (or consecutive-caps) enum names to kebab-case filenames
@@ -81,4 +94,50 @@ export function buildSharedTypesUserPrompt(contract: FrozenContract): string {
     'Do NOT generate DTOs, modules, Prisma schema, or any other file — those are',
     'owned by other stages and will be dropped if returned here.',
   ].join('\n');
+}
+
+/**
+ * Shared-types LLM stage. Runs once per job between `prisma` and
+ * `nest-entities`, emits enum files and pagination generics, and throws if
+ * the LLM returns zero in-zone files. Files outside the two allowed prefixes
+ * are dropped with a warning.
+ */
+export async function runSharedTypesStage(input: StageInput): Promise<StageResult> {
+  const { contract, previousError } = input;
+
+  const systemPrompt = await fs.readFile(SYSTEM_PROMPT_PATH, 'utf8');
+  const userPrompt = appendRepairFeedback(buildSharedTypesUserPrompt(contract), previousError);
+
+  const { content } = await callLLM({
+    systemPrompt,
+    userPrompt,
+    maxTokens: 4000,
+    temperature: 0.2,
+    label: 'shared-types',
+  });
+
+  const parsed = parseLlmFiles(content);
+
+  const kept: FileEntry[] = [];
+  const dropped: FileEntry[] = [];
+  for (const f of parsed) {
+    if (ALLOWED_PREFIXES.some((p) => f.path.startsWith(p))) {
+      kept.push(f);
+    } else {
+      dropped.push(f);
+    }
+  }
+
+  for (const d of dropped) {
+    console.warn(
+      `[shared-types] WARN dropped out-of-zone file "${d.path}" ` +
+        `(allowed prefixes: ${ALLOWED_PREFIXES.join(', ')})`,
+    );
+  }
+
+  if (kept.length === 0) {
+    throw new Error(`shared-types: no in-zone files returned (raw count=${parsed.length})`);
+  }
+
+  return { files: kept };
 }
