@@ -28,6 +28,7 @@ import { runValidator, type ValidateResult } from './validate.js';
 
 export type StageName =
   | 'prisma'
+  | 'shared-types'
   | 'nest-entities'
   | 'react-entities'
   | 'integration'
@@ -70,8 +71,12 @@ const STAGE_ZONES: StageZone[] = [
     patterns: [/^server\/prisma\//],
   },
   {
+    stage: 'shared-types',
+    patterns: [/^server\/src\/enums\//, /^server\/src\/shared\//],
+  },
+  {
     stage: 'nest-entities',
-    patterns: [/^server\/src\/modules\//, /^server\/src\/enums\//],
+    patterns: [/^server\/src\/modules\//],
   },
   {
     stage: 'react-entities',
