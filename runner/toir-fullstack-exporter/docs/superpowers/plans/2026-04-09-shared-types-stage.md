@@ -12,25 +12,42 @@
 
 **Working directory for all paths:** `/Users/yyy/Desktop/create-runner-exporter/aid/runner/toir-fullstack-exporter/` (git root: `aid/`, so paths in commits are relative to `aid/`). All paths below are given relative to the runner project root unless explicitly stated.
 
+**Cross-repo prompt sourcing (CRITICAL — read before Task 2 and Task 8):**
+
+The runner's `context/prompts/` directory is a **build artifact**. It is gitignored in the runner repo and populated by `scripts/sync-context.mjs` (runs as `prebuild`). The script reads from a separate git repository at `/Users/yyy/Desktop/create-runner-exporter/toir-automatization/prompts/` and copies whitelisted files into `context/prompts/`. Any file edited directly in `context/prompts/` will be wiped on the next sync.
+
+**Therefore:**
+- The source of truth for prompt files is `toir-automatization/prompts/`, not the runner's `context/prompts/`.
+- Adding a new prompt file requires editing **two repos**: create the file in `toir-automatization/prompts/`, then add its filename to the `PROMPTS` array in `runner/toir-fullstack-exporter/scripts/sync-context.mjs`.
+- Editing an existing prompt file means editing it in `toir-automatization/prompts/` and then running `npm run sync-context` from the runner to refresh the local copy.
+- `toir-automatization` is a separate git repo (root: `/Users/yyy/Desktop/create-runner-exporter/toir-automatization`). Commits to prompt files go in that repo.
+
+This was discovered mid-execution and Task 2 was rewritten accordingly. Task 8 has the same constraint.
+
 ---
 
 ## File Structure
 
-**New files:**
+**New files in the runner repo (`aid/`):**
 - `vitest.config.ts` — vitest configuration
 - `src/generator/repair.test.ts` — tests for `STAGE_ZONES` attribution
 - `src/generator/stages/sharedTypesStage.ts` — new stage
 - `src/generator/stages/sharedTypesStage.test.ts` — tests for the stage and its prompt builder
 - `src/generator/tsBuildCheck.ts` — extracted, dependency-injected ts-build check
 - `src/generator/tsBuildCheck.test.ts` — tests for repair sweep behavior and infra short-circuit
-- `context/prompts/shared-types-rules.md` — system prompt for the new stage
 
-**Modified files:**
+**New files in the toir-automatization repo:**
+- `prompts/shared-types-rules.md` — system prompt for the new stage (synced into the runner's `context/prompts/` at build time via `sync-context.mjs`)
+
+**Modified files in the runner repo:**
 - `package.json` — add `vitest` devDep and `test` script
 - `src/generator/repair.ts` — add `'shared-types'` to `StageName`, add new `STAGE_ZONES` entry, remove enum pattern from `nest-entities`
 - `src/generator/stages/nestEntityStage.ts` — remove dual-prefix filter, add "Available shared types" section to user prompt
 - `src/orchestrator.ts` — import and call `runSharedTypesStage`, switch to `runTsBuildCheck` from its own module
-- `context/prompts/backend-rules.md` — replace "Shared Enum Files" section, update DSL→TS enum mapping in rules
+- `scripts/sync-context.mjs` — add `'shared-types-rules.md'` to the `PROMPTS` array so the new prompt syncs into `context/prompts/`
+
+**Modified files in the toir-automatization repo:**
+- `prompts/backend-rules.md` — replace "Shared Enum Files" section with the new "Shared Types" section; update DSL→TS enum mapping in the rules table
 
 ---
 
@@ -242,12 +259,15 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ---
 
-## Task 2: Create `shared-types-rules.md` system prompt
+## Task 2: Create `shared-types-rules.md` system prompt (cross-repo)
+
+> **Status:** Completed during architecture-fix mid-execution. The original plan had this file landing directly in `context/prompts/` of the runner, which is incorrect — that directory is gitignored and wiped by `sync-context.mjs` on every build. The proper home is `toir-automatization/prompts/`. Steps below reflect the corrected flow that was actually executed. They are kept here so the plan stays a faithful record of what was done.
 
 **Files:**
-- Create: `context/prompts/shared-types-rules.md`
+- Create: `prompts/shared-types-rules.md` **in the toir-automatization repo** (`/Users/yyy/Desktop/create-runner-exporter/toir-automatization/`)
+- Modify: `runner/toir-fullstack-exporter/scripts/sync-context.mjs` (add `'shared-types-rules.md'` to the `PROMPTS` array)
 
-- [ ] **Step 2.1: Create the prompt file**
+- [x] **Step 2.1: Create the prompt file in toir-automatization**
 
 Full contents:
 ```markdown
@@ -345,14 +365,44 @@ If you must return additional enum files, append them to the `files` array.
 All paths MUST start with one of the two allowed prefixes.
 ```
 
-- [ ] **Step 2.2: Commit**
+- [x] **Step 2.2: Add the new file to the runner's `sync-context.mjs` PROMPTS array**
+
+Edit `/Users/yyy/Desktop/create-runner-exporter/aid/runner/toir-fullstack-exporter/scripts/sync-context.mjs`. Insert `'shared-types-rules.md'` between `runtime-rules.md` and `validation-rules.md` in the `PROMPTS` array.
+
+- [x] **Step 2.3: Run sync-context to populate the runner's local copy**
 
 ```bash
-git add runner/toir-fullstack-exporter/context/prompts/shared-types-rules.md
-git commit -m "docs(prompts): add shared-types-rules.md system prompt
+cd /Users/yyy/Desktop/create-runner-exporter/aid/runner/toir-fullstack-exporter
+npm run sync-context
+```
+Expected: 16 files synced (was 15). Includes a line `→ .../context/prompts/shared-types-rules.md`.
+
+- [x] **Step 2.4: Commit in toir-automatization**
+
+```bash
+cd /Users/yyy/Desktop/create-runner-exporter/toir-automatization
+git add prompts/shared-types-rules.md prompts/backend-rules.md
+git commit -m "prompts: add shared-types-rules; expand backend-rules
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 ```
+
+(`backend-rules.md` is included because earlier in-conversation iterations had drifted only the runner's local copy; this commit moves that drift to the source of truth. The Task 8 content rewrite happens later as a separate edit.)
+
+- [x] **Step 2.5: Commit the sync-context.mjs change in the runner**
+
+The synced `.md` files in `context/prompts/` are gitignored — only the script change is tracked.
+```bash
+cd /Users/yyy/Desktop/create-runner-exporter/aid
+git add runner/toir-fullstack-exporter/scripts/sync-context.mjs
+git commit -m "chore(sync-context): include shared-types-rules.md in synced prompts
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+```
+
+> **Actual commits:**
+> - `toir-automatization` repo: `a4f042a` (prompts: add shared-types-rules; expand backend-rules)
+> - `aid` runner repo: `7ade1c4` (revert of the original wrong commit `d65cb30`), `8556b68` (chore(sync-context): include shared-types-rules.md)
 
 ---
 
@@ -1242,16 +1292,19 @@ Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
 ---
 
-## Task 8: Update `backend-rules.md`
+## Task 8: Update `backend-rules.md` (cross-repo)
+
+> **CRITICAL:** Edit `backend-rules.md` in **toir-automatization**, NOT in the runner. The runner's `context/prompts/backend-rules.md` is gitignored and gets overwritten by `sync-context.mjs` on every build. See the "Cross-repo prompt sourcing" note at the top of this plan.
 
 **Files:**
-- Modify: `context/prompts/backend-rules.md`
+- Modify: `prompts/backend-rules.md` in the **toir-automatization** repo (`/Users/yyy/Desktop/create-runner-exporter/toir-automatization/`)
+- After editing, run `npm run sync-context` from the runner project root to refresh the runner's local copy
 
 No tests: this is a prompt text change. Behavior is verified in Task 9.
 
 - [ ] **Step 8.1: Remove the stale "Shared Enum Files" section**
 
-Edit `context/prompts/backend-rules.md`. Find and delete the entire section that starts with `## Shared Enum Files` and continues up to (but not including) the next `##` heading. This section was added in a prior fix that put enum generation inside `nest-entities`; it is now wrong because enum files are generated by the `shared-types` stage.
+Edit `/Users/yyy/Desktop/create-runner-exporter/toir-automatization/prompts/backend-rules.md`. Find and delete the entire section that starts with `## Shared Enum Files` and continues up to (but not including) the next `##` heading. This section was added in a prior fix that put enum generation inside `nest-entities`; it is now wrong because enum files are generated by the `shared-types` stage.
 
 - [ ] **Step 8.2: Add the new "Shared Types" section in the same position**
 
@@ -1295,11 +1348,21 @@ Replace with:
 | enum name | `EnumName` (imported from `../../enums/<kebab>.enum`) | `@IsEnum(EnumName)` | Do not use `string` |
 ```
 
-- [ ] **Step 8.4: Commit**
+- [ ] **Step 8.4: Sync the change into the runner**
+
+From the runner project root:
+```bash
+cd /Users/yyy/Desktop/create-runner-exporter/aid/runner/toir-fullstack-exporter
+npm run sync-context
+```
+Expected: 16 files synced. The script will overwrite `context/prompts/backend-rules.md` with the new toir-automatization version. The synced file is gitignored, so this is not committed in the runner repo.
+
+- [ ] **Step 8.5: Commit in toir-automatization**
 
 ```bash
-git add runner/toir-fullstack-exporter/context/prompts/backend-rules.md
-git commit -m "docs(prompts): retarget enum rules at shared-types stage
+cd /Users/yyy/Desktop/create-runner-exporter/toir-automatization
+git add prompts/backend-rules.md
+git commit -m "prompts(backend): retarget enum rules at shared-types stage
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 ```
