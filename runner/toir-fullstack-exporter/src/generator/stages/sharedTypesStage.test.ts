@@ -176,7 +176,9 @@ describe('runSharedTypesStage', () => {
       usage: null,
     });
 
-    await expect(runSharedTypesStage({ contract: oneEnumContract })).rejects.toThrow();
+    await expect(runSharedTypesStage({ contract: oneEnumContract })).rejects.toThrow(
+      /no in-zone files returned/,
+    );
   });
 
   it('appends previousError to the user prompt when repair feedback is supplied', async () => {

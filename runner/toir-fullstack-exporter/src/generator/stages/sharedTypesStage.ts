@@ -136,7 +136,10 @@ export async function runSharedTypesStage(input: StageInput): Promise<StageResul
   }
 
   if (kept.length === 0) {
-    throw new Error(`shared-types: no in-zone files returned (raw count=${parsed.length})`);
+    const droppedPaths = dropped.map((d) => d.path).join(', ') || '<none>';
+    throw new Error(
+      `shared-types: no in-zone files returned (raw count=${parsed.length}); dropped paths: ${droppedPaths}`,
+    );
   }
 
   return { files: kept };
