@@ -32,18 +32,22 @@ import { writeResultFile } from './writeback.js';
  * Top-level pipeline for one job.
  *
  * Pipeline stages (Phase 6+ status):
- *   0  fetch DSL                       — real
- *   1  contract-freeze                 — real (deterministic)
- *   2  scaffold                        — real (copies templates from context/scaffold/)
- *   3  context sync (api-summary)      — real (generates api-summary.json from contract)
- *   4  prisma stage                    — LLM + bounded repair (Phase 8)
- *   5  nest entity stage               — LLM + bounded repair (Phase 9)
- *   6  react entity stage              — LLM + bounded repair (Phase 9)
- *   7  integration stage               — LLM + bounded repair (Phase 10)
- *   8  auth stage                      — LLM + bounded repair (Phase 10)
- *   9  post-processing (compose)       — real (deterministic; skipped if absent)
- *  10  validation                      — real
- *  11+ deploy (gitea/portainer/npm)    — real, only when validation passes
+ *   0   fetch DSL                       — real
+ *   1   contract-freeze                 — real (deterministic)
+ *   2   scaffold                        — real (copies templates from context/scaffold/)
+ *   3   context sync (api-summary)      — real (generates api-summary.json from contract)
+ *   4   prisma stage                    — LLM + bounded repair (Phase 8)
+ *   4b  shared-types stage              — LLM + bounded repair; emits enums + pagination
+ *   5   nest entity stage               — LLM + bounded repair (Phase 9)
+ *   6   react entity stage              — LLM + bounded repair (Phase 9)
+ *   7   integration stage               — LLM + bounded repair (Phase 10)
+ *   8   auth stage                      — LLM + bounded repair (Phase 10)
+ *   8b  ts-build check                  — npm install + prisma generate + tsc --noEmit;
+ *                                          on tsc failure runs the repair sweep
+ *                                          shared-types → nest-entities → integration
+ *   9   post-processing (compose)       — real (deterministic; skipped if absent)
+ *  10   validation                      — real (structural validator)
+ *  11+  deploy (gitea/portainer/npm)    — real, only when validation passes
  *
  * When `EXPORTER_MOCK_GENERATOR=true`, stages 1-10 are bypassed and the bundled
  * mock-project is materialized instead, preserving the Phase 5 fallback path.

@@ -142,5 +142,29 @@ export async function runSharedTypesStage(input: StageInput): Promise<StageResul
     );
   }
 
+  // Warn (but do not throw) if the LLM returned a partial result that omits
+  // a file we expected from this contract. The downstream `ts-build` sweep
+  // will catch the consequence as a compile error and trigger a repair pass,
+  // but flagging the omission directly makes the root cause obvious in logs.
+  const keptPaths = new Set(kept.map((f) => f.path));
+  const expectedPaths = expectedFilePaths(contract);
+  for (const expected of expectedPaths) {
+    if (!keptPaths.has(expected)) {
+      console.warn(
+        `[shared-types] WARN expected file "${expected}" was not generated`,
+      );
+    }
+  }
+
   return { files: kept };
+}
+
+function expectedFilePaths(contract: { enums: { name: string }[] }): string[] {
+  const paths: string[] = [];
+  for (const e of contract.enums) {
+    paths.push(`server/src/enums/${enumFileName(e.name)}.enum.ts`);
+  }
+  paths.push('server/src/shared/pagination.ts');
+  paths.push('server/src/shared/index.ts');
+  return paths;
 }
