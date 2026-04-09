@@ -10,7 +10,9 @@ import { syncContext } from './generator/contextSync.js';
 import { postProcessCompose } from './generator/postProcess.js';
 import { runValidator } from './generator/validate.js';
 import { runTsCheck } from './generator/tsCheck.js';
+import { runTsBuildCheck } from './generator/tsBuildCheck.js';
 import { runPrismaStage } from './generator/stages/prismaStage.js';
+import { runSharedTypesStage } from './generator/stages/sharedTypesStage.js';
 import { runNestEntityStage } from './generator/stages/nestEntityStage.js';
 import { runReactEntityStage } from './generator/stages/reactEntityStage.js';
 import { runIntegrationStage } from './generator/stages/integrationStage.js';
@@ -157,6 +159,7 @@ async function runRealGenerator(
   // once with the validator output appended to the prompt as feedback. After
   // a single repair pass we either pass validation or throw and fail the job.
   await runLlmStage(jobId, 'prisma', workingDir, contract, runPrismaStage);
+  await runLlmStage(jobId, 'shared-types', workingDir, contract, runSharedTypesStage);
   await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
     runNestEntityStage({
       ...input,
@@ -172,8 +175,27 @@ async function runRealGenerator(
   await runLlmStage(jobId, 'integration', workingDir, contract, runIntegrationStage);
   await runLlmStage(jobId, 'auth', workingDir, contract, runAuthStage);
 
-  // Stage 8 — TypeScript build check with one repair pass
-  await runTsBuildCheck(jobId, workingDir, contract);
+  // Stage 8b — TypeScript build check with repair sweep shared-types → nest-entities → integration
+  await runTsBuildCheck(workingDir, {
+    tsCheck: runTsCheck,
+    log: (msg: string) => sendProgress(jobId, 'processing', msg),
+    rerunStages: async (feedback: string) => {
+      const inject = { contract, previousError: feedback };
+      await runLlmStage(jobId, 'shared-types', workingDir, contract, (input) =>
+        runSharedTypesStage({ ...input, ...inject }),
+      );
+      await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
+        runNestEntityStage({
+          ...input,
+          ...inject,
+          onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
+        }),
+      );
+      await runLlmStage(jobId, 'integration', workingDir, contract, (input) =>
+        runIntegrationStage({ ...input, ...inject }),
+      );
+    },
+  });
 
   // Stage 9 — post-processing
   await sendProgress(jobId, 'processing', `[post-process] Rewriting docker-compose.yml`);
@@ -226,51 +248,6 @@ async function runLlmStage(
   await sendProgress(jobId, 'processing', `[${name}] Wrote ${result.files.length} files`);
 }
 
-/**
- * Runs TypeScript compilation check (npm install + prisma generate + tsc --noEmit)
- * against the generated server code. On failure, re-runs nest-entities and integration
- * stages with the TS errors as repair feedback, then checks again.
- */
-async function runTsBuildCheck(
-  jobId: string,
-  workingDir: string,
-  contract: FrozenContract,
-): Promise<void> {
-  await sendProgress(jobId, 'processing', `[ts-build] Running TypeScript check`);
-
-  const first = await runTsCheck(workingDir);
-  if (first.ok) {
-    await sendProgress(jobId, 'processing', `[ts-build] TypeScript check passed`);
-    return;
-  }
-
-  const tsErrors = (first.stdout + '\n' + first.stderr).trim();
-  await sendProgress(jobId, 'processing', `[ts-build] TypeScript errors found — running repair`);
-  console.warn(`[${jobId}] ts-build errors:\n${tsErrors}`);
-
-  // Repair pass: re-run nest-entities and integration with TS errors as feedback
-  const repairInput = { contract, previousError: `TypeScript compilation failed:\n\n${tsErrors}` };
-
-  await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
-    runNestEntityStage({
-      ...input,
-      ...repairInput,
-      onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
-    }),
-  );
-  await runLlmStage(jobId, 'integration', workingDir, contract, (input) =>
-    runIntegrationStage({ ...input, ...repairInput }),
-  );
-
-  // Re-check after repair
-  await sendProgress(jobId, 'processing', `[ts-build] Re-checking TypeScript after repair`);
-  const second = await runTsCheck(workingDir);
-  if (!second.ok) {
-    const detail = (second.stdout + '\n' + second.stderr).trim();
-    throw new Error(`TypeScript build failed after repair:\n\n${detail}`);
-  }
-  await sendProgress(jobId, 'processing', `[ts-build] TypeScript check passed after repair`);
-}
 
 async function runStage<T>(jobId: string, name: string, fn: () => Promise<T>): Promise<T> {
   try {
