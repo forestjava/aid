@@ -180,19 +180,36 @@ async function runRealGenerator(
     tsCheck: runTsCheck,
     log: (msg: string) => sendProgress(jobId, 'processing', msg),
     rerunStages: async (feedback: string) => {
-      const inject = { contract, previousError: feedback };
+      // When this rerun causes a stage's inner runStageWithRepair to retry,
+      // the inner pass's `previousError` (validator failure) must NOT be lost.
+      // We merge both signals: the ts-build feedback (root cause) plus the
+      // inner pass's validator feedback (immediate write failure), so the LLM
+      // sees both. mergeFeedback preserves whichever is non-empty and
+      // concatenates them in priority order (validator first, then ts-build).
+      const mergeFeedback = (innerError: string | undefined): string =>
+        [innerError, feedback].filter(Boolean).join('\n\n--- earlier ts-build feedback ---\n\n');
+
       await runLlmStage(jobId, 'shared-types', workingDir, contract, (input) =>
-        runSharedTypesStage({ ...input, ...inject }),
+        runSharedTypesStage({
+          ...input,
+          contract,
+          previousError: mergeFeedback(input.previousError),
+        }),
       );
       await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
         runNestEntityStage({
           ...input,
-          ...inject,
+          contract,
+          previousError: mergeFeedback(input.previousError),
           onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
         }),
       );
       await runLlmStage(jobId, 'integration', workingDir, contract, (input) =>
-        runIntegrationStage({ ...input, ...inject }),
+        runIntegrationStage({
+          ...input,
+          contract,
+          previousError: mergeFeedback(input.previousError),
+        }),
       );
     },
   });
