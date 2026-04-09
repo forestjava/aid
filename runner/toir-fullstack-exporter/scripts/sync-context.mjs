@@ -19,6 +19,7 @@ const PROMPTS = [
   'frontend-rules.md',
   'prisma-rules.md',
   'runtime-rules.md',
+  'shared-types-rules.md',
   'validation-rules.md',
   'claude-orchestration-rules.md',
 ];
