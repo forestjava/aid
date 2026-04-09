@@ -65,7 +65,7 @@ export async function runTsBuildCheck(
   }
 
   const secondErrors = combineOutput(second);
-  throw new Error(`TypeScript build failed after repair:\n\n${secondErrors}`);
+  throw new Error(`ts-build: build failed after repair:\n\n${secondErrors}`);
 }
 
 function combineOutput(result: TsCheckResult): string {

@@ -63,15 +63,19 @@ describe('runTsBuildCheck', () => {
       .mockResolvedValueOnce(tscFailure('first round of errors'))
       .mockResolvedValueOnce(tscFailure('second round of errors'));
 
-    await expect(runTsBuildCheck('/tmp/work', deps)).rejects.toThrow(
-      /TypeScript build failed after repair/,
-    );
-
-    tsCheck
-      .mockResolvedValueOnce(tscFailure('first round of errors'))
-      .mockResolvedValueOnce(tscFailure('second round of errors'));
     const err = await runTsBuildCheck('/tmp/work', deps).catch((e: Error) => e);
+
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toMatch(/build failed after repair/);
     expect((err as Error).message).toContain('second round of errors');
+  });
+
+  it('surfaces infra errors that appear only after the repair sweep', async () => {
+    tsCheck
+      .mockResolvedValueOnce(tscFailure('first round'))
+      .mockResolvedValueOnce(infraFailure('npm install failed: broken lockfile'));
+
+    await expect(runTsBuildCheck('/tmp/work', deps)).rejects.toThrow(/npm install failed/);
   });
 
   it('short-circuits on infra errors (npm install) without running the repair sweep', async () => {
