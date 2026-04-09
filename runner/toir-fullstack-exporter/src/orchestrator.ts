@@ -6,8 +6,10 @@ import { materializeMockProject } from './generator/materialize.js';
 import { fetchSourceContent } from './fetchSource.js';
 import { freezeContract, type FrozenContract } from './generator/contractFreeze.js';
 import { copyScaffold } from './generator/scaffold.js';
+import { syncContext } from './generator/contextSync.js';
 import { postProcessCompose } from './generator/postProcess.js';
 import { runValidator } from './generator/validate.js';
+import { runTsCheck } from './generator/tsCheck.js';
 import { runPrismaStage } from './generator/stages/prismaStage.js';
 import { runNestEntityStage } from './generator/stages/nestEntityStage.js';
 import { runReactEntityStage } from './generator/stages/reactEntityStage.js';
@@ -27,20 +29,21 @@ import { writeResultFile } from './writeback.js';
 /**
  * Top-level pipeline for one job.
  *
- * Pipeline stages (Phase 7 status):
+ * Pipeline stages (Phase 6+ status):
  *   0  fetch DSL                       — real
  *   1  contract-freeze                 — real (deterministic)
- *   2  scaffold                        — real (no-op until templates land)
- *   3  prisma stage                    — STUB (Phase 8)
- *   4  nest entity stage               — STUB (Phase 8)
- *   5  react entity stage              — STUB (Phase 9)
- *   6  integration stage               — STUB (Phase 9)
- *   7  auth stage                      — STUB (Phase 10)
- *   8  post-processing (compose)       — real (deterministic; skipped if absent)
- *   9  validation                      — real
- *  10+ deploy (gitea/portainer/npm)    — real, only when validation passes
+ *   2  scaffold                        — real (copies templates from context/scaffold/)
+ *   3  context sync (api-summary)      — real (generates api-summary.json from contract)
+ *   4  prisma stage                    — LLM + bounded repair (Phase 8)
+ *   5  nest entity stage               — LLM + bounded repair (Phase 9)
+ *   6  react entity stage              — LLM + bounded repair (Phase 9)
+ *   7  integration stage               — LLM + bounded repair (Phase 10)
+ *   8  auth stage                      — LLM + bounded repair (Phase 10)
+ *   9  post-processing (compose)       — real (deterministic; skipped if absent)
+ *  10  validation                      — real
+ *  11+ deploy (gitea/portainer/npm)    — real, only when validation passes
  *
- * When `EXPORTER_MOCK_GENERATOR=true`, stages 1-9 are bypassed and the bundled
+ * When `EXPORTER_MOCK_GENERATOR=true`, stages 1-10 are bypassed and the bundled
  * mock-project is materialized instead, preserving the Phase 5 fallback path.
  */
 export async function runJob(jobId: string, dslPath: string): Promise<void> {
@@ -136,13 +139,18 @@ async function runRealGenerator(
     await sendProgress(
       jobId,
       'processing',
-      `[scaffold] No scaffold templates present yet (Phase 6.5 TODO)`,
+      `[scaffold] No scaffold templates present (critical: needs Phase 6.5)`,
     );
   } else {
     await sendProgress(jobId, 'processing', `[scaffold] Copied ${scaffold.copied.length} files`);
   }
 
-  // Stages 3-7 — LLM stages with bounded one-pass repair (Phase 11).
+  // Stage 3 — context sync (write DSL to domain/ + generate api-summary.json)
+  await sendProgress(jobId, 'processing', `[context-sync] Writing domain/*.api.dsl and api-summary.json`);
+  await runStage(jobId, 'context-sync', () => syncContext(workingDir, dslContent));
+  await sendProgress(jobId, 'processing', `[context-sync] Wrote domain/main.api.dsl and api-summary.json`);
+
+  // Stages 4-8 — LLM stages with bounded one-pass repair (Phase 11).
   // Each stage runs through `runStageWithRepair`, which writes the stage's
   // files, runs the structural validator, and — if the validator reports a
   // failure that touches THIS stage's write zones — re-runs the stage exactly
@@ -164,7 +172,10 @@ async function runRealGenerator(
   await runLlmStage(jobId, 'integration', workingDir, contract, runIntegrationStage);
   await runLlmStage(jobId, 'auth', workingDir, contract, runAuthStage);
 
-  // Stage 8 — post-processing
+  // Stage 8 — TypeScript build check with one repair pass
+  await runTsBuildCheck(jobId, workingDir, contract);
+
+  // Stage 9 — post-processing
   await sendProgress(jobId, 'processing', `[post-process] Rewriting docker-compose.yml`);
   const post = await runStage(jobId, 'post-process', () =>
     postProcessCompose(workingDir, { slug }),
@@ -213,6 +224,52 @@ async function runLlmStage(
   );
 
   await sendProgress(jobId, 'processing', `[${name}] Wrote ${result.files.length} files`);
+}
+
+/**
+ * Runs TypeScript compilation check (npm install + prisma generate + tsc --noEmit)
+ * against the generated server code. On failure, re-runs nest-entities and integration
+ * stages with the TS errors as repair feedback, then checks again.
+ */
+async function runTsBuildCheck(
+  jobId: string,
+  workingDir: string,
+  contract: FrozenContract,
+): Promise<void> {
+  await sendProgress(jobId, 'processing', `[ts-build] Running TypeScript check`);
+
+  const first = await runTsCheck(workingDir);
+  if (first.ok) {
+    await sendProgress(jobId, 'processing', `[ts-build] TypeScript check passed`);
+    return;
+  }
+
+  const tsErrors = (first.stdout + '\n' + first.stderr).trim();
+  await sendProgress(jobId, 'processing', `[ts-build] TypeScript errors found — running repair`);
+  console.warn(`[${jobId}] ts-build errors:\n${tsErrors}`);
+
+  // Repair pass: re-run nest-entities and integration with TS errors as feedback
+  const repairInput = { contract, previousError: `TypeScript compilation failed:\n\n${tsErrors}` };
+
+  await runLlmStage(jobId, 'nest-entities', workingDir, contract, (input) =>
+    runNestEntityStage({
+      ...input,
+      ...repairInput,
+      onProgress: (msg) => sendProgress(jobId, 'processing', `[nest-entities] ${msg}`),
+    }),
+  );
+  await runLlmStage(jobId, 'integration', workingDir, contract, (input) =>
+    runIntegrationStage({ ...input, ...repairInput }),
+  );
+
+  // Re-check after repair
+  await sendProgress(jobId, 'processing', `[ts-build] Re-checking TypeScript after repair`);
+  const second = await runTsCheck(workingDir);
+  if (!second.ok) {
+    const detail = (second.stdout + '\n' + second.stderr).trim();
+    throw new Error(`TypeScript build failed after repair:\n\n${detail}`);
+  }
+  await sendProgress(jobId, 'processing', `[ts-build] TypeScript check passed after repair`);
 }
 
 async function runStage<T>(jobId: string, name: string, fn: () => Promise<T>): Promise<T> {

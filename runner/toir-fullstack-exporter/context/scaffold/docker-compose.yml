@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: __SLUG__-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: toir
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: __SLUG__-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/toir
+      NODE_ENV: production
+      PORT: 3000
+      KEYCLOAK_ISSUER: ${KEYCLOAK_URL}/realms/toir
+      KEYCLOAK_JWKS_URL: ${KEYCLOAK_URL}/realms/toir/protocol/openid-connect/certs
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: __SLUG__-client
+    environment:
+      VITE_API_URL: http://server:3000
+      VITE_KEYCLOAK_URL: ${KEYCLOAK_URL}
+    ports:
+      - "${CLIENT_PORT:-8080}:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

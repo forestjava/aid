@@ -71,7 +71,7 @@ const STAGE_ZONES: StageZone[] = [
   },
   {
     stage: 'nest-entities',
-    patterns: [/^server\/src\/modules\//],
+    patterns: [/^server\/src\/modules\//, /^server\/src\/enums\//],
   },
   {
     stage: 'react-entities',
@@ -208,9 +208,13 @@ export async function runStageWithRepair(
 
     const combined = `${validation.stdout}\n${validation.stderr}`;
     const allFailures = parseValidatorFailures(combined);
-    // Attribute unknown-path failures to the just-run stage so we don't
-    // silently swallow them.
-    const stageFailures = failuresForStage(allFailures, stageName, true);
+    // Only attribute failures whose file paths match this stage's zone.
+    // Failures without a recognizable path (e.g. "Expected at least one
+    // domain/*.api.dsl file", "authProvider must distinguish 401 and 403")
+    // belong to other stages or to deterministic setup (scaffold) and are
+    // NOT this stage's responsibility — the final full validation will
+    // surface them.
+    const stageFailures = failuresForStage(allFailures, stageName, false);
 
     if (stageFailures.length === 0) {
       // Validator failed, but nothing in this stage's zone is broken — that

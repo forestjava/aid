@@ -1,62 +1,27 @@
-import { promises as fs } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-
-import { callLLM } from '../llmClient.js';
-import { appendRepairFeedback, type StageInput } from '../repair.js';
-import { parseLlmFiles } from './fileParser.js';
-import type { FileEntry, StageResult } from './types.js';
-
-const AUTH_RULES_PATH = fileURLToPath(
-  new URL('../../../context/prompts/auth-rules.md', import.meta.url),
-);
-
-const ALLOWED_PREFIXES = ['server/src/auth/', 'client/src/auth/'];
+import type { StageInput } from '../repair.js';
+import type { StageResult } from './types.js';
 
 /**
- * Phase 10 — auth stage. Generates the shared auth platform skeleton from
- * `auth-rules.md`:
+ * Phase 10 — auth stage (deterministic mode).
  *
- *   - server/src/auth/* — Nest auth module, JwtAuthGuard, RolesGuard, JWKS validator
+ * Auth files are now bundled directly in `context/scaffold/`:
+ *   - server/src/auth/* — Nest auth module, JwtAuthGuard, RolesGuard, JWKS service
  *   - client/src/auth/* — Keycloak adapter and React Admin authProvider
  *
- * Output is filtered to `server/src/auth/` and `client/src/auth/` — anything
- * outside those zones is dropped.
+ * These files are copied during the scaffold stage (Phase 6.5), so the auth
+ * stage is now a no-op that simply returns success. The auth seam is stable
+ * across all generated apps and only varies by env var values, so using a
+ * deterministic template is faster and more reliable than LLM generation.
  *
- * TODO Phase 14 candidate: replace this LLM call with a deterministic template
- * based on the working defaults in `auth-rules.md`. The auth seam is stable
- * across all generated apps and only varies by env var values, so a fixed
- * template would be both faster and more reliable than an LLM transcription.
+ * If repair feedback is needed, it would be applied during a re-run of the
+ * scaffold stage itself (not auth).
  */
 export async function runAuthStage(input: StageInput): Promise<StageResult> {
-  const systemPrompt = await fs.readFile(AUTH_RULES_PATH, 'utf8');
+  // Auth files already copied from scaffold during Phase 6.5.
+  // No LLM needed — just acknowledge success.
+  console.log('[auth] Auth files already present from scaffold. Stage no-op.');
 
-  const userPrompt = appendRepairFeedback(buildAuthUserPrompt(), input.previousError);
-
-  const { content } = await callLLM({
-    systemPrompt,
-    userPrompt,
-    maxTokens: 12000,
-    temperature: 0.2,
-    label: 'auth',
-  });
-
-  const parsed = parseLlmFiles(content);
-  const kept: FileEntry[] = [];
-  for (const f of parsed) {
-    if (ALLOWED_PREFIXES.some((p) => f.path.startsWith(p))) {
-      kept.push(f);
-    } else {
-      console.warn(
-        `[auth] WARN dropped out-of-zone file "${f.path}" (allowed prefixes: ${ALLOWED_PREFIXES.join(', ')})`,
-      );
-    }
-  }
-
-  if (kept.length === 0) {
-    throw new Error(`auth stage: no in-zone files returned (raw count=${parsed.length})`);
-  }
-
-  return { files: kept };
+  return { files: [] };
 }
 
 function buildAuthUserPrompt(): string {

@@ -40,6 +40,7 @@ export async function runNestEntityStage(input: StageInput): Promise<StageResult
         const slice = sliceContractForEntity(contract, entity.name);
         const kebab = entityKebab(entity.name);
         const allowedPrefix = `server/src/modules/${kebab}/`;
+        const enumsPrefix = 'server/src/enums/';
 
         if (onProgress) {
           await onProgress(`Generating Nest module: ${entity.name}`);
@@ -59,11 +60,15 @@ export async function runNestEntityStage(input: StageInput): Promise<StageResult
           });
 
           const parsed = parseLlmFiles(content);
-          const { kept, dropped } = filterByPrefix(parsed, allowedPrefix);
+          // Allow both the module zone and shared enums zone
+          const moduleResult = filterByPrefix(parsed, allowedPrefix);
+          const enumsResult = filterByPrefix(moduleResult.dropped, enumsPrefix);
+          const kept = [...moduleResult.kept, ...enumsResult.kept];
+          const dropped = enumsResult.dropped;
 
           for (const d of dropped) {
             console.warn(
-              `[nest:${kebab}] WARN dropped out-of-zone file "${d.path}" (allowed prefix: ${allowedPrefix})`,
+              `[nest:${kebab}] WARN dropped out-of-zone file "${d.path}" (allowed prefixes: ${allowedPrefix}, ${enumsPrefix})`,
             );
           }
 
@@ -112,9 +117,10 @@ function buildNestUserPrompt(slice: EntitySlice, kebab: string, allowedPrefix: s
     '{"files":[{"path":"server/src/modules/<kebab>/...","content":"<file contents>"}]}',
     '```',
     '',
-    `All file paths MUST start with \`${allowedPrefix}\`. Do NOT generate \`app.module.ts\`,`,
-    'auth files, Prisma schema, or any other shared/integration file — those are owned',
-    'by other stages and will be dropped if returned here.',
+    `Module file paths MUST start with \`${allowedPrefix}\`.`,
+    `Shared enum files MAY use path \`server/src/enums/<EnumName>.enum.ts\`.`,
+    'Do NOT generate `app.module.ts`, auth files, Prisma schema, or any other shared/integration',
+    'file — those are owned by other stages and will be dropped if returned here.',
     '',
     'Do NOT include explanations or prose outside the JSON object.',
     '',

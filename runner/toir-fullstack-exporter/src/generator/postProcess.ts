@@ -77,6 +77,11 @@ export async function postProcessCompose(
     delete service.ports;
 
     const isPublic = serviceName === publicService;
+    // Public (client) service: expose port 80 internally so NPM can route to it
+    // via the shared proxy Docker network without publishing it on the host.
+    if (isPublic) {
+      service.expose = ['80'];
+    }
     service.networks = isPublic ? [internalNet, externalNet] : [internalNet];
 
     if (serviceName === postgresService) {

@@ -1,0 +1,28 @@
+{
+  "name": "toir-fullstack-generated",
+  "version": "1.0.0",
+  "description": "Fullstack API + Admin UI generated from DSL",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "dev:api": "cd server && npm run dev",
+    "dev:ui": "cd client && npm run dev",
+    "db:migrate:dev": "cd server && npx prisma migrate dev --name init",
+    "db:push": "cd server && npx prisma db push",
+    "db:seed": "cd server && npx prisma db seed",
+    "type-check": "npm run type-check:server && npm run type-check:client",
+    "type-check:server": "cd server && tsc --noEmit",
+    "type-check:client": "cd client && tsc --noEmit"
+  },
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  }
+}

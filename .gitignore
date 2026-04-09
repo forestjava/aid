@@ -4,3 +4,4 @@ scripts
 .cursor
 backup
 .env*
+!.env.example

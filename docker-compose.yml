@@ -47,7 +47,7 @@ services:
       - CALLBACK_BASE_URL=http://aid-backend:3000
       # LLM config (production defaults, hardcoded)
       - AI_API_URL=https://openrouter.ai/api/v1/chat/completions
-      - AI_MODEL=openrouter/auto
+      - AI_MODEL=moonshotai/kimi-k2.5
       - AI_MAX_TOKENS=4000
       - AI_TEMPERATURE=0.7
       # LLM credentials (from .env, secrets only)
