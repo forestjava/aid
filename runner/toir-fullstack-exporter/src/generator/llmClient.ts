@@ -13,7 +13,10 @@ interface ChatRequest {
 }
 
 interface ChatResponse {
-  choices?: { message?: { content?: string } }[];
+  choices?: {
+    message?: { content?: string };
+    finish_reason?: string;
+  }[];
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -106,10 +109,23 @@ export async function callLLM(opts: CallLLMOptions): Promise<LLMResult> {
     throw new Error(`[${label}] LLM API returned error: ${JSON.stringify(data.error)}`);
   }
 
-  const content = data.choices?.[0]?.message?.content;
+  const choice = data.choices?.[0];
+  const content = choice?.message?.content;
   if (!content) {
     throw new Error(
       `[${label}] Empty response from LLM API: ${JSON.stringify(data).slice(0, 500)}`,
+    );
+  }
+
+  const finishReason = choice?.finish_reason;
+  if (finishReason && finishReason !== 'stop' && finishReason !== 'end_turn') {
+    console.warn(
+      `[${label}] LLM response truncated (finish_reason=${finishReason}, requested max_tokens=${maxTokens}). Response may be incomplete.`,
+    );
+    throw new Error(
+      `[${label}] LLM response truncated: finish_reason="${finishReason}". ` +
+        `The model could not complete its output within ${maxTokens} max_tokens. ` +
+        `Increase AI_MAX_TOKENS or reduce prompt complexity.`,
     );
   }
 

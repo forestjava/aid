@@ -144,18 +144,18 @@
 
 ## Переменные окружения
 
-**Архитектура переменных**: infrastructure URLs, LLM defaults и production config **hardcoded в `docker-compose.yml`**. 
-В `.env` только **secrets** (API keys, tokens, passwords) — см. `.env.example`.
+**Архитектура переменных**: инфра-стековые константы (PORT, CALLBACK_BASE_URL) hardcoded в `docker-compose.yml`.
+LLM-настройки и credentials — из `.env` (см. `.env.example`).
 
 | Переменная | Где | Статус | Назначение |
 |---|---|---|---|
 | `PORT` | `docker-compose.yml` | hardcoded: `3030` | Порт HTTP-сервера экспортера |
 | `CALLBACK_BASE_URL` | `docker-compose.yml` | hardcoded: `http://aid-backend:3000` | Базовый URL прогресс-коллбэков в AID |
 | **`AI_API_KEY`** | **`.env`** | **обязательна** | API-ключ OpenRouter |
-| `AI_API_URL` | `docker-compose.yml` | hardcoded: `https://openrouter.ai/api/v1/chat/completions` | Endpoint chat completions |
-| `AI_MODEL` | `docker-compose.yml` | hardcoded: `openrouter/auto` | LLM модель |
-| `AI_MAX_TOKENS` | `docker-compose.yml` | hardcoded: `4000` | Лимит токенов на запрос |
-| `AI_TEMPERATURE` | `docker-compose.yml` | hardcoded: `0.7` | Temperature для consistency |
+| `AI_API_URL` | `.env` / compose default | default: `https://openrouter.ai/api/v1/chat/completions` | Endpoint chat completions |
+| **`AI_MODEL`** | **`.env`** | **обязательна** | LLM модель (напр. `moonshotai/kimi-k2.5`) |
+| **`AI_MAX_TOKENS`** | **`.env`** | default: `16000` | Глобальный лимит output-токенов. Стадии могут переопределять (nest-entities: 12000, prisma: 16000) |
+| `AI_TEMPERATURE` | `.env` / compose default | default: `0.7` | Temperature для consistency |
 | `GITEA_BASE_URL` | `docker-compose.yml` | hardcoded: `https://git.greact.ru` | Gitea API base |
 | `GITEA_USERNAME` | `docker-compose.yml` | hardcoded: `toir-bot` | Gitea bot user |
 | **`GITEA_TOKEN`** | **`.env`** | **обязательна** | Gitea PAT (scope `repo`) |
