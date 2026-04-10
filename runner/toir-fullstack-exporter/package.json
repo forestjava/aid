@@ -1,0 +1,25 @@
+{
+  "name": "toir-fullstack-exporter",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-context": "node scripts/sync-context.mjs",
+    "prebuild": "node scripts/sync-context.mjs",
+    "start": "tsx src/index.ts",
+    "cleanup": "tsx src/cleanup/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.1.0",
+    "yaml": "^2.8.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.9"
+  }
+}

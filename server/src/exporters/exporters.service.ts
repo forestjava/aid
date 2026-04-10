@@ -25,6 +25,12 @@ export class ExportersService implements OnModuleInit {
       baseUrl: 'http://contract-craft-dev-service:8080',
       startPath: '/api/trigger',
     });
+    this.register({
+      exporterId: 'toir-fullstack',
+      name: 'TOiR Fullstack Exporter',
+      baseUrl: 'http://aid-runner-toir-fullstack-exporter:3030',
+      startPath: '/start',
+    });
   }
 
   register(config: ExporterConfig): void {

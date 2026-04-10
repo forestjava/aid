@@ -1,34 +1,55 @@
 import { Injectable, Logger, MessageEvent } from '@nestjs/common';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, concat, from } from 'rxjs';
 import type { ProgressEvent } from '../types/runner';
+
+interface JobStream {
+  subject: Subject<MessageEvent>;
+  buffer: MessageEvent[];
+  subscribed: boolean;
+}
 
 @Injectable()
 export class SseService {
   private readonly logger = new Logger(SseService.name);
-  private readonly streams = new Map<string, Subject<MessageEvent>>();
+  private readonly streams = new Map<string, JobStream>();
+
+  private ensureStream(jobId: string): JobStream {
+    let stream = this.streams.get(jobId);
+    if (!stream) {
+      stream = { subject: new Subject(), buffer: [], subscribed: false };
+      this.streams.set(jobId, stream);
+    }
+    return stream;
+  }
 
   getOrCreate(jobId: string): Observable<MessageEvent> {
-    let subject = this.streams.get(jobId);
-    if (!subject) {
-      subject = new Subject<MessageEvent>();
-      this.streams.set(jobId, subject);
+    const stream = this.ensureStream(jobId);
+    stream.subscribed = true;
+
+    if (stream.buffer.length > 0) {
+      const buffered = [...stream.buffer];
+      stream.buffer = [];
+      return concat(from(buffered), stream.subject.asObservable());
     }
-    return subject.asObservable();
+
+    return stream.subject.asObservable();
   }
 
   sendToJob(jobId: string, event: ProgressEvent): void {
-    const subject = this.streams.get(jobId);
-    if (!subject) {
-      this.logger.warn(`No SSE stream for jobId=${jobId}`);
-      return;
+    const stream = this.ensureStream(jobId);
+    const msg = { data: event.message, type: event.status } as MessageEvent;
+
+    if (stream.subscribed) {
+      stream.subject.next(msg);
+    } else {
+      stream.buffer.push(msg);
     }
-    subject.next({ data: event.message, type: event.status } as MessageEvent);
   }
 
   closeStream(jobId: string): void {
-    const subject = this.streams.get(jobId);
-    if (subject) {
-      subject.complete();
+    const stream = this.streams.get(jobId);
+    if (stream) {
+      stream.subject.complete();
       this.streams.delete(jobId);
       this.logger.log(`SSE stream closed for jobId=${jobId}`);
     }
