@@ -206,6 +206,7 @@ interface ChatRequest {
   max_tokens?: number;
   temperature?: number;
   provider?: ProviderConfig;
+  provider_name?: string;
 }
 
 interface ChatResponse {
@@ -235,11 +236,13 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
     ],
     max_tokens: config.AI_MAX_TOKENS,
     temperature: config.AI_TEMPERATURE,
+    provider_name: 'Anthropic',
     provider: {
       order: ['Anthropic', 'Google', 'Amazon Bedrock', 'Azure'],
       allow_fallbacks: true,
     },
   };
+  console.log(config.AI_MODEL);
 
   const response = await fetch(config.AI_API_URL, {
     method: 'POST',
