@@ -195,11 +195,17 @@ interface ChatMessage {
   content: string;
 }
 
+interface ProviderConfig {
+  order?: string[];
+  allow_fallbacks?: boolean;
+}
+
 interface ChatRequest {
   model: string;
   messages: ChatMessage[];
   max_tokens?: number;
   temperature?: number;
+  provider?: ProviderConfig;
 }
 
 interface ChatResponse {
@@ -208,6 +214,11 @@ interface ChatResponse {
     prompt_tokens: number;
     completion_tokens: number;
     total_tokens: number;
+  };
+  error?: {
+    message: string;
+    code?: number | string;
+    metadata?: Record<string, unknown>;
   };
 }
 
@@ -224,6 +235,10 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
     ],
     max_tokens: config.AI_MAX_TOKENS,
     temperature: config.AI_TEMPERATURE,
+    provider: {
+      order: ['Anthropic', 'Google', 'Amazon Bedrock', 'Azure'],
+      allow_fallbacks: true,
+    },
   };
 
   const response = await fetch(config.AI_API_URL, {
@@ -241,6 +256,10 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
   }
 
   const data = (await response.json()) as ChatResponse;
+
+  if (data.error) {
+    throw new Error(`LLM API error: ${JSON.stringify(data.error)}`);
+  }
 
   if (data.usage) {
     console.log(
