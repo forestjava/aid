@@ -23,6 +23,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "adm-zip": "^0.5.16",
+    "handlebars": "^4.7.9",
     "js-yaml": "^4.1.1",
     "ohm-js": "^17.3.0",
     "reflect-metadata": "^0.2.2",
