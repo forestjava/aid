@@ -25,6 +25,12 @@ export class ExportersService implements OnModuleInit {
       baseUrl: 'http://contract-craft-dev-service:8080',
       startPath: '/api/trigger',
     });
+    this.register({
+      exporterId: 'prisma-schema',
+      name: 'Prisma Schema Generator',
+      baseUrl: 'http://aid-runner-prisma:3004',
+      startPath: '/start',
+    });
   }
 
   register(config: ExporterConfig): void {
