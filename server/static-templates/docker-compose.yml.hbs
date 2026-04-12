@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: {{projectName}}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: {{projectName}}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: {{projectName}}-backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/{{projectName}}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      NODE_ENV: production
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: {{projectName}}-frontend
+    restart: unless-stopped
+    networks:
+      - internal
+
+  nginx:
+    image: nginx:alpine
+    container_name: {{projectName}}-nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - internal
+      - proxy
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  proxy:
+    external: true
