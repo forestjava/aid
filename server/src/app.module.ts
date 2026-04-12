@@ -10,6 +10,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { ProgressModule } from './progress/progress.module';
 import { LoadModule } from './load/load.module';
 import { BackupModule } from './load/backup.module';
+import { OrchestratorModule } from './orchestrator/orchestrator.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BackupModule } from './load/backup.module';
     ProgressModule,
     LoadModule,
     BackupModule,
+    OrchestratorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
