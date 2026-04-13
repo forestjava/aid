@@ -25,7 +25,12 @@ export function validatePrismaSchema(schemaContent: string): ValidationResult {
         cwd: tmpDir,
         timeout: 30000,
         stdio: 'pipe',
-        env: { ...process.env, PRISMA_HIDE_UPDATE_MESSAGE: '1' },
+        env: {
+          ...process.env,
+          PRISMA_HIDE_UPDATE_MESSAGE: '1',
+          // Prisma 6 validate requires DATABASE_URL even for syntax check
+          DATABASE_URL: process.env.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy',
+        },
       });
       console.log('Prisma validate passed:', output.toString().trim());
     } catch (err: unknown) {
@@ -43,7 +48,11 @@ export function validatePrismaSchema(schemaContent: string): ValidationResult {
         cwd: tmpDir,
         timeout: 30000,
         stdio: 'pipe',
-        env: { ...process.env, PRISMA_HIDE_UPDATE_MESSAGE: '1' },
+        env: {
+          ...process.env,
+          PRISMA_HIDE_UPDATE_MESSAGE: '1',
+          DATABASE_URL: process.env.DATABASE_URL || 'postgresql://dummy:dummy@localhost:5432/dummy',
+        },
       });
       const formatted = fs.readFileSync(schemaPath, 'utf-8');
       return { valid: true, formatted };
