@@ -30,7 +30,14 @@ RULES:
 9. Do NOT generate authProvider.ts or dataProvider.ts — they are provided as static references.
 10. App.tsx must call initKeycloak() before rendering <Admin>.
 11. Entity folder names use kebab-case: equipment-status/, not EquipmentStatus/.
-12. Generate a main.tsx entry point that imports App and renders it.`;
+12. Generate a main.tsx entry point that imports App and renders it.
+13. For EACH entity folder, generate an index.ts barrel export file that re-exports all components. Example:
+    // resources/equipment/index.ts
+    export { EquipmentList } from './EquipmentList';
+    export { EquipmentEdit } from './EquipmentEdit';
+    export { EquipmentCreate } from './EquipmentCreate';
+    export { EquipmentShow } from './EquipmentShow';
+14. In App.tsx, import from the barrel: import { EquipmentList, ... } from './resources/equipment';`;
 
 export async function generateReactAdminFrontend(dslContent: string, prismaSchema: string, authReference: string): Promise<string> {
   const context7Docs = await fetchReactAdminDocs();

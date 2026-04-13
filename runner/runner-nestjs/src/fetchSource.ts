@@ -17,18 +17,17 @@ export async function fetchFile(filePath: string): Promise<string> {
 }
 
 export async function fetchAuthReference(): Promise<string> {
-  const files = [
-    'backend/src/auth/auth.module.ts',
-    'backend/src/auth/jwt.strategy.ts',
-    'backend/src/auth/jwt-auth.guard.ts',
-    'backend/src/prisma/prisma.service.ts',
-  ];
+  // Read from bundled reference files (not from aid filesystem)
+  const fs = await import('fs');
+  const path = await import('path');
+  const refsDir = path.join(import.meta.dirname ?? __dirname, 'refs');
+  const files = ['auth.module.ts', 'jwt.strategy.ts', 'jwt-auth.guard.ts', 'prisma.service.ts'];
   const contents: string[] = [];
   for (const f of files) {
     try {
-      const content = await fetchFile(f);
+      const content = fs.readFileSync(path.join(refsDir, f), 'utf-8');
       contents.push(`// --- ${f} ---\n${content}`);
-    } catch { console.warn(`Could not fetch reference file: ${f}`); }
+    } catch { console.warn(`Could not read reference file: ${f}`); }
   }
   return contents.join('\n\n');
 }

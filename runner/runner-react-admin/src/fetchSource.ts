@@ -17,11 +17,17 @@ export async function fetchFile(filePath: string): Promise<string> {
 }
 
 export async function fetchAuthReference(): Promise<string> {
-  const files = ['frontend/src/authProvider.ts', 'frontend/src/dataProvider.ts'];
+  // Read from bundled reference files (not from aid filesystem)
+  const fs = await import('fs');
+  const path = await import('path');
+  const refsDir = path.join(import.meta.dirname ?? __dirname, 'refs');
+  const files = ['authProvider.ts', 'dataProvider.ts'];
   const contents: string[] = [];
   for (const f of files) {
-    try { const content = await fetchFile(f); contents.push(`// --- ${f} ---\n${content}`); }
-    catch { console.warn(`Could not fetch reference file: ${f}`); }
+    try {
+      const content = fs.readFileSync(path.join(refsDir, f), 'utf-8');
+      contents.push(`// --- ${f} ---\n${content}`);
+    } catch { console.warn(`Could not read reference file: ${f}`); }
   }
   return contents.join('\n\n');
 }
