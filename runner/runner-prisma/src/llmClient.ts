@@ -13,26 +13,24 @@ interface ChatResponse {
 
 const SYSTEM_PROMPT = `You are a Prisma schema generator. You generate prisma/schema.prisma files from entity descriptions.
 
-CRITICAL: You are generating for Prisma 7.7+. The "url" property is NO LONGER allowed in datasource blocks.
-
 RULES:
 1. Output ONLY the content of schema.prisma — no markdown fences, no explanations, no preamble.
-2. Use Prisma 7 syntax with PostgreSQL provider.
-3. The datasource block must ONLY contain the provider — NO url property:
+2. Use Prisma 6 syntax with PostgreSQL provider.
+3. Always include the datasource and generator blocks:
    datasource db {
      provider = "postgresql"
+     url      = env("DATABASE_URL")
    }
    generator client {
-     provider = "prisma-client"
+     provider = "prisma-client-js"
    }
-4. Do NOT use env("DATABASE_URL") in datasource — connection is configured via adapter in application code.
-5. Use @id @default(uuid()) for primary keys unless the entity specifies otherwise.
-6. Use @relation with explicit fields and references for all relations.
-7. Map DSL types to Prisma types: String, Int, Float, Boolean, DateTime, Json.
-8. Use @updatedAt for updatedAt fields, @default(now()) for createdAt.
-9. Add @@map("table_name") if the entity name differs from desired table name.
-10. Enums should be defined as Prisma enums.
-11. Use camelCase for field names, PascalCase for model names.`;
+4. Use @id @default(uuid()) for primary keys unless the entity specifies otherwise.
+5. Use @relation with explicit fields and references for all relations.
+6. Map DSL types to Prisma types: String, Int, Float, Boolean, DateTime, Json.
+7. Use @updatedAt for updatedAt fields, @default(now()) for createdAt.
+8. Add @@map("table_name") if the entity name differs from desired table name.
+9. Enums should be defined as Prisma enums.
+10. Use camelCase for field names, PascalCase for model names.`;
 
 export async function generatePrismaSchema(dslContent: string): Promise<string> {
   const context7Docs = await fetchPrismaDocs();

@@ -24,7 +24,9 @@ RULES:
 9. Use pagination: findAll accepts query params skip/take, returns { data, total }.
 10. Import paths: PrismaService from '../prisma/prisma.service', JwtAuthGuard from '../auth/jwt-auth.guard'.
 11. Do NOT generate auth or prisma files — they are provided as static references.
-12. Entity folder names use kebab-case: equipment-status/, not equipmentStatus/.`;
+12. Entity folder names use kebab-case: equipment-status/, not equipmentStatus/.
+13. Do NOT import types from 'generated/prisma'. Instead, import from '@prisma/client'. Example: import { Prisma } from '@prisma/client';
+14. Import PrismaService from '../prisma/prisma.service'. Import Prisma namespace from '@prisma/client'.`;
 
 export async function generateNestJsBackend(dslContent: string, prismaSchema: string, authReference: string): Promise<string> {
   const context7Docs = await fetchNestJsDocs();

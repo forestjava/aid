@@ -31,7 +31,7 @@ describe('TemplateService', () => {
       // Static files (non-.hbs) should be copied as-is
       const tsconfig = result.get('backend/tsconfig.json');
       expect(tsconfig).toBeDefined();
-      expect(tsconfig).toContain('"module": "ESNext"');
+      expect(tsconfig).toContain('"module": "commonjs"');
 
       // .hbs extension should be stripped from output keys
       expect(result.has('docker-compose.yml')).toBe(true);

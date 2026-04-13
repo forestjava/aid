@@ -5,7 +5,7 @@
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { Post, Prisma } from 'generated/prisma';
+import { Post, Prisma } from '@prisma/client';
 
 @Injectable()
 export class PostsService {

@@ -7,7 +7,7 @@ import { passportJwtSecret } from 'jwks-rsa';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKeyProvider: passportJwtSecret({
         cache: true,
@@ -20,11 +20,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: Record<string, unknown>) {
+  validate(payload: any) {
     return {
       userId: payload.sub,
       username: payload.preferred_username,
-      roles: payload.realm_access?.['roles'] ?? [],
+      roles: payload.realm_access?.roles ?? [],
     };
   }
 }

@@ -53,9 +53,8 @@ describe('Integration: Template Rendering', () => {
     const pkg = JSON.parse(files.get('backend/package.json')!);
     expect(pkg.dependencies['@nestjs/core']).toBeDefined();
     expect(pkg.dependencies['@prisma/client']).toBeDefined();
-    expect(pkg.dependencies['@prisma/adapter-pg']).toBeDefined();
 
     const tsconfig = JSON.parse(files.get('backend/tsconfig.json')!);
-    expect(tsconfig.compilerOptions.module).toBe('ESNext');
+    expect(tsconfig.compilerOptions.module).toBe('commonjs');
   });
 });

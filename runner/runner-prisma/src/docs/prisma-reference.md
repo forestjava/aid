@@ -1,14 +1,15 @@
-## Prisma 7 Schema Reference
+## Prisma 6 Schema Reference
 
 ### Schema Structure
 
 ```prisma
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
 }
 
 model User {
@@ -28,8 +29,6 @@ model Post {
   authorId  String
 }
 ```
-
-CRITICAL: Prisma 7 does NOT support `url` in datasource. Only `provider` is allowed.
 
 ### Key Decorators
 - `@id` — primary key
