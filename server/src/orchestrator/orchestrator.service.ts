@@ -51,6 +51,7 @@ export class OrchestratorService {
 
   private async runPipeline(jobId: string, dto: GenerateDto): Promise<void> {
     try {
+      // Step 0: Preparation
       this.updateProgress(jobId, 'started', 'Step 0: Preparing project...');
 
       const exists = await this.giteaClient.repoExists(dto.projectName);
@@ -71,24 +72,69 @@ export class OrchestratorService {
       this.updateProgress(jobId, 'processing', `Pushing ${files.size} template files to Gitea...`);
       await this.giteaClient.pushFiles(dto.projectName, files, 'chore: initial project scaffold');
 
+      // Phase 1: Prisma Schema (sequential)
       this.updateProgress(jobId, 'processing', 'Phase 1: Generating Prisma schema...');
       const prismaConfig = this.exportersService.findById('prisma-schema');
-
-      if (!prismaConfig) {
-        throw new Error('runner-prisma not registered in exporters');
-      }
+      if (!prismaConfig) throw new Error('runner-prisma not registered');
 
       const prismaJob = this.jobsService.create('prisma-schema');
       await this.exportersService.startJob(prismaConfig, {
         jobId: prismaJob.jobId,
         path: dto.dslPath,
       });
-
       await this.waitForJob(prismaJob.jobId, 120000);
-
       this.updateProgress(jobId, 'processing', 'Phase 1 complete. Schema validated.');
 
-      this.updateProgress(jobId, 'completed', `Generation complete. Repo: ${repo.html_url}`);
+      // Phase 2: Backend + Frontend (parallel)
+      this.updateProgress(jobId, 'processing', 'Phase 2: Generating backend and frontend in parallel...');
+
+      const nestjsConfig = this.exportersService.findById('nestjs-backend');
+      const reactAdminConfig = this.exportersService.findById('react-admin-frontend');
+
+      const phase2Jobs: Array<{ name: string; jobId: string }> = [];
+
+      if (nestjsConfig) {
+        const job = this.jobsService.create('nestjs-backend');
+        await this.exportersService.startJob(nestjsConfig, {
+          jobId: job.jobId,
+          path: dto.dslPath,
+        });
+        phase2Jobs.push({ name: 'Backend', jobId: job.jobId });
+      }
+
+      if (reactAdminConfig) {
+        const job = this.jobsService.create('react-admin-frontend');
+        await this.exportersService.startJob(reactAdminConfig, {
+          jobId: job.jobId,
+          path: dto.dslPath,
+        });
+        phase2Jobs.push({ name: 'Frontend', jobId: job.jobId });
+      }
+
+      // Wait for all Phase 2 jobs in parallel
+      const results = await Promise.allSettled(
+        phase2Jobs.map(async (j) => {
+          await this.waitForJob(j.jobId, 180000);
+          return j.name;
+        }),
+      );
+
+      const succeeded = results
+        .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled')
+        .map(r => r.value);
+      const failed = results
+        .filter(r => r.status === 'rejected')
+        .map((_, i) => phase2Jobs[i]?.name ?? 'unknown');
+
+      if (failed.length > 0 && succeeded.length > 0) {
+        this.updateProgress(jobId, 'completed',
+          `Partial generation. Success: ${succeeded.join(', ')}. Failed: ${failed.join(', ')}. Repo: ${repo.html_url}`);
+      } else if (failed.length > 0) {
+        throw new Error(`Phase 2 failed: ${failed.join(', ')}`);
+      } else {
+        this.updateProgress(jobId, 'completed',
+          `Generation complete. Backend + Frontend generated. Repo: ${repo.html_url}`);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.updateProgress(jobId, 'failed', `Pipeline failed: ${message}`);
