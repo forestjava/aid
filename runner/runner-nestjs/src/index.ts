@@ -4,7 +4,7 @@ import { sendProgress } from './progress.js';
 import { fetchSourceText, fetchFile, fetchAuthReference } from './fetchSource.js';
 import { generateNestJsBackend } from './llmClient.js';
 import { writeResultFile } from './writeResult.js';
-import { parseFileOutput } from '../../shared/fileParser.js';
+import { parseFileOutput } from './fileParser.js';
 
 interface StartRequest { jobId: string; path: string; }
 const MAX_RETRIES = 2;
