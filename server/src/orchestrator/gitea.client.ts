@@ -113,8 +113,35 @@ export class GiteaClient {
   }
 
   async repoExists(name: string): Promise<boolean> {
-    const url = `${this.baseUrl}/api/v1/repos/${this.owner}/${name}`;
-    const res = await fetch(url, { headers: this.headers() });
-    return res.ok;
+    // Check org first, then authenticated user
+    const orgUrl = `${this.baseUrl}/api/v1/repos/${this.org}/${name}`;
+    const orgRes = await fetch(orgUrl, { headers: this.headers() });
+    if (orgRes.ok) {
+      this.owner = this.org;
+      return true;
+    }
+
+    // Check user's own repos
+    const userUrl = `${this.baseUrl}/api/v1/repos/${await this.getUsername()}/${name}`;
+    const userRes = await fetch(userUrl, { headers: this.headers() });
+    if (userRes.ok) {
+      this.owner = await this.getUsername();
+      return true;
+    }
+
+    return false;
+  }
+
+  private usernameCache: string | null = null;
+
+  private async getUsername(): Promise<string> {
+    if (this.usernameCache) return this.usernameCache;
+    const res = await fetch(`${this.baseUrl}/api/v1/user`, { headers: this.headers() });
+    if (res.ok) {
+      const data = await res.json() as { login: string };
+      this.usernameCache = data.login;
+      return data.login;
+    }
+    return this.org; // fallback
   }
 }
