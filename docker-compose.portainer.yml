@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -10,13 +8,13 @@ services:
       - /data/aid:/data
     environment:
       - PORT=3000
-      - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
-      GITEA_URL: ${GITEA_URL:-http://gitea:3000}
-      GITEA_TOKEN: ${GITEA_TOKEN}
-      GITEA_ORG: ${GITEA_ORG:-greact}
-      PORTAINER_URL: ${PORTAINER_URL:-http://portainer:9000}
-      PORTAINER_API_KEY: ${PORTAINER_API_KEY}
-      PORTAINER_ENDPOINT_ID: ${PORTAINER_ENDPOINT_ID:-1}
+      - FS_ROOT_PATH=/data
+      - GITEA_URL=${GITEA_URL:-http://gitea:3000}
+      - GITEA_TOKEN=${GITEA_TOKEN}
+      - GITEA_ORG=${GITEA_ORG:-greact}
+      - PORTAINER_URL=${PORTAINER_URL:-http://portainer:9000}
+      - PORTAINER_API_KEY=${PORTAINER_API_KEY}
+      - PORTAINER_ENDPOINT_ID=${PORTAINER_ENDPOINT_ID:-1}
     networks:
       - proxy
     restart: unless-stopped
@@ -68,14 +66,14 @@ services:
     container_name: aid-runner-prisma
     restart: unless-stopped
     environment:
-      CALLBACK_BASE_URL: http://aid-backend:3000
-      AI_API_URL: ${AI_API_URL}
-      AI_API_KEY: ${AI_API_KEY}
-      AI_MODEL: ${AI_MODEL}
-      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-16000}
-      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.2}
-      CONTEXT7_ENABLED: "true"
-      PORT: "3004"
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - AI_API_URL=${AI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL}
+      - AI_MAX_TOKENS=${AI_MAX_TOKENS:-16000}
+      - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
+      - CONTEXT7_ENABLED=true
+      - PORT=3004
     networks:
       - proxy
 
@@ -86,14 +84,14 @@ services:
     container_name: aid-runner-nestjs
     restart: unless-stopped
     environment:
-      CALLBACK_BASE_URL: http://aid-backend:3000
-      AI_API_URL: ${AI_API_URL}
-      AI_API_KEY: ${AI_API_KEY}
-      AI_MODEL: ${AI_MODEL}
-      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-32000}
-      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.2}
-      CONTEXT7_ENABLED: "true"
-      PORT: "3005"
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - AI_API_URL=${AI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL}
+      - AI_MAX_TOKENS=${AI_MAX_TOKENS:-32000}
+      - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
+      - CONTEXT7_ENABLED=true
+      - PORT=3005
     networks:
       - proxy
 
@@ -104,14 +102,14 @@ services:
     container_name: aid-runner-react-admin
     restart: unless-stopped
     environment:
-      CALLBACK_BASE_URL: http://aid-backend:3000
-      AI_API_URL: ${AI_API_URL}
-      AI_API_KEY: ${AI_API_KEY}
-      AI_MODEL: ${AI_MODEL}
-      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-32000}
-      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.2}
-      CONTEXT7_ENABLED: "true"
-      PORT: "3006"
+      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - AI_API_URL=${AI_API_URL}
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_MODEL=${AI_MODEL}
+      - AI_MAX_TOKENS=${AI_MAX_TOKENS:-32000}
+      - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
+      - CONTEXT7_ENABLED=true
+      - PORT=3006
     networks:
       - proxy
 

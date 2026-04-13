@@ -10,7 +10,9 @@ export interface TemplateVars {
 
 @Injectable()
 export class TemplateService {
-  private readonly templatesDir = path.join(__dirname, '..', '..', 'static-templates');
+  // process.cwd() = /app/server in both dev and Docker production
+  // __dirname doesn't work in production because it points to dist/src/orchestrator/
+  private readonly templatesDir = path.join(process.cwd(), 'static-templates');
 
   async renderTemplates(vars: TemplateVars): Promise<Map<string, string>> {
     const result = new Map<string, string>();
