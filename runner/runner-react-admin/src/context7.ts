@@ -10,11 +10,21 @@ const QUERIES = [
 let cachedDocs: string | null = null;
 
 async function queryContext7(libraryId: string, query: string): Promise<string> {
-  const url = `${CONTEXT7_BASE}/query`;
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ libraryId, query }) });
-  if (!res.ok) { console.warn(`Context7 query failed (${res.status})`); return ''; }
-  const data = await res.json() as { content: string };
-  return data.content ?? '';
+  try {
+    const url = `${CONTEXT7_BASE}/query`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ libraryId, query }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) { console.warn(`Context7 query failed (${res.status})`); return ''; }
+    const data = await res.json() as { content: string };
+    return data.content ?? '';
+  } catch (err) {
+    console.warn(`Context7 unreachable: ${err instanceof Error ? err.message : err}`);
+    return '';
+  }
 }
 
 export async function fetchReactAdminDocs(): Promise<string> {
