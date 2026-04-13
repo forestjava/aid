@@ -11,6 +11,12 @@ services:
     environment:
       - PORT=3000
       - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
+      GITEA_URL: ${GITEA_URL:-http://gitea:3000}
+      GITEA_TOKEN: ${GITEA_TOKEN}
+      GITEA_ORG: ${GITEA_ORG:-greact}
+      PORTAINER_URL: ${PORTAINER_URL:-http://portainer:9000}
+      PORTAINER_API_KEY: ${PORTAINER_API_KEY}
+      PORTAINER_ENDPOINT_ID: ${PORTAINER_ENDPOINT_ID:-1}
     networks:
       - proxy
     restart: unless-stopped
