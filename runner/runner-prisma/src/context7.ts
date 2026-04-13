@@ -34,7 +34,7 @@ async function queryContext7(libraryId: string, query: string): Promise<string> 
 }
 
 export async function fetchPrismaDocs(): Promise<string> {
-  if (cachedDocs) return cachedDocs;
+  if (cachedDocs !== null) return cachedDocs;
 
   if (!config.CONTEXT7_ENABLED) {
     cachedDocs = '';

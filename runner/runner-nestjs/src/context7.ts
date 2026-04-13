@@ -29,7 +29,7 @@ async function queryContext7(libraryId: string, query: string): Promise<string> 
 }
 
 export async function fetchNestJsDocs(): Promise<string> {
-  if (cachedDocs) return cachedDocs;
+  if (cachedDocs !== null) return cachedDocs;
   if (!config.CONTEXT7_ENABLED) { cachedDocs = ''; return cachedDocs; }
   console.log('Fetching NestJS documentation from Context7...');
   const results: string[] = [];
