@@ -17,6 +17,7 @@ import EntityNode from './EntityNode'
 import UiNode from './UiNode'
 import { useProcessSchema } from './useProcessSchema'
 import { ExportMenu } from './ExportMenu'
+import { GenerateApp } from '@/components/workspace/GenerateApp'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -192,6 +193,7 @@ export const Preview: React.FC<PreviewProps> = ({ selectedPath }) => {
                 </Command>
               </PopoverContent>
             </Popover>
+            <GenerateApp dslPath={selectedPath} />
             <ExportMenu path={selectedPath} />
           </div>
         )}
