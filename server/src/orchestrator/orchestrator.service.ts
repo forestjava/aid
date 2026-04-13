@@ -6,6 +6,7 @@ import { ExportersService } from '../exporters/exporters.service';
 import { SseService } from '../sse/sse.service';
 import { GenerateDto } from './dto/generate.dto';
 import { ConfigService } from '@nestjs/config';
+import { PortainerClient } from './portainer.client';
 
 export interface GenerationResult {
   jobId: string;
@@ -18,6 +19,7 @@ export interface GenerationResult {
 export class OrchestratorService {
   private readonly logger = new Logger(OrchestratorService.name);
   private readonly giteaClient: GiteaClient;
+  private readonly portainerClient: PortainerClient;
 
   constructor(
     private readonly templateService: TemplateService,
@@ -30,6 +32,11 @@ export class OrchestratorService {
       configService.get('GITEA_URL', 'http://gitea:3000'),
       configService.get('GITEA_TOKEN', ''),
       configService.get('GITEA_ORG', 'greact'),
+    );
+    this.portainerClient = new PortainerClient(
+      configService.get('PORTAINER_URL', 'http://portainer:9000'),
+      configService.get('PORTAINER_API_KEY', ''),
+      Number(configService.get('PORTAINER_ENDPOINT_ID', '1')),
     );
   }
 
@@ -132,6 +139,25 @@ export class OrchestratorService {
       } else if (failed.length > 0) {
         throw new Error(`Phase 2 failed: ${failed.join(', ')}`);
       } else {
+        // Step 3: Deploy via Portainer
+        try {
+          this.updateProgress(jobId, 'processing', 'Step 3: Deploying via Portainer...');
+          const existingStack = await this.portainerClient.getStackByName(dto.projectName);
+          if (existingStack) {
+            this.updateProgress(jobId, 'processing', 'Removing previous deployment...');
+            await this.portainerClient.removeStack(existingStack.Id);
+          }
+          const composeContent = files.get('docker-compose.yml');
+          if (composeContent) {
+            this.updateProgress(jobId, 'processing', 'Creating Portainer stack...');
+            await this.portainerClient.deployStack(dto.projectName, composeContent);
+            this.updateProgress(jobId, 'processing', 'Stack deployed successfully.');
+          }
+        } catch (deployErr) {
+          const deployMsg = deployErr instanceof Error ? deployErr.message : String(deployErr);
+          this.logger.warn(`Portainer deploy failed: ${deployMsg}`);
+          this.updateProgress(jobId, 'processing', `Deploy warning: ${deployMsg}. Code is in Gitea.`);
+        }
         this.updateProgress(jobId, 'completed',
           `Generation complete. Backend + Frontend generated. Repo: ${repo.html_url}`);
       }
