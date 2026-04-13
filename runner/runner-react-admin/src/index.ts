@@ -50,13 +50,23 @@ async function processJob(jobId: string, sourcePath: string): Promise<void> {
         continue;
       }
 
-      await sendProgress(jobId, 'processing', `Writing ${files.size} frontend files...`);
+      // Strip leading src/ from LLM paths if present
+      const normalizedFiles = new Map<string, string>();
       for (const [filePath, content] of files) {
-        const outputPath = dir ? `${dir}/frontend/src/${filePath}` : `frontend/src/${filePath}`;
-        await writeResultFile(outputPath, content);
+        const clean = filePath.replace(/^src\//, '');
+        normalizedFiles.set(clean, content);
       }
 
-      await sendProgress(jobId, 'completed', `Frontend generated: ${files.size} files`);
+      // Send generated files as JSON in completed message for Orchestrator to push to Gitea
+      const filesObj: Record<string, string> = {};
+      for (const [k, v] of normalizedFiles) {
+        filesObj[`frontend/src/${k}`] = v;
+      }
+
+      await sendProgress(jobId, 'completed', JSON.stringify({
+        message: `Frontend generated: ${normalizedFiles.size} files`,
+        files: filesObj,
+      }));
       return;
     }
   } catch (err) {

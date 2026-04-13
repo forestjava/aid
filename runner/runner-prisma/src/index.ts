@@ -57,11 +57,15 @@ async function processJob(jobId: string, sourcePath: string): Promise<void> {
       }
     }
 
-    const outputPath = deriveOutputPath(sourcePath);
-    await sendProgress(jobId, 'processing', 'Writing schema.prisma...');
-    await writeResultFile(outputPath, schema);
+    // Send generated schema as JSON in completed message for Orchestrator to push to Gitea
+    const filesObj: Record<string, string> = {
+      'backend/prisma/schema.prisma': schema,
+    };
 
-    await sendProgress(jobId, 'completed', `Schema generated and validated: ${outputPath}`);
+    await sendProgress(jobId, 'completed', JSON.stringify({
+      message: `Schema generated and validated`,
+      files: filesObj,
+    }));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Job ${jobId} failed:`, message);

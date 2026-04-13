@@ -16,7 +16,7 @@ interface GenerateDialogProps {
 }
 
 export function GenerateDialog({ open, onClose, onSubmit }: GenerateDialogProps) {
-  const [projectName, setProjectName] = useState('')
+  const [projectName, setProjectName] = useState('toir-light-v2')
   const [domain, setDomain] = useState('')
 
   const handleProjectNameChange = (value: string) => {

@@ -89,7 +89,14 @@ export class OrchestratorService {
         jobId: prismaJob.jobId,
         path: dto.dslPath,
       });
-      await this.waitForJob(prismaJob.jobId, 120000);
+      const prismaResult = await this.waitForJob(prismaJob.jobId, 120000);
+
+      // Push Phase 1 files to Gitea
+      const prismaFiles = this.extractFilesFromResult(prismaResult);
+      if (prismaFiles.size > 0) {
+        this.updateProgress(jobId, 'processing', `Pushing ${prismaFiles.size} Phase 1 files to Gitea...`);
+        await this.giteaClient.pushFiles(dto.projectName, prismaFiles, 'feat: add Prisma schema');
+      }
       this.updateProgress(jobId, 'processing', 'Phase 1 complete. Schema validated.');
 
       // Phase 2: Backend + Frontend (parallel)
@@ -121,17 +128,33 @@ export class OrchestratorService {
       // Wait for all Phase 2 jobs in parallel
       const results = await Promise.allSettled(
         phase2Jobs.map(async (j) => {
-          await this.waitForJob(j.jobId, 180000);
-          return j.name;
+          const result = await this.waitForJob(j.jobId, 180000);
+          return { name: j.name, result };
         }),
       );
 
-      const succeeded = results
-        .filter((r): r is PromiseFulfilledResult<string> => r.status === 'fulfilled')
-        .map(r => r.value);
-      const failed = results
-        .filter(r => r.status === 'rejected')
-        .map((_, i) => phase2Jobs[i]?.name ?? 'unknown');
+      const succeeded: string[] = [];
+      const failed: string[] = [];
+      const allGeneratedFiles = new Map<string, string>();
+
+      for (let i = 0; i < results.length; i++) {
+        const r = results[i];
+        if (r.status === 'fulfilled') {
+          succeeded.push(r.value.name);
+          const generatedFiles = this.extractFilesFromResult(r.value.result);
+          for (const [path, content] of generatedFiles) {
+            allGeneratedFiles.set(path, content);
+          }
+        } else {
+          failed.push(phase2Jobs[i]?.name ?? 'unknown');
+        }
+      }
+
+      // Push Phase 2 files to Gitea
+      if (allGeneratedFiles.size > 0) {
+        this.updateProgress(jobId, 'processing', `Pushing ${allGeneratedFiles.size} generated files to Gitea...`);
+        await this.giteaClient.pushFiles(dto.projectName, allGeneratedFiles, 'feat: add generated code');
+      }
 
       if (failed.length > 0 && succeeded.length > 0) {
         this.updateProgress(jobId, 'completed',
@@ -167,7 +190,7 @@ export class OrchestratorService {
     }
   }
 
-  private async waitForJob(jobId: string, timeoutMs: number): Promise<void> {
+  private async waitForJob(jobId: string, timeoutMs: number): Promise<string> {
     const start = Date.now();
     const pollInterval = 2000;
 
@@ -175,7 +198,7 @@ export class OrchestratorService {
       const job = this.jobsService.findById(jobId);
       if (!job) throw new Error(`Job ${jobId} not found`);
 
-      if (job.status === 'completed') return;
+      if (job.status === 'completed') return job.lastMessage ?? '';
       if (job.status === 'failed') {
         throw new Error(`Sub-job ${jobId} failed: ${job.lastMessage}`);
       }
@@ -184,6 +207,23 @@ export class OrchestratorService {
     }
 
     throw new Error(`Sub-job ${jobId} timed out after ${timeoutMs}ms`);
+  }
+
+  private extractFilesFromResult(resultMessage: string): Map<string, string> {
+    const files = new Map<string, string>();
+    try {
+      const parsed = JSON.parse(resultMessage);
+      if (parsed.files && typeof parsed.files === 'object') {
+        for (const [path, content] of Object.entries(parsed.files)) {
+          if (typeof content === 'string') {
+            files.set(path, content);
+          }
+        }
+      }
+    } catch {
+      // Not JSON — old format, no files to extract
+    }
+    return files;
   }
 
   private updateProgress(jobId: string, status: string, message: string): void {
