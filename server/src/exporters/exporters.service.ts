@@ -31,6 +31,18 @@ export class ExportersService implements OnModuleInit {
       baseUrl: 'http://aid-runner-prisma:3004',
       startPath: '/start',
     });
+    this.register({
+      exporterId: 'nestjs-backend',
+      name: 'NestJS Backend Generator',
+      baseUrl: 'http://aid-runner-nestjs:3005',
+      startPath: '/start',
+    });
+    this.register({
+      exporterId: 'react-admin-frontend',
+      name: 'React Admin Frontend Generator',
+      baseUrl: 'http://aid-runner-react-admin:3006',
+      startPath: '/start',
+    });
   }
 
   register(config: ExporterConfig): void {

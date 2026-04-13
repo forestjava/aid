@@ -73,6 +73,42 @@ services:
     networks:
       - proxy
 
+  runner-nestjs:
+    build:
+      context: ./runner/runner-nestjs
+      dockerfile: Dockerfile
+    container_name: aid-runner-nestjs
+    restart: unless-stopped
+    environment:
+      CALLBACK_BASE_URL: http://aid-backend:3000
+      AI_API_URL: ${AI_API_URL}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_MODEL: ${AI_MODEL}
+      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-32000}
+      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.2}
+      CONTEXT7_ENABLED: "true"
+      PORT: "3005"
+    networks:
+      - proxy
+
+  runner-react-admin:
+    build:
+      context: ./runner/runner-react-admin
+      dockerfile: Dockerfile
+    container_name: aid-runner-react-admin
+    restart: unless-stopped
+    environment:
+      CALLBACK_BASE_URL: http://aid-backend:3000
+      AI_API_URL: ${AI_API_URL}
+      AI_API_KEY: ${AI_API_KEY}
+      AI_MODEL: ${AI_MODEL}
+      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-32000}
+      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.2}
+      CONTEXT7_ENABLED: "true"
+      PORT: "3006"
+    networks:
+      - proxy
+
 networks:
   proxy:
     external: true
