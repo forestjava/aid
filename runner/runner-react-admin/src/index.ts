@@ -16,7 +16,8 @@ async function processJob(jobId: string, sourcePath: string): Promise<void> {
     const dslContent = await fetchSourceText(sourcePath);
 
     await sendProgress(jobId, 'processing', 'Fetching Prisma schema...');
-    const dir = sourcePath.replace(/\/[^/]+$/, '');
+    const lastSlash = sourcePath.lastIndexOf('/');
+    const dir = lastSlash === -1 ? '' : sourcePath.substring(0, lastSlash);
     const schemaPath = dir ? `${dir}/schema.prisma` : 'schema.prisma';
     const prismaSchema = await fetchFile(schemaPath);
 

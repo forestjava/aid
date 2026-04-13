@@ -14,8 +14,10 @@ interface StartRequest {
 const MAX_RETRIES = 2;
 
 function deriveOutputPath(sourcePath: string): string {
-  const dir = sourcePath.replace(/\/[^/]+$/, '');
-  return dir ? `${dir}/schema.prisma` : 'schema.prisma';
+  const lastSlash = sourcePath.lastIndexOf('/');
+  if (lastSlash === -1) return 'schema.prisma'; // file in root → schema.prisma in root
+  const dir = sourcePath.substring(0, lastSlash);
+  return `${dir}/schema.prisma`;
 }
 
 async function processJob(jobId: string, sourcePath: string): Promise<void> {
