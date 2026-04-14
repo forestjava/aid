@@ -12,7 +12,8 @@ describe('Integration: Template Rendering', () => {
     // Verify all expected files exist
     const expectedFiles = [
       'docker-compose.yml',
-      'nginx.conf',
+      'nginx/Dockerfile',
+      'nginx/nginx.conf',
       '.env.example',
       'backend/Dockerfile',
       'backend/package.json',
@@ -43,7 +44,7 @@ describe('Integration: Template Rendering', () => {
     expect(compose).toContain('my-app');
     expect(compose).not.toContain('{{');
 
-    const nginx = files.get('nginx.conf')!;
+    const nginx = files.get('nginx/nginx.conf')!;
     expect(nginx).toContain('my-app.greact.ru');
 
     const mainTs = files.get('backend/src/main.ts')!;
