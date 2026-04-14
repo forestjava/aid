@@ -11,6 +11,6 @@ const httpClient = (url: string, options: fetchUtils.Options = {}) => {
   return fetchUtils.fetchJson(url, { ...options, headers });
 };
 
-const apiUrl = import.meta.env.VITE_API_URL || '/api';
+const apiUrl = '/api';
 
 export const dataProvider = simpleRestProvider(apiUrl, httpClient);

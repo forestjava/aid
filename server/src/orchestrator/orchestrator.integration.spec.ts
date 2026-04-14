@@ -57,5 +57,20 @@ describe('Integration: Template Rendering', () => {
 
     const tsconfig = JSON.parse(files.get('backend/tsconfig.json')!);
     expect(tsconfig.compilerOptions.module).toBe('commonjs');
+
+    // Verify authProvider has hardcoded Keycloak values (not import.meta.env)
+    const authProvider = files.get('frontend/src/authProvider.ts')!;
+    expect(authProvider).toContain("realm: 'my-app'");
+    expect(authProvider).toContain("clientId: 'my-app-frontend'");
+    expect(authProvider).not.toContain('import.meta.env');
+
+    // Verify backend Dockerfile uses dist/src/main (SWC output path)
+    const backendDockerfile = files.get('backend/Dockerfile')!;
+    expect(backendDockerfile).toContain('dist/src/main');
+
+    // Verify nginx uses resolver for dynamic DNS
+    const nginxConf = files.get('nginx/nginx.conf')!;
+    expect(nginxConf).toContain('resolver 127.0.0.11');
+    expect(nginxConf).toContain('set $backend');
   });
 });
