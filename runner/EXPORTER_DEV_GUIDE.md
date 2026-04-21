@@ -123,3 +123,13 @@ this.register({
 - `runner/node` — демонстрационный (пустой) экспортер
 - `runner/crud-api-exporter` — экспортер, генерирующий описание CRUD API через LLM
 
+## Agentic Mode (since 2026-04-14)
+
+runner-prisma, runner-nestjs, and runner-react-admin now run in agentic mode:
+
+- Each runner receives `workspacePath` in its start request.
+- The workspace is a subdirectory of `/workspace`, shared between all runners via a Docker volume, and is pre-populated by the orchestrator with a `git clone` of the project repo (which already contains static templates).
+- The runner does not return generated files in the job completion payload. It calls `runAgenticLoop` from `@aid/runner-shared`, which invokes the LLM in a multi-turn conversation with `list_files`, `read_file`, `write_file` tools against the workspace.
+- After Phase 2, the orchestrator runs `git add . && git commit && git push` against the workspace.
+- Legacy exporters (crud-api, demo, contract) continue to work with the old `{jobId, path}` payload — the new `workspacePath` and `projectName` fields are optional on the shared payload type.
+
