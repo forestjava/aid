@@ -9,6 +9,7 @@ services:
       - FS_ROOT_PATH=/data
     volumes:
       - ./data:/data
+      - workspace:/workspace
     networks:
       - proxy
     restart: unless-stopped
@@ -39,3 +40,6 @@ services:
 networks:
   proxy:
     driver: bridge
+
+volumes:
+  workspace:
