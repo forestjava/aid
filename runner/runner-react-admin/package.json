@@ -2,7 +2,18 @@
   "name": "runner-react-admin",
   "version": "1.0.0",
   "private": true,
-  "scripts": { "start": "tsx src/index.ts" },
-  "dependencies": { "dotenv": "^16.4.0", "express": "^5.1.0" },
-  "devDependencies": { "@types/express": "^5.0.0", "tsx": "^4.19.0", "typescript": "^5.9.0" }
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@aid/runner-shared": "file:../shared",
+    "dotenv": "^16.4.0",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.0"
+  }
 }
