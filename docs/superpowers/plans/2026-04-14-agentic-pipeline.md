@@ -147,7 +147,7 @@ git commit -m "chore: add workspace volume to aid docker-compose"
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "test": "node --test --experimental-strip-types --no-warnings 'src/**/*.spec.ts'"
+    "test": "node --test --experimental-strip-types --no-warnings '**/*.spec.ts'"
   }
 }
 ```
