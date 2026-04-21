@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { ExporterConfig } from '../types/runner';
+import { ExporterConfig, RunnerStartPayload } from '../types/runner';
 
 @Injectable()
 export class ExportersService implements OnModuleInit {
@@ -56,7 +56,7 @@ export class ExportersService implements OnModuleInit {
 
   async startJob(
     config: ExporterConfig,
-    payload: { jobId: string; path: string },
+    payload: RunnerStartPayload,
   ): Promise<void> {
     const url = `${config.baseUrl}${config.startPath}`;
     this.logger.log(`Starting job=${payload.jobId} on exporter=${config.exporterId} at ${url}`);

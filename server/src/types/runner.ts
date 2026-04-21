@@ -22,6 +22,13 @@ export interface ExporterConfig {
   startPath: string;
 }
 
+export interface RunnerStartPayload {
+  jobId: string;
+  path: string;
+  workspacePath?: string;   // absolute path inside shared volume, e.g. /workspace/{projectName}
+  projectName?: string;     // used for logging / progress messages
+}
+
 export class StartJobDto {
   exporterId: string;
   path: string;
