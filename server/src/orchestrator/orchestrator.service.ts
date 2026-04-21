@@ -20,6 +20,9 @@ export class OrchestratorService {
   private readonly logger = new Logger(OrchestratorService.name);
   private readonly giteaClient: GiteaClient;
   private readonly portainerClient: PortainerClient;
+  private readonly workspaceRoot = '/workspace';
+  private readonly giteaUser: string;
+  private readonly giteaToken: string;
 
   constructor(
     private readonly templateService: TemplateService,
@@ -38,6 +41,8 @@ export class OrchestratorService {
       configService.get('PORTAINER_API_KEY', ''),
       Number(configService.get('PORTAINER_ENDPOINT_ID', '1')),
     );
+    this.giteaUser = configService.get('GITEA_USER', 'aid');
+    this.giteaToken = configService.get('GITEA_TOKEN', '');
   }
 
   async startGeneration(dto: GenerateDto): Promise<GenerationResult> {
@@ -79,6 +84,12 @@ export class OrchestratorService {
       this.updateProgress(jobId, 'processing', `Pushing ${files.size} template files to Gitea...`);
       await this.giteaClient.pushFiles(dto.projectName, files, 'chore: initial project scaffold');
 
+      this.updateProgress(jobId, 'processing', 'Cloning workspace...');
+      const authClone = repo.clone_url
+        .replace('http://', `http://${this.giteaUser}:${this.giteaToken}@`)
+        .replace('https://', `https://${this.giteaUser}:${this.giteaToken}@`);
+      const workspacePath = await this.prepareWorkspace(dto.projectName, authClone);
+
       // Phase 1: Prisma Schema (sequential)
       this.updateProgress(jobId, 'processing', 'Phase 1: Generating Prisma schema...');
       const prismaConfig = this.exportersService.findById('prisma-schema');
@@ -88,6 +99,8 @@ export class OrchestratorService {
       await this.exportersService.startJob(prismaConfig, {
         jobId: prismaJob.jobId,
         path: dto.dslPath,
+        workspacePath,
+        projectName: dto.projectName,
       });
       const prismaResult = await this.waitForJob(prismaJob.jobId, 120000);
 
@@ -112,6 +125,8 @@ export class OrchestratorService {
         await this.exportersService.startJob(nestjsConfig, {
           jobId: job.jobId,
           path: dto.dslPath,
+          workspacePath,
+          projectName: dto.projectName,
         });
         phase2Jobs.push({ name: 'Backend', jobId: job.jobId });
       }
@@ -121,6 +136,8 @@ export class OrchestratorService {
         await this.exportersService.startJob(reactAdminConfig, {
           jobId: job.jobId,
           path: dto.dslPath,
+          workspacePath,
+          projectName: dto.projectName,
         });
         phase2Jobs.push({ name: 'Frontend', jobId: job.jobId });
       }
@@ -224,6 +241,22 @@ export class OrchestratorService {
       // Not JSON — old format, no files to extract
     }
     return files;
+  }
+
+  private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
+    const targetDir = `${this.workspaceRoot}/${projectName}`;
+    const { promisify } = await import('node:util');
+    const { exec } = await import('node:child_process');
+    const execP = promisify(exec);
+
+    // wipe if exists (re-run case)
+    await execP(`rm -rf ${targetDir}`);
+    await execP(`mkdir -p ${this.workspaceRoot}`);
+    await execP(`git clone ${repoCloneUrl} ${targetDir}`);
+    // configure git identity so commits succeed later
+    await execP(`git -C ${targetDir} config user.email "aid@greact.ru"`);
+    await execP(`git -C ${targetDir} config user.name "aid-orchestrator"`);
+    return targetDir;
   }
 
   private updateProgress(jobId: string, status: string, message: string): void {
