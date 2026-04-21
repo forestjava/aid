@@ -6,6 +6,7 @@ services:
     container_name: aid-backend
     volumes:
       - ./data:/data
+      - workspace:/workspace
     environment:
       - PORT=3000
       - FS_ROOT_PATH=/data
@@ -61,10 +62,12 @@ services:
 
   runner-prisma:
     build:
-      context: ./runner/runner-prisma
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: runner/runner-prisma/Dockerfile
     container_name: aid-runner-prisma
     restart: unless-stopped
+    volumes:
+      - workspace:/workspace
     environment:
       - CALLBACK_BASE_URL=http://aid-backend:3000
       - AI_API_URL=${AI_API_URL}
@@ -79,10 +82,12 @@ services:
 
   runner-nestjs:
     build:
-      context: ./runner/runner-nestjs
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: runner/runner-nestjs/Dockerfile
     container_name: aid-runner-nestjs
     restart: unless-stopped
+    volumes:
+      - workspace:/workspace
     environment:
       - CALLBACK_BASE_URL=http://aid-backend:3000
       - AI_API_URL=${AI_API_URL}
@@ -97,10 +102,12 @@ services:
 
   runner-react-admin:
     build:
-      context: ./runner/runner-react-admin
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: runner/runner-react-admin/Dockerfile
     container_name: aid-runner-react-admin
     restart: unless-stopped
+    volumes:
+      - workspace:/workspace
     environment:
       - CALLBACK_BASE_URL=http://aid-backend:3000
       - AI_API_URL=${AI_API_URL}
@@ -130,3 +137,6 @@ services:
 networks:
   proxy:
     external: true
+
+volumes:
+  workspace:
