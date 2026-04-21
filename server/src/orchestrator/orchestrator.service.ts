@@ -108,14 +108,8 @@ export class OrchestratorService {
         projectName: dto.projectName,
       });
       const prismaResult = await this.waitForJob(prismaJob.jobId, 120000);
-
-      // Push Phase 1 files to Gitea
-      const prismaFiles = this.extractFilesFromResult(prismaResult);
-      if (prismaFiles.size > 0) {
-        this.updateProgress(jobId, 'processing', `Pushing ${prismaFiles.size} Phase 1 files to Gitea...`);
-        await this.giteaClient.pushFiles(dto.projectName, prismaFiles, 'feat: add Prisma schema');
-      }
-      this.updateProgress(jobId, 'processing', 'Phase 1 complete. Schema validated.');
+      void prismaResult;
+      this.updateProgress(jobId, 'processing', 'Phase 1 complete. Schema written to workspace.');
 
       // Phase 2: Backend + Frontend (parallel)
       this.updateProgress(jobId, 'processing', 'Phase 2: Generating backend and frontend in parallel...');
@@ -157,32 +151,26 @@ export class OrchestratorService {
 
       const succeeded: string[] = [];
       const failed: string[] = [];
-      const allGeneratedFiles = new Map<string, string>();
 
       for (let i = 0; i < results.length; i++) {
         const r = results[i];
         if (r.status === 'fulfilled') {
           succeeded.push(r.value.name);
-          const generatedFiles = this.extractFilesFromResult(r.value.result);
-          for (const [path, content] of generatedFiles) {
-            allGeneratedFiles.set(path, content);
-          }
         } else {
           failed.push(phase2Jobs[i]?.name ?? 'unknown');
         }
       }
 
-      // Push Phase 2 files to Gitea
-      if (allGeneratedFiles.size > 0) {
-        this.updateProgress(jobId, 'processing', `Pushing ${allGeneratedFiles.size} generated files to Gitea...`);
-        await this.giteaClient.pushFiles(dto.projectName, allGeneratedFiles, 'feat: add generated code');
+      if (failed.length > 0 && succeeded.length === 0) {
+        throw new Error(`Phase 2 failed: ${failed.join(', ')}`);
       }
 
-      if (failed.length > 0 && succeeded.length > 0) {
+      this.updateProgress(jobId, 'processing', 'Committing and pushing generated code...');
+      await this.finalizeWorkspace(workspacePath, 'feat: add generated code');
+
+      if (failed.length > 0) {
         this.updateProgress(jobId, 'completed',
           `Partial generation. Success: ${succeeded.join(', ')}. Failed: ${failed.join(', ')}. Repo: ${repo.html_url}`);
-      } else if (failed.length > 0) {
-        throw new Error(`Phase 2 failed: ${failed.join(', ')}`);
       } else {
         // Step 3: Deploy via Portainer
         try {
@@ -231,21 +219,17 @@ export class OrchestratorService {
     throw new Error(`Sub-job ${jobId} timed out after ${timeoutMs}ms`);
   }
 
-  private extractFilesFromResult(resultMessage: string): Map<string, string> {
-    const files = new Map<string, string>();
-    try {
-      const parsed = JSON.parse(resultMessage);
-      if (parsed.files && typeof parsed.files === 'object') {
-        for (const [path, content] of Object.entries(parsed.files)) {
-          if (typeof content === 'string') {
-            files.set(path, content);
-          }
-        }
-      }
-    } catch {
-      // Not JSON — old format, no files to extract
+  private async finalizeWorkspace(workspacePath: string, commitMessage: string): Promise<boolean> {
+    const { stdout } = await execFileP('git', ['-C', workspacePath, 'status', '--porcelain']);
+    if (stdout.trim().length === 0) {
+      this.logger.warn(`No changes in ${workspacePath} to commit`);
+      return false;
     }
-    return files;
+
+    await execFileP('git', ['-C', workspacePath, 'add', '.']);
+    await execFileP('git', ['-C', workspacePath, 'commit', '-m', commitMessage]);
+    await execFileP('git', ['-C', workspacePath, 'push']);
+    return true;
   }
 
   private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
