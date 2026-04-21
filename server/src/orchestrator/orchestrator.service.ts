@@ -7,6 +7,11 @@ import { SseService } from '../sse/sse.service';
 import { GenerateDto } from './dto/generate.dto';
 import { ConfigService } from '@nestjs/config';
 import { PortainerClient } from './portainer.client';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import * as path from 'node:path';
+
+const execFileP = promisify(execFile);
 
 export interface GenerationResult {
   jobId: string;
@@ -85,10 +90,10 @@ export class OrchestratorService {
       await this.giteaClient.pushFiles(dto.projectName, files, 'chore: initial project scaffold');
 
       this.updateProgress(jobId, 'processing', 'Cloning workspace...');
-      const authClone = repo.clone_url
-        .replace('http://', `http://${this.giteaUser}:${this.giteaToken}@`)
-        .replace('https://', `https://${this.giteaUser}:${this.giteaToken}@`);
-      const workspacePath = await this.prepareWorkspace(dto.projectName, authClone);
+      const cloneUrl = new URL(repo.clone_url);
+      cloneUrl.username = this.giteaUser;
+      cloneUrl.password = this.giteaToken;
+      const workspacePath = await this.prepareWorkspace(dto.projectName, cloneUrl.toString());
 
       // Phase 1: Prisma Schema (sequential)
       this.updateProgress(jobId, 'processing', 'Phase 1: Generating Prisma schema...');
@@ -244,18 +249,17 @@ export class OrchestratorService {
   }
 
   private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
-    const targetDir = `${this.workspaceRoot}/${projectName}`;
-    const { promisify } = await import('node:util');
-    const { exec } = await import('node:child_process');
-    const execP = promisify(exec);
+    const targetDir = path.join(this.workspaceRoot, projectName);
 
-    // wipe if exists (re-run case)
-    await execP(`rm -rf ${targetDir}`);
-    await execP(`mkdir -p ${this.workspaceRoot}`);
-    await execP(`git clone ${repoCloneUrl} ${targetDir}`);
+    // Wipe if exists (re-run case)
+    await execFileP('rm', ['-rf', targetDir]);
+    await execFileP('mkdir', ['-p', this.workspaceRoot]);
+    await execFileP('git', ['clone', repoCloneUrl, targetDir]);
+
     // configure git identity so commits succeed later
-    await execP(`git -C ${targetDir} config user.email "aid@greact.ru"`);
-    await execP(`git -C ${targetDir} config user.name "aid-orchestrator"`);
+    await execFileP('git', ['-C', targetDir, 'config', 'user.email', 'aid@greact.ru']);
+    await execFileP('git', ['-C', targetDir, 'config', 'user.name', 'aid-orchestrator']);
+
     return targetDir;
   }
 

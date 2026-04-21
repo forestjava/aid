@@ -753,19 +753,26 @@ private readonly workspaceRoot = '/workspace';
 Inside the class, add:
 
 ```typescript
-private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
-  const targetDir = `${this.workspaceRoot}/${projectName}`;
-  const { promisify } = await import('node:util');
-  const { exec } = await import('node:child_process');
-  const execP = promisify(exec);
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import * as path from 'node:path';
 
-  // wipe if exists (re-run case)
-  await execP(`rm -rf ${targetDir}`);
-  await execP(`mkdir -p ${this.workspaceRoot}`);
-  await execP(`git clone ${repoCloneUrl} ${targetDir}`);
+const execFileP = promisify(execFile);
+
+// ...
+
+private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
+  const targetDir = path.join(this.workspaceRoot, projectName);
+
+  // Wipe if exists (re-run case)
+  await execFileP('rm', ['-rf', targetDir]);
+  await execFileP('mkdir', ['-p', this.workspaceRoot]);
+  await execFileP('git', ['clone', repoCloneUrl, targetDir]);
+
   // configure git identity so commits succeed later
-  await execP(`git -C ${targetDir} config user.email "aid@greact.ru"`);
-  await execP(`git -C ${targetDir} config user.name "aid-orchestrator"`);
+  await execFileP('git', ['-C', targetDir, 'config', 'user.email', 'aid@greact.ru']);
+  await execFileP('git', ['-C', targetDir, 'config', 'user.name', 'aid-orchestrator']);
+
   return targetDir;
 }
 ```
@@ -779,14 +786,13 @@ this.updateProgress(jobId, 'processing', 'Cloning workspace...');
 const workspacePath = await this.prepareWorkspace(dto.projectName, repo.clone_url);
 ```
 
-Note: `repo.clone_url` must be the authenticated URL that includes the Gitea token so `git clone` and later `git push` work non-interactively. If `GiteaClient.createRepo` does not yet return an authenticated URL, construct it here:
+Note: `repo.clone_url` must be the authenticated URL that includes the Gitea token so `git clone` and later `git push` work non-interactively. If `GiteaClient.createRepo` does not yet return an authenticated URL, construct it here using the URL API (which properly URL-encodes tokens containing special characters):
 
 ```typescript
-const authClone = repo.clone_url.replace(
-  'http://',
-  `http://${this.giteaUser}:${this.giteaToken}@`,
-);
-const workspacePath = await this.prepareWorkspace(dto.projectName, authClone);
+const cloneUrl = new URL(repo.clone_url);
+cloneUrl.username = this.giteaUser;
+cloneUrl.password = this.giteaToken;
+const workspacePath = await this.prepareWorkspace(dto.projectName, cloneUrl.toString());
 ```
 
 Read `giteaUser` and `giteaToken` from `ConfigService` in the constructor:
