@@ -12,6 +12,7 @@ services:
       - FS_ROOT_PATH=/data
       - GITEA_URL=${GITEA_URL:-http://gitea:3000}
       - GITEA_TOKEN=${GITEA_TOKEN}
+      - GITEA_USER=${GITEA_USER:-aid}
       - GITEA_ORG=${GITEA_ORG:-greact}
       - PORTAINER_URL=${PORTAINER_URL:-http://portainer:9000}
       - PORTAINER_API_KEY=${PORTAINER_API_KEY}

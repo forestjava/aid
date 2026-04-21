@@ -233,12 +233,23 @@ export class OrchestratorService {
   }
 
   private async prepareWorkspace(projectName: string, repoCloneUrl: string): Promise<string> {
-    const targetDir = path.join(this.workspaceRoot, projectName);
+    const targetDir = path.resolve(path.join(this.workspaceRoot, projectName));
+    const workspaceRootResolved = path.resolve(this.workspaceRoot);
+    const withSep = workspaceRootResolved.endsWith(path.sep) ? workspaceRootResolved : workspaceRootResolved + path.sep;
+    if (!targetDir.startsWith(withSep)) {
+      throw new Error(`Invalid projectName: path traversal denied`);
+    }
 
     // Wipe if exists (re-run case)
     await execFileP('rm', ['-rf', targetDir]);
     await execFileP('mkdir', ['-p', this.workspaceRoot]);
-    await execFileP('git', ['clone', repoCloneUrl, targetDir]);
+    try {
+      await execFileP('git', ['clone', repoCloneUrl, targetDir]);
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : String(err);
+      const scrubbed = raw.replace(/https?:\/\/[^\s'"@\/]+:[^\s'"@\/]+@/g, 'http://***:***@');
+      throw new Error(`git clone failed: ${scrubbed}`);
+    }
 
     // configure git identity so commits succeed later
     await execFileP('git', ['-C', targetDir, 'config', 'user.email', 'aid@greact.ru']);
