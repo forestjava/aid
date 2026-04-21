@@ -1,7 +1,5 @@
 FROM node:22-alpine
 
-RUN apk add --no-cache git
-
 WORKDIR /app
 
 # Copy shared package (from project root context) — leverages docker cache

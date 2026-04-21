@@ -921,7 +921,7 @@ git commit -m "refactor(orchestrator): owns all git ops; drop file-parser"
 - Modify: `runner/runner-nestjs/Dockerfile`
 - Modify: `runner/runner-react-admin/Dockerfile`
 
-All three Dockerfiles currently copy only their own source. They need access to `runner/shared/` and must have `git` installed (future tasks may need it; orchestrator does git ops, but runners can still benefit from having git available for debugging — skip if not strictly needed).
+All three Dockerfiles currently copy only their own source. They need access to `runner/shared/`. Git is not needed in runners — the orchestrator owns all git operations.
 
 - [ ] **Step 1: Update `runner/runner-prisma/Dockerfile`**
 
@@ -939,7 +939,8 @@ COPY runner/shared /app/shared
 COPY runner/runner-prisma/package*.json /app/runner/
 WORKDIR /app/runner
 RUN npm install
-RUN npx prisma --version || true
+
+# Copy runner source
 COPY runner/runner-prisma/. /app/runner/
 
 EXPOSE 3004
@@ -955,11 +956,15 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Copy shared package (from project root context) — leverages docker cache
 COPY runner/shared /app/shared
 
+# Copy runner's package definition and install
 COPY runner/runner-nestjs/package*.json /app/runner/
 WORKDIR /app/runner
 RUN npm install
+
+# Copy runner source
 COPY runner/runner-nestjs/. /app/runner/
 
 EXPOSE 3005
@@ -975,11 +980,15 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Copy shared package (from project root context) — leverages docker cache
 COPY runner/shared /app/shared
 
+# Copy runner's package definition and install
 COPY runner/runner-react-admin/package*.json /app/runner/
 WORKDIR /app/runner
 RUN npm install
+
+# Copy runner source
 COPY runner/runner-react-admin/. /app/runner/
 
 EXPOSE 3006
