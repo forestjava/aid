@@ -1,9 +1,9 @@
 import { executeTool } from './fileTools.ts';
 import type { FileToolSchema } from './fileTools.ts';
 
-export class ChatMessage {
-  role!: 'system' | 'user' | 'assistant' | 'tool';
-  content!: string | null;
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string | null;
   tool_call_id?: string;
   name?: string;
   tool_calls?: ToolCall[];
@@ -15,8 +15,8 @@ export interface ToolCall {
   function: { name: string; arguments: string };
 }
 
-export class LLMResponse {
-  choices!: Array<{
+export interface LLMResponse {
+  choices: Array<{
     index: number;
     finish_reason: string;
     message: ChatMessage;

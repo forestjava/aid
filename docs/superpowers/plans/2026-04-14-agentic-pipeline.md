@@ -406,7 +406,8 @@ import assert from 'node:assert/strict';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { runAgenticLoop, ChatMessage, LLMResponse } from './agenticLoop.ts';
+import { runAgenticLoop } from './agenticLoop.ts';
+import type { ChatMessage, LLMResponse } from './agenticLoop.ts';
 import { FILE_TOOL_SCHEMAS } from './fileTools.ts';
 
 let workspace: string;
