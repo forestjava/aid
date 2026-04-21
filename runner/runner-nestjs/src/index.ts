@@ -1,77 +1,28 @@
 import express from 'express';
 import { config } from './config.js';
 import { sendProgress } from './progress.js';
-import { fetchSourceText, fetchFile, fetchAuthReference } from './fetchSource.js';
-import { generateNestJsBackend } from './llmClient.js';
-import { writeResultFile } from './writeResult.js';
-import { parseFileOutput } from './fileParser.js';
+import { fetchSourceText } from './fetchSource.js';
+import { generateNestJsBackendAgentic } from './llmClient.js';
 
-interface StartRequest { jobId: string; path: string; }
-const MAX_RETRIES = 2;
+interface StartRequest {
+  jobId: string;
+  path: string;
+  workspacePath: string;
+  projectName: string;
+}
 
-async function processJob(jobId: string, sourcePath: string): Promise<void> {
+async function processJob(jobId: string, sourcePath: string, workspacePath: string): Promise<void> {
   try {
-    await sendProgress(jobId, 'started', 'Starting NestJS backend generation...');
-
+    await sendProgress(jobId, 'started', 'Starting NestJS backend generation (agentic mode)...');
     await sendProgress(jobId, 'processing', 'Fetching DSL source...');
     const dslContent = await fetchSourceText(sourcePath);
 
-    await sendProgress(jobId, 'processing', 'Fetching Prisma schema...');
-    const lastSlash = sourcePath.lastIndexOf('/');
-    const dir = lastSlash === -1 ? '' : sourcePath.substring(0, lastSlash);
-    const schemaPath = dir ? `${dir}/schema.prisma` : 'schema.prisma';
-    const prismaSchema = await fetchFile(schemaPath);
+    await sendProgress(jobId, 'processing', 'Running agentic loop...');
+    await generateNestJsBackendAgentic(dslContent, workspacePath, (m) => {
+      sendProgress(jobId, 'processing', m);
+    });
 
-    await sendProgress(jobId, 'processing', 'Fetching auth reference code...');
-    const authReference = await fetchAuthReference();
-
-    let rawOutput = '';
-    let lastError = '';
-
-    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      const label = attempt > 0 ? ` (retry ${attempt}/${MAX_RETRIES})` : '';
-      await sendProgress(jobId, 'processing', `Generating NestJS backend via LLM${label}...`);
-
-      let prompt = dslContent;
-      if (attempt > 0 && lastError) {
-        prompt += `\n\n--- PREVIOUS ATTEMPT HAD ISSUES ---\n${lastError}\nPlease fix and regenerate.`;
-      }
-
-      rawOutput = await generateNestJsBackend(prompt, prismaSchema, authReference);
-      const files = parseFileOutput(rawOutput);
-
-      if (files.size === 0) {
-        lastError = 'LLM output did not contain any ===FILE:=== markers.';
-        if (attempt === MAX_RETRIES) throw new Error(`Backend generation failed after ${MAX_RETRIES + 1} attempts: ${lastError}`);
-        continue;
-      }
-
-      const hasAppModule = [...files.keys()].some(k => k.includes('app.module'));
-      if (!hasAppModule) {
-        lastError = 'Generated output is missing app.module.ts.';
-        if (attempt === MAX_RETRIES) throw new Error(`Backend generation failed: ${lastError}`);
-        continue;
-      }
-
-      // Strip leading src/ from LLM paths if present (LLM includes src/ but we add it)
-      const normalizedFiles = new Map<string, string>();
-      for (const [filePath, content] of files) {
-        const clean = filePath.replace(/^src\//, '');
-        normalizedFiles.set(clean, content);
-      }
-
-      // Send generated files as JSON in completed message for Orchestrator to push to Gitea
-      const filesObj: Record<string, string> = {};
-      for (const [k, v] of normalizedFiles) {
-        filesObj[`backend/src/${k}`] = v;
-      }
-
-      await sendProgress(jobId, 'completed', JSON.stringify({
-        message: `Backend generated: ${normalizedFiles.size} files`,
-        files: filesObj,
-      }));
-      return;
-    }
+    await sendProgress(jobId, 'completed', 'Backend generated.');
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Job ${jobId} failed:`, message);
@@ -83,12 +34,19 @@ const app = express();
 app.use(express.json());
 
 app.post('/start', (req, res) => {
-  const { jobId, path: sourcePath } = req.body as StartRequest;
-  if (!jobId || !sourcePath) { res.status(400).json({ error: 'jobId and path are required' }); return; }
-  processJob(jobId, sourcePath);
+  const { jobId, path: sourcePath, workspacePath } = req.body as StartRequest;
+  if (!jobId || !sourcePath || !workspacePath) {
+    res.status(400).json({ error: 'jobId, path, workspacePath are required' });
+    return;
+  }
+  processJob(jobId, sourcePath, workspacePath);
   res.status(202).json({ received: true });
 });
 
-app.get('/health', (_req, res) => { res.json({ status: 'ok', runner: 'nestjs' }); });
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', runner: 'nestjs' });
+});
 
-app.listen(Number(config.PORT), () => { console.log(`runner-nestjs listening on port ${config.PORT}`); });
+app.listen(Number(config.PORT), () => {
+  console.log(`runner-nestjs listening on port ${config.PORT}`);
+});
