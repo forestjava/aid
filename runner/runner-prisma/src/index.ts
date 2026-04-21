@@ -1,71 +1,66 @@
 import express from 'express';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import { config } from './config.js';
 import { sendProgress } from './progress.js';
 import { fetchSourceText } from './fetchSource.js';
-import { generatePrismaSchema } from './llmClient.js';
+import { generatePrismaSchemaAgentic } from './llmClient.js';
 import { validatePrismaSchema } from './validator.js';
-import { writeResultFile } from './writeResult.js';
 
 interface StartRequest {
   jobId: string;
   path: string;
+  workspacePath: string;
+  projectName: string;
 }
 
 const MAX_RETRIES = 2;
 
-function deriveOutputPath(sourcePath: string): string {
-  const lastSlash = sourcePath.lastIndexOf('/');
-  if (lastSlash === -1) return 'schema.prisma'; // file in root → schema.prisma in root
-  const dir = sourcePath.substring(0, lastSlash);
-  return `${dir}/schema.prisma`;
-}
-
-async function processJob(jobId: string, sourcePath: string): Promise<void> {
+async function processJob(jobId: string, sourcePath: string, workspacePath: string): Promise<void> {
   try {
-    await sendProgress(jobId, 'started', 'Starting Prisma schema generation...');
+    await sendProgress(jobId, 'started', 'Starting Prisma schema generation (agentic mode)...');
 
     await sendProgress(jobId, 'processing', 'Fetching DSL source...');
     const sourceContent = await fetchSourceText(sourcePath);
 
-    let schema: string = '';
-    let lastError: string = '';
-
+    let lastError = '';
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      const attemptLabel = attempt > 0 ? ` (retry ${attempt}/${MAX_RETRIES})` : '';
-      await sendProgress(jobId, 'processing', `Generating Prisma schema via LLM${attemptLabel}...`);
+      const label = attempt > 0 ? ` (retry ${attempt}/${MAX_RETRIES})` : '';
+      await sendProgress(jobId, 'processing', `Agentic loop${label}...`);
 
-      let prompt = sourceContent;
+      let dsl = sourceContent;
       if (attempt > 0 && lastError) {
-        prompt += `\n\n--- PREVIOUS ATTEMPT FAILED VALIDATION ---\nError: ${lastError}\nPlease fix the schema and try again.`;
+        dsl += `\n\n--- PREVIOUS ATTEMPT FAILED VALIDATION ---\n${lastError}\nWrite a corrected schema.prisma.`;
       }
 
-      schema = await generatePrismaSchema(prompt);
+      await generatePrismaSchemaAgentic(dsl, workspacePath, (m) => {
+        sendProgress(jobId, 'processing', m);
+      });
 
-      await sendProgress(jobId, 'processing', `Validating schema${attemptLabel}...`);
+      const schemaPath = path.join(workspacePath, 'backend', 'prisma', 'schema.prisma');
+      let schema: string;
+      try {
+        schema = await fs.readFile(schemaPath, 'utf-8');
+      } catch {
+        lastError = 'LLM did not write backend/prisma/schema.prisma';
+        if (attempt === MAX_RETRIES) throw new Error(lastError);
+        continue;
+      }
+
       const result = validatePrismaSchema(schema);
-
       if (result.valid) {
-        schema = result.formatted ?? schema;
-        break;
+        if (result.formatted && result.formatted !== schema) {
+          await fs.writeFile(schemaPath, result.formatted, 'utf-8');
+        }
+        await sendProgress(jobId, 'completed', 'Schema generated and validated.');
+        return;
       }
 
       lastError = result.error ?? 'Unknown validation error';
-      console.warn(`Validation failed (attempt ${attempt + 1}): ${lastError}`);
-
       if (attempt === MAX_RETRIES) {
         throw new Error(`Schema validation failed after ${MAX_RETRIES + 1} attempts: ${lastError}`);
       }
     }
-
-    // Send generated schema as JSON in completed message for Orchestrator to push to Gitea
-    const filesObj: Record<string, string> = {
-      'backend/prisma/schema.prisma': schema,
-    };
-
-    await sendProgress(jobId, 'completed', JSON.stringify({
-      message: `Schema generated and validated`,
-      files: filesObj,
-    }));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`Job ${jobId} failed:`, message);
@@ -77,14 +72,12 @@ const app = express();
 app.use(express.json());
 
 app.post('/start', (req, res) => {
-  const { jobId, path: sourcePath } = req.body as StartRequest;
-
-  if (!jobId || !sourcePath) {
-    res.status(400).json({ error: 'jobId and path are required' });
+  const { jobId, path: sourcePath, workspacePath } = req.body as StartRequest;
+  if (!jobId || !sourcePath || !workspacePath) {
+    res.status(400).json({ error: 'jobId, path, workspacePath are required' });
     return;
   }
-
-  processJob(jobId, sourcePath);
+  processJob(jobId, sourcePath, workspacePath);
   res.status(202).json({ received: true });
 });
 
