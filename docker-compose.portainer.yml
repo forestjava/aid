@@ -5,12 +5,17 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    container_name: aid-backend
+    container_name: aid-backend${ENV_SUFFIX:-}
     volumes:
-      - /data/aid:/data
+      - ${DATA_HOST_PATH:-/data/aid}:/data
     environment:
       - PORT=3000
       - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
+      - EXPORTER_DEMO_URL=${EXPORTER_DEMO_URL:-http://aid-runner-demo:3003}
+      - EXPORTER_CRUD_API_URL=${EXPORTER_CRUD_API_URL:-http://aid-runner-crud-api-exporter:3003}
+      - EXPORTER_CONTRACT_URL=${EXPORTER_CONTRACT_URL:-http://contract-craft-dev-service:8080}
+    expose:
+      - "3000"
     networks:
       - proxy
     restart: unless-stopped
@@ -22,7 +27,9 @@ services:
       dockerfile: client/Dockerfile
       args:
         - VITE_COPYRIGHT=${VITE_COPYRIGHT} # авторство устанавливается переменной окружения
-    container_name: aid-frontend
+    container_name: aid-frontend${ENV_SUFFIX:-}
+    expose:
+      - "80"
     networks:
       - proxy
     restart: unless-stopped
@@ -31,10 +38,12 @@ services:
     build:
       context: runner/node
       dockerfile: Dockerfile
-    container_name: aid-runner-demo
+    container_name: aid-runner-demo${ENV_SUFFIX:-}
     environment:
       - PORT=3003
-      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
+    expose:
+      - "3003"
     networks:
       - proxy
     restart: unless-stopped
@@ -43,14 +52,16 @@ services:
     build:
       context: runner/crud-api-exporter
       dockerfile: Dockerfile
-    container_name: aid-runner-crud-api-exporter
+    container_name: aid-runner-crud-api-exporter${ENV_SUFFIX:-}
     environment:
-      - CALLBACK_BASE_URL=${CALLBACK_BASE_URL}
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
       - AI_API_URL=${AI_API_URL}
       - AI_API_KEY=${AI_API_KEY}
       - AI_MODEL=${AI_MODEL}
       - AI_MAX_TOKENS=${AI_MAX_TOKENS}
       - AI_TEMPERATURE=${AI_TEMPERATURE}
+    expose:
+      - "3003"
     networks:
       - proxy
     restart: unless-stopped
