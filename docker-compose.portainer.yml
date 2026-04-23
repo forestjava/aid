@@ -5,7 +5,7 @@ services:
       dockerfile: server/Dockerfile
     container_name: aid-backend
     volumes:
-      - ./data:/data
+      - backend_data:/data
       - workspace:/workspace
     environment:
       - PORT=3000
@@ -143,3 +143,4 @@ networks:
 
 volumes:
   workspace:
+  backend_data:
