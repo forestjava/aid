@@ -10,7 +10,7 @@ services:
       - ${DATA_HOST_PATH:-/data/aid}:/data
     environment:
       - PORT=3000
-      - FS_ROOT_PATH=/data # путь к данным на хосте не берётся из переменной окружения
+      - FS_ROOT_PATH=/data # путь внутри контейнера; host-путь задаётся через DATA_HOST_PATH (volume выше)
       - EXPORTER_DEMO_URL=${EXPORTER_DEMO_URL:-http://aid-runner-demo:3003}
       - EXPORTER_CRUD_API_URL=${EXPORTER_CRUD_API_URL:-http://aid-runner-crud-api-exporter:3003}
       - EXPORTER_CONTRACT_URL=${EXPORTER_CONTRACT_URL:-http://contract-craft-dev-service:8080}
