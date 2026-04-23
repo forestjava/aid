@@ -1,5 +1,12 @@
 ## NestJS 11 + Prisma CRUD Reference
 
+> **API contract (MANDATORY).** The frontend `dataProvider` expects every list
+> endpoint to return `{ data: T[], total: number }`. Single-item endpoints
+> (getOne, create, update, delete) return the raw entity. Query parameters for
+> list endpoints: `skip`, `take`, `orderBy` (JSON, e.g. `{"id":"asc"}`), `where`
+> (JSON, Prisma `Where*Input`). Never return bare arrays; never rely on
+> `Content-Range`. Keep this contract for every resource you generate.
+
 ### Service with Prisma
 
 ```typescript
@@ -16,9 +23,13 @@ export class PostsService {
     take?: number;
     where?: Prisma.PostWhereInput;
     orderBy?: Prisma.PostOrderByWithRelationInput;
-  }): Promise<Post[]> {
+  }): Promise<{ data: Post[]; total: number }> {
     const { skip, take, where, orderBy } = params;
-    return this.prisma.post.findMany({ skip, take, where, orderBy });
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.post.findMany({ skip, take, where, orderBy }),
+      this.prisma.post.count({ where }),
+    ]);
+    return { data, total };
   }
 
   async findOne(where: Prisma.PostWhereUniqueInput): Promise<Post | null> {
@@ -52,6 +63,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+const parseJson = <T>(value?: string): T | undefined => {
+  if (!value) return undefined;
+  try { return JSON.parse(value) as T; } catch { return undefined; }
+};
+
 @ApiTags('posts')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -60,8 +76,18 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  findAll(@Query('skip') skip?: number, @Query('take') take?: number) {
-    return this.postsService.findAll({ skip: +skip || 0, take: +take || 25 });
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+    @Query('orderBy') orderBy?: string,
+    @Query('where') where?: string,
+  ) {
+    return this.postsService.findAll({
+      skip: skip ? Number(skip) : 0,
+      take: take ? Number(take) : 25,
+      orderBy: parseJson(orderBy),
+      where: parseJson(where),
+    });
   }
 
   @Get(':id')

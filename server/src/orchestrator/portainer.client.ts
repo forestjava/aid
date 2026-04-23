@@ -40,6 +40,39 @@ export class PortainerClient {
     return res.json() as Promise<PortainerStack>;
   }
 
+  async deployStackFromRepo(
+    name: string,
+    repoUrl: string,
+    auth: { username: string; password: string },
+    env: Record<string, string> = {},
+    ref = 'refs/heads/main',
+    composeFile = 'docker-compose.yml',
+  ): Promise<PortainerStack> {
+    const url = `${this.baseUrl}/api/stacks/create/standalone/repository?endpointId=${this.endpointId}`;
+    const envArr = Object.entries(env).map(([name, value]) => ({ name, value }));
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: this.headers(),
+      body: JSON.stringify({
+        Name: name,
+        RepositoryURL: repoUrl,
+        RepositoryReferenceName: ref,
+        ComposeFile: composeFile,
+        RepositoryAuthentication: true,
+        RepositoryUsername: auth.username,
+        RepositoryPassword: auth.password,
+        Env: envArr,
+      }),
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error(`Portainer deployStackFromRepo failed (${res.status}): ${body}`);
+    }
+
+    return res.json() as Promise<PortainerStack>;
+  }
+
   async removeStack(stackId: number): Promise<void> {
     const url = `${this.baseUrl}/api/stacks/${stackId}?endpointId=${this.endpointId}`;
     const res = await fetch(url, {

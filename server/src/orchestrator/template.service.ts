@@ -6,6 +6,9 @@ import * as path from 'path';
 export interface TemplateVars {
   projectName: string;
   domain: string;
+  // Unique per generation. Injected into docker-compose build args so that
+  // Docker cannot reuse a stale cached image layer on redeploy.
+  cacheBust: string;
 }
 
 @Injectable()

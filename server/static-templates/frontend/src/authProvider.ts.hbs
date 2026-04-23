@@ -2,9 +2,9 @@ import Keycloak from 'keycloak-js';
 import { AuthProvider } from 'react-admin';
 
 const keycloak = new Keycloak({
-  url: 'https://sso.greact.ru',
-  realm: '{{projectName}}',
-  clientId: '{{projectName}}-frontend',
+  url: import.meta.env.VITE_KEYCLOAK_URL,
+  realm: import.meta.env.VITE_KEYCLOAK_REALM,
+  clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
 });
 
 let authenticated = false;

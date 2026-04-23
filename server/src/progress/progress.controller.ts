@@ -40,6 +40,21 @@ export class ProgressController {
     this.logger.log(`Progress: job=${jobId} status=${event.status} message=${event.message}`);
     this.sseService.sendToJob(jobId, event);
 
+    // Forward sub-job progress to parent orchestrator SSE stream so the UI,
+    // which is subscribed only to the orchestrator job, sees runner activity.
+    const parentJobId = this.jobsService.getParent(jobId);
+    if (parentJobId) {
+      // Only forward intermediate progress; terminal events (completed/failed)
+      // belong to the orchestrator's own transitions, not the sub-job.
+      if (event.status === 'started' || event.status === 'processing') {
+        this.sseService.sendToJob(parentJobId, {
+          jobId: parentJobId,
+          status: 'processing',
+          message: event.message,
+        });
+      }
+    }
+
     if (event.status === 'completed' || event.status === 'failed') {
       this.sseService.closeStream(jobId);
     }

@@ -6,6 +6,7 @@ import type { JobRecord, ProgressEvent } from '../types/runner';
 export class JobsService {
   private readonly logger = new Logger(JobsService.name);
   private readonly jobs = new Map<string, JobRecord>();
+  private readonly parentByChild = new Map<string, string>();
 
   create(exporterId: string): JobRecord {
     const jobId = randomUUID();
@@ -20,6 +21,14 @@ export class JobsService {
     this.jobs.set(jobId, job);
     this.logger.log(`Job created: ${jobId} for exporter=${exporterId}`);
     return job;
+  }
+
+  linkChildToParent(childJobId: string, parentJobId: string): void {
+    this.parentByChild.set(childJobId, parentJobId);
+  }
+
+  getParent(childJobId: string): string | undefined {
+    return this.parentByChild.get(childJobId);
   }
 
   findById(jobId: string): JobRecord | undefined {

@@ -1,6 +1,5 @@
 # Папка describer не нужна в образах
 describer/
-runner/
 data/
 data.example/
 backup/

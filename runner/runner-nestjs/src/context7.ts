@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { loadFieldContract } from '@aid/runner-shared';
 
 let cachedDocs: string | null = null;
 
@@ -7,12 +8,15 @@ export async function fetchNestJsDocs(): Promise<string> {
   if (cachedDocs !== null) return cachedDocs;
 
   const docsPath = path.join(import.meta.dirname ?? __dirname, 'docs', 'nestjs-reference.md');
+  let nestDocs = '';
   try {
-    cachedDocs = fs.readFileSync(docsPath, 'utf-8');
-    console.log(`Loaded ${cachedDocs.length} chars of NestJS reference docs`);
+    nestDocs = fs.readFileSync(docsPath, 'utf-8');
   } catch {
     console.warn(`Reference docs not found at ${docsPath}, proceeding without`);
-    cachedDocs = '';
   }
+
+  const contract = loadFieldContract();
+  cachedDocs = [nestDocs, contract].filter(Boolean).join('\n\n---\n\n');
+  console.log(`Loaded ${cachedDocs.length} chars of NestJS reference + field contract`);
   return cachedDocs;
 }

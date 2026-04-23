@@ -12,6 +12,39 @@ export interface ValidationResult {
 // Use prisma from runner's own node_modules, not npx (which tries to download)
 const PRISMA_BIN = path.join(process.cwd(), 'node_modules', '.bin', 'prisma');
 
+// Every model MUST have a field declared with `@id` (single-column primary key).
+// Composite keys (`@@id([a, b])`) are rejected — they break the frontend sort/lookup.
+function validateIdFields(schema: string): string | null {
+  const modelRegex = /\bmodel\s+(\w+)\s*\{([^}]*)\}/g;
+  const missing: string[] = [];
+  const composite: string[] = [];
+
+  let match: RegExpExecArray | null;
+  while ((match = modelRegex.exec(schema)) !== null) {
+    const [, name, body] = match;
+    const hasAtId = /^\s*\w+\s+\S+[^\n]*\s@id\b/m.test(body);
+    const hasAtAtId = /^\s*@@id\s*\(/m.test(body);
+
+    if (hasAtAtId && !hasAtId) composite.push(name);
+    if (!hasAtId) missing.push(name);
+  }
+
+  const errors: string[] = [];
+  if (missing.length > 0) {
+    errors.push(
+      `The following models have no \`id\` field with \`@id\`: ${missing.join(', ')}. ` +
+      `Every model MUST have \`id Int @id @default(autoincrement())\` or \`id String @id @default(uuid())\`.`,
+    );
+  }
+  if (composite.length > 0) {
+    errors.push(
+      `The following models use a composite primary key (\`@@id\`): ${composite.join(', ')}. ` +
+      `Composite keys are forbidden — replace with a surrogate \`id\` and add a compound \`@@unique\` instead.`,
+    );
+  }
+  return errors.length > 0 ? errors.join('\n') : null;
+}
+
 export function validatePrismaSchema(schemaContent: string): ValidationResult {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'prisma-validate-'));
   const schemaPath = path.join(tmpDir, 'schema.prisma');
@@ -40,6 +73,12 @@ export function validatePrismaSchema(schemaContent: string): ValidationResult {
       const msg = stderr || stdout || error.message || 'Unknown validation error';
       console.warn('Prisma validate error:', msg.slice(0, 500));
       return { valid: false, error: msg };
+    }
+
+    const idError = validateIdFields(schemaContent);
+    if (idError) {
+      console.warn('Field-contract violation:', idError);
+      return { valid: false, error: idError };
     }
 
     // Run prisma format

@@ -16,13 +16,16 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        CACHE_BUST: "{{cacheBust}}"
     container_name: {{projectName}}-backend
     restart: unless-stopped
     depends_on:
       - postgres
     environment:
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/{{projectName}}
-      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      KEYCLOAK_ISSUER_URL: ${KEYCLOAK_ISSUER_URL}
+      KEYCLOAK_AUDIENCE: ${KEYCLOAK_AUDIENCE}
       NODE_ENV: production
     networks:
       - internal
@@ -31,6 +34,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        CACHE_BUST: "{{cacheBust}}"
+        VITE_KEYCLOAK_URL: ${VITE_KEYCLOAK_URL}
+        VITE_KEYCLOAK_REALM: ${VITE_KEYCLOAK_REALM}
+        VITE_KEYCLOAK_CLIENT_ID: ${VITE_KEYCLOAK_CLIENT_ID}
     container_name: {{projectName}}-frontend
     restart: unless-stopped
     networks:
@@ -40,6 +48,8 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+      args:
+        CACHE_BUST: "{{cacheBust}}"
     container_name: {{projectName}}-nginx
     restart: unless-stopped
     depends_on:

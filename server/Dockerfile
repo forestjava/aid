@@ -1,5 +1,11 @@
 FROM node:22-alpine
 
+RUN apk add --no-cache git
+
+RUN git config --system --add safe.directory '*'
+
+RUN mkdir -p /workspace && chmod 777 /workspace
+
 WORKDIR /app
 
 # Copy shared files

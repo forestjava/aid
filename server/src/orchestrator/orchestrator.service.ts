@@ -10,6 +10,7 @@ import { PortainerClient } from './portainer.client';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import * as path from 'node:path';
+import { randomBytes } from 'node:crypto';
 
 const execFileP = promisify(execFile);
 
@@ -28,6 +29,11 @@ export class OrchestratorService {
   private readonly workspaceRoot = '/workspace';
   private readonly giteaUser: string;
   private readonly giteaToken: string;
+  private readonly keycloakIssuerUrl: string;
+  private readonly keycloakAudience: string;
+  private readonly viteKeycloakUrl: string;
+  private readonly viteKeycloakRealm: string;
+  private readonly viteKeycloakClientId: string;
 
   constructor(
     private readonly templateService: TemplateService,
@@ -48,6 +54,11 @@ export class OrchestratorService {
     );
     this.giteaUser = configService.get('GITEA_USER', 'aid');
     this.giteaToken = configService.get('GITEA_TOKEN', '');
+    this.keycloakIssuerUrl = configService.get('KEYCLOAK_ISSUER_URL', '');
+    this.keycloakAudience = configService.get('KEYCLOAK_AUDIENCE', '');
+    this.viteKeycloakUrl = configService.get('VITE_KEYCLOAK_URL', '');
+    this.viteKeycloakRealm = configService.get('VITE_KEYCLOAK_REALM', '');
+    this.viteKeycloakClientId = configService.get('VITE_KEYCLOAK_CLIENT_ID', '');
   }
 
   async startGeneration(dto: GenerateDto): Promise<GenerationResult> {
@@ -69,7 +80,7 @@ export class OrchestratorService {
   private async runPipeline(jobId: string, dto: GenerateDto): Promise<void> {
     try {
       // Step 0: Preparation
-      this.updateProgress(jobId, 'started', 'Step 0: Preparing project...');
+      this.updateProgress(jobId, 'started', '▶️ Step 0: Preparing project...');
 
       const exists = await this.giteaClient.repoExists(dto.projectName);
       if (exists) {
@@ -84,6 +95,7 @@ export class OrchestratorService {
       const files = await this.templateService.renderTemplates({
         projectName: dto.projectName,
         domain: dto.domain,
+        cacheBust: `${Date.now()}-${randomBytes(4).toString('hex')}`,
       });
 
       this.updateProgress(jobId, 'processing', `Pushing ${files.size} template files to Gitea...`);
@@ -101,15 +113,16 @@ export class OrchestratorService {
       if (!prismaConfig) throw new Error('runner-prisma not registered');
 
       const prismaJob = this.jobsService.create('prisma-schema');
+      this.jobsService.linkChildToParent(prismaJob.jobId, jobId);
       await this.exportersService.startJob(prismaConfig, {
         jobId: prismaJob.jobId,
         path: dto.dslPath,
         workspacePath,
         projectName: dto.projectName,
       });
-      const prismaResult = await this.waitForJob(prismaJob.jobId, 120000);
+      const prismaResult = await this.waitForJob(prismaJob.jobId, 600000);
       void prismaResult;
-      this.updateProgress(jobId, 'processing', 'Phase 1 complete. Schema written to workspace.');
+      this.updateProgress(jobId, 'processing', '✅ Phase 1 complete. Schema written to workspace.');
 
       // Phase 2: Backend + Frontend (parallel)
       this.updateProgress(jobId, 'processing', 'Phase 2: Generating backend and frontend in parallel...');
@@ -121,6 +134,7 @@ export class OrchestratorService {
 
       if (nestjsConfig) {
         const job = this.jobsService.create('nestjs-backend');
+        this.jobsService.linkChildToParent(job.jobId, jobId);
         await this.exportersService.startJob(nestjsConfig, {
           jobId: job.jobId,
           path: dto.dslPath,
@@ -132,6 +146,7 @@ export class OrchestratorService {
 
       if (reactAdminConfig) {
         const job = this.jobsService.create('react-admin-frontend');
+        this.jobsService.linkChildToParent(job.jobId, jobId);
         await this.exportersService.startJob(reactAdminConfig, {
           jobId: job.jobId,
           path: dto.dslPath,
@@ -144,7 +159,7 @@ export class OrchestratorService {
       // Wait for all Phase 2 jobs in parallel
       const results = await Promise.allSettled(
         phase2Jobs.map(async (j) => {
-          const result = await this.waitForJob(j.jobId, 180000);
+          const result = await this.waitForJob(j.jobId, 900000);
           return { name: j.name, result };
         }),
       );
@@ -162,15 +177,16 @@ export class OrchestratorService {
       }
 
       if (failed.length > 0 && succeeded.length === 0) {
-        throw new Error(`Phase 2 failed: ${failed.join(', ')}`);
+        throw new Error(`❌ Phase 2 failed: ${failed.join(', ')}`);
       }
 
-      this.updateProgress(jobId, 'processing', 'Committing and pushing generated code...');
+      this.updateProgress(jobId, 'processing', '💾 Committing and pushing generated code...');
       await this.finalizeWorkspace(workspacePath, 'feat: add generated code');
 
       if (failed.length > 0) {
-        this.updateProgress(jobId, 'completed',
-          `Partial generation. Success: ${succeeded.join(', ')}. Failed: ${failed.join(', ')}. Repo: ${repo.html_url}`);
+        this.updateProgress(jobId, 'failed',
+          `⚠️ Partial generation. ✅ Success: ${succeeded.join(', ')}. ❌ Failed: ${failed.join(', ')}. Repo: ${repo.html_url}`);
+        return;
       } else {
         // Step 3: Deploy via Portainer
         try {
@@ -180,23 +196,34 @@ export class OrchestratorService {
             this.updateProgress(jobId, 'processing', 'Removing previous deployment...');
             await this.portainerClient.removeStack(existingStack.Id);
           }
-          const composeContent = files.get('docker-compose.yml');
-          if (composeContent) {
-            this.updateProgress(jobId, 'processing', 'Creating Portainer stack...');
-            await this.portainerClient.deployStack(dto.projectName, composeContent);
-            this.updateProgress(jobId, 'processing', 'Stack deployed successfully.');
-          }
+          this.updateProgress(jobId, 'processing', 'Creating Portainer stack from Gitea repo...');
+          const stackEnv = {
+            DB_USER: dto.projectName.replace(/[^a-zA-Z0-9_]/g, '_'),
+            DB_PASSWORD: randomBytes(16).toString('hex'),
+            KEYCLOAK_ISSUER_URL: this.keycloakIssuerUrl,
+            KEYCLOAK_AUDIENCE: this.keycloakAudience,
+            VITE_KEYCLOAK_URL: this.viteKeycloakUrl,
+            VITE_KEYCLOAK_REALM: this.viteKeycloakRealm,
+            VITE_KEYCLOAK_CLIENT_ID: this.viteKeycloakClientId,
+          };
+          await this.portainerClient.deployStackFromRepo(
+            dto.projectName,
+            repo.clone_url,
+            { username: this.giteaUser, password: this.giteaToken },
+            stackEnv,
+          );
+          this.updateProgress(jobId, 'processing', 'Stack deployed successfully.');
         } catch (deployErr) {
           const deployMsg = deployErr instanceof Error ? deployErr.message : String(deployErr);
           this.logger.warn(`Portainer deploy failed: ${deployMsg}`);
           this.updateProgress(jobId, 'processing', `Deploy warning: ${deployMsg}. Code is in Gitea.`);
         }
         this.updateProgress(jobId, 'completed',
-          `Generation complete. Backend + Frontend generated. Repo: ${repo.html_url}`);
+          `✅ Generation complete. Backend + Frontend generated. Repo: ${repo.html_url}`);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      this.updateProgress(jobId, 'failed', `Pipeline failed: ${message}`);
+      this.updateProgress(jobId, 'failed', `❌ Pipeline failed: ${message}`);
     }
   }
 

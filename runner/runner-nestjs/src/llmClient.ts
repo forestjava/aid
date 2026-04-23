@@ -23,7 +23,19 @@ RULES:
 8. DTOs use class-validator decorators.
 9. Controllers implement findAll (GET /), findOne (GET /:id), create (POST /), update (PATCH /:id), remove (DELETE /:id) with skip/take pagination.
 10. Entity folder names use kebab-case.
-11. When all files are written, stop calling tools. Do not emit a final assistant narrative.`;
+11. Enum fields in DTOs MUST use \`@ApiProperty({ enum: EnumName, enumName: 'EnumName' })\` — NEVER \`@ApiProperty({ type: EnumName })\` (causes "circular dependency" Swagger error).
+12. Import enums from '@prisma/client': \`import { EnumName } from '@prisma/client'\`.
+13. DTOs contain ONLY scalar fields and foreign key ids (\`xxxId: string\`). DO NOT include relation objects (e.g. no nested \`user: UserDto\` in CreateFooDto). Relations are resolved on the response side only.
+14. If you absolutely must reference another DTO class in @ApiProperty, use lazy resolver form: \`@ApiProperty({ type: () => OtherDto })\` — never the bare class.
+15. For optional/nullable scalar fields use \`@IsOptional()\` + \`@ApiProperty({ required: false })\`.
+16. For @Param() / @Query() parameters typed as Prisma enums: ALWAYS add explicit Swagger decorator immediately above. Example:
+    \`\`\`
+    @ApiParam({ name: 'newStatus', enum: EquipmentStatus, enumName: 'EquipmentStatus' })
+    @Param('newStatus') newStatus: EquipmentStatus,
+    \`\`\`
+    Without this, Swagger crashes at runtime with "circular dependency" on the enum's first value. The same applies to @ApiQuery for @Query() with enum types.
+17. Import \`ApiParam\`, \`ApiQuery\` from '@nestjs/swagger' whenever a controller uses enum-typed @Param or @Query.
+18. When all files are written, stop calling tools. Do not emit a final assistant narrative.`;
 
 export async function generateNestJsBackendAgentic(
   dslContent: string,

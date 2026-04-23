@@ -13,10 +13,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: `${process.env.KEYCLOAK_URL}/protocol/openid-connect/certs`,
+        jwksUri: `${process.env.KEYCLOAK_ISSUER_URL}/protocol/openid-connect/certs`,
       }),
       algorithms: ['RS256'],
-      issuer: process.env.KEYCLOAK_URL,
+      issuer: process.env.KEYCLOAK_ISSUER_URL,
+      ...(process.env.KEYCLOAK_AUDIENCE
+        ? { audience: process.env.KEYCLOAK_AUDIENCE }
+        : {}),
     });
   }
 

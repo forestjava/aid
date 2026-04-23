@@ -1,3 +1,5 @@
+import { IsString, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
+
 export type JobStatus = 'started' | 'processing' | 'completed' | 'failed';
 
 export interface ProgressEvent {
@@ -30,12 +32,24 @@ export interface RunnerStartPayload {
 }
 
 export class StartJobDto {
+  @IsString()
+  @IsNotEmpty()
   exporterId: string;
+
+  @IsString()
+  @IsNotEmpty()
   path: string;
 }
 
 export class ProgressEventDto {
+  @IsString()
+  @IsOptional()
   jobId: string;
+
+  @IsIn(['started', 'processing', 'completed', 'failed'])
   status: JobStatus;
+
+  @IsString()
+  @IsNotEmpty()
   message: string;
 }

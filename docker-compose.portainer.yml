@@ -17,10 +17,14 @@ services:
       - PORTAINER_URL=${PORTAINER_URL:-http://portainer:9000}
       - PORTAINER_API_KEY=${PORTAINER_API_KEY}
       - PORTAINER_ENDPOINT_ID=${PORTAINER_ENDPOINT_ID:-1}
+      - KEYCLOAK_ISSUER_URL=${KEYCLOAK_ISSUER_URL}
+      - KEYCLOAK_AUDIENCE=${KEYCLOAK_AUDIENCE}
+      - VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
+      - VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
+      - VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
     networks:
       - proxy
     restart: unless-stopped
-    user: "1013:1013"
 
   frontend:
     build:
