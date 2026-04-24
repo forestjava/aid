@@ -2,90 +2,71 @@
 
 ## Структура
 
-Приложение состоит из трех Docker контейнеров:
-- **backend** - NestJS API (порт 3000)
-- **frontend** - React + Vite, сервится через nginx (порт 80)
-- **proxy** - Nginx reverse proxy (порт 80 наружу)
+Два compose-файла (канонический Docker-паттерн):
 
-## Первый запуск
+- **`docker-compose.yml`** — production-safe база. Все сервисы (`backend`, `frontend`, runner-\*, `proxy`). У `proxy` нет `ports:` — наружу хоста ничего не публикуется, маршрутизация идёт через external-сеть `proxy`. Этот файл деплоится в Portainer как есть.
+- **`docker-compose.override.yml`** — локальный dev-overlay. Содержит ровно одно изменение: добавляет `ports: ["${PROXY_HOST_PORT:-8080}:80"]` к `proxy`, чтобы UI был доступен с хоста.
 
-Создайте директорию для данных:
+`docker compose up` без флагов автоматически мёржит оба файла. Portainer запускает Compose с явным `-f docker-compose.yml` и `override.yml` подмешать не успевает — поведение в проде остаётся чистым.
+
+Сервисы:
+
+- **backend** — NestJS API (`expose 3000`)
+- **frontend** — React + Vite, отданный через nginx (`expose 80`)
+- **runner-\*** — генераторы (demo, crud-api-exporter, prisma, nestjs, react-admin) на портах 3003–3006
+- **proxy** — nginx reverse proxy (роутит `/` на frontend, `/api` на backend)
+
+## Первый запуск (локально)
+
+Сеть `proxy` объявлена как `external: true` (общая с другими стеками в проде). Создайте её один раз:
 ```bash
-mkdir -p data
+docker network create proxy
 ```
 
-Скопируйте примеры данных (опционально):
+## Запуск (локально)
+
 ```bash
-cp -r data.example/* data/
+docker compose up --build           # передний план
+docker compose up -d --build        # фоном
+docker compose down                 # без удаления volumes
+docker compose down -v              # с удалением workspace и backend_data
 ```
 
-## Запуск
+## Доступ к приложению (локально)
 
-### Сборка и запуск всех сервисов:
-```bash
-docker-compose up --build
-```
+- UI: http://localhost:8080
+- API: http://localhost:8080/api
 
-### Запуск в фоновом режиме:
-```bash
-docker-compose up -d --build
-```
-
-### Остановка:
-```bash
-docker-compose down
-```
-
-### Остановка с удалением volumes:
-```bash
-docker-compose down -v
-```
-
-## Доступ к приложению
-
-После запуска приложение доступно по адресу:
-- Frontend: http://localhost
-- API: http://localhost/api
+Хост-порт меняется переменной `PROXY_HOST_PORT` (например, `PROXY_HOST_PORT=3001 docker compose up`).
 
 ## Данные
 
-Данные backend хранятся в директории `./data` на хосте и монтируются в контейнер в `/data`.
-
-## Переменные окружения
-
-Backend использует переменную окружения `FS_ROOT_PATH=/data` для указания пути к данным.
+Backend хранит файлы в named volume `backend_data` (`/data` внутри контейнера). Workspace runner'ов — `workspace`. Оба автоматически изолируются project-name'ом стека (локально — `aid_*`, в Portainer — `aid_*` / `aid-dev_*`).
 
 ## Логи
 
-Просмотр логов всех сервисов:
 ```bash
-docker-compose logs -f
-```
-
-Просмотр логов конкретного сервиса:
-```bash
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f proxy
+docker compose logs -f
+docker compose logs -f backend
+docker compose logs -f proxy
 ```
 
 ## Пересборка
 
-Пересборка конкретного сервиса:
 ```bash
-docker-compose build backend
-docker-compose build frontend
+docker compose build backend
+docker compose build frontend
 ```
 
 ## Проверка статуса
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 ## Деплой в Portainer: контуры dev/prod
 
-`docker-compose.portainer.yml` рассчитан на параллельный деплой двух stack'ов из одного git-репозитория. Внутри стека сервисы сидят в приватной compose-сети `internal`; в общую external-сеть `proxy` выходит только контейнер `aid-proxy${ENV_SUFFIX}` — он и виден внешнему reverse-proxy.
+В Portainer оба stack'а (prod и dev) деплоятся из одного и того же `docker-compose.yml`. Override-файл не подхватывается, потому что Portainer указывает compose-файл явно через `-f`. Внешний reverse-proxy в общей сети `proxy` маршрутизирует трафик на контейнер `aid-proxy${ENV_SUFFIX}` по доменам.
 
 | Переменная stack'а | prod | dev |
 |--------------------|------|-----|
@@ -103,4 +84,4 @@ Stack'и:
 - **prod** — git ref `master`, переменные из колонки prod.
 - **dev** — git ref `dev` (создаётся от `master` и отслеживает его), переменные из колонки dev.
 
-Named volumes `backend_data` (данные backend) и `workspace` (шина между backend и runner'ами) автоматически префиксуются project-name'ом Portainer-стека (`aid_backend_data` vs `aid-dev_backend_data`), поэтому никаких ручных правок для изоляции данных не требуется.
+Named volumes `backend_data` и `workspace` автоматически префиксуются project-name'ом Portainer-стека (`aid_backend_data` vs `aid-dev_backend_data`), поэтому изоляция данных между контурами получается из коробки.
