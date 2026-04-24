@@ -10,12 +10,12 @@ services:
     environment:
       - PORT=3000
       - FS_ROOT_PATH=/data
-      - EXPORTER_DEMO_URL=${EXPORTER_DEMO_URL:-http://aid-runner-demo:3003}
-      - EXPORTER_CRUD_API_URL=${EXPORTER_CRUD_API_URL:-http://aid-runner-crud-api-exporter:3003}
+      - EXPORTER_DEMO_URL=${EXPORTER_DEMO_URL:-http://aid-runner-demo${ENV_SUFFIX:-}:3003}
+      - EXPORTER_CRUD_API_URL=${EXPORTER_CRUD_API_URL:-http://aid-runner-crud-api-exporter${ENV_SUFFIX:-}:3003}
       - EXPORTER_CONTRACT_URL=${EXPORTER_CONTRACT_URL:-http://contract-craft-dev-service:8080}
-      - EXPORTER_PRISMA_URL=${EXPORTER_PRISMA_URL:-http://aid-runner-prisma:3004}
-      - EXPORTER_NESTJS_URL=${EXPORTER_NESTJS_URL:-http://aid-runner-nestjs:3005}
-      - EXPORTER_REACT_ADMIN_URL=${EXPORTER_REACT_ADMIN_URL:-http://aid-runner-react-admin:3006}
+      - EXPORTER_PRISMA_URL=${EXPORTER_PRISMA_URL:-http://aid-runner-prisma${ENV_SUFFIX:-}:3004}
+      - EXPORTER_NESTJS_URL=${EXPORTER_NESTJS_URL:-http://aid-runner-nestjs${ENV_SUFFIX:-}:3005}
+      - EXPORTER_REACT_ADMIN_URL=${EXPORTER_REACT_ADMIN_URL:-http://aid-runner-react-admin${ENV_SUFFIX:-}:3006}
       - GITEA_URL=${GITEA_URL:-http://gitea:3000}
       - GITEA_TOKEN=${GITEA_TOKEN}
       - GITEA_USER=${GITEA_USER:-aid}
