@@ -96,6 +96,8 @@ services:
       - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
       - CONTEXT7_ENABLED=true
       - PORT=3004
+    expose:
+      - "3004"
     networks:
       - internal
 
@@ -116,6 +118,8 @@ services:
       - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
       - CONTEXT7_ENABLED=true
       - PORT=3005
+    expose:
+      - "3005"
     networks:
       - internal
 
@@ -136,6 +140,8 @@ services:
       - AI_TEMPERATURE=${AI_TEMPERATURE:-0.2}
       - CONTEXT7_ENABLED=true
       - PORT=3006
+    expose:
+      - "3006"
     networks:
       - internal
 
