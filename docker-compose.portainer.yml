@@ -31,7 +31,12 @@ services:
     expose:
       - "3000"
     networks:
+      # internal — общая шина с runner'ами и frontend/proxy внутри стека
       - internal
+      # proxy — чтобы достучаться до внешних сервисов в общей сети
+      # (contract-craft-dev-service, Gitea, Portainer и т.п.), а также
+      # чтобы contract-craft мог сделать callback в aid-backend${ENV_SUFFIX}
+      - proxy
     restart: unless-stopped
 
   frontend:
