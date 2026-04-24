@@ -58,11 +58,11 @@ describe('Integration: Template Rendering', () => {
     const tsconfig = JSON.parse(files.get('backend/tsconfig.json')!);
     expect(tsconfig.compilerOptions.module).toBe('commonjs');
 
-    // Verify authProvider has hardcoded Keycloak values (not import.meta.env)
+    // Verify authProvider reads Keycloak config from Vite env at runtime.
     const authProvider = files.get('frontend/src/authProvider.ts')!;
-    expect(authProvider).toContain("realm: 'my-app'");
-    expect(authProvider).toContain("clientId: 'my-app-frontend'");
-    expect(authProvider).not.toContain('import.meta.env');
+    expect(authProvider).toContain('import.meta.env.VITE_KEYCLOAK_URL');
+    expect(authProvider).toContain('import.meta.env.VITE_KEYCLOAK_REALM');
+    expect(authProvider).toContain('import.meta.env.VITE_KEYCLOAK_CLIENT_ID');
 
     // Verify backend Dockerfile uses dist/src/main (SWC output path)
     const backendDockerfile = files.get('backend/Dockerfile')!;
