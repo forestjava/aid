@@ -3,13 +3,19 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    container_name: aid-backend
+    container_name: aid-backend${ENV_SUFFIX:-}
     volumes:
       - backend_data:/data
       - workspace:/workspace
     environment:
       - PORT=3000
       - FS_ROOT_PATH=/data
+      - EXPORTER_DEMO_URL=${EXPORTER_DEMO_URL:-http://aid-runner-demo:3003}
+      - EXPORTER_CRUD_API_URL=${EXPORTER_CRUD_API_URL:-http://aid-runner-crud-api-exporter:3003}
+      - EXPORTER_CONTRACT_URL=${EXPORTER_CONTRACT_URL:-http://contract-craft-dev-service:8080}
+      - EXPORTER_PRISMA_URL=${EXPORTER_PRISMA_URL:-http://aid-runner-prisma:3004}
+      - EXPORTER_NESTJS_URL=${EXPORTER_NESTJS_URL:-http://aid-runner-nestjs:3005}
+      - EXPORTER_REACT_ADMIN_URL=${EXPORTER_REACT_ADMIN_URL:-http://aid-runner-react-admin:3006}
       - GITEA_URL=${GITEA_URL:-http://gitea:3000}
       - GITEA_TOKEN=${GITEA_TOKEN}
       - GITEA_USER=${GITEA_USER:-aid}
@@ -22,8 +28,10 @@ services:
       - VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
       - VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
       - VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
+    expose:
+      - "3000"
     networks:
-      - proxy
+      - internal
     restart: unless-stopped
 
   frontend:
@@ -31,50 +39,56 @@ services:
       context: .
       dockerfile: client/Dockerfile
       args:
-        - VITE_COPYRIGHT=${VITE_COPYRIGHT} # авторство устанавливается переменной окружения
-    container_name: aid-frontend
+        - VITE_COPYRIGHT=${VITE_COPYRIGHT}
+    container_name: aid-frontend${ENV_SUFFIX:-}
+    expose:
+      - "80"
     networks:
-      - proxy
+      - internal
     restart: unless-stopped
 
   runner-demo:
     build:
       context: runner/node
       dockerfile: Dockerfile
-    container_name: aid-runner-demo
+    container_name: aid-runner-demo${ENV_SUFFIX:-}
     environment:
       - PORT=3003
-      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
+    expose:
+      - "3003"
     networks:
-      - proxy
+      - internal
     restart: unless-stopped
 
   runner-crud-api-exporter:
     build:
       context: runner/crud-api-exporter
       dockerfile: Dockerfile
-    container_name: aid-runner-crud-api-exporter
+    container_name: aid-runner-crud-api-exporter${ENV_SUFFIX:-}
     environment:
-      - CALLBACK_BASE_URL=${CALLBACK_BASE_URL}
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
       - AI_API_URL=${AI_API_URL}
       - AI_API_KEY=${AI_API_KEY}
       - AI_MODEL=${AI_MODEL}
       - AI_MAX_TOKENS=${AI_MAX_TOKENS}
       - AI_TEMPERATURE=${AI_TEMPERATURE}
+    expose:
+      - "3003"
     networks:
-      - proxy
+      - internal
     restart: unless-stopped
 
   runner-prisma:
     build:
       context: .
       dockerfile: runner/runner-prisma/Dockerfile
-    container_name: aid-runner-prisma
+    container_name: aid-runner-prisma${ENV_SUFFIX:-}
     restart: unless-stopped
     volumes:
       - workspace:/workspace
     environment:
-      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
       - AI_API_URL=${AI_API_URL}
       - AI_API_KEY=${AI_API_KEY}
       - AI_MODEL=${AI_MODEL}
@@ -83,18 +97,18 @@ services:
       - CONTEXT7_ENABLED=true
       - PORT=3004
     networks:
-      - proxy
+      - internal
 
   runner-nestjs:
     build:
       context: .
       dockerfile: runner/runner-nestjs/Dockerfile
-    container_name: aid-runner-nestjs
+    container_name: aid-runner-nestjs${ENV_SUFFIX:-}
     restart: unless-stopped
     volumes:
       - workspace:/workspace
     environment:
-      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
       - AI_API_URL=${AI_API_URL}
       - AI_API_KEY=${AI_API_KEY}
       - AI_MODEL=${AI_MODEL}
@@ -103,18 +117,18 @@ services:
       - CONTEXT7_ENABLED=true
       - PORT=3005
     networks:
-      - proxy
+      - internal
 
   runner-react-admin:
     build:
       context: .
       dockerfile: runner/runner-react-admin/Dockerfile
-    container_name: aid-runner-react-admin
+    container_name: aid-runner-react-admin${ENV_SUFFIX:-}
     restart: unless-stopped
     volumes:
       - workspace:/workspace
     environment:
-      - CALLBACK_BASE_URL=http://aid-backend:3000
+      - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
       - AI_API_URL=${AI_API_URL}
       - AI_API_KEY=${AI_API_KEY}
       - AI_MODEL=${AI_MODEL}
@@ -123,23 +137,26 @@ services:
       - CONTEXT7_ENABLED=true
       - PORT=3006
     networks:
-      - proxy
+      - internal
 
   proxy:
-      build:
-        context: .
-        dockerfile: proxy/Dockerfile
-      container_name: aid-proxy
-      depends_on:
-        - backend
-        - frontend
-      networks:
-        - proxy
-      restart: unless-stopped
+    build:
+      context: .
+      dockerfile: proxy/Dockerfile
+    container_name: aid-proxy${ENV_SUFFIX:-}
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - internal
+      - proxy
+    restart: unless-stopped
 
 networks:
   proxy:
     external: true
+  internal:
+    driver: bridge
 
 volumes:
   workspace:

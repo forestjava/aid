@@ -92,16 +92,26 @@ app.listen(PORT, () => console.log(`Exporter on port ${PORT}`));
 
 ### Шаг 2. Зарегистрировать экспортер на бэкенде
 
-Файл `server/src/exporters/exporters.service.ts`, метод `onModuleInit()` — добавить вызов `this.register(...)`:
+Файл `server/src/exporters/exporters.service.ts`, метод `onModuleInit()` — добавить вызов `this.register(...)`. **URL экспортера должен читаться из env-переменной с prod-дефолтом** (иначе dev/prod-контуры не смогут разводить адреса):
 
 ```typescript
 this.register({
-  exporterId: 'my-super-exporter',       // уникальный ID
-  name: 'My Super Exporter',             // имя для логов и UI
-  baseUrl: 'http://aid-runner-my-super-exporter:3030', // адрес внутри Docker-сети
-  startPath: '/start',                   // путь для POST-запроса
+  exporterId: 'my-super-exporter',  // уникальный ID
+  name: 'My Super Exporter',        // имя для логов и UI
+  baseUrl:
+    process.env.EXPORTER_MY_SUPER_URL ??
+    'http://aid-runner-my-super-exporter:3030', // дефолт — адрес в сети internal
+  startPath: '/start',              // путь для POST-запроса
 });
 ```
+
+Затем пробросить эту env-переменную в backend в `docker-compose.portainer.yml` (в `environment:` сервиса `backend`), с дефолтом, совпадающим с фолбэком в коде:
+
+```yaml
+      - EXPORTER_MY_SUPER_URL=${EXPORTER_MY_SUPER_URL:-http://aid-runner-my-super-exporter:3030}
+```
+
+И добавить новую строку в `aid/.env.example`. В dev-контуре переменная переопределяется (например, `http://aid-runner-my-super-exporter-dev:3030`) — см. `DOCKER.md` → «Деплой в Portainer: контуры dev/prod».
 
 ### Шаг 3. Добавить кнопку на фронтенде
 

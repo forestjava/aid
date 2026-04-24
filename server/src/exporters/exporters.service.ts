@@ -10,44 +10,54 @@ export class ExportersService implements OnModuleInit {
     this.register({
       exporterId: 'demo',
       name: 'Demo Exporter',
-      baseUrl: 'http://aid-runner-demo:3003', // имя внутри proxy сети, порт указанный в переменных docker окружения 
+      baseUrl: process.env.EXPORTER_DEMO_URL ?? 'http://aid-runner-demo:3003',
       startPath: '/start',
     });
     this.register({
       exporterId: 'crud-api',
       name: 'CRUD API Exporter',
-      baseUrl: 'http://aid-runner-crud-api-exporter:3003',
+      baseUrl:
+        process.env.EXPORTER_CRUD_API_URL ??
+        'http://aid-runner-crud-api-exporter:3003',
       startPath: '/start',
     });
     this.register({
       exporterId: 'contract',
       name: 'Contract Craft Exporter',
-      baseUrl: 'http://contract-craft-dev-service:8080',
+      baseUrl:
+        process.env.EXPORTER_CONTRACT_URL ??
+        'http://contract-craft-dev-service:8080',
       startPath: '/api/trigger',
     });
     this.register({
       exporterId: 'prisma-schema',
       name: 'Prisma Schema Generator',
-      baseUrl: 'http://aid-runner-prisma:3004',
+      baseUrl:
+        process.env.EXPORTER_PRISMA_URL ?? 'http://aid-runner-prisma:3004',
       startPath: '/start',
     });
     this.register({
       exporterId: 'nestjs-backend',
       name: 'NestJS Backend Generator',
-      baseUrl: 'http://aid-runner-nestjs:3005',
+      baseUrl:
+        process.env.EXPORTER_NESTJS_URL ?? 'http://aid-runner-nestjs:3005',
       startPath: '/start',
     });
     this.register({
       exporterId: 'react-admin-frontend',
       name: 'React Admin Frontend Generator',
-      baseUrl: 'http://aid-runner-react-admin:3006',
+      baseUrl:
+        process.env.EXPORTER_REACT_ADMIN_URL ??
+        'http://aid-runner-react-admin:3006',
       startPath: '/start',
     });
   }
 
   register(config: ExporterConfig): void {
     this.registry.set(config.exporterId, config);
-    this.logger.log(`Registered exporter: ${config.exporterId} (${config.name}) at ${config.baseUrl}`);
+    this.logger.log(
+      `Registered exporter: ${config.exporterId} (${config.name}) at ${config.baseUrl}`,
+    );
   }
 
   findById(exporterId: string): ExporterConfig | undefined {
@@ -59,7 +69,9 @@ export class ExportersService implements OnModuleInit {
     payload: RunnerStartPayload,
   ): Promise<void> {
     const url = `${config.baseUrl}${config.startPath}`;
-    this.logger.log(`Starting job=${payload.jobId} on exporter=${config.exporterId} at ${url}`);
+    this.logger.log(
+      `Starting job=${payload.jobId} on exporter=${config.exporterId} at ${url}`,
+    );
 
     const response = await fetch(url, {
       method: 'POST',
