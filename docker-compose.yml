@@ -64,8 +64,8 @@ services:
 
   runner-crud-api-exporter:
     build:
-      context: runner/crud-api-exporter
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: runner/crud-api-exporter/Dockerfile
     container_name: aid-runner-crud-api-exporter${ENV_SUFFIX:-}
     environment:
       - CALLBACK_BASE_URL=http://aid-backend${ENV_SUFFIX:-}:3000
