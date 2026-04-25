@@ -26,25 +26,53 @@ async function processJob(jobId: string, path: string): Promise<void> {
   try {
     await sendProgress(jobId, 'started', 'Задача принята к исполнению');
 
-    // 1. Fetch source DSL content
+    // 1. Fetch source DSL
     await sendProgress(jobId, 'processing', 'Получение исходного текста');
     const sourceContent = await fetchSourceContent(path);
     const lineCount = sourceContent.split('\n').length;
     console.log(`[${jobId}] Fetched ${lineCount} lines from ${path}`);
-    await sendProgress(jobId, 'processing', `Исходный текст получен (${lineCount} строк)`);
 
-    // 2. Send to LLM
+    // 2. Validate input
+    const inputEnabled = process.env.CRUD_INPUT_VALIDATION_ENABLED !== 'false';
+    if (inputEnabled) {
+      await sendProgress(jobId, 'processing', 'Валидация входного DSL');
+      const { validateInputSource } = await import('./validator/index.ts');
+      const inp = validateInputSource(sourceContent);
+      if (!inp.ok) {
+        const payload = JSON.stringify({
+          stage: inp.parseErrors.length > 0 ? 'input-parse' : 'input-validation',
+          errors: inp.parseErrors.length > 0 ? inp.parseErrors : inp.issues,
+        });
+        await sendProgress(jobId, 'failed', payload);
+        return;
+      }
+    }
+
+    // 3. LLM
     await sendProgress(jobId, 'processing', 'Обращение к LLM');
     const llmResult = await generateWithLLM(sourceContent);
     console.log(`[${jobId}] LLM response: ${llmResult.length} characters`);
-    await sendProgress(jobId, 'processing', `LLM ответ получен (${llmResult.length} символов)`);
 
-    // 3. Write result file
+    // 4. Validate output
+    const outputEnabled = process.env.CRUD_OUTPUT_VALIDATION_ENABLED !== 'false';
+    if (outputEnabled) {
+      await sendProgress(jobId, 'processing', 'Валидация выходного DSL');
+      const { validateOutputAgainstInput } = await import('./validator/index.ts');
+      const out = validateOutputAgainstInput(sourceContent, llmResult);
+      if (!out.ok) {
+        const payload = JSON.stringify({
+          stage: out.parseErrors.length > 0 ? 'output-parse' : 'output-validation',
+          errors: out.parseErrors.length > 0 ? out.parseErrors : out.issues,
+        });
+        await sendProgress(jobId, 'failed', payload);
+        return;
+      }
+    }
+
+    // 5. Write result
     const outputPath = deriveOutputPath(path);
     await sendProgress(jobId, 'processing', `Запись результата в ${outputPath}`);
     await writeResultFile(outputPath, llmResult);
-    console.log(`[${jobId}] Result written to ${outputPath}`);
-    await sendProgress(jobId, 'processing', `Результат записан в файл ${outputPath}`);
 
     await sendProgress(jobId, 'completed', 'Готово');
     console.log(`[${jobId}] Job completed`);
