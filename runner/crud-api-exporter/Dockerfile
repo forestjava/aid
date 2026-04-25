@@ -5,7 +5,7 @@ WORKDIR /app
 # explicitly from the runner/crud-api-exporter subdir and place shared/grammar.ohm
 # at /app/shared so the validator can resolve it next to the package in the image.
 COPY runner/crud-api-exporter/package*.json ./
-RUN npm install --omit=dev=false
+RUN npm ci
 
 COPY runner/crud-api-exporter/ ./
 COPY shared/grammar.ohm ./shared/grammar.ohm

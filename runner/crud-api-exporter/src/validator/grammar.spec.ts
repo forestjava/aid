@@ -9,6 +9,6 @@ describe('grammar', () => {
 
   it('parses a minimal entity', () => {
     const m = dslGrammar.match('entity X { attribute id { type uuid; key primary; } }');
-    assert.ok(m.succeeded(), m.message);
+    assert.ok(m.succeeded(), m.failed() ? m.message : 'parse failed');
   });
 });
