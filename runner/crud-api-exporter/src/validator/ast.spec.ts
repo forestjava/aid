@@ -108,4 +108,15 @@ api API.Equipment {
     assert.equal(api.endpoints.length, 1);
     assert.equal(api.endpoints[0].label, 'POST /equipment/page');
   });
+
+  it('does not capture bare relates as foreignRelates', () => {
+    const src = `entity X { attribute id { type uuid; key primary; }
+    attribute eq { type uuid; is required; relates Other.id; } }`;
+    const { ast, errors } = parseToAst(src);
+    assert.deepEqual(errors, []);
+    const e = ast.containers[0];
+    if (e.kind !== 'entity') throw new Error('typing');
+    const eq = e.attributes.find(a => a.name === 'eq')!;
+    assert.equal(eq.foreignRelates, null);
+  });
 });

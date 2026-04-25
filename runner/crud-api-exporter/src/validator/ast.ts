@@ -209,7 +209,6 @@ function buildAttribute(raw: RawEntity, source: string): AttributeNode {
     } else if (v === 'Entity_ref') {
       if (kw === 'map') attr.mapTarget = item.name;
       else if (kw === 'sync' || kw === 'обмен') attr.syncTarget = item.name;
-      else if (kw === 'relates' || kw === 'относится') attr.foreignRelates = item.name;
     } else if (v === 'Entity_value') {
       if (kw === 'default') attr.defaultValue = item.rawValue;
     }
