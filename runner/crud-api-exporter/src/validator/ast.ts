@@ -276,6 +276,13 @@ function buildContainer(raw: RawEntity, source: string): ContainerNode | null {
       if ((item.keyword === 'value' || item.keyword === 'значение') &&
           (item.variant === 'Entity_options' || item.variant === 'Entity_simple')) {
         en.values.push(buildEnumValue(item, source));
+      } else if ((item.keyword === 'value' || item.keyword === 'значение') &&
+                 item.variant === 'Entity_value') {
+        en.values.push({
+          name: item.rawValue ?? '',
+          position: pos(source, item),
+          label: null,
+        });
       }
     }
     return en;
