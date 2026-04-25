@@ -41,3 +41,39 @@ describe('validateInputSource', () => {
     assert.ok(ruleIds.has('R17'), 'R17 missing labels');
   });
 });
+
+import { validateOutputAgainstInput } from './index.ts';
+
+const INPUT_OK = `entity X { attribute id { type uuid; key primary; }
+  attribute date { type datetime; is required; label "D"; } }`;
+
+const OUTPUT_GOOD = `dto DTO.X { description "x"; attribute id { type uuid; map X.id; } attribute date { type datetime; is required; map X.date; } }
+dto DTO.XCreate { description "x"; attribute date { type datetime; is required; map X.date; } }
+dto DTO.XUpdate { description "x"; attribute date { type datetime; is nullable; map X.date; } }
+dto DTO.XListRequest { description "x"; attribute filter { type DTO.Filter; is nullable; } attribute page { type DTO.PageRequest; } }
+dto DTO.XListResponse { description "x"; attribute content { type DTO.X[]; } attribute pageInfo { type DTO.PageInfo; } }
+api API.X { description "x";
+  endpoint listX { label "POST /x/page"; attribute request { type DTO.XListRequest; } attribute response { type DTO.XListResponse; } }
+  endpoint getX { label "GET /x/{id}"; attribute id { type uuid; } attribute response { type DTO.X; } }
+  endpoint createX { label "POST /x"; attribute request { type DTO.XCreate; } }
+  endpoint updateX { label "PATCH /x/{id}"; attribute id { type uuid; } attribute request { type DTO.XUpdate; } }
+  endpoint deleteX { label "DELETE /x/{id}"; attribute id { type uuid; } } }`;
+
+describe('validateOutputAgainstInput', () => {
+  it('passes for clean output', () => {
+    const r = validateOutputAgainstInput(INPUT_OK, OUTPUT_GOOD);
+    assert.equal(r.ok, true, JSON.stringify(r.issues, null, 2));
+  });
+  it('fails when datetime is downgraded to date', () => {
+    const broken = OUTPUT_GOOD.replace('attribute date { type datetime; is required; map X.date; }',
+                                        'attribute date { type date; is required; map X.date; }');
+    const r = validateOutputAgainstInput(INPUT_OK, broken);
+    assert.equal(r.ok, false);
+    assert.ok(r.issues.some(i => i.rule === 'O3'));
+  });
+  it('fails when update is PUT', () => {
+    const broken = OUTPUT_GOOD.replace('label "PATCH /x/{id}"', 'label "PUT /x/{id}"');
+    const r = validateOutputAgainstInput(INPUT_OK, broken);
+    assert.ok(r.issues.some(i => i.rule === 'O9'));
+  });
+});
