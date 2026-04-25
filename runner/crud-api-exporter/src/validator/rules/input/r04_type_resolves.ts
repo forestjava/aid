@@ -1,6 +1,9 @@
 import type { Rule, Issue } from '../../types.ts';
 
 const PRIMITIVES = new Set(['string', 'text', 'integer', 'decimal', 'boolean', 'uuid', 'date', 'datetime']);
+// Names that R5 specifically flags as case-mistake primitives.
+// R4 cedes these so we don't double-report.
+const R5_KNOWN_BAD = new Set(['Number', 'number', 'Date', 'DateTime', 'dateTime', 'String', 'Integer', 'Boolean', 'UUID', 'Uuid']);
 
 function stripArray(t: string): string {
   return t.endsWith('[]') ? t.slice(0, -2) : t;
@@ -22,6 +25,7 @@ export const ruleR4: Rule = {
       for (const a of c.attributes) {
         if (a.type === null) continue;
         const t = stripDecimalArgs(stripArray(a.type));
+        if (R5_KNOWN_BAD.has(t)) continue;
         if (PRIMITIVES.has(t)) continue;
         if (knownNames.has(t)) continue;
         issues.push({

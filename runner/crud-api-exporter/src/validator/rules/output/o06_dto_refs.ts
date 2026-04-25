@@ -17,7 +17,7 @@ export const ruleO6: OutputRule = {
       if (!declared.has(t)) {
         issues.push({
           rule: 'O6', line,
-          message: `O6: reference to undefined DTO '${t}' at ${where} (line ${line}).`,
+          message: `reference to undefined DTO '${t}' at ${where} (line ${line}).`,
         });
       }
     }

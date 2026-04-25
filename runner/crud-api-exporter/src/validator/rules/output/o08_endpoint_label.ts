@@ -29,7 +29,7 @@ export const ruleO8: OutputRule = {
             if (ep.label !== expected) {
               issues.push({
                 rule: 'O8', entity: c.name, attribute: ep.name, line: ep.position.line,
-                message: `O8: ${c.name}.${ep.name} (line ${ep.position.line}): label '${ep.label ?? ''}' does not match expected '${expected}'.`,
+                message: `${c.name}.${ep.name} (line ${ep.position.line}): label '${ep.label ?? ''}' does not match expected '${expected}'.`,
               });
             }
             break;

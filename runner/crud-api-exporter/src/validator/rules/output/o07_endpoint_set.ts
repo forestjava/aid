@@ -15,7 +15,7 @@ export const ruleO7: OutputRule = {
       if (!api) {
         issues.push({
           rule: 'O7', entity: c.name, line: c.position.line,
-          message: `O7: missing API container '${apiName}'.`,
+          message: `missing API container '${apiName}'.`,
         });
         continue;
       }
@@ -24,7 +24,7 @@ export const ruleO7: OutputRule = {
         if (!api.endpoints.some(ep => ep.name === expected)) {
           issues.push({
             rule: 'O7', entity: c.name, line: api.position.line,
-            message: `O7: missing endpoint '${expected}' in '${apiName}'.`,
+            message: `missing endpoint '${expected}' in '${apiName}'.`,
           });
         }
       }

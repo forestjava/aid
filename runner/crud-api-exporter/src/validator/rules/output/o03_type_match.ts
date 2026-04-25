@@ -20,7 +20,7 @@ export const ruleO3: OutputRule = {
         if (entAttr.type !== a.type) {
           issues.push({
             rule: 'O3', entity: c.name, attribute: a.name, line: a.position.line,
-            message: `O3: ${c.name}.${a.name} (line ${a.position.line}): type mismatch with ${ent.name}.${a.name}: DTO has '${a.type}', entity has '${entAttr.type}'.`,
+            message: `${c.name}.${a.name} (line ${a.position.line}): type mismatch with ${ent.name}.${a.name}: DTO has '${a.type}', entity has '${entAttr.type}'.`,
           });
         }
       }

@@ -17,4 +17,10 @@ entity X { attribute id { type uuid; key primary; }
     assert.equal(issues.length, 1);
     assert.match(issues[0].message, /unknown type 'Stirng'/);
   });
+  it('does not double-fire on dateTime (R5 owns case-mistake primitives)', () => {
+    const { ast } = parseToAst(`entity X { attribute id { type uuid; key primary; }
+    attribute d { type dateTime; is required; label "D"; } }`);
+    const issues = ruleR4.check(ast);
+    assert.equal(issues.length, 0);
+  });
 });

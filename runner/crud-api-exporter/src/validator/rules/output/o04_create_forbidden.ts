@@ -12,7 +12,7 @@ export const ruleO4: OutputRule = {
         if (FORBIDDEN.has(a.name)) {
           issues.push({
             rule: 'O4', entity: c.name, attribute: a.name, line: a.position.line,
-            message: `O4: ${c.name}.${a.name} (line ${a.position.line}): forbidden in Create-DTO (server-managed field).`,
+            message: `${c.name}.${a.name} (line ${a.position.line}): forbidden in Create-DTO (server-managed field).`,
           });
         }
       }

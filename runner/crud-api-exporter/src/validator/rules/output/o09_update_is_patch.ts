@@ -12,7 +12,7 @@ export const ruleO9: OutputRule = {
         if (verb && verb !== 'PATCH') {
           issues.push({
             rule: 'O9', entity: c.name, attribute: ep.name, line: ep.position.line,
-            message: `O9: ${c.name}.${ep.name} (line ${ep.position.line}): method must be 'PATCH', got '${verb}'.`,
+            message: `${c.name}.${ep.name} (line ${ep.position.line}): method must be 'PATCH', got '${verb}'.`,
           });
         }
       }

@@ -15,7 +15,7 @@ export const ruleO2: OutputRule = {
         if (!a.mapTarget) {
           issues.push({
             rule: 'O2', entity: c.name, attribute: a.name, line: a.position.line,
-            message: `O2: ${c.name}.${a.name} (line ${a.position.line}): missing 'map' directive.`,
+            message: `${c.name}.${a.name} (line ${a.position.line}): missing 'map' directive.`,
           });
         }
       }

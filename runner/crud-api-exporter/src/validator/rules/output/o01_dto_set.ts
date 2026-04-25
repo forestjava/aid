@@ -14,7 +14,7 @@ export const ruleO1: OutputRule = {
         if (!dtoNames.has(expected)) {
           issues.push({
             rule: 'O1', entity: c.name, line: c.position.line,
-            message: `O1: missing DTO '${expected}' for entity '${c.name}'.`,
+            message: `missing DTO '${expected}' for entity '${c.name}'.`,
           });
         }
       }
