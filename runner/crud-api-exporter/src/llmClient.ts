@@ -162,7 +162,7 @@ api API.Products {
   }
 
   endpoint updateProduct {
-    label "PUT /products/{id}";
+    label "PATCH /products/{id}";
     description "Обновить товар";
     attribute id {
       type uuid;
@@ -182,6 +182,18 @@ api API.Products {
 - Сохраняй description из исходных атрибутов в DTO.
 - Используй 2-пробельную индентацию.
 - Добавляй description к каждому dto и endpoint.
+
+## Compatibility rules (NestJS + react-admin)
+
+C1. Update endpoint method is PATCH (not PUT). Always emit: label "PATCH /<kebab>/{id}";
+C2. Path parameter is a single {id}. No composite keys.
+C3. List endpoint is POST /<kebab>/page with body {filter, page}; response is {content, pageInfo}.
+C4. Create-DTO does not contain id, createdAt, updatedAt, deletedAt. Update-DTO has every field 'is nullable'.
+C5. FK fields stay flat in DTOs: emit only <other>Id: uuid. Do NOT add nested objects like 'equipment: DTO.Equipment'.
+C6. If an entity attribute has 'type datetime', the matching DTO attribute is also 'type datetime'. NEVER downgrade to 'date'.
+C7. Copy 'description' from each entity attribute into matching DTO attributes.
+C8. Endpoint labels do NOT include the global '/api' prefix. Write 'POST /equipment', not 'POST /api/equipment'.
+C9. URL path segments are kebab-case derived from the entity name (ChangeEquipmentStatus -> /change-equipment-status).
 `;
 
 const USER_PROMPT_TEMPLATE = `Вот описание доменных сущностей на DSL-языке. Сгенерируй полное описание CRUD API (DTO + api-эндпоинты) по правилам из системного промпта.
