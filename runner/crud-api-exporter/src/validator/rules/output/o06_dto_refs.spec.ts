@@ -17,4 +17,17 @@ dto DTO.XListResponse { attribute content { type DTO.X[]; } attribute pageInfo {
     assert.equal(issues.length, 1);
     assert.match(issues[0].message, /undefined DTO 'DTO\.NoSuch'/);
   });
+  it('passes for per-entity shared DTOs', () => {
+    const out = `dto DTO.X { attribute id { type uuid; map X.id; } }
+dto DTO.XListRequest { attribute filter { type DTO.XFilter; } attribute page { type DTO.XPageRequest; } }
+dto DTO.XListResponse { attribute content { type DTO.X[]; } attribute pageInfo { type DTO.XPageInfo; } }`;
+    const o = parseToAst(out).ast;
+    assert.deepEqual(ruleO6.check({ source: '', containers: [] }, o), []);
+  });
+  it('still fails on DTO with shared-suffix but unknown entity body', () => {
+    const out = `api API.X { description "x"; endpoint l { label "POST /x/page"; attribute request { type DTO.lowercaseFilter; } } }`;
+    const o = parseToAst(out).ast;
+    const issues = ruleO6.check({ source: '', containers: [] }, o);
+    assert.equal(issues.length, 1);
+  });
 });

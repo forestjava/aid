@@ -1,6 +1,6 @@
 import type { OutputRule, Issue } from '../../types.ts';
 
-const SHARED_DTO = new Set(['DTO.Filter', 'DTO.PageRequest', 'DTO.PageInfo']);
+const SHARED_DTO_PATTERN = /^DTO\.([A-Z][A-Za-z0-9]*)?(Filter|PageRequest|PageInfo)$/;
 
 function stripArray(t: string): string { return t.endsWith('[]') ? t.slice(0, -2) : t; }
 
@@ -13,7 +13,7 @@ export const ruleO6: OutputRule = {
       if (!ref) return;
       const t = stripArray(ref);
       if (!t.startsWith('DTO.')) return;
-      if (SHARED_DTO.has(t)) return;
+      if (SHARED_DTO_PATTERN.test(t)) return;
       if (!declared.has(t)) {
         issues.push({
           rule: 'O6', line,

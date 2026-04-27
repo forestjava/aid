@@ -9,6 +9,18 @@ import { writeResultFile } from './writeResult.js';
 const app = express();
 app.use(express.json());
 
+function sanitizeLlmOutput(raw: string): string {
+  let text = raw.replace(/^\uFEFF/, '');
+  const fencedBlocks = [...text.matchAll(/```[a-zA-Z0-9_-]*\r?\n([\s\S]*?)\r?\n```/g)];
+  if (fencedBlocks.length > 0) {
+    const last = fencedBlocks[fencedBlocks.length - 1];
+    text = last[1];
+  }
+  text = text.replace(/^[\s\u00A0\u200B\u2028\u2029]+/, '');
+  text = text.replace(/[\s\u00A0\u200B\u2028\u2029]+$/, '');
+  return text;
+}
+
 interface StartRequest {
   jobId: string;
   path: string;
@@ -50,8 +62,14 @@ async function processJob(jobId: string, path: string): Promise<void> {
 
     // 3. LLM
     await sendProgress(jobId, 'processing', 'Обращение к LLM');
-    const llmResult = await generateWithLLM(sourceContent);
-    console.log(`[${jobId}] LLM response: ${llmResult.length} characters`);
+    const llmResultRaw = await generateWithLLM(sourceContent);
+    console.log(`[${jobId}] LLM response: ${llmResultRaw.length} characters`);
+    console.log(`[${jobId}] LLM head: ${JSON.stringify(llmResultRaw.slice(0, 200))}`);
+    console.log(`[${jobId}] LLM tail: ${JSON.stringify(llmResultRaw.slice(-100))}`);
+    const llmResult = sanitizeLlmOutput(llmResultRaw);
+    if (llmResult.length !== llmResultRaw.length) {
+      console.log(`[${jobId}] Sanitized: stripped ${llmResultRaw.length - llmResult.length} chars (BOM/whitespace/fences)`);
+    }
 
     // 4. Validate output
     const outputEnabled = process.env.CRUD_OUTPUT_VALIDATION_ENABLED !== 'false';

@@ -135,7 +135,10 @@ enum Status {
 Общие DTO для пагинации и фильтрации:
 - **DTO.<Entity>ListRequest** — объединяет фильтры и пагинацию в одном теле POST-запроса для запроса отфильтрованного списка с определенной страницы пагинации
 - **DTO.<Entity>ListResponse** — оборачивает результирующий массив сущностей content вместе с метаданными фильтрации и пагинации.
-При необходимости используй ссылки на DTO.Filter, DTO.PageRequest, DTO.PageInfo и т.п. так, как будто они уже существуют, не описывая их самих для лаконичности выходного текста.
+
+Для фильтров и пагинации используй per-entity внешние DTO: **DTO.<Entity>Filter**, **DTO.<Entity>PageRequest**, **DTO.<Entity>PageInfo**. Считай их уже существующими и не описывай их тела — только ссылайся по типу. Имя сущности (<Entity>) — ровно то же PascalCase-имя, что и у соответствующей entity из входа (например, для entity Equipment → DTO.EquipmentFilter, DTO.EquipmentPageRequest, DTO.EquipmentPageInfo).
+
+Не используй обобщённые DTO.Filter, DTO.PageRequest, DTO.PageInfo без префикса сущности — каждой сущности соответствует свой типизированный набор.
 
 ### 2. API-контейнеры (api)
 
@@ -207,18 +210,11 @@ interface ChatMessage {
   content: string;
 }
 
-interface ProviderConfig {
-  order?: string[];
-  allow_fallbacks?: boolean;
-}
-
 interface ChatRequest {
   model: string;
   messages: ChatMessage[];
   max_tokens?: number;
   temperature?: number;
-  provider?: ProviderConfig;
-  provider_name?: string;
 }
 
 interface ChatResponse {
@@ -248,11 +244,6 @@ export async function generateWithLLM(sourceContent: string): Promise<string> {
     ],
     max_tokens: config.AI_MAX_TOKENS,
     temperature: config.AI_TEMPERATURE,
-    provider_name: 'Anthropic',
-    provider: {
-      order: ['Anthropic', 'Google', 'Amazon Bedrock', 'Azure'],
-      allow_fallbacks: true,
-    },
   };
   console.log(config.AI_MODEL);
 

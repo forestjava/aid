@@ -37,6 +37,9 @@ export async function generatePrismaSchemaAgentic(
     };
     if (config.AI_MAX_TOKENS) body.max_tokens = config.AI_MAX_TOKENS;
     if (config.AI_TEMPERATURE !== undefined) body.temperature = config.AI_TEMPERATURE;
+    body.provider = {
+      allow_fallbacks: true,
+    };
 
     const res = await fetch(config.AI_API_URL, {
       method: 'POST',

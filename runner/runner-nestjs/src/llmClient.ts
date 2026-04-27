@@ -19,7 +19,7 @@ RULES:
 4. Controllers use @UseGuards(JwtAuthGuard), @ApiBearerAuth(), @ApiTags('{entity}').
 5. Use EXACT model and field names from \`backend/prisma/schema.prisma\` (read it first).
 6. Import PrismaService from '../prisma/prisma.service'; JwtAuthGuard from '../auth/jwt-auth.guard'.
-7. Import Prisma types from '@prisma/client', never from 'generated/prisma'.
+7. Import Prisma types from '@prisma/client', never from 'generated/prisma'. The data layer is Prisma ONLY — do NOT import from '@nestjs/typeorm', 'typeorm', '@nestjs/sequelize', 'sequelize', '@nestjs/mongoose', or 'mongoose'. Do NOT use TypeOrmModule, SequelizeModule, MongooseModule, @Entity, @Column, @PrimaryGeneratedColumn, or any equivalent decorators/modules from those libraries. All database access goes exclusively through PrismaService.
 8. DTOs use class-validator decorators.
 9. Controllers implement findAll (GET /), findOne (GET /:id), create (POST /), update (PATCH /:id), remove (DELETE /:id) with skip/take pagination.
 10. Entity folder names use kebab-case.
@@ -35,7 +35,9 @@ RULES:
     \`\`\`
     Without this, Swagger crashes at runtime with "circular dependency" on the enum's first value. The same applies to @ApiQuery for @Query() with enum types.
 17. Import \`ApiParam\`, \`ApiQuery\` from '@nestjs/swagger' whenever a controller uses enum-typed @Param or @Query.
-18. When all files are written, stop calling tools. Do not emit a final assistant narrative.`;
+18. When all files are written, stop calling tools. Do not emit a final assistant narrative.
+19. For Date/DateTime Prisma fields in DTOs use ONLY \`@IsDateString({ strict: false })\` — this accepts both 'YYYY-MM-DD' date-only strings and full ISO datetime strings like '2024-01-15T10:30'. NEVER use \`@IsDate()\`, \`@IsDateString()\` without options, or \`@IsDateString({ strict: true })\`. Do NOT add \`@Type(() => Date)\` transforms on string date fields.
+20. In service create/update methods, for every Date/DateTime Prisma field convert the DTO string to a Date object before passing to Prisma: \`commissionedAt: new Date(dto.commissionedAt)\`. NEVER pass raw date strings to Prisma (it rejects strings without seconds, e.g. '2024-01-15T10:00Z'). NEVER append 'Z' or 'T00:00:00.000Z' manually — always use \`new Date(value)\`.`;
 
 export async function generateNestJsBackendAgentic(
   dslContent: string,
@@ -54,6 +56,9 @@ export async function generateNestJsBackendAgentic(
     };
     if (config.AI_MAX_TOKENS) body.max_tokens = config.AI_MAX_TOKENS;
     if (config.AI_TEMPERATURE !== undefined) body.temperature = config.AI_TEMPERATURE;
+    body.provider = {
+      allow_fallbacks: true,
+    };
 
     const res = await fetch(config.AI_API_URL, {
       method: 'POST',
